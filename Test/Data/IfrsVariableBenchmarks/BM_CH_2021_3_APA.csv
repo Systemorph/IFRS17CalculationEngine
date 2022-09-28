@@ -1,0 +1,11 @@
+$$Default
+@@Main
+Month,ReportingNode,Scenario,Year
+3,CH,,2021
+@@APA
+AccidentYear,AmountType,AocType,DataNode,EconomicBasis,EstimateType,Novelty,Value
+,PR,CF,DT2.1,,APA,C,72
+,PR,CF,DT1.1,,APA,C,72
+,PR,CF,DT1.3,,APA,C,90
+,PR,CF,DT3.1,,APA,C,72
+,PR,CF,DT4.1,,APA,C,72
