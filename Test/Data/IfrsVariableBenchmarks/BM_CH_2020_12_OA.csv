@@ -1,0 +1,8 @@
+$$Default
+@@Main
+Month,ReportingNode,Scenario,Year
+12,CH,,2020
+@@OA
+AccidentYear,AmountType,AocType,DataNode,EconomicBasis,EstimateType,Novelty,Value
+,PR,BOP,DT3.1,,OA,I,1.5
+,PR,EOP,DT3.1,,OA,C,1.5
