@@ -1,0 +1,127 @@
+{
+    "metadata": {
+        "authors": [],
+        "kernelspec": {
+            "display_name": "Formula Framework",
+            "language": "C#",
+            "name": "C#"
+        },
+        "language_info": {
+            "file_extension": ".cs",
+            "mimetype": "text/plain",
+            "name": "C#"
+        },
+        "toc-autonumbering": "True",
+        "toc-showcode": "False"
+    },
+    "nbformat": 4,
+    "nbformat_minor": 5,
+    "cells": [
+        {
+            "cell_type": "markdown",
+            "source": [
+                "<p style=\"font-weight:bold;\"> <span style=\"font-size: 36px\"> Tests </span> </p>"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "#!eval-notebook \"IfrsVariablesTest\""
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "#!eval-notebook \"ImportStorageTest\""
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "#!eval-notebook \"ReportStorageTest\""
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "#!eval-notebook \"QueriesTest\""
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "#!eval-notebook \"AocStructureTest\""
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "#!eval-notebook \"TechnicalMarginTest\""
+            ]
+        },
+        {
+            "cell_type": "markdown",
+            "source": [
+                "---"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "#!eval-notebook \"SpecificationsImportCashflows\""
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "#!eval-notebook \"SpecificationsImportActuals\""
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "#!eval-notebook \"SpecificationsTechnicalMargin\""
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "#!eval-notebook \"SpecificationsFinancialPerformance\""
+            ]
+        },
+        {
+            "cell_type": "markdown",
+            "source": [
+                "---"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+<<<<<<< HEAD
+                "#!eval-notebook \"MapTemplateAndImportTest\""
+=======
+                "//#!eval-notebook \"MapTemplateAndImportTest\""
+>>>>>>> develop
+            ]
+        },
+        {
+            "cell_type": "markdown",
+            "source": [
+                "---"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "#!eval-notebook \"ReportVariablesTest\""
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                ""
+            ]
+        }
+    ]
+}

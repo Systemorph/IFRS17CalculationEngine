@@ -1,0 +1,138 @@
+{
+    "metadata": {
+        "authors": [],
+        "kernelspec": {
+            "display_name": "Formula Framework",
+            "language": "C#",
+            "name": "C#"
+        },
+        "language_info": {
+            "file_extension": ".cs",
+            "mimetype": "text/plain",
+            "name": "C#"
+        },
+        "toc-autonumbering": "True",
+        "toc-showcode": "False"
+    },
+    "nbformat": 4,
+    "nbformat_minor": 5,
+    "cells": [
+        {
+<<<<<<< HEAD
+            "cell_type": "markdown",
+            "source": [
+                "<p style=\"font-weight:bold;\"> <span style=\"font-size: 36px\"> Specifications Setup </span> </p>"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "#!import \"../Import/ImportScopeCalculation\"",
+                "\n#!import \"../Utils/TestHelper\""
+=======
+            "cell_type": "code",
+            "source": [
+                "#!import \"../Import/ImportScopeCalculation\""
+>>>>>>> develop
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "public interface Universe : IMutableScopeWithStorage<ImportStorage>{}",
+                "\n",
+                "\npublic async Task<Universe> StartCalculatorAsync(string reportingNode, int year, int month, string economicBasis, Periodicity period, string format) ",
+                "\n{",
+                "\n    ",
+                "\n    var importArgs = new ImportArgs(reportingNode, year, month, period, null, format);",
+                "\n    Workspace.Reset();",
+                "\n    Workspace.Initialize(x => x.FromSource(DataSource)",
+                "\n                         .DisableInitialization<RawVariable>()",
+                "\n                         .DisableInitialization<IfrsVariable>());",
+                "\n",
+                "\n    var partition = (await DataSource.Query<PartitionByReportingNodeAndPeriod>().Where(p => p.ReportingNode == importArgs.ReportingNode &&",
+                "\n                                                                                                   p.Year == importArgs.Year &&",
+                "\n                                                                                                   p.Month == importArgs.Month &&",
+                "\n                                                                                                   p.Scenario == importArgs.Scenario",
+                "\n                                                                                            ).ToArrayAsync()).Single().Id;",
+                "\n    await DataSource.Partition.SetAsync<PartitionByReportingNodeAndPeriod>(partition);",
+                "\n",
+                "\n    //Set Workspace as when the parsing is completed.",
+                "\n    if(importArgs.ImportFormat == ImportFormats.Actual)",
+                "\n    { ",
+                "\n        await Workspace.UpdateAsync<IfrsVariable>(await DataSource.Query<IfrsVariable>()",
+                "\n                                                      .Where(x => x.Partition == partition && ",
+                "\n                                                                  new string[]{EstimateTypes.A, EstimateTypes.AA, EstimateTypes.OA}.Contains(x.EstimateType) &&  ",
+                "\n                                                                  new string[]{AocTypes.CF, AocTypes.WO}.Contains(x.AocType))",
+                "\n                                                      .ToArrayAsync());",
+                "\n    }",
+                "\n    else if(importArgs.ImportFormat == ImportFormats.Opening)",
+                "\n    { ",
+                "\n        await Workspace.UpdateAsync<IfrsVariable>(await DataSource.Query<IfrsVariable>()",
+                "\n                                                  .Where(x => x.Partition == partition && ",
+                "\n                                                                      new string[]{ EstimateTypes.C, EstimateTypes.L, EstimateTypes.LR, EstimateTypes.AA, EstimateTypes.OA, EstimateTypes.DA}.Contains(x.EstimateType) &&  ",
+                "\n                                                                  x.AocType == AocTypes.BOP && x.Novelty == Novelties.I)",
+                "\n                                                      .ToArrayAsync());",
+                "\n    }",
+                "\n    else",
+                "\n    {",
+                "\n        await Workspace.UpdateAsync<RawVariable>(await DataSource.Query<RawVariable>().Where(x => x.Partition == partition).ToArrayAsync());",
+                "\n    }",
+                "\n    var storage = new ImportStorage(importArgs, DataSource, Workspace);",
+                "\n    await storage.InitializeAsync();",
+                "\n    return Scopes.ForStorage(storage).WithContext(economicBasis).ToScope<Universe>();",
+                "\n}",
+                "\n",
+                "\npublic static ImportIdentity GetIdentity (this Universe universe, string dataNode, string aocType, string novelty) ",
+                "\n    => universe.GetScope<GetIdentities>(dataNode).Identities.Single( x => x.AocType == aocType && x.Novelty == novelty );",
+                "\n",
+                "\nstatic T GetValidElement<T>(this IList<T> array, int index) => GetElementOrDefault(array, index);",
+                "\n",
+                "\nstatic T GetValidElement<T>(this IEnumerable<T> array, int index) => GetElementOrDefault(array.ToArray(), index);",
+                "\n",
+                "\nstatic void ForEach<T>(this IEnumerable<T> self, Action<T> action) => self.ToList().ForEach(action);",
+                "\n",
+                "\npublic static IfrsVariable FromPvToIfrsVariable(this PresentValue scope)",
+                "\n    => new IfrsVariable{ EconomicBasis = scope.EconomicBasis, ",
+                "\n                         EstimateType = scope.Identity.CalculationType, ",
+                "\n                         DataNode = scope.Identity.Id.DataNode, ",
+                "\n                         AocType = scope.Identity.Id.AocType, ",
+                "\n                         Novelty = scope.Identity.Id.Novelty, ",
+                "\n                         AccidentYear = scope.Identity.AccidentYear,",
+                "\n                         AmountType = scope.Identity.AmountType,",
+                "\n                         Value = scope.Value,",
+                "\n                         Partition = scope.GetStorage().TargetPartition };",
+                "\n",
+                "\npublic static IfrsVariable FromCsmToIfrsVariable(this Csm scope)",
+                "\n    => new IfrsVariable{ EstimateType = scope.EstimateType, ",
+                "\n                         DataNode = scope.Identity.DataNode, ",
+                "\n                         AocType = scope.Identity.AocType, ",
+                "\n                         Novelty = scope.Identity.Novelty, ",
+                "\n                         Value = scope.Value,",
+                "\n                         Partition = scope.GetStorage().TargetPartition };",
+                "\n",
+                "\npublic static IfrsVariable FromLcToIfrsVariable(this Lc scope)",
+                "\n    => new IfrsVariable{ EstimateType = scope.EstimateType, ",
+                "\n                         DataNode = scope.Identity.DataNode, ",
+                "\n                         AocType = scope.Identity.AocType, ",
+                "\n                         Novelty = scope.Identity.Novelty, ",
+                "\n                         Value = scope.Value,",
+                "\n                         Partition = scope.GetStorage().TargetPartition };",
+                "\n",
+                "\npublic static IfrsVariable FromLoReCoToIfrsVariable(this LoReCo scope)",
+                "\n    => new IfrsVariable{ EstimateType = scope.EstimateType, ",
+                "\n                         DataNode = scope.Identity.DataNode, ",
+                "\n                         AocType = scope.Identity.AocType, ",
+                "\n                         Novelty = scope.Identity.Novelty, ",
+                "\n                         Value = scope.Value,",
+                "\n                         Partition = scope.GetStorage().TargetPartition };"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                ""
+            ]
+        }
+    ]
+}

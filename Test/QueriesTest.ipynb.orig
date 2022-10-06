@@ -1,0 +1,427 @@
+{
+    "metadata": {
+        "authors": [],
+        "kernelspec": {
+            "display_name": "Formula Framework",
+            "language": "C#",
+            "name": "C#"
+        },
+        "language_info": {
+            "file_extension": ".cs",
+            "mimetype": "text/plain",
+            "name": "C#"
+        },
+        "toc-autonumbering": "True",
+        "toc-showcode": "False"
+    },
+    "nbformat": 4,
+    "nbformat_minor": 5,
+    "cells": [
+        {
+            "cell_type": "code",
+            "source": [
+<<<<<<< HEAD
+                "#!eval-notebook \"../Utils/Queries\""
+=======
+                "#!eval-notebook \"../Utils/UtilityMethods\""
+>>>>>>> develop
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "var gic = \"DT1.1\";"
+            ]
+        },
+        {
+            "cell_type": "markdown",
+            "source": [
+                "# Test Load Current and Previous Parameter for Yield Curve"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "Workspace.Reset(x => x.ResetInitializationRules().ResetCurrentPartitions());"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "public async Task CheckLoadCurrentAndPreviousParameterForYieldCurveAsync(Args args, IEnumerable<YieldCurve> testData, ",
+                "\n                                                                         (int Year, int Month) expectedCurrentPeriod, ",
+                "\n                                                                         (int Year, int Month) expectedPreviousPeriod)",
+                "\n{",
+                "\n    await Workspace.UpdateAsync(testData);",
+                "\n    var eurCurrentAndPreviousYieldCurve = (await Workspace.LoadCurrentAndPreviousParameterAsync<YieldCurve>(args, x => x.Currency))[\"EUR\"];",
+                "\n    ",
+                "\n    //Check Current Period",
+                "\n    eurCurrentAndPreviousYieldCurve[CurrentPeriod].Year.Should().Be(expectedCurrentPeriod.Year);",
+                "\n    eurCurrentAndPreviousYieldCurve[CurrentPeriod].Month.Should().Be(expectedCurrentPeriod.Month);",
+                "\n    ",
+                "\n    //Check Previous Period",
+                "\n    eurCurrentAndPreviousYieldCurve[PreviousPeriod].Year.Should().Be(expectedPreviousPeriod.Year);",
+                "\n    eurCurrentAndPreviousYieldCurve[PreviousPeriod].Month.Should().Be(expectedPreviousPeriod.Month);",
+                "\n    ",
+                "\n    await Workspace.DeleteAsync(Workspace.Query<YieldCurve>().ToArray());",
+                "\n}"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "var args = new Args(\"CH\",2020,9,Periodicity.Monthly,null);",
+                "\nvar testData = new YieldCurve{ Currency = \"EUR\", Year = 2020, Month = 9};",
+                "\nawait CheckLoadCurrentAndPreviousParameterForYieldCurveAsync(args, testData.RepeatOnce(), (2020, 9),(2020, 9));"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "var args = new Args(\"CH\",2020,9,Periodicity.Monthly,null);",
+                "\nvar testData = new YieldCurve{ Currency = \"EUR\", Year = 2019, Month = 12};",
+                "\nawait CheckLoadCurrentAndPreviousParameterForYieldCurveAsync(args, testData.RepeatOnce(), (2019, 12), (2019, 12));"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "var args = new Args(\"CH\",2020,9,Periodicity.Monthly,null);",
+                "\nvar testData = new YieldCurve[] {new YieldCurve{ Currency = \"EUR\", Year = 2020, Month = 6}, ",
+                "\n                                 new YieldCurve{ Currency = \"EUR\", Year = 2020, Month = 3}};",
+                "\nawait CheckLoadCurrentAndPreviousParameterForYieldCurveAsync(args, testData, (2020, 6), (2020, 6));"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "var args = new Args(\"CH\",2020,9,Periodicity.Monthly,null);",
+                "\nvar testData = new YieldCurve[] {new YieldCurve{ Currency = \"EUR\", Year = 2020, Month = 9}, ",
+                "\n                                 new YieldCurve{ Currency = \"EUR\", Year = 2020, Month = 6}};",
+                "\nawait CheckLoadCurrentAndPreviousParameterForYieldCurveAsync(args, testData, (2020, 9), (2020, 9));"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "var args = new Args(\"CH\",2020,9,Periodicity.Monthly,null);",
+                "\nvar testData = new YieldCurve[] {new YieldCurve{ Currency = \"EUR\", Year = 2019, Month = 9}, ",
+                "\n                                 new YieldCurve{ Currency = \"EUR\", Year = 2020, Month = 9}};",
+                "\nawait CheckLoadCurrentAndPreviousParameterForYieldCurveAsync(args, testData, (2020, 9), (2019, 9));"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "var args = new Args(\"CH\",2020,9,Periodicity.Monthly,null);",
+                "\nvar testData = new YieldCurve[] {new YieldCurve{ Currency = \"EUR\", Year = 2019, Month = 12}, ",
+                "\n                                 new YieldCurve{ Currency = \"EUR\", Year = 2019, Month = 9}};",
+                "\nawait CheckLoadCurrentAndPreviousParameterForYieldCurveAsync(args, testData, (2019, 12), (2019, 12));"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "var args = new Args(\"CH\",2020,9,Periodicity.Monthly,null);",
+                "\nvar testData = new YieldCurve[] {new YieldCurve{ Currency = \"EUR\", Year = 2019, Month = 12}, ",
+                "\n                                 new YieldCurve{ Currency = \"EUR\", Year = 2018, Month = 9}};",
+                "\nawait CheckLoadCurrentAndPreviousParameterForYieldCurveAsync(args, testData, (2019, 12), (2019, 12));"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "var args = new Args(\"CH\",2020,9,Periodicity.Monthly,null);",
+                "\nvar testData = new YieldCurve[] {new YieldCurve{ Currency = \"EUR\", Year = 2019, Month = 6}, ",
+                "\n                                 new YieldCurve{ Currency = \"EUR\", Year = 2016, Month = 9},",
+                "\n                                 new YieldCurve{ Currency = \"EUR\", Year = 2016, Month = 6}};",
+                "\nawait CheckLoadCurrentAndPreviousParameterForYieldCurveAsync(args, testData, (2019, 6), (2019, 6));"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "var args = new Args(\"CH\",2020,9,Periodicity.Monthly,null);",
+                "\nvar testData = new YieldCurve[] {new YieldCurve{ Currency = \"EUR\", Year = 2020, Month = 6}, ",
+                "\n                                 new YieldCurve{ Currency = \"EUR\", Year = 2020, Month = 3}, ",
+                "\n                                 new YieldCurve{ Currency = \"EUR\", Year = 2015, Month = 9},",
+                "\n                                 new YieldCurve{ Currency = \"EUR\", Year = 2016, Month = 3}};",
+                "\nawait CheckLoadCurrentAndPreviousParameterForYieldCurveAsync(args, testData, (2020, 6), (2016, 3));"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "var args = new Args(\"CH\",2020,9,Periodicity.Monthly,null);",
+                "\nvar testData = new YieldCurve[] {new YieldCurve{ Currency = \"EUR\", Year = 2020, Month = 6}, ",
+                "\n                                 new YieldCurve{ Currency = \"EUR\", Year = 2020, Month = 3}, ",
+                "\n                                 new YieldCurve{ Currency = \"EUR\", Year = 2021, Month = 9},",
+                "\n                                 new YieldCurve{ Currency = \"EUR\", Year = 2016, Month = 3}};",
+                "\n",
+                "\nawait CheckLoadCurrentAndPreviousParameterForYieldCurveAsync(args, testData, (2020, 6), (2016, 3));"
+            ]
+        },
+        {
+            "cell_type": "markdown",
+            "source": [
+                "# Test Data Node State Query"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "public async Task CheckLoadDataNodeStateAsync(Args args, IEnumerable<DataNodeState> testData, bool isExpectedToBeActive)",
+                "\n{",
+                "\n    await Workspace.UpdateAsync(testData);",
+                "\n    var isActive = (await Workspace.LoadDataNodeStateAsync(args)).Keys.Contains(gic);",
+                "\n    ",
+                "\n    isActive.Should().Be(isExpectedToBeActive);",
+                "\n    ",
+                "\n    await Workspace.DeleteAsync(Workspace.Query<DataNodeState>().ToArray());",
+                "\n}"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "var args = new Args(\"CH\",2020,12,Periodicity.Monthly,null);",
+                "\nvar testData = new DataNodeState[] {new DataNodeState{ DataNode = gic, Year = 2019, Month = 12, State = State.Active },",
+                "\n                                    new DataNodeState{ DataNode = gic, Year = 2020, Month = 6, State = State.Inactive }};",
+                "\nawait CheckLoadDataNodeStateAsync(args, testData, false);"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "var args = new Args(\"CH\",2020,12,Periodicity.Monthly,null);",
+                "\nvar testData = new DataNodeState[] {new DataNodeState{ DataNode = gic, Year = 2020, Month = 3, State = State.Active },",
+                "\n                                    new DataNodeState{ DataNode = gic, Year = 2020, Month = 9, State = State.Inactive }};",
+                "\nawait CheckLoadDataNodeStateAsync(args, testData, false);"
+            ]
+        },
+        {
+            "cell_type": "markdown",
+            "source": [
+                "# Test Load Yield Curve"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "public async Task CheckLoadYieldCurveAsync(Args args, IEnumerable<YieldCurve> testData, ",
+                "\n                                           (int year , int month) dataNodeYearAndMonth, ",
+                "\n                                           double expectedCurrentPreviousFirstYcValue,",
+                "\n                                           double expectedCurrentFirstYcValue,",
+                "\n                                           double expectedLockedFirstYcValue)",
+                "\n{",
+                "\n    await Workspace.UpdateAsync(testData);",
+                "\n    await Workspace.UpdateAsync<ReportingNode>(new ReportingNode[]{new ReportingNode{Currency=\"EUR\",SystemName=\"CH\"}});",
+                "\n    ",
+                "\n    var dataNodes = new DataNodeData[]{new DataNodeData{ValuationApproach=\"BBA\", Year = dataNodeYearAndMonth.year, Month = dataNodeYearAndMonth.month, DataNode = gic, ContractualCurrency = \"EUR\"}};",
+                "\n    var eurLockedYieldCurve = (await LoadLockedInYieldCurveAsync(Workspace, args, dataNodes));",
+                "\n    var eurCurrentYieldCurve = (await LoadCurrentYieldCurveAsync(Workspace, args, dataNodes));",
+                "\n    ",
+                "\n    await Workspace.DeleteAsync(Workspace.Query<YieldCurve>().ToArray());",
+                "\n    await Workspace.DeleteAsync(Workspace.Query<ReportingNode>().ToArray());",
+                "\n    ",
+                "\n    var errors = new List<string>();",
+                "\n    var currentPrevPeriod = eurCurrentYieldCurve[\"EUR\"][PreviousPeriod].Values.First();",
+                "\n    if(Math.Abs(currentPrevPeriod - expectedCurrentPreviousFirstYcValue) > 1E-8)",
+                "\n        errors.Add( $\"Current YieldCurve for Previous Period not matching:\\n Expected {expectedCurrentPreviousFirstYcValue} \\n Computed {currentPrevPeriod}.\" );",
+                "\n    ",
+                "\n    var currentCurrPeriod = eurCurrentYieldCurve[\"EUR\"][CurrentPeriod].Values.First();",
+                "\n    if(Math.Abs(currentCurrPeriod - expectedCurrentFirstYcValue) > 1E-8)",
+                "\n        errors.Add( $\"Current YieldCurve for Current Period not matching:\\n Expected {expectedCurrentFirstYcValue} \\n Computed {currentCurrPeriod}.\" );",
+                "\n    ",
+                "\n    var lockedYc = eurLockedYieldCurve[gic].Values.First();",
+                "\n    if(Math.Abs(lockedYc - expectedLockedFirstYcValue) > 1E-8)",
+                "\n        errors.Add( $\"LockedIn YieldCurve not matching:\\n Expected {expectedLockedFirstYcValue} \\n Computed {lockedYc}.\" );",
+                "\n     ",
+                "\n    if(errors.Any()) ApplicationMessage.Log(Error.Generic, string.Join(\"\\n\", errors));        ",
+                "\n}"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "var args = new Args(\"CH\",2020,9,Periodicity.Monthly,null);",
+                "\nvar testData = new YieldCurve[] {new YieldCurve{ Currency = \"EUR\", Year = 2020, Month = 6, Values = new double[]{0.1,0.2,0.3,0.4,0.5,0.6} }, ",
+                "\n                                 new YieldCurve{ Currency = \"EUR\", Year = 2020, Month = 3, Values = new double[]{2.1,2.2,2.3,2.4,2.5,2.6} }, ",
+                "\n                                 new YieldCurve{ Currency = \"EUR\", Year = 2021, Month = 9, Values = new double[]{4.1,4.2,4.3,4.4,4.5,4.6} },",
+                "\n                                 new YieldCurve{ Currency = \"EUR\", Year = 2016, Month = 3, Values = new double[]{6.1,6.2,6.3,6.4,6.5,6.6} }};",
+                "\n",
+                "\nawait CheckLoadYieldCurveAsync(args, testData, (2016, 6), 6.1, 0.1, 6.1);"
+            ]
+        },
+        {
+            "cell_type": "markdown",
+            "source": [
+                "# Test Load Data Node Parameter"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "var gic2 = \"gic2\";",
+                "\nvar xgic = \"xgic\";",
+                "\nvar gric1 = \"gric1\";"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "public async Task CheckLoadInterDataNodeParameterAsync(Args args, IEnumerable<InterDataNodeParameter> testData, ",
+                "\n                                                       int previousYear,",
+                "\n                                                       int? currentYear = null)",
+                "\n{",
+                "\n    currentYear = currentYear ?? previousYear;",
+                "\n    await Workspace.UpdateAsync(testData);",
+                "\n        ",
+                "\n    var interDataNodeParameters = await LoadInterDataNodeParametersAsync(Workspace, args);",
+                "\n   ",
+                "\n    //Check Keys",
+                "\n    var uniqueLinks = testData.Select(x => x.DataNode).Concat(testData.Select(x => x.LinkedDataNode)).ToHashSet();",
+                "\n    uniqueLinks.Intersect(interDataNodeParameters.Keys).Count().Should().Be(uniqueLinks.Count());",
+                "\n    ",
+                "\n    //CheckInnerDictionaries",
+                "\n    var currentYearData = testData.Where(x => x.Year == currentYear);",
+                "\n    var previousYearData = testData.Where(x => x.Year == previousYear);",
+                "\n    ",
+                "\n    var errors = new List<string>();",
+                "\n    foreach(var dn in uniqueLinks)",
+                "\n    {",
+                "\n        //Set up BM counts",
+                "\n        var currentLinks = currentYearData.Select(x => x.DataNode).Concat(currentYearData.Select(x => x.LinkedDataNode));",
+                "\n        var currentLinksCount = currentLinks.Where(x => x == dn).Count();",
+                "\n        var prevlinks = previousYearData.Select(x => x.DataNode).Concat(previousYearData.Select(x => x.LinkedDataNode));",
+                "\n        var previousLinksCount = prevlinks.Where(x => x == dn).Count();",
+                "\n        ",
+                "\n        //Current Period",
+                "\n        var computedCount = interDataNodeParameters[dn][CurrentPeriod].Count();",
+                "\n",
+                "\n        if (currentYearData.Any())",
+                "\n        {",
+                "\n            if(computedCount != currentLinksCount)",
+                "\n                errors.Add( $\"Current DataNode parameter count for {dn} not matching:\\n Expected {currentLinksCount} \\n Computed {computedCount}.\" );",
+                "\n        }",
+                "\n        else if(computedCount != previousLinksCount)",
+                "\n                errors.Add( $\"Current DataNode parameter count for {dn} not matching:\\n Expected {previousLinksCount} \\n Computed {computedCount}.\" );",
+                "\n        ",
+                "\n        foreach (var param in interDataNodeParameters[dn][CurrentPeriod])",
+                "\n        {",
+                "\n            var linkedDn = param.DataNode == dn ? param.LinkedDataNode : param.DataNode;",
+                "\n            var isLinkInPrevPeriod = previousYearData.Any(x => x.DataNode == dn && x.LinkedDataNode == linkedDn || x.DataNode == linkedDn && x.LinkedDataNode == dn);",
+                "\n            var isLinkInCurrPeriod = currentYearData.Any(x => x.DataNode == dn && x.LinkedDataNode == linkedDn || x.DataNode == linkedDn && x.LinkedDataNode == dn); ",
+                "\n            ",
+                "\n           if(isLinkInPrevPeriod && !isLinkInCurrPeriod)",
+                "\n            {    ",
+                "\n                if (param.ReinsuranceCoverage != ((double)previousYear)/1000)",
+                "\n                    errors.Add( $\"Current Reinsurance Coverage for {dn} linked to {linkedDn} not matching:\\n Expected {((double)previousYear)/1000} \\n Computed {param.ReinsuranceCoverage}.\" );",
+                "\n            }",
+                "\n            else if( param.ReinsuranceCoverage != ((double)currentYear)/1000)",
+                "\n                errors.Add( $\"Current Reinsurance Coverage for {dn} linked to {linkedDn} not matching:\\n Expected {((double)currentYear)/1000} \\n Computed {param.ReinsuranceCoverage}.\" );",
+                "\n        }",
+                "\n",
+                "\n        //Previous Period",
+                "\n        computedCount = interDataNodeParameters[dn][PreviousPeriod].Count();",
+                "\n       ",
+                "\n        if (currentYearData.Any())",
+                "\n        {",
+                "\n            if(computedCount != currentLinksCount)",
+                "\n                errors.Add( $\"Previous DataNode parameter count for {dn} not matching:\\n Expected {currentLinksCount} \\n Computed {computedCount}.\" );",
+                "\n        }",
+                "\n        else if(computedCount != previousLinksCount)",
+                "\n                errors.Add( $\"Previous DataNode parameter count for {dn} not matching:\\n Expected {previousLinksCount} \\n Computed {computedCount}.\" );",
+                "\n        ",
+                "\n        foreach (var param in interDataNodeParameters[dn][PreviousPeriod])",
+                "\n        {",
+                "\n            var linkedDn = param.DataNode == dn ? param.LinkedDataNode : param.DataNode;",
+                "\n            var isLinkInPrevPeriod = previousYearData.Any(x => x.DataNode == dn && x.LinkedDataNode == linkedDn || x.DataNode == linkedDn && x.LinkedDataNode == dn);",
+                "\n            var isLinkInCurrPeriod = currentYearData.Any(x => x.DataNode == dn && x.LinkedDataNode == linkedDn || x.DataNode == linkedDn && x.LinkedDataNode == dn); ",
+                "\n            ",
+                "\n           if(!isLinkInPrevPeriod && isLinkInCurrPeriod)",
+                "\n            {    ",
+                "\n                if (param.ReinsuranceCoverage != ((double)currentYear)/1000)",
+                "\n                    errors.Add( $\"Previous Reinsurance Coverage for {dn} linked to {linkedDn} not matching:\\n Expected {((double)currentYear)/1000} \\n Computed {param.ReinsuranceCoverage}.\" );",
+                "\n            }",
+                "\n            else if( param.ReinsuranceCoverage != ((double)previousYear)/1000)",
+                "\n                errors.Add( $\"Previous Reinsurance Coverage for {dn} linked to {linkedDn} not matching:\\n Expected {((double)previousYear)/1000} \\n Computed {param.ReinsuranceCoverage}.\" );",
+                "\n        }",
+                "\n    }",
+                "\n    ",
+                "\n    await Workspace.DeleteAsync(Workspace.Query<InterDataNodeParameter>().ToArray());",
+                "\n   ",
+                "\n    if(errors.Any()) ApplicationMessage.Log(Error.Generic, string.Join(\"\\n\", errors));",
+                "\n}"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "var args = new Args(\"CH\",2020,9,Periodicity.Monthly,null);",
+                "\nint previousYear = 2019;",
+                "\nvar testData = new InterDataNodeParameter[] ",
+                "\n                                {new InterDataNodeParameter{ DataNode = gic, LinkedDataNode = gric1, ReinsuranceCoverage = ((double)previousYear)/1000, Year = previousYear, Month = 3}, ",
+                "\n                                 new InterDataNodeParameter{ DataNode = gic2, LinkedDataNode = gric1, ReinsuranceCoverage = ((double)previousYear)/1000, Year = previousYear, Month = 3}, ",
+                "\n                                 new InterDataNodeParameter{ DataNode = gric1, LinkedDataNode = xgic, ReinsuranceCoverage = ((double)previousYear)/1000, Year = previousYear, Month = 3}, ",
+                "\n                                 };",
+                "\n",
+                "\nawait CheckLoadInterDataNodeParameterAsync(args, testData, previousYear);"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "var args = new Args(\"CH\",2020,9,Periodicity.Monthly,null);",
+                "\nint previousYear = 2019;",
+                "\nint currentYear = 2020;",
+                "\nvar testData = new InterDataNodeParameter[] ",
+                "\n                                {",
+                "\n                                 new InterDataNodeParameter{ DataNode = gic, LinkedDataNode = gric1, ReinsuranceCoverage = ((double)previousYear)/1000, Year = previousYear, Month = 3}, ",
+                "\n                                 new InterDataNodeParameter{ DataNode = gric1, LinkedDataNode = xgic, ReinsuranceCoverage = ((double)previousYear)/1000, Year = previousYear, Month = 3}, ",
+                "\n                                 new InterDataNodeParameter{ DataNode = gic, LinkedDataNode = gric1, ReinsuranceCoverage = ((double)currentYear)/1000, Year = currentYear, Month = 9},",
+                "\n                                 new InterDataNodeParameter{ DataNode = gic2, LinkedDataNode = gric1, ReinsuranceCoverage = ((double)currentYear)/1000, Year = currentYear, Month = 9}, ",
+                "\n                                 new InterDataNodeParameter{ DataNode = gric1, LinkedDataNode = xgic, ReinsuranceCoverage = ((double)currentYear)/1000, Year = currentYear, Month = 9}, ",
+                "\n                                };",
+                "\n",
+                "\nawait CheckLoadInterDataNodeParameterAsync(args, testData, previousYear, currentYear);"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "var args = new Args(\"CH\",2020,9,Periodicity.Monthly,null);",
+                "\nint previousYear = 2019;",
+                "\nint currentYear = 2020;",
+                "\nvar testData = new InterDataNodeParameter[] ",
+                "\n                                {",
+                "\n                                 new InterDataNodeParameter{ DataNode = gic, LinkedDataNode = gric1, ReinsuranceCoverage = ((double)previousYear)/1000, Year = previousYear, Month = 3}, ",
+                "\n                                 new InterDataNodeParameter{ DataNode = gric1, LinkedDataNode = xgic, ReinsuranceCoverage = ((double)previousYear)/1000, Year = previousYear, Month = 3}, ",
+                "\n                                };",
+                "\n",
+                "\nawait CheckLoadInterDataNodeParameterAsync(args, testData, previousYear, currentYear);"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "var args = new Args(\"CH\",2020,9,Periodicity.Monthly,null);",
+                "\nint previousYear = 2019;",
+                "\nint currentYear = 2020;",
+                "\nvar testData = new InterDataNodeParameter[] ",
+                "\n                                {",
+                "\n                                 new InterDataNodeParameter{ DataNode = gic, LinkedDataNode = gric1, ReinsuranceCoverage = ((double)currentYear)/1000, Year = currentYear, Month = 3}, ",
+                "\n                                 new InterDataNodeParameter{ DataNode = gric1, LinkedDataNode = xgic, ReinsuranceCoverage = ((double)currentYear)/1000, Year = currentYear, Month = 3}, ",
+                "\n                                };",
+                "\n",
+                "\nawait CheckLoadInterDataNodeParameterAsync(args, testData, previousYear, currentYear);"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                ""
+            ]
+        }
+    ]
+}
