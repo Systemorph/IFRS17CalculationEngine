@@ -1,7 +1,6 @@
-$$Default
 @@Main
-Month,ReportingNode,Scenario,Year
-3,CH,,2021
+ReportingNode,Year,Month,Scenario
+CH,2021,3,
 @@L
 AccidentYear,AmountType,AocType,DataNode,EconomicBasis,EstimateType,Novelty,Value
 ,,CL,DT2.1,,L,C,-87.43135554903122
@@ -16,6 +15,8 @@ AccidentYear,AmountType,AocType,DataNode,EconomicBasis,EstimateType,Novelty,Valu
 ,,BOP,DT1.3,,L,N,31.958738976731105
 ,,IA,DT1.3,,L,N,0.016300537999407044
 ,,EV,DT1.3,,L,N,55.45631603430072
+,,EA,DT3.1,,L,C,9.728296571059161
+,,AM,DT3.1,,L,C,-9.728296571059161
 ,,BOP,DT3.1,,L,N,31.958738976731105
 ,,IA,DT3.1,,L,N,0.016300537999407044
 ,,EV,DT3.1,,L,N,55.45631603430072
