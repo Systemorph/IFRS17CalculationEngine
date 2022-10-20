@@ -23,9 +23,7 @@ You will be introduced to
 
 ## Got Questions
 
-For support around the IFRS17 CalculationEngine you can personally reach out to one of our IFRS17 experts: 
-- [Dr. Andrea Muolo]()
-- [Dr. Davide Colleoni](https://www.linkedin.com/in/davidecolleoni/)
-- [Mrs. Sara Busato]()
+For support around the IFRS 17 CalculationEngine get in contact with our Community:
 
-If you are interested in adapting the IFRS17 CalculationEngine to your data and would like to start a collaboration with us, you can contact [Wolfgang Maehr]()
+- [Community]() -link to the community page- 
+- [Evangelists]() -link to Evangelists page- 
