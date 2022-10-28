@@ -1,4 +1,4 @@
-![Systemorph_logo.png](https://portal.systemorph.cloud/api/project/ifrs17ce/env/dev/file/download?path=Images/Systemorph_logo.png)
+![Systemorph_logo.png](./Images/Systemorph_logo.png)
 
 
 **IFRS17 Calculation Engine**
