@@ -1,0 +1,10 @@
+@@Main,,
+ReportingNode,Year,Month
+G,2021,3
+,,
+@@SingleDataNodeParameter,,
+DataNode,PremiumAllocation,
+GIC1,0.9,
+,,
+@@InterDataNodeParameter,,
+DataNode,LinkedDataNode,ReinsuranceCoverage
