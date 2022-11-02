@@ -1,0 +1,7 @@
+﻿@@Main,,,,
+ReportingNode,Year,Month,,
+CH,2020,12,,
+@@Actual,,,,
+DataNode,AocType,ValueType,AccidentYear,Value
+DT1.1,CF,NIC,,280
+
