@@ -1,7 +1,6 @@
 ﻿@@Main,,,,
-ReportingNode,Year,Month,,
-CH,2020,12,,
+ReportingNode,Year,Month,Scenario,
+CH,2020,12,MUP,
 @@Actual,,,,
 DataNode,AocType,ValueType,AccidentYear,Value
 DT1.1,CF,NIC,,308
-

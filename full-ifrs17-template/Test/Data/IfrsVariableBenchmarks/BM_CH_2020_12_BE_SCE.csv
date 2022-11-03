@@ -1,6 +1,6 @@
 @@Main,,,,,,,
 Month,ReportingNode,Scenario,Year,,,,
-12,CH,IRU,2020,,,,
+12,CH,MUP,2020,,,,
 @@BE,,,,,,,
 AccidentYear,AmountType,AocType,DataNode,EconomicBasis,EstimateType,Novelty,Value
 ,PR,BOP,DT1.1,C,BE,N,-878.3904043
