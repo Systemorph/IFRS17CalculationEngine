@@ -1,5 +1,5 @@
 <p align="right">
-<img width="250" src="https://portal.systemorph.cloud/api/project/ifrs17ce/env/dc/file/download?path=Images/Systemorph_logo.png" alt="Systemorph logo">
+<img width="250" src="https://portal.systemorph.cloud/api/project/ifrs17/env/v1.0.0/file/download?path=Images/Systemorph_logo.png" alt="Systemorph logo">
 </p>
 
 <h1 align="center">IFRS 17 Calculation Engine</h1>
@@ -13,14 +13,14 @@ Systemorph portal allows Users to create their own projects powered by the Verte
 # Overview
 
 <p align="left">
-<img width="900" src="https://portal.systemorph.cloud/api/project/ifrs17ce/env/dc/file/download?path=Images/BigPicture.png" alt="IFRS 17 Solution Overview">
+<img width="900" src="https://portal.systemorph.cloud/api/project/ifrs17/env/v1.0.0/file/download?path=Images/BigPicture.png" alt="IFRS 17 Solution Overview">
 </p>
 
 
 If you want to know more about the Calculation Engine than just its standard technical use, you are recommended to look at [OverviewCalculationEngine](OverviewCalculationEngine) (*OverviewCalculationEngine*). 
 You will be introduced to
-- [DataModel](./DataModel/DataStructure) (*./DataModel/DataStructure*) with links to detailed description of individual data types, dimensions and partitions employed
-- [Calculation](./Import/ImportScopeCalculation) (*./Import/ImportScopeCalculation*) with in detail description using mathematical formulas and links to supporting material
+- [DataModel](https://portal.systemorph.cloud/api/project/ifrs17/env/v1.0.0/DataModel/DataStructure) with links to detailed description of individual data types, dimensions and partitions employed
+- [Calculation](https://portal.systemorph.cloud/api/project/ifrs17/env/v1.0.0/Import/ImportScopeCalculation) with in detail description using mathematical formulas and links to supporting material
 
 # Got Questions
 

@@ -1,10 +1,10 @@
 <p align="right">
-<img width="250" src="https://portal.systemorph.cloud/api/project/full-ifrs17-template1/env/dcolleoni/file/download?path=Images/Systemorph_logo.png" alt="Systemorph logo">
+<img width="250" src="https://portal.systemorph.cloud/api/project/full-ifrs-17-template/env/v1.0.0/file/download?path=Images/Systemorph_logo.png" alt="Systemorph logo">
 </p>
 
 <h1 align="center">Full IFRS 17 Template</h1>
 
-[**IFRS 17 Calculation Engine**](https://portal.systemorph.cloud/api/project/ifrs17ce/env/dev/) is a tool to conduct all the essential IFRS 17 calculations given some key figures.
+[**IFRS 17 Calculation Engine**](https://portal.systemorph.cloud/api/project/ifrs17/env/v1.0.0/) is a tool to conduct all the essential IFRS 17 calculations given some key figures.
 
 **Full IFRS 17 Template** uses our IFRS 17 Calculation Engine to import several use-cases and show the results. 
 
@@ -15,14 +15,14 @@ Clone this project to start interacting with it.
 # Supporting Material
 
 Check out our video series. You can get started here: 
-[<img src="https://portal.systemorph.cloud/api/project/full-ifrs17-template1/env/dcolleoni/file/download?path=Images/video1.png">](https://www.youtube.com/watch?v=M1B5AyYvXT8)
+[<img src="https://portal.systemorph.cloud/api/project/full-ifrs-17-template/env/v1.0.0/file/download?path=Images/video1.png">](https://www.youtube.com/watch?v=M1B5AyYvXT8)
 
 For more information on our IFRS 17 initiative check out our [IFRS 17 page](*landing page*).
 
 # Report
 
-Check out the IFRS 17 reports computed for our mock use-cases [here](./Report/Reports). (*./Report/Reports*)
-Check out the our mock data set by exporting excel MapTemplates [here](./Export/MapTemplate). (*./Export/MapTemplate*)
+Check out the IFRS 17 reports computed for our mock use-cases [here](https://portal.systemorph.cloud/api/project/full-ifrs-17-template/env/v1.0.0/Report/Reports).
+Check out the our mock data set by exporting excel MapTemplates [here](https://portal.systemorph.cloud/api/project/full-ifrs-17-template/env/v1.0.0/Export/MapTemplate).
 
 # Got Questions
 
