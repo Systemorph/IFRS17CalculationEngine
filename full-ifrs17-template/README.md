@@ -1,36 +1,35 @@
-![Systemorph_logo.png](https://portal.systemorph.cloud/api/project/full-ifrs17-template1/env/dev/file/download?path=Images/Systemorph_logo.png)
+<p align="right">
+<img width="250" src="https://portal.systemorph.cloud/api/project/full-ifrs17-template1/env/dcolleoni/file/download?path=Images/Systemorph_logo.png" alt="Systemorph logo">
+</p>
 
-**Full IFRS 17 Template**
+<h1 align="center">Full IFRS 17 Template</h1>
 
-Systemorph's IFRS 17 [Calculation Engine](https://portal.systemorph.cloud/api/project/ifrs17ce/env/dev/) is a tool to conduct all the essential IFRS 17 calculations given some key figures.
+[**IFRS 17 Calculation Engine**](https://portal.systemorph.cloud/api/project/ifrs17ce/env/dev/) is a tool to conduct all the essential IFRS 17 calculations given some key figures.
 
-Systemorph's *Full IFRS 17 Template* uses our IFRS 17 Calculation Engine to import several use-cases and show the results. 
+**Full IFRS 17 Template** uses our IFRS 17 Calculation Engine to import several use-cases and show the results. 
 
 # Get Started
 
-Interact with this *Full IFRS 17 Template* after having cloned the project
+Clone this project to start interacting with it.
 
 # Supporting Material
 
-Check out the [video]() (this is a youtube link or the video is embedded)
+Check out our video series. You can get started here: 
+[<img src="https://portal.systemorph.cloud/api/project/full-ifrs17-template1/env/dcolleoni/file/download?path=Images/video1.png">](https://www.youtube.com/watch?v=M1B5AyYvXT8)
 
-Check out our IFRS 17 initiative [here](landing page)
+For more information on our IFRS 17 initiative check out our [IFRS 17 page](*landing page*).
 
 # Report
 
-Check out the IFRS 17 reports computed for our use-cases [here](./Report/Reports)
-
-# Testing
-
-If you want a step by step guide into the calculation logic, please go to the "Specification" notebook you are interested in:
-- [Cashflow Calculation](./Test/SpecificationsImportCashflows)
-- [Actuals Calculation](./Test/SpecificationsImportActuals)
-- [Technical Margin Calculation](./Test/SpecificationsTechnicalMargin)
-- [Financial Performance Calculation](./Test/SpecificationsFinancialPerformance)
+Check out the IFRS 17 reports computed for our mock use-cases [here](./Report/Reports). (*./Report/Reports*)
+Check out the our mock data set by exporting excel MapTemplates [here](./Export/MapTemplate). (*./Export/MapTemplate*)
 
 # Got Questions
 
-For support around the IFRS 17 CalculationEngine get in contact with our Community:
+For support around the IFRS 17 CalculationEngine get in contact with our [Community](). (*-link to the community page(IFRS17 landing page)*)- 
 
-- [Community]() -link to the community page- 
-- [Evangelists]() -link to Evangelists page- 
+# Contributing
+
+All work on the **Full IFRS 17 Template** happens directly on [GitHub](https://github.com/Systemorph/IFRS17CalculationEngine). 
+
+This project adheres to the Contributor Covenant [code of conduct](https://github.com/Systemorph/IFRS17CalculationEngine/blob/main/full-ifrs17-template/CODE_OF_CONDUCT.md).
