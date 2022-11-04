@@ -17,13 +17,11 @@ Systemorph portal allows Users to create their own projects powered by the Verte
 </p>
 
 
-If you want to know more about the Calculation Engine than just its standard technical use, you are recommended to look at [OverviewCalculationEngine](OverviewCalculationEngine). 
+If you want to know more about the Calculation Engine than just its standard technical use, you are recommended to look at [OverviewCalculationEngine](OverviewCalculationEngine) (*OverviewCalculationEngine*). 
 You will be introduced to
-- [DataModel](./DataModel/DataStructure) with links to detailed description of individual data types, dimensions and partitions employed
-- [Calculation](./Import/ImportScopeCalculation) with in detail description using mathematical formulas and links to supporting material
+- [DataModel](./DataModel/DataStructure) (*./DataModel/DataStructure*) with links to detailed description of individual data types, dimensions and partitions employed
+- [Calculation](./Import/ImportScopeCalculation) (*./Import/ImportScopeCalculation*) with in detail description using mathematical formulas and links to supporting material
 
 # Got Questions
 
-For support around the IFRS 17 CalculationEngine get in contact with our Community:
-
-- [Community]() -link to the community page(IFRS17 landing page)- 
+For support around the IFRS 17 CalculationEngine get in contact with our [Community](). -link to the community page(IFRS17 landing page)- 
