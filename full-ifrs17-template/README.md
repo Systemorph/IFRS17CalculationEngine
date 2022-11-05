@@ -4,7 +4,7 @@
 
 <h1 align="center">Full IFRS 17 Template</h1>
 
-**Full IFRS 17 Template** uses our **IFRS 17 Calculation Engine**](https://portal.systemorph.cloud/api/project/ifrs17/env/v1.0.0/) to import several use-cases and show the results. 
+**Full IFRS 17 Template** uses our [**IFRS 17 Calculation Engine**](https://portal.systemorph.cloud/api/project/ifrs17/env/v1.0.0/) to import several use-cases and show the results. 
 
 **IFRS 17 Calculation Engine** is a tool to conduct all the essential IFRS 17 calculations given some key figures.
 
