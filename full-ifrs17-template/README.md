@@ -21,11 +21,15 @@ For more information on our IFRS 17 initiative check out our [IFRS 17 page](*lan
 
 For an overview of the **Full IFRS 17 Template** project refer to the [OverviewIFRS17Template](https://portal.systemorph.cloud/project/full-ifrs-17-template/env/v1.0.0/OverviewIFRS17Template)
 
-# Report
+# Report 
 
 Check out the IFRS 17 reports computed for our mock use-cases [here](https://portal.systemorph.cloud/project/full-ifrs-17-template/env/v1.0.0/Report/Reports).
 
-Check out the our mock data set by exporting excel MapTemplates [here](https://portal.systemorph.cloud/project/full-ifrs-17-template/env/v1.0.0/Export/MapTemplate).
+# Export - Import
+
+Check out our mock data set by exporting excel MapTemplates [here](https://portal.systemorph.cloud/project/full-ifrs-17-template/env/v1.0.0/Export/MapTemplate).
+
+Import your custom files using our [CloseImportTemplate](https://portal.systemorph.cloud/project/full-ifrs-17-template/env/v1.0.0/Import/CloseImportTemplate) Notebook.
 
 # Got Questions
 
