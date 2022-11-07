@@ -35,4 +35,4 @@ For support around the IFRS 17 CalculationEngine get in contact with our [Commun
 
 All work on the **Full IFRS 17 Template** happens directly on [GitHub](https://github.com/Systemorph/IFRS17CalculationEngine). 
 
-This project adheres to the Contributor Covenant [code of conduct](https://github.com/Systemorph/IFRS17CalculationEngine/blob/main/full-ifrs17-template/CODE_OF_CONDUCT.md).
+This project adheres to overall [General Terms & Conditions for Systemorph Cloud]() TODO link to terms and conditions file.
