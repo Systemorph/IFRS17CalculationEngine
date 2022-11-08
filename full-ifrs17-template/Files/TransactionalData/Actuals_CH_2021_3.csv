@@ -60,3 +60,12 @@ DT4.1,CF,ICO,,-6
 DT4.1,CF,NIC,,-70
 DT4.1,CF,ACA,,-10
 DT4.1,CF,AEA,,-5
+DT1.4,WO,PayablePR,,4
+DT1.4,WO,ReceivablePR,,-2
+DT1.4,CF,PayablePR,,-5
+DT1.4,CF,ReceivablePR,,3
+DT1.4,CF,PR,,90
+DT1.4,CF,ICO,,-6
+DT1.4,CF,NIC,,-70
+DT1.4,CF,ACA,,-10
+DT1.4,CF,AEA,,-5
