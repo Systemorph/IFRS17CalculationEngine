@@ -1,5 +1,5 @@
 ﻿@@Main,,,,
-ReportingNode,Year,Month,Scenario ,
+ReportingNode,Year,Month,Scenario,
 CH,2020,12,MTUP10pct,
 @@Actual,,,,
 DataNode,AocType,ValueType,AccidentYear,Value
