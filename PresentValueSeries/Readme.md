@@ -1,6 +1,6 @@
-<center><img src="Images/Systemorph_logo.png" width="40%" style="float:center;">
-
-<p style="font-size: 40px; text-align:center">  Present Value Series </p>
+<p align="right">
+<img width="250" src="https://portal.stage.systemorph.cloud/api/project/present-value-analysis/env/dev/file/download?path=Images/Systemorph_logo.png" alt="Systemorph logo">
+</p>
 
 # Overview
 
@@ -15,7 +15,9 @@ The first [video](https://systemorph-my.sharepoint.com/personal/amuolo_systemorp
 describes the computing the Present Value of the insurance contracts, which is the main goal of the IFRS 17 economic accounting standard.
 Briefly, this is the fair price one would pay for all these insurance policies today. 
 
-<center><img src="Images/valuationOfInsurancePolicies.png" width="40%" style="float:center;">
+<p align="center">
+<img width="800" src="https://portal.stage.systemorph.cloud/api/project/present-value-analysis/env/dev/file/download?path=Images/valuationOfInsurancePolicies.png" alt="ValuationInsurancePolicies">
+</p>
 
 For computing present values, the insurance contracts are allocated to homogeneous groups usually formed by type, line of business, 
 annual cohort to simplify reporting without a distinct loss of accuracy.
@@ -23,7 +25,9 @@ We will compute the present value for each group of insurance contracts individu
 This requires that all the cash flows are estimated and modelled until the product is run off.
 These are the amounts of cash and cash equivalents being transferred into and out of a business, such as premium incomes, benefits ...
 
-<center><img src="Images/waterfallChart.png" width="40%" style="float:center;">
+<p align="center">
+<img width="500" src="https://portal.stage.systemorph.cloud/api/project/present-value-analysis/env/dev/file/download?path=Images/waterfallChart.png" alt="WaterfallChart">
+</p>
 
 Because the growth of the market and the inflation, the time of the expected cash flow impacts the present value of that cash flow.
 The timespan from now until the time of the cash flow is called maturity.
@@ -46,11 +50,11 @@ In this analysis, we identify different components and their effects on the Pres
  - Financial assumption updates, e.g., a new yield curve,
  - Combined liabilities, a final run combining in-force and new business incl dependencies.
 
-
-
 # Episode 2
 
-<center><img src="Images/AndreaAndVanessa.png" width="40%" style="float:center;">
+<p align="center">
+<img width="90%" src="https://portal.stage.systemorph.cloud/api/project/present-value-analysis/env/dev/file/download?path=Images/VanessaAndrea.png" alt="VanessaAndrea">
+</p>
 
 The second [video](https://systemorph-my.sharepoint.com/personal/amuolo_systemorph_com/_layouts/15/stream.aspx?id=%2Fpersonal%2Famuolo%5Fsystemorph%5Fcom%2FDocuments%2FMicrosoft%20Teams%20Chat%20Files%2F220927%2DSM%2DS1%2DE2%2DV02%2Emp4&referrer=Teams%2ETEAMS%2DELECTRON&referrerScenario=p2p%5Fns%2Dbim&ga=1)
 demonstrates the use of the IFRS17 calculation engine for computing the previously described present values. 
@@ -60,6 +64,10 @@ Furthermore the notebook uses the information about the interest rate stored in 
 With this information, with few commands the calculation engine displays the wanted present values separated per each analysis of change step.
 
 In the notebook further on, the computation of the present values is broken down and accompanied with charts of interest rates and cash flows.
+
+<p align="center">
+<img width="70%" src="https://portal.stage.systemorph.cloud/api/project/present-value-analysis/env/dev/file/download?path=Images/DemoPresentValue.png" alt="DemoPresentValue">
+</p>
 
 # Episode 3
 
@@ -72,5 +80,4 @@ only in the additional commands regarding importing the additional cash flows.
 For all the changes please see the video.
 
 
-<center><img src="Images/Andrea.png" width="40%" style="float:center;">
 
