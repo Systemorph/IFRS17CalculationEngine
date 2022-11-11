@@ -1,8 +1,0 @@
-@@Main,,
-ReportingNode,Year,Month
-G,2021,3
-,,
-@@DataNodeState,,
-DataNode,State,
-GIC1,Active,
-GIC2,Active,
