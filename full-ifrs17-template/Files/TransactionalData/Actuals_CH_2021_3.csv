@@ -40,6 +40,7 @@ DT1.4,WO,ReceivablePR,,7
 DT1.4,WO,ReceivableNIC,,-5
 DT1.4,CF,PayablePR,,5
 DT1.4,CF,ReceivablePR,,3
+DT1.4,CF,PayableNIC,,8
 DT1.4,CF,PR,,90
 DT1.4,CF,ICO,,-6
 DT1.4,CF,NIC,,-70
