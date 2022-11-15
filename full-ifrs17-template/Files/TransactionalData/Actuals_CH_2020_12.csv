@@ -46,10 +46,10 @@ DT1.5,CF,AEA,,-5
 DT1.5,CF,ReceivablePR,,-10
 DTR1.3,CF,PR,,-200
 DTR1.3,CF,NIC,,140
-DTR1.3,CF,PayablePR,,-7.5
-DTR1.3,CF,ReceivablePR,,5
-DTR1.3,CF,ReceivableNIC,,2.5
-DTR1.3,CF,PayableNIC,,-4
+DTR1.3,CF,RiPayablePR,,7.5
+DTR1.3,CF,RiReceivablePR,,-5
+DTR1.3,CF,RiReceivableNIC,,-2.5
+DTR1.3,CF,RiPayableNIC,,4
 DTR1.4,CF,PR,,-200
 DTR1.4,CF,NIC,,140
-DTR1.4,CF,ReceivableNIC,,10
+DTR1.4,CF,RiReceivableNIC,,-10
