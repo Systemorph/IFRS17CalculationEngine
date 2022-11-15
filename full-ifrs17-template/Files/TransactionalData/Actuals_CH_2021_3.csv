@@ -52,3 +52,10 @@ DT1.5,CF,ICO,,-6
 DT1.5,CF,NIC,,-70
 DT1.5,CF,ACA,,-10
 DT1.5,CF,AEA,,-5
+DTR1.3,CF,PR,,-45
+DTR1.3,CF,NIC,,35
+DTR1.3,WO,ReceivablePR,,-3.5
+DTR1.3,WO,ReceivableNIC,,-2.5
+DTR1.3,CF,PayablePR,,-2.5
+DTR1.3,CF,ReceivablePR,,-1.5
+DTR1.3,CF,PayableNIC,,4
