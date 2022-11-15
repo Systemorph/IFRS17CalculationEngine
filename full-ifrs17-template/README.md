@@ -1,42 +1,73 @@
-<p align="right">
-<img width="250" src="https://portal.systemorph.cloud/api/project/full-ifrs-17-template/env/v1.0.0/file/download?path=Images/Systemorph_logo.png" alt="Systemorph logo">
-</p>
+The **Full IFRS 17 Template** uses the functionality of the Systemorph [**IFRS 17 Calculation Engine**](https://portal.systemorph.cloud/project/ifrs17/env/v1.0.0/) to demonstrate how an IFRS 17 solution looks like. It is a fully working yet simple example of an implementation of the IFRS 17 standard. It uses mock data for illustration purposes, where we apply the default settings of the Systemorph IFRS 17 Calculation Engine to produce real IFRS 17 reports.
 
-<h1 align="center">Full IFRS 17 Template</h1>
+Moreover, it is fully configurable. Thus, it serves as the perfect starting point for you to explore the features and begin applying them to solve your problems. You can adapt this template to your own needs by changing the input data and calculating your own IFRS 17 results immediately. See how to do this below.
 
-**Full IFRS 17 Template** uses our [**IFRS 17 Calculation Engine**](https://portal.systemorph.cloud/api/project/ifrs17/env/v1.0.0/) to import several use-cases and show the results. 
 
-**IFRS 17 Calculation Engine** is a tool to conduct all the essential IFRS 17 calculations given some key figures.
+## Get Started
+Follow the steps below to start your IFRS 17 journey with Systemorph:
 
-# Get Started
+<div style="display:grid; grid-gap: 8px; grid-auto-flow: column; grid-template-columns: repeat(4, 1fr); margin: 32px 0 40px;">
 
-Clone this project to start interacting with it.
+<div style="border: 2px solid #80B8FF; border-radius: 4px; padding: 6px 24px 8px;">
 
-# Supporting Material
+### Clone
 
-Check out our video series. You can get started here: 
-[<img src="https://portal.systemorph.cloud/api/project/full-ifrs-17-template/env/v1.0.0/file/download?path=Images/video1.png">](https://www.youtube.com/watch?v=M1B5AyYvXT8)
+Click on the **Clone** button to create your own copy of the present project.
 
-For more information on our IFRS 17 initiative check out our [IFRS 17 page](*landing page*).
+</div>
+<div style="border: 2px solid #8FC7FA; border-radius: 4px; padding: 6px 24px 8px">
 
-For an overview of the **Full IFRS 17 Template** project refer to the [OverviewIFRS17Template](https://portal.systemorph.cloud/project/full-ifrs-17-template/env/v1.0.0/OverviewIFRS17Template)
+### Reports
 
-# Report 
+Check out our [Reports](./Report/Reports) computed using our use-cases.
 
-Check out the IFRS 17 reports computed for our mock use-cases [here](https://portal.systemorph.cloud/project/full-ifrs-17-template/env/v1.0.0/Report/Reports).
+</div>
+<div style="border: 2px solid #9DD6F6; border-radius: 4px; padding: 6px 24px 8px">
 
-# Export - Import
+### Export
 
-Check out our mock data set by exporting excel MapTemplates [here](https://portal.systemorph.cloud/project/full-ifrs-17-template/env/v1.0.0/Export/MapTemplate).
+Export [Map Template](./Export/MapTemplate) files to change a selection of input parameters.
 
-Import your custom files using our [CloseImportTemplate](https://portal.systemorph.cloud/project/full-ifrs-17-template/env/v1.0.0/Import/CloseImportTemplate) Notebook.
+</div>
+<div style="border: 2px solid #AAE2F2; border-radius: 4px; padding: 6px 24px 8px">
 
-# Got Questions
+### Import
 
-For support around the IFRS 17 CalculationEngine get in contact with our [Community](). (*TODO -link to the community page(IFRS17 landing page)*)- 
+[Import](./Import/CloseImportTemplate) your own files (parameters and transactional data) and get them ready to be analyzed in Reports notebook.
 
-# Contributing
+</div>
 
-All work on the **Full IFRS 17 Template** happens directly on [GitHub](https://github.com/Systemorph/IFRS17CalculationEngine). 
+</div>
 
-This project adheres to overall [General Terms & Conditions for Systemorph Cloud]() TODO link to terms and conditions file.
+For an detailed overview of the **Full IFRS 17 Template** project refer to the [Overview IFRS 17 Template](./OverviewIFRS17Template) notebook.
+
+## Supporting Materials
+Follow step by step our [Get Started]() video and explore our notebooks to learn how to interact with the project.
+
+<div style="background-color: rgba(204, 227, 255, 0.1); padding: 24px 40px; border: 2px solid #AAE2F2; border-radius: 4px; display: grid; grid-gap: 32px; grid-auto-flow: column; align-items: center; font-size: 20px;">
+
+[<img src="./Images/SM-Thumbnail-fulltemplate-288x142.png"  width="350" style="display:block">](https://www.youtube.com/watch?v=M1B5AyYvXT8)
+
+Subscribe to our [YouTube channel](https://www.youtube.com/channel/UCZOLBxOpuWWob_TvUOsDrnQ) to be notified about our latest videos on how to customize your **Full IFRS 17 Template**.  
+
+</div>
+
+For more information on our IFRS 17 initiative check out our [IFRS 17 page]().
+
+<hr style="border-bottom: 0; border-top: 1px solid rgba(0,0,0,0.15); height: 0; margin-top: 40px;" />
+
+## Got Questions?
+
+For support around the **Full IFRS 17 Template** project get in contact with our [Community Team]( https://systemorph.com/community) or contact us through [Linkedin](https://www.linkedin.com/company/systemorph) or add your questions directly on [Youtube](https://www.youtube.com/channel/UCZOLBxOpuWWob_TvUOsDrnQ) videos.
+
+## Contributing
+
+All work on the **Full IFRS 17 Template** happens directly on [GitHub](https://github.com/Systemorph/IFRS17CalculationEngine). From here, you can get to know about future releases, track the current work and report issues. 
+
+<hr style="border-bottom: 0; border-top: 1px solid rgba(0,0,0,0.15); height: 0; margin-top: 40px;" />
+
+<div style="font-size: 13px">
+
+This project adheres to overall [General Terms & Conditions for Systemorph Cloud]().
+
+</div>
