@@ -59,3 +59,6 @@ DTR1.3,WO,ReceivableNIC,,-2.5
 DTR1.3,CF,PayablePR,,-2.5
 DTR1.3,CF,ReceivablePR,,-1.5
 DTR1.3,CF,PayableNIC,,4
+DTR1.4,CF,PR,,-45
+DTR1.4,CF,NIC,,35
+DTR1.4,WO,ReceivableNIC,,-10
