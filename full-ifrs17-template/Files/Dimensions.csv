@@ -1,4 +1,4 @@
-@@PvAmountType,,,,,,,,,,,
+@@AmountType,,,,,,,,,,,
 SystemName,DisplayName,Parent,Order,PeriodType,ExternalId0,ExternalId1,ExternalId2,ExternalId3,,,
 PR,Premiums,,10,BeginningOfPeriod,PayablePR,ReceivablePR,RiPayablePR,RiReceivablePR,,,
 CL,Claims,,20,EndOfPeriod,,,,,,,
