@@ -1,3 +1,7 @@
+<!---
+Abstract: Powered by our IFRS 17 Calculation Engine, this project provides a fully customizable implementation of the IFRS 17 standard. It contains template data which serves as the starting point to explore our IFRS 17 results immediately. This is the entry point project for working on your IFRS 17 reports. 
+--->
+
 The **Full IFRS 17 Template** uses the functionality of the Systemorph [**IFRS 17 Calculation Engine**](https://portal.systemorph.cloud/project/ifrs17/env/v1.0.0/) to demonstrate how an IFRS 17 solution looks like. It is a fully working yet simple example of an implementation of the IFRS 17 standard. It uses mock data for illustration purposes, where we apply the default settings of the Systemorph IFRS 17 Calculation Engine to produce real IFRS 17 reports.
 
 Moreover, it is fully configurable. Thus, it serves as the perfect starting point for you to explore the features and begin applying them to solve your problems. You can adapt this template to your own needs by changing the input data and calculating your own IFRS 17 results immediately. See how to do this below.
@@ -46,7 +50,7 @@ Follow step by step our [Get Started]() video and explore our notebooks to learn
 
 <div style="background-color: rgba(204, 227, 255, 0.1); padding: 24px 40px; border: 2px solid #AAE2F2; border-radius: 4px; display: grid; grid-gap: 32px; grid-auto-flow: column; align-items: center; font-size: 20px;">
 
-[<img src="./Images/SM-Thumbnail-fulltemplate-288x142.png"  width="350" style="display:block">](https://www.youtube.com/watch?v=M1B5AyYvXT8)
+[<img src="./Images/SM-youtube-preview-SFTE02.png"  width="350" style="display:block">](https://www.youtube.com/watch?v=M1B5AyYvXT8)
 
 Subscribe to our [YouTube channel](https://www.youtube.com/channel/UCZOLBxOpuWWob_TvUOsDrnQ) to be notified about our latest videos on how to customize your **Full IFRS 17 Template**.  
 
