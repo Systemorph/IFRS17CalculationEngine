@@ -1,4 +1,3 @@
-$$Default
 @@Main
 Month,ReportingNode,Scenario,Year
 3,CH,,2021
@@ -14,3 +13,7 @@ AccidentYear,AmountType,AocType,DataNode,EconomicBasis,EstimateType,Novelty,Valu
 ,PR,CF,DT3.1,L,BEPA,N,8
 ,PR,CF,DT4.1,L,BEPA,I,88
 ,PR,CF,DT4.1,L,BEPA,N,16
+,PR,CF,DT1.4,L,BEPA,I,88
+,PR,CF,DT1.4,L,BEPA,N,8
+,PR,CF,DT1.5,L,BEPA,I,88
+,PR,CF,DT1.5,L,BEPA,N,8
