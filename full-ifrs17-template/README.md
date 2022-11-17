@@ -1,5 +1,5 @@
 <!---
-Abstract: Powered by our IFRS 17 Calculation Engine, provides a fully customizable implementation of the IFRS 17 standard. It contains template data which serve as starting point to explore our IFRS 17 results immediately. This is the entry point project for working on your IFRS 17 reports. 
+Abstract: Powered by our IFRS 17 Calculation Engine, provides a fully customizable implementation of the IFRS 17 standard. It contains mock data which serve as starting point to explore our IFRS 17 results immediately. This is the entry point project for working on your IFRS 17 reports. 
 --->
 
 The **Full IFRS 17 Template** uses the functionality of the Systemorph [**IFRS 17 Calculation Engine**](https://portal.systemorph.cloud/project/ifrs17/env/v1.0.0/) to demonstrate how an IFRS 17 solution looks like. It is a fully working yet simple example of an implementation of the IFRS 17 standard. It uses mock data for illustration purposes, where we apply the default settings of the Systemorph IFRS 17 Calculation Engine to produce real IFRS 17 reports.
