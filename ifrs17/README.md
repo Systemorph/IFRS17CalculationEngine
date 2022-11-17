@@ -6,11 +6,11 @@ This project contains the specification, documentation and implementation of the
 
 You can find a standard IFRS 17 implementation in the [**Full IFRS 17 Template**](https://portal.systemorph.cloud/project/full-ifrs-17-template/env/v1.0.0) project, where we apply the functionality of the engine in practice. There you can explore and interact with all the features provided by the Systemorph IFRS 17 Calculation Engine.
 
-The Systemorph IFRS 17 Calculation Engine is evolving, and new features are continuously added. An overview can be seen in our [GitHub](https://github.com/Systemorph/IFRS17CalculationEngine) page. We also have a [Community Team]( https://systemorph.com/community) and are keen to hear your feedback, suggestions or comments.
+The Systemorph IFRS 17 Calculation Engine is evolving, and new features are continuously added. An overview can be seen in our [GitHub](https://github.com/Systemorph/IFRS17CalculationEngine) page. We also have a [Community Team](https://systemorph.cloud/community) and are keen to hear your feedback, suggestions or comments.
 
 ## Get started
 
-Open our [**Full IFRS 17 Template**](./OverviewCalculationEngine) project and follow the instructions to interact with the figures and customize the solution with your own inputs. 
+Open our [**Full IFRS 17 Template**](https://portal.systemorph.cloud/project/full-ifrs-17-template/env/v1.0.0) project and follow the instructions to interact with the figures and customize the solution with your own inputs. 
 
 ## Overall picture
 
@@ -25,7 +25,7 @@ You will be introduced to:
 
 ## Got Questions?
 
-For support around the **IFRS 17 Calculation Engine** project get in touch with our [Community Team]( https://systemorph.com/community) or contact us through [Linkedin](https://www.linkedin.com/company/systemorph) or add your questions directly on [Youtube](https://www.youtube.com/channel/UCZOLBxOpuWWob_TvUOsDrnQ) videos.
+For support around the **IFRS 17 Calculation Engine** project get in touch with our [Community Team](https://systemorph.cloud/community) or contact us through [Linkedin](https://www.linkedin.com/company/systemorph) or add your questions directly on [Youtube](https://www.youtube.com/@systemorph) videos.
 
 <hr style="border-bottom: 0; border-top: 1px solid rgba(0,0,0,0.15); height: 0; margin-top: 40px;" />
 
@@ -37,6 +37,6 @@ All work on the **IFRS 17 Calculation Engine** happens directly on [GitHub](http
 
 <div style="font-size: 13px">
 
-This project adheres to overall [General Terms & Conditions for Systemorph Cloud](https://systemorph.cloud/general-terms-and-conditions/).
+This project adheres to our [General Terms & Conditions](https://systemorph.cloud/general-terms-and-conditions/).
 
 </div>
