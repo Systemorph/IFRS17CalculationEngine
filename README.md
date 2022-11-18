@@ -1,5 +1,5 @@
 <p align="center">
-<img width="450" src=".\IFRS17CalculationEngine\ifrs17\Images\Systemorph_logo" alt="Systemorph logo">
+<img width="450" src="https://stacdnsmcwe.blob.core.windows.net/content/IFRS17CalculationEngine/Images/General/Systemorph_logo.png" alt="Systemorph logo">
 </p>
 
 IFRS17 Calculation Engine is Systemorph repository for all IFRS 17 related projects available in our [portal](https://portal.systemorph.cloud/).
