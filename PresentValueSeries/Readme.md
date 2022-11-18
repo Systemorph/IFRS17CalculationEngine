@@ -36,13 +36,13 @@ Together with the present project, we produced a series consisting of **three ep
 Given that this project and video series is focused on Present Values and Analysis of Change approach,
 the full IFRS 17 solution is much broader and provides a lot more functionalities than those presented
 in this project. We invite you to clone the
-[Full IFRS 17 Template Project](https://portal.stage.systemorph.cloud/project/present-value-analysis/env/dev/)
+[IFRS 17 Template](https://portal.systemorph.cloud/project/ifrs17-template)
 in order to test the full end-to-end solution.
 You can reuse the data you prepared for this project in the Full Template project as well.
 
 Additionally, if you are interested in the implemented methodologies and are keen to learn from
 our open-source IFRS 17 code and documentation, please refer to the
-[Systemorph Calculation Engine](https://portal.stage.systemorph.cloud/project/present-value-analysis/env/dev/). 
+[IFRS 17 Calculation Engine](https://portal.systemorph.cloud/project/ifrs17). 
 
 
 ## The Theory Behind Economic Accounting 
@@ -79,7 +79,7 @@ $$ \text{PresentValue} = \displaystyle\frac{\text{CashFlow}}{(1+\text{InterestRa
 
 The total Present Value of the policy is then the sum of Present Values of all cash flows.
 
-Every period (Typically every quarter) an insurance company will need to prepare a statement of the Present Value of future cash flows. This statement is based on the value of a group of insurance contracts at the beginning of the period, its development throughout the period, and the value at the end of the period. Different effects contribute to the change in value between the beginning and the end of a period and these effects are shown in the Analysis of Change.
+Every period (typically every quarter) an insurance company will need to prepare a statement of the Present Value of future cash flows. This statement is based on the value of a group of insurance contracts at the beginning of the period, its development throughout the period, and the value at the end of the period. Different effects contribute to the change in value between the beginning and the end of a period and these effects are shown in the Analysis of Change.
 
 <p align="center">
 <img width="550" src="https://portal.stage.systemorph.cloud/api/project/present-value-analysis/env/dev/file/download?path=Images/waterfallChart.png" alt="WaterfallChart">
@@ -92,14 +92,13 @@ In this analysis, we identify different components and their effects on the Pres
  - Experience variance, new assessment by actuaries given newest developments,
  - Assumption updates, e.g., a new mortality table,
  - Financial assumption updates, e.g., a new yield curve,
- - Combined liabilities, a final run combining in-force and new business incl dependencies.
+ - Combined liabilities, a final run combining in-force and new business.
 
 
 ## On the Calculation and Reporting
 
 The content of this section refers to the second
 [episode](https://systemorph-my.sharepoint.com/personal/amuolo_systemorph_com/).
-
 
 This episode aims at demonstrating the use of the IFRS 17 calculation engine for computing Present Values using the standard IFRS 17 Calculation Engine and the notebook **PresentValues - Episode 2**. Vanessa and Andrea will guide you through this journey.
 
@@ -133,9 +132,9 @@ Lastly, the episode describes how to add a custom Analysis of Change step to the
 ## Got Questions?
 
 For support around the **Full IFRS 17 Template** project get in contact with our 
-[Community Team]( https://systemorph.com/community) or contact us through 
+[Community Team](https://systemorph.cloud/community) or contact us through 
 [Linkedin](https://www.linkedin.com/company/systemorph) or add your questions directly on 
-[Youtube](https://www.youtube.com/channel/UCZOLBxOpuWWob_TvUOsDrnQ) videos.
+[YouTube channel](https://www.youtube.com/@systemorph) videos.
 
 
 ## Contributing
@@ -148,7 +147,7 @@ From here, you can get to know about future releases, track the current work and
 
 <div style="font-size: 13px">
 
-This project adheres to overall [General Terms & Conditions for Systemorph Cloud]().
+This project adheres to our [General Terms & Conditions](https://systemorph.cloud/general-terms-and-conditions/).
 
 </div>
 
