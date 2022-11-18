@@ -39,7 +39,7 @@ the full IFRS 17 solution is much broader and provides a lot more functionalitie
 in this project. We invite you to clone the
 [IFRS 17 Template](https://portal.systemorph.cloud/project/ifrs17-template)
 in order to test the full end-to-end solution.
-You can reuse the data you prepared for this project in the Full Template project as well.
+You can reuse the data you prepared for this project in the IFRS 17 Template project as well.
 
 Additionally, if you are interested in the implemented methodologies and are keen to learn from
 our open-source IFRS 17 code and documentation, please refer to the
