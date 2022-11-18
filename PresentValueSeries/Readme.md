@@ -14,19 +14,19 @@ Together with the present project, we produced a series consisting of **three ep
 
 <div style="display: grid; gap: 8px; grid-template-columns: 1fr 1fr 1fr; margin-bottom: 24px;">
     <div style="border: 2px solid #80B8FF; border-radius: 4px; background-color: rgba(204, 227, 255, 0.1); ">
-        <a href="https://systemorph-my.sharepoint.com/personal/amuolo_systemorph_com/" style="display:block; padding: 24px;">
+        <a href="https://youtu.be/cEEHJhZOCWI" style="display:block; padding: 24px;">
             <img style="display:block; margin-bottom: 12px;" width="100%" src="https://portal.stage.systemorph.cloud/api/project/present-value-analysis/env/dev/file/download?path=Images/SM-YoutubePreview-S01E01.png" alt="Overview">
             The Theory Behind Economic Accounting
         </a>
     </div>
     <div style="border: 2px solid #8FC7FA; border-radius: 4px; background-color: rgba(204, 227, 255, 0.1); ">
-        <a href="https://systemorph-my.sharepoint.com/personal/amuolo_systemorph_com/" style="display:block; padding: 24px;">
+        <a href="https://youtu.be/dhdA3F6ZWbs" style="display:block; padding: 24px;">
             <img style="display:block; margin-bottom: 12px;" width="100%" src="https://portal.stage.systemorph.cloud/api/project/present-value-analysis/env/dev/file/download?path=Images/SM-YoutubePreview-S01E02.png" alt="Overview">
             The Systemorph Calculation Engine in Action
         </a>
     </div>
     <div style="border: 2px solid #9DD6F6; border-radius: 4px; background-color: rgba(204, 227, 255, 0.1); ">
-        <a href="https://systemorph-my.sharepoint.com/personal/amuolo_systemorph_com/" style="display:block; padding: 24px;">
+        <a href="https://youtu.be/n7KO5-NKTng" style="display:block; padding: 24px;">
             <img style="display:block; margin-bottom: 12px;" width="100%" src="https://portal.stage.systemorph.cloud/api/project/present-value-analysis/env/dev/file/download?path=Images/SM-YoutubePreview-S01E03.png" alt="Overview">
             How to Customize the Input to your Dataset and Contracts
         </a>
@@ -48,7 +48,7 @@ our open-source IFRS 17 code and documentation, please refer to the
 ## The Theory Behind Economic Accounting 
 
 The content of this section is presented in the first
-[episode](https://systemorph-my.sharepoint.com/personal/amuolo_systemorph_com/)
+[episode](https://youtu.be/cEEHJhZOCWI)
 of this series.
 
 Computing the Present Value of the insurance contracts is the main goal of the IFRS 17 economic accounting standard.
@@ -65,13 +65,14 @@ the Present Value of that cash flow.
 The timespan from now until the time of the cash flow is called maturity.
 
 <p style="margin-bottom: 24px;">
-<img width="100%" src="https://portal.stage.systemorph.cloud/api/project/present-value-analysis/env/dev/file/download?path=Images/overview.png" alt="Overview">
-</p>
+<a href="https://youtu.be/cEEHJhZOCWI" style="display:block; padding: 24px;">
+<img width="100%" src="https://portal.stage.systemorph.cloud/api/project/present-value-analysis/env/dev/file/download?path=Images/PvOverview.png" alt="Overview">
+</a></p>
 
 The Present Value of a cash flow is computed as the discounted cash flow
 and can be expressed through the following formula:
 
-<div style="text-align: center; margin: 40px 0; color: #A25BDE;">
+<div style="text-align: center; margin: 40px 0;">
 
 $$ \text{PresentValue} = \displaystyle\frac{\text{CashFlow}}{(1+\text{InterestRate})^{\text{MaturityYears} }} ~.$$
 
@@ -82,8 +83,9 @@ The total Present Value of the policy is then the sum of Present Values of all c
 Every period (typically every quarter) an insurance company will need to prepare a statement of the Present Value of future cash flows. This statement is based on the value of a group of insurance contracts at the beginning of the period, its development throughout the period, and the value at the end of the period. Different effects contribute to the change in value between the beginning and the end of a period and these effects are shown in the Analysis of Change.
 
 <p align="center">
-<img width="550" src="https://portal.stage.systemorph.cloud/api/project/present-value-analysis/env/dev/file/download?path=Images/waterfallChart.png" alt="WaterfallChart">
-</p>
+<a href="https://youtu.be/cEEHJhZOCWI" style="display:block; padding: 24px;">
+<img width="550" src="https://portal.stage.systemorph.cloud/api/project/present-value-analysis/env/dev/file/download?path=Images/PvWaterfallChart.png" alt="WaterfallChart">
+</a></p>
 
 In this analysis, we identify different components and their effects on the Present Value in the form of deltas, such as
  - Model correction for existing business,
@@ -97,21 +99,22 @@ In this analysis, we identify different components and their effects on the Pres
 
 ## On the Calculation and Reporting
 
-The content of this section refers to the second
-[episode](https://systemorph-my.sharepoint.com/personal/amuolo_systemorph_com/).
+The content of this section refers to the second [episode](https://youtu.be/dhdA3F6ZWbs).
 
 This episode aims at demonstrating the use of the IFRS 17 calculation engine for computing Present Values using the standard IFRS 17 Calculation Engine and the notebook **PresentValues - Episode 2**. Vanessa and Andrea will guide you through this journey.
 
 <p align="center">
+<a href="https://youtu.be/dhdA3F6ZWbs" style="display:block; padding: 24px;">
 <img width="90%" src="https://portal.stage.systemorph.cloud/api/project/present-value-analysis/env/dev/file/download?path=Images/VanessaAndrea.png" alt="VanessaAndrea">
-</p>
+</a></p>
 
 The interest and discount rates can be derived by the assumed yield curve, which is stored in the file `YieldCurve.xlsx`, and imported in the notebook as the economic input. Conversely, the values of the modelled cash flows are stored in the file `Cashflows.xlsx` forming the insurance input. From both inputs and thanks to the methods provided by the Systemorph IFRS 17 Calculation Engine, it is possible to discount and comulate the cash flows, from which deltas can be computed and reported
 per each step of the Analysis of Change.
 
 <p align="center">
+<a href="https://youtu.be/dhdA3F6ZWbs" style="display:block; padding: 24px;">
 <img width="70%" src="https://portal.stage.systemorph.cloud/api/project/present-value-analysis/env/dev/file/download?path=Images/flowchart.png" alt="flowchart">
-</p>
+</a></p>
 
 In the last section of the notebook these steps are taken individually for a selected Analysis of Change Step, so that the calculation can be checked. 
 
@@ -119,7 +122,7 @@ In the last section of the notebook these steps are taken individually for a sel
 ## How To Customize The Input: Do It Yourself
 
 The content of this section refers to the third 
-and last [episode](https://systemorph-my.sharepoint.com/personal/amuolo_systemorph_com/) of this series.
+and last [episode](https://youtu.be/n7KO5-NKTng) of this series.
 
 Its aim is to present how to customize the setup described in the Episode 2 to your business data set and company. The corresponding notebook is named **PresentValues - Episode 3**.
 
