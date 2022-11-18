@@ -1,5 +1,6 @@
 <!--- 
-The aim of this project is to apply the Systemorph IFRS 17 Calculation Engine to valuate insurance contracts
+https://stacdnsmcwe.blob.core.windows.net/content/IFRS17CalculationEngine/Images/PresentValueOfCashFlow/SM-Thumbnail-S01-288x142.png
+Abstract: The aim of this project is to apply the Systemorph IFRS 17 Calculation Engine to valuate insurance contracts
 through the Analysis of Change of the Present Values.
 Starting from the economic and insurance inputs, i.e. yield curves and nominal cash flows,
 the Present Values are calculated so that the change from opening to closing balance can be
@@ -15,19 +16,19 @@ Together with the present project, we produced a series consisting of **three ep
 <div style="display: grid; gap: 8px; grid-template-columns: 1fr 1fr 1fr; margin-bottom: 24px;">
     <div style="border: 2px solid #80B8FF; border-radius: 4px; background-color: rgba(204, 227, 255, 0.1); ">
         <a href="https://youtu.be/cEEHJhZOCWI" style="display:block; padding: 24px;">
-            <img style="display:block; margin-bottom: 12px;" width="100%" src="https://portal.stage.systemorph.cloud/api/project/present-value-analysis/env/dev/file/download?path=Images/SM-YoutubePreview-S01E01.png" alt="Overview">
+            <img style="display:block; margin-bottom: 12px;" width="100%" src="https://stacdnsmcwe.blob.core.windows.net/content/IFRS17CalculationEngine/Images/PresentValueOfCashFlow/SM-YoutubePreview-S01E01.png" alt="Overview">
             The Theory Behind Economic Accounting
         </a>
     </div>
     <div style="border: 2px solid #8FC7FA; border-radius: 4px; background-color: rgba(204, 227, 255, 0.1); ">
         <a href="https://youtu.be/dhdA3F6ZWbs" style="display:block; padding: 24px;">
-            <img style="display:block; margin-bottom: 12px;" width="100%" src="https://portal.stage.systemorph.cloud/api/project/present-value-analysis/env/dev/file/download?path=Images/SM-YoutubePreview-S01E02.png" alt="Overview">
+            <img style="display:block; margin-bottom: 12px;" width="100%" src="https://stacdnsmcwe.blob.core.windows.net/content/IFRS17CalculationEngine/Images/PresentValueOfCashFlow/SM-YoutubePreview-S01E02.png" alt="Overview">
             The Systemorph Calculation Engine in Action
         </a>
     </div>
     <div style="border: 2px solid #9DD6F6; border-radius: 4px; background-color: rgba(204, 227, 255, 0.1); ">
         <a href="https://youtu.be/n7KO5-NKTng" style="display:block; padding: 24px;">
-            <img style="display:block; margin-bottom: 12px;" width="100%" src="https://portal.stage.systemorph.cloud/api/project/present-value-analysis/env/dev/file/download?path=Images/SM-YoutubePreview-S01E03.png" alt="Overview">
+            <img style="display:block; margin-bottom: 12px;" width="100%" src="https://stacdnsmcwe.blob.core.windows.net/content/IFRS17CalculationEngine/Images/PresentValueOfCashFlow/SM-YoutubePreview-S01E03.png" alt="Overview">
             How to Customize the Input to your Dataset and Contracts
         </a>
     </div>
@@ -66,7 +67,7 @@ The timespan from now until the time of the cash flow is called maturity.
 
 <p style="margin-bottom: 24px;">
 <a href="https://youtu.be/cEEHJhZOCWI" style="display:block; padding: 24px;">
-<img width="100%" src="https://portal.stage.systemorph.cloud/api/project/present-value-analysis/env/dev/file/download?path=Images/PvOverview.png" alt="Overview">
+<img width="100%" src="https://stacdnsmcwe.blob.core.windows.net/content/IFRS17CalculationEngine/Images/PresentValueOfCashFlow/Overview.png" alt="Overview">
 </a></p>
 
 The Present Value of a cash flow is computed as the discounted cash flow
@@ -84,7 +85,7 @@ Every period (typically every quarter) an insurance company will need to prepare
 
 <p align="center">
 <a href="https://youtu.be/cEEHJhZOCWI" style="display:block; padding: 24px;">
-<img width="550" src="https://portal.stage.systemorph.cloud/api/project/present-value-analysis/env/dev/file/download?path=Images/PvWaterfallChart.png" alt="WaterfallChart">
+<img width="550" src="https://stacdnsmcwe.blob.core.windows.net/content/IFRS17CalculationEngine/Images/PresentValueOfCashFlow/WaterfallChart.png" alt="WaterfallChart">
 </a></p>
 
 In this analysis, we identify different components and their effects on the Present Value in the form of deltas, such as
@@ -105,7 +106,7 @@ This episode aims at demonstrating the use of the IFRS 17 calculation engine for
 
 <p align="center">
 <a href="https://youtu.be/dhdA3F6ZWbs" style="display:block; padding: 24px;">
-<img width="90%" src="https://portal.stage.systemorph.cloud/api/project/present-value-analysis/env/dev/file/download?path=Images/VanessaAndrea.png" alt="VanessaAndrea">
+<img width="90%" src="https://stacdnsmcwe.blob.core.windows.net/content/IFRS17CalculationEngine/Images/PresentValueOfCashFlow/VanessaAndrea.png" alt="VanessaAndrea">
 </a></p>
 
 The interest and discount rates can be derived by the assumed yield curve, which is stored in the file `YieldCurve.xlsx`, and imported in the notebook as the economic input. Conversely, the values of the modelled cash flows are stored in the file `Cashflows.xlsx` forming the insurance input. From both inputs and thanks to the methods provided by the Systemorph IFRS 17 Calculation Engine, it is possible to discount and comulate the cash flows, from which deltas can be computed and reported
@@ -113,7 +114,7 @@ per each step of the Analysis of Change.
 
 <p align="center">
 <a href="https://youtu.be/dhdA3F6ZWbs" style="display:block; padding: 24px;">
-<img width="70%" src="https://portal.stage.systemorph.cloud/api/project/present-value-analysis/env/dev/file/download?path=Images/flowchart.png" alt="flowchart">
+<img width="70%" src="https://stacdnsmcwe.blob.core.windows.net/content/IFRS17CalculationEngine/Images/PresentValueOfCashFlow/Flowchart.png" alt="flowchart">
 </a></p>
 
 In the last section of the notebook these steps are taken individually for a selected Analysis of Change Step, so that the calculation can be checked. 
@@ -134,7 +135,7 @@ Lastly, the episode describes how to add a custom Analysis of Change step to the
 
 ## Got Questions?
 
-For support around the **Full IFRS 17 Template** project get in contact with our 
+For support around the **Present Value of Cash flow** project get in contact with our 
 [Community Team](https://systemorph.cloud/community) or contact us through 
 [Linkedin](https://www.linkedin.com/company/systemorph) or add your questions directly on 
 [YouTube channel](https://www.youtube.com/@systemorph) videos.
@@ -142,7 +143,7 @@ For support around the **Full IFRS 17 Template** project get in contact with our
 
 ## Contributing
 
-All work on the **Full IFRS 17 Template** happens directly on 
+All work on the **Present Value of Cash flow** happens directly on 
 [GitHub](https://github.com/Systemorph/IFRS17CalculationEngine). 
 From here, you can get to know about future releases, track the current work and report issues.
 
