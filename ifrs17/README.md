@@ -5,13 +5,13 @@ Abstract: This project contains the specification, documentation and implementat
 
 **The Systemorph IFRS 17 Calculation Engine** provides the functionality to develop and maintain an IFRS 17 solution based on Systemorph Cloud. It includes specifications and corresponding implementations of data importers, data transformations, calculations, reports and much more.
 
-You can find a standard IFRS 17 implementation in the [**IFRS 17 Template**](https://portal.systemorph.cloud/project/ifrs17-template/env/v1.0.0) project, where we apply the functionality of the engine in practice. There you can explore and interact with all the features provided by the Systemorph IFRS 17 Calculation Engine.
+You can find a standard IFRS 17 implementation in the [**IFRS 17 Template**](https://portal.systemorph.cloud/project/ifrs17-template) project, where we apply the functionality of the engine in practice. There you can explore and interact with all the features provided by the Systemorph IFRS 17 Calculation Engine.
 
 The Systemorph IFRS 17 Calculation Engine is evolving, and new features are continuously added. An overview can be seen in our [GitHub](https://github.com/Systemorph/IFRS17CalculationEngine) page. We also have a [Community Team](https://systemorph.cloud/community) and are keen to hear your feedback, suggestions or comments.
 
 ## Get started
 
-Open our [**IFRS 17 Template**](https://portal.systemorph.cloud/project/ifrs17-template/env/v1.0.0) project and follow the instructions to interact with the figures and customize the solution with your own inputs. 
+Open our [**IFRS 17 Template**](https://portal.systemorph.cloud/project/ifrs17-template) project and follow the instructions to interact with the figures and customize the solution with your own inputs. 
 
 ## Overall picture
 
