@@ -75,7 +75,7 @@ and can be expressed through the following formula:
 
 <div style="text-align: center; margin: 40px 0;">
 
-$$ \text{PresentValue} = \displaystyle\frac{\text{CashFlow}}{(1+\text{InterestRate})^{\text{MaturityYears} }} ~.$$
+$$ \text{PresentValue} = \displaystyle\frac{\text{Cash Flow}}{(1+\text{InterestRate})^{\text{MaturityYears} }} ~.$$
 
 </div>
 
