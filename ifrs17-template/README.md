@@ -47,13 +47,13 @@ Export [Map Template](./Export/MapTemplate) files to change a selection of input
 For a detailed overview of the **IFRS 17 Template** project refer to the [Overview IFRS 17 Template](./OverviewIFRS17Template) notebook.
 
 ## Supporting Materials
-Follow step by step our [Get Started]() video and explore our notebooks to learn how to interact with the project.
+Subscribe to our [YouTube channel](https://www.youtube.com/@systemorph) to be notified about our latest videos on how to customize your **IFRS 17 Template**.
 
 <div style="background-color: rgba(204, 227, 255, 0.1); padding: 24px 40px; border: 2px solid #AAE2F2; border-radius: 4px; display: grid; grid-gap: 32px; grid-auto-flow: column; align-items: center; font-size: 20px;">
 
 [<img src="https://stacdnsmcwe.blob.core.windows.net/content/IFRS17CalculationEngine/Images/IFRS17Template/SM-youtube-preview-SFTE02.png"  width="350" style="display:block">](https://www.youtube.com/watch?v=M1B5AyYvXT8)
 
-Subscribe to our [YouTube channel](https://www.youtube.com/@systemorph) to be notified about our latest videos on how to customize your **IFRS 17 Template**.  
+Follow step by step our [Get Started](https://www.youtube.com/watch?v=M1B5AyYvXT8) video and explore our notebooks to learn how to interact with the project.
 
 </div>
 
