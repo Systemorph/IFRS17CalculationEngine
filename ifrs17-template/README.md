@@ -51,9 +51,9 @@ Subscribe to our [YouTube channel](https://www.youtube.com/@systemorph) to be no
 
 <div style="background-color: rgba(204, 227, 255, 0.1); padding: 24px 40px; border: 2px solid #AAE2F2; border-radius: 4px; display: grid; grid-gap: 32px; grid-auto-flow: column; align-items: center; font-size: 20px;">
 
-[<img src="https://stacdnsmcwe.blob.core.windows.net/content/IFRS17CalculationEngine/Images/IFRS17Template/SM-youtube-preview-SFTE02.png"  width="350" style="display:block">](https://www.youtube.com/watch?v=M1B5AyYvXT8)
+[<img src="https://stacdnsmcwe.blob.core.windows.net/content/IFRS17CalculationEngine/Images/IFRS17Template/SM-youtube-preview-SFTE02.png"  width="350" style="display:block">](https://youtu.be/WQFn58gFhaM)
 
-Follow step by step our [Get Started](https://www.youtube.com/watch?v=M1B5AyYvXT8) video and explore our notebooks to learn how to interact with the project.
+Follow step by step our [Get Started](https://youtu.be/WQFn58gFhaM) video and explore our notebooks to learn how to interact with the project.
 
 </div>
 
