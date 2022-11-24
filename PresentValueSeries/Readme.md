@@ -27,7 +27,7 @@ Together with the present project, we produced a series consisting of **three ep
         </a>
     </div>
     <div style="border: 2px solid #9DD6F6; border-radius: 4px; background-color: rgba(204, 227, 255, 0.1); ">
-        <a href="https://youtu.be/n7KO5-NKTng" style="display:block; padding: 24px;">
+        <a href="https://youtu.be/bhtSm0cJudo" style="display:block; padding: 24px;">
             <img style="display:block; margin-bottom: 12px;" width="100%" src="https://stacdnsmcwe.blob.core.windows.net/content/IFRS17CalculationEngine/Images/PresentValueOfCashFlow/SM-YoutubePreview-S01E03.png" alt="Overview">
             How to Customize the Input to your Dataset and Contracts
         </a>
@@ -123,7 +123,7 @@ In the last section of the notebook these steps are taken individually for a sel
 ## How To Customize The Input: Do It Yourself
 
 The content of this section refers to the third 
-and last [episode](https://youtu.be/n7KO5-NKTng) of this series.
+and last [episode](https://youtu.be/bhtSm0cJudo) of this series.
 
 Its aim is to present how to customize the setup described in the Episode 2 to your business data set and company. The corresponding notebook is named **PresentValues - Episode 3**.
 
