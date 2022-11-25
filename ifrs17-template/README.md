@@ -57,7 +57,7 @@ Follow step by step our [Get Started](https://youtu.be/WQFn58gFhaM) video and ex
 
 </div>
 
-For more information on our IFRS 17 initiative check out our [IFRS 17 page]().
+For more information on our IFRS 17 initiative check out our [IFRS 17 page](https://systemorph.com/).
 
 <hr style="border-bottom: 0; border-top: 1px solid rgba(0,0,0,0.15); height: 0; margin-top: 40px;" />
 
