@@ -1,0 +1,8 @@
+@@Main
+Year,Month
+2021,3
+@@YieldCurve
+Currency,Year,Month,Values0,Values1,Values2,Values3
+CHF,2021,3,0.1,0.1,0.1,0.1
+USD,2021,3,0.005,0.005,0.005,0.005
+GBP,2021,3,0.005,0.005,0.005,0.005
