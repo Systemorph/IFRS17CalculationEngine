@@ -1,7 +1,7 @@
 @@Main
-Year,Month
-2020,1
+Year,Month,Scenario
+2020,12,
 @@YieldCurve
-Currency,Year,Month,Values0,Values1,Values2,Values3
-USD,2020,1,0.002,0.002,0.002,0.002
+Currency,Values0,Values1,Values2,Values3
+USD,0.002,0.002,0.002,0.002
 
