@@ -1,6 +1,6 @@
 <!---
 https://stacdnsmcwe.blob.core.windows.net/content/IFRS17CalculationEngine/Images/IFRS17/portal-calculation-engine-thumbnail-288x142.jpg
-Abstract: This project contains the specification, documentation and implementation of the functionality required to develop IFRS 17 professional. It provides default implementations of key concerns of the IFRS 17 requirements, such as the business logic, data importers, reports, etc... A practical example of the Systemorph IFRS 17 Calculation Engine and starting point for your IFRS 17 reporting is our IFRS 17 Template project, where you have an end-to-end working solution template. 
+Abstract: This project contains the specification, documentation and implementation of the functionality required to develop a professional IFRS 17 solution. It provides default implementations of key concerns of the IFRS 17 requirements, such as the business logic, data importers, reports, etc... A practical example of the Systemorph IFRS 17 Calculation Engine and starting point for your IFRS 17 reporting is our IFRS 17 Template project, where you have an end-to-end working solution template. 
 --->
 
 **The Systemorph IFRS 17 Calculation Engine** provides the functionality to develop and maintain an IFRS 17 solution based on Systemorph Cloud. It includes specifications and corresponding implementations of data importers, data transformations, calculations, reports and much more.
