@@ -1,0 +1,42 @@
+@@Main,,,,,,
+ReportingNode,,,,,,
+CH,,,,,,
+,,,,,,
+@@InsurancePortfolio,,,,,,
+SystemName,DisplayName,ContractualCurrency,LineOfBusiness,ValuationApproach,OciType,
+DT,DT Complex CF,USD,ANN,BBA,Default,
+DT1,DT1 OCI,USD,ANN,BBA,Default,
+DT2,DT2 NOCI,USD,ANN,BBA,,
+DT3,DT3 RunOff,USD,ANN,BBA,Default,
+DT4,DT4 OCI,USD,ANN,BBA,Default,
+DT5,DT5 Simple Import,USD,ANN,BBA,Default,
+,,,,,,
+@@GroupOfInsuranceContract,,,,,,
+SystemName,DisplayName,InsurancePortfolio,AnnualCohort,LiabilityType,Profitability,
+GicComplex,Gic test discounting,DT,2020,LRC,P,
+DT1.1,DT1.1 OCI LRC PA 0.8,DT1,2020,LRC,P,
+DT1.2,DT1.2 OCI LIC,DT1,2020,LIC,P,
+DT1.3,DT1.3 OCI LRC PA 1,DT1,2020,LRC,P,
+DT1.4,DT1.4 Adv and Ove Actuals on DT1.1,DT1,2020,LRC,P,
+DT1.5,DT1.5 OA and WO Premium on DT1.1,DT1,2020,LRC,P,
+DT2.1,DT2.1 NOCI LRC PA 0.8,DT2,2020,LRC,P,
+DT2.2,DT2.2 NOCI LIC,DT2,2020,LIC,P,
+DT3.1,DT3.1 Runoff - PA 0.8,DT3,2020,LRC,P,
+DT4.1,DT4.1 CSM PA 0.8,DT4,2020,LRC,P,
+DT5.1,DT5.1 Simple Import on DT 4.1,DT5,2020,LRC,P,
+,,,,,,
+@@ReinsurancePortfolio,,,,,,
+SystemName,DisplayName,ContractualCurrency,LineOfBusiness,ValuationApproach,OciType,
+DTR,DTR complex CF,USD,ANN,BBA,,
+DTR1,DTR1 OCI,USD,ANN,BBA,Default,
+DTR2,DTR2 NOCI,USD,ANN,BBA,,
+,,,,,,
+@@GroupOfReinsuranceContract,,,,,,
+SystemName,DisplayName,ReinsurancePortfolio,AnnualCohort,LiabilityType,Profitability,Partner
+GricComplex,Gric test for discounting,DTR,2020,LRC,P,PT1
+DTR1.1,DTR1.1 OCI LRC,DTR1,2020,LRC,P,PT1
+DTR1.2,DTR1.2 OCI LIC,DTR1,2020,LIC,P,PT1
+DTR1.3,DTR1.3 Adv and Ove Actuals on DTR1.1,DTR1,2020,LRC,P,PT1
+DTR1.4,DTR1.4 OA and WO Claims on DTR1.1,DTR1,2020,LRC,P,PT1
+DTR2.1,DTR2.1 NOCI LRC,DTR2,2020,LRC,P,PT1
+DTR2.2,DTR2.2 NOCI LIC,DTR2,2020,LIC,P,PT1
