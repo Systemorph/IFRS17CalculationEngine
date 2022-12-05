@@ -32,7 +32,7 @@ DTR1,DTR1 OCI,USD,ANN,BBA,Default,
 DTR2,DTR2 NOCI,USD,ANN,BBA,,
 ,,,,,,
 @@GroupOfReinsuranceContract,,,,,,
-SystemName,DisplayName,ReinsurancePortfolio,AnnualCohort,LiabilityType,Profitability,Partner,
+SystemName,DisplayName,ReinsurancePortfolio,AnnualCohort,LiabilityType,Profitability,Partner
 GricComplex,Gric test for discounting,DTR,2020,LRC,P,PT1
 DTR1.1,DTR1.1 OCI LRC,DTR1,2020,LRC,P,PT1
 DTR1.2,DTR1.2 OCI LIC,DTR1,2020,LIC,P,PT1
