@@ -1,0 +1,12 @@
+@@Main,,
+ReportingNode,Year,Month
+CH,2020,12
+,,
+@@SingleDataNodeParameter,,
+DataNode,PremiumAllocation,
+MZ2.1,0.5,
+MZ2.2,0.5,
+MZ2.3,0.5,
+MZ2.4,0.5,
+MZ2.5,0.5,
+MZ2.6,0.5,
