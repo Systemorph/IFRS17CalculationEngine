@@ -1,7 +1,7 @@
 ﻿@@Main,,,,
 ReportingNode,Year,Month,,
-CH,2020,12,,
+CH,2021,6,,
 @@Actual,,,,
 DataNode,AocType,ValueType,AccidentYear,Value
-MZ2.1,CF,PR,,413
-MZ2.1,CF,NIC,,-311
+MZ2.1,CF,PR,,296
+MZ2.1,CF,NIC,,-221
