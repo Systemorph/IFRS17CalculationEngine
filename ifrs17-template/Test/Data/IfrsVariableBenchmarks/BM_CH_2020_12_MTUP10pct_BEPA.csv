@@ -4,3 +4,4 @@ Month,ReportingNode,Scenario,Year
 @@BEPA
 AccidentYear,AmountType,AocType,DataNode,EconomicBasis,EstimateType,Novelty,Value
 ,PR,CF,DT1.1,L,BEPA,N,320
+,PR,CF,DT1.1,L,BEPA,C,0
