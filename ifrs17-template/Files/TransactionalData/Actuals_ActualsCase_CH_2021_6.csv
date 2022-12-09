@@ -5,3 +5,12 @@ CH,2021,6,,
 DataNode,AocType,ValueType,AccidentYear,Value
 MZ2.1,CF,PR,,296
 MZ2.1,CF,NIC,,-221
+MZ2.2,CF,PR,,296
+MZ2.2,CF,NIC,,-221
+MZ2.2,WO,ReceivablePR,,100
+MZ2.3,CF,PR,,296
+MZ2.3,CF,NIC,,-221
+MZ2.3,WO,ReceivableNIC,,75
+MZ2.4,CF,PR,,296
+MZ2.4,CF,NIC,,-221
+MZ2.4,CF,PayablePR,,100

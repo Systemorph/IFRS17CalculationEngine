@@ -5,3 +5,13 @@ CH,2020,12,,
 DataNode,AocType,ValueType,AccidentYear,Value
 MZ2.1,CF,PR,,413
 MZ2.1,CF,NIC,,-311
+MZ2.2,CF,PR,,413
+MZ2.2,CF,NIC,,-311
+MZ2.2,CF,ReceivablePR,,-200
+MZ2.3,CF,PR,,413
+MZ2.3,CF,NIC,,-311
+MZ2.3,CF,ReceivableNIC,,-150
+MZ2.4,CF,PR,,413
+MZ2.4,CF,NIC,,-311
+MZ2.4,CF,PayablePR,,200
+MZ2.4,CF,PayableNIC,,150

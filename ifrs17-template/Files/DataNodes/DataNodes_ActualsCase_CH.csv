@@ -9,8 +9,6 @@ MZ2,Actuals Case,CHF,ANN,BBA,Default
 @@GroupOfInsuranceContract,,,,,
 SystemName,DisplayName,InsurancePortfolio,AnnualCohort,LiabilityType,Profitability
 MZ2.1,MZ 2.1 Written,MZ2,2020,LRC,P
-MZ2.2,MZ 2.2 OA and CF Premium,MZ2,2020,LRC,P
-MZ2.3,MZ 2.3 OA and WO Premium,MZ2,2020,LRC,P
-MZ2.4,MZ 2.2 AA and CF Claim,MZ2,2020,LRC,P
-MZ2.5,MZ 2.3 AA and WO Claim,MZ2,2020,LRC,P
-MZ2.6,MZ 2.2 AA and CF Premium,MZ2,2020,LRC,P
+MZ2.2,MZ 2.2 OA Premium,MZ2,2020,LRC,P
+MZ2.3,MZ 2.3 AA Claim,MZ2,2020,LRC,P
+MZ2.4,MZ 2.4 AA Premium / OA Claim,MZ2,2020,LRC,P
