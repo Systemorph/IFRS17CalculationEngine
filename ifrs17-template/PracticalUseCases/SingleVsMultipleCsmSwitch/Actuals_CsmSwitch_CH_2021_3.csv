@@ -1,0 +1,10 @@
+﻿@@Main,,,,
+ReportingNode,Year,Month,,
+CH,2021,3,,
+@@Actual,,,,
+DataNode,AocType,ValueType,AccidentYear,Value
+MZ1.1,CF,PR,,90
+MZ1.1,CF,ICO,,-6
+MZ1.1,CF,NIC,,-70
+MZ1.1,CF,ACA,,-10
+MZ1.1,CF,AEA,,-5
