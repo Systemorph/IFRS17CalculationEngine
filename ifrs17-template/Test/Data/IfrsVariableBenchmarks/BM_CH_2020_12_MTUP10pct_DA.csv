@@ -1,0 +1,14 @@
+@@Main
+Month,ReportingNode,Scenario,Year
+12,CH,MTUP10pct,2020
+@@DA
+AccidentYear,AmountType,AocType,DataNode,EconomicBasis,EstimateType,Novelty,Value
+,,EOP,DT1.1,,DA,C,-5.15655
+,,AM,DT1.1,,DA,C,9.84345
+,,CF,DT1.1,,DA,C,-15
+,,CF,DT2.1,,DA,C,-15
+,,AM,DT2.1,,DA,C,9.84345
+,,EOP,DT2.1,,DA,C,-5.15655
+,,CF,DT1.3,,DA,C,-15
+,,AM,DT1.3,,DA,C,9.84345
+,,EOP,DT1.3,,DA,C,-5.15655
