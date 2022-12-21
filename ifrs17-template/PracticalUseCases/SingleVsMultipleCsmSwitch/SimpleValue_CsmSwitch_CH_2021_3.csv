@@ -67,10 +67,10 @@ AccidentYear,AmountType,AocType,DataNode,EconomicBasis,EstimateType,Novelty,Valu
 ,,EOP,MZ1.2,,DA,C,-10.69387
 ,,BOP,MZ1.2,,DA,I,-3.12564
 ,,AM,MZ1.2,L,F,C,0.41001
-,,CL,MZ1.2,,L,C,-69.45932
-,,BOP,MZ1.2,,L,N,21.78754
-,,EV,MZ1.2,,L,N,43.93326
-,,IA,MZ1.2,,L,N,3.73853
+,,CL,MZ1.2,,C,C,69.45932
+,,BOP,MZ1.2,,C,N,-21.78754
+,,EV,MZ1.2,,C,N,-43.93326
+,,IA,MZ1.2,,C,N,-3.73853
 ,,EOP,MZ1.2,C,RA,C,17.56543
 ,,BOP,MZ1.2,C,RA,I,21.83648
 ,,CF,MZ1.2,C,RA,I,-6
