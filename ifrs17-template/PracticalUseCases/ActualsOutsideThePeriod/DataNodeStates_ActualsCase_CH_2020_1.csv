@@ -1,0 +1,10 @@
+@@Main,,
+ReportingNode,Year,Month
+CH,2020,1
+,,
+@@DataNodeState,,
+DataNode,State,
+MZ2.1,Active,
+MZ2.2,Active,
+MZ2.3,Active,
+MZ2.4,Active,
