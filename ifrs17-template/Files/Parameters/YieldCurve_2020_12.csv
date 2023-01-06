@@ -1,0 +1,8 @@
+@@Main
+Year,Month
+2020,1
+@@YieldCurve
+Currency,Values0,Values1,Values2,Values3
+USD,0.002,0.002,0.002,0.002
+CHF,0.01,0.02,0.025,0.025
+
