@@ -53,6 +53,7 @@ YCU,I,CalculatedTelescopic,4,EndOfPeriod,EndOfPeriod,BeginningOfPeriod,EndOfPeri
 CRU,I,CalculatedTelescopic,4,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,80,1900,1
 EV,I,Optional,4,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,90,1900,1
 BOP,N,Optional,4,Average,EndOfPeriod,EndOfPeriod,BeginningOfPeriod,EndOfPeriod,100,1900,1
+MC,N,Optional,4,Average,EndOfPeriod,EndOfPeriod,BeginningOfPeriod,EndOfPeriod,105,1900,1
 CF,N,Calculated,4,Average,NotApplicable,EndOfPeriod,Delta,EndOfPeriod,110,1900,1
 IA,N,Calculated,4,Average,EndOfPeriod,EndOfPeriod,Delta,EndOfPeriod,120,1900,1
 AU,N,Optional,4,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,130,1900,1
@@ -99,8 +100,9 @@ EUR,Euro,,,,,,,,,,
 GBP,British Pound,,,,,,,,,,
 HKD,Hong Kong Dollar,,,,,,,,,,
 ITL,Italian Lira,,,,,,,,,,
-PLN,Polish Zloty (since 01.01.95),,,,,,,,,,
+PLN,Polish Zloty,,,,,,,,,,
 SKK,Slovakian Krona,,,,,,,,,,
+XTSHY,Testing Currency (High Yields),,,,,,,,,,
 ,,,,,,,,,,,
 @@EconomicBasis,,,,,,,,,,,
 SystemName,DisplayName,Order,,,,,,,,,

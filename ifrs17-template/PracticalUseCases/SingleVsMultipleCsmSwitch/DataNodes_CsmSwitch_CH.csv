@@ -1,0 +1,12 @@
+@@Main,,,,,
+ReportingNode,,,,,
+CH,,,,,
+,,,,,
+@@InsurancePortfolio,,,,,
+SystemName,DisplayName,ContractualCurrency,LineOfBusiness,ValuationApproach,OciType
+MZ1,CSM/LC Switch,XTSHY,ANN,BBA,Default
+,,,,,
+@@GroupOfInsuranceContract,,,,,
+SystemName,DisplayName,InsurancePortfolio,AnnualCohort,LiabilityType,Profitability
+MZ1.1,MZ 1.1 Multiple Switches,MZ1,2020,LRC,P
+MZ1.2,MZ 1.2 Single Switch,MZ1,2020,LRC,P

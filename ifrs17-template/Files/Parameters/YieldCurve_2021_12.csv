@@ -1,0 +1,6 @@
+@@Main
+Year,Month
+2021,12
+@@YieldCurve
+Currency,Values0,Values1,Values2,Values3
+CHF,0.025,0.025,0.035,0.035
