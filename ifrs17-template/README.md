@@ -59,6 +59,30 @@ Follow step by step our [Get Started](https://youtu.be/WQFn58gFhaM) video and ex
 
 For more information on our IFRS 17 initiative check out our [IFRS 17 page](https://systemorph.com/).
 
+## Practical Use Cases
+
+Interact with our IFRS 17 practical use cases. Analyze your data and create new use cases.
+
+<div style="display:grid; grid-gap: 8px; grid-auto-flow: column; grid-template-columns: repeat(2, 1fr); margin: 32px 0 40px;">
+
+<div style="border: 2px solid #AAE2F2; border-radius: 4px; padding: 6px 24px 8px">
+
+### Actuals outside the period
+
+Compare use-cases of [actuals](./PracticalUseCases/ActualsOutsideThePeriod/ActualsUseCaseReports) paid outside the reporting period.
+
+</div>
+<div style="border: 2px solid #AAE2F2; border-radius: 4px; padding: 6px 24px 8px">
+
+### Contractual service margin : single vs multiple switch
+
+Compare the effects of modelling the [CSM - LC switch](./PracticalUseCases/SingleVsMultipleCsmSwitch/CsmSwitchReports) with a single vs multiple switch logic.
+
+</div>
+
+</div>
+
+
 <hr style="border-bottom: 0; border-top: 1px solid rgba(0,0,0,0.15); height: 0; margin-top: 40px;" />
 
 ## Got Questions?
