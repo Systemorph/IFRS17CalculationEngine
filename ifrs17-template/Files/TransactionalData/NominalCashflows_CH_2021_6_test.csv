@@ -1,0 +1,13 @@
+@@Main
+ReportingNode,Year,Month,Scenario
+CH,2021,6
+@@Cashflow
+DataNode,AmountType,EstimateType,AocType,Novelty,AccidentYear,Values0,Values1,Values2,Values3,Values4,Values5,Values6,Values7,Values8,Values9,Values10,Values11,Values12,Values13,Values14,Values15,Values16,Values17,Values18,Values19,Values20,Values21,Values22,Values23
+DT1.1,PR,BE,BOP,N,,100,0,0,100,0,0,100,0,0,100,0,0
+DT1.1,NIC,BE,BOP,N,,-25,-25,-25,-25,-25,-25,-25,-25,-25,-25,-25,-25
+DT1.1,,CU,BOP,N,,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10
+DT1.1,,RA,BOP,N,,-2.5,-2.5,-2.5,-2.5,-2.5,-2.5,-2.5,-2.5,-2.5,-2.5,-2.5,-2.5
+DT1.1,PR,BE,CL,C,,100,0,0,100,0,0,100,0,0,100,0,0
+DT1.1,NIC,BE,CL,C,,-25,-25,-25,-25,-25,-25,-25,-25,-25,-25,-25,-25
+DT1.1,,CU,CL,C,,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10
+DT1.1,,RA,CL,C,,-2.5,-2.5,-2.5,-2.5,-2.5,-2.5,-2.5,-2.5,-2.5,-2.5,-2.5,-2.5
