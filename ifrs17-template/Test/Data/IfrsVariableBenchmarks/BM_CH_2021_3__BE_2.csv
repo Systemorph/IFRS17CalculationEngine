@@ -1,6 +1,0 @@
-@@Main
-Month,ReportingNode,Scenario,Year
-3,CH,,2021
-@@BE
-AccidentYear,AmountType,AocType,DataNode,EconomicBasis,EstimateType,Novelty,Value,Value1
-,NIC,BOP,DT1.1,L,BE,N,47.94809,30
