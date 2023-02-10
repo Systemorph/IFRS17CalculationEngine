@@ -1,9 +1,0 @@
-@@Main
-ReportingNode,Year,Month
-CH,2021,6
-@@Cashflow
-DataNode,AmountType,EstimateType,AocType,Novelty,AccidentYear,Values0,Values1,Values2,Values3,Values4,Values5,Values6,Values7,Values8,Values9,Values10,Values11
-DT1.1,NIC,BE,MC,I,,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20
-DT1.1,NIC,BE,BOP,N,,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4
-DT1.1,NIC,BE,EV,N,,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9
-DT1.1,NIC,BE,CL,C,,-29,-29,-29,-29,-29,-29,-29,-29,-29,-29,-29,-29
