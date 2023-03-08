@@ -1,0 +1,11 @@
+@@Main,,
+ReportingNode,Year,Month,Scenario
+CH,2020,12
+,,
+@@SingleDataNodeParameter,,
+DataNode,PremiumAllocation,
+RP1.1,0.8
+,,
+@@InterDataNodeParameter,,
+DataNode,LinkedDataNode,ReinsuranceCoverage
+RP1.1,RPR1.1,0.5
