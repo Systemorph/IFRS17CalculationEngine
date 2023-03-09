@@ -1,0 +1,7 @@
+﻿@@Main,,,,,
+ReportingNode,Year,Month,Scenario ,,
+G,2023,3,,,
+@@Actual,,,,,
+DataNode,AocType,AmountType,EstimateType,AccidentYear,Value
+GIC2,CF,PR,A,,360
+GIC2,CF,CL,A,,45
