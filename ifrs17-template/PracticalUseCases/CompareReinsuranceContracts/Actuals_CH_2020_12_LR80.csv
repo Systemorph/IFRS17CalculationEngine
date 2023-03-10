@@ -1,0 +1,11 @@
+﻿@@Main,,,,,
+ReportingNode,Year,Month,Scenario,,
+CH,2020,12,LR80,,
+@@Actual,,,,,
+DataNode,AocType,AmountType,EstimateType,AccidentYear,Value
+RP1.1,CF,PR,A,,500
+RP1.1,CF,NIC,A,,-390
+RP1.1,CF,AEM,A,,-170
+RPR1.1,CF,PR,A,,-160
+RPR1.1,CF,NIC,A,,106
+RPR1.1,CF,AC,A,,390

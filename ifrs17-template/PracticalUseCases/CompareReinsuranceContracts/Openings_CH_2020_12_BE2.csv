@@ -3,6 +3,5 @@ ReportingNode,Year,Month,,
 CH,2020,12,,
 @@Opening,,,,
 DataNode,EstimateType,AmountType,AccidentYear,Value
-RP1.1,L,,,350.2
-RP1.1,AA,PR,,-1.5
-RP1.1,OA,PR,,1.5
+RP1.1,C,,,100.2
+RPR1.1,C,,,-175.1
