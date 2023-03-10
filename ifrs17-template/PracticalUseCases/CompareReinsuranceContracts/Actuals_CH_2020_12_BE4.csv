@@ -3,8 +3,9 @@ ReportingNode,Year,Month,,,
 CH,2020,12,,,
 @@Actual,,,,,
 DataNode,AocType,AmountType,EstimateType,AccidentYear,Value
-RP1.1,CF,PR,A,,500
+RP1.1,CF,PR,A,,1000
 RP1.1,CF,NIC,A,,-300
-RP1.1,CF,AEM,A,,-170
-RPR1.1,CF,PR,A,,-250
-RPR1.1,CF,NIC,A,,350
+RP1.1,CF,AEM,A,,-150
+RPR1.1,CF,PR,A,,-300
+RPR1.1,CF,NIC,A,,90
+RPR1.1,CF,AC,A,,105

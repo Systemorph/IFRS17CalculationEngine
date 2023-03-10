@@ -1,0 +1,7 @@
+﻿@@Main,,,,
+ReportingNode,Year,Month,Scenario,
+CH,2020,12,LR70,
+@@Opening,,,,
+DataNode,EstimateType,AmountType,AccidentYear,Value
+RP1.1,L,,,1
+RPR1.1,LR,,,-100.1
