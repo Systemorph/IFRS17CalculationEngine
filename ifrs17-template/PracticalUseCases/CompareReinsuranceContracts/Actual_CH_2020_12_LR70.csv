@@ -4,8 +4,8 @@ CH,2020,12,LR70,,
 @@Actual,,,,,
 DataNode,AocType,AmountType,EstimateType,AccidentYear,Value
 RP1.1,CF,PR,A,,1000
-RP1.1,CF,NIC,A,,-350
-RP1.1,CF,AEM,A,,-150
+RP1.1,CF,NIC,A,,-700
+RP1.1,CF,AEM,A,,-300
 RPR1.1,CF,PR,A,,-300
-RPR1.1,CF,NIC,A,,90
+RPR1.1,CF,NIC,A,,210
 RPR1.1,CF,AC,A,,105

@@ -2,6 +2,8 @@
 SystemName,DisplayName,,,,,,,,,,
 LR70,Loss Ratio 70,
 LR80,Loss Ratio 80,
+ELR60A70,Expected Loss Ratio 60 Actual 70,
+ELR60A80,Expected Loss Ratio 60 Actual 80,
 YCUP1.0pct,Yield Curve Up 1.0pct,,,,,,,,,,
 YCDW1.0pct,Yield Curve Down 1.0pct,,,,,,,,,,
 SRUP1.0pct,Spread Rate Up 1.0pct,,,,,,,,,,
