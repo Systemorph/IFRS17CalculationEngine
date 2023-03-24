@@ -1,0 +1,8 @@
+@@Main
+ReportingNode,Year,Month,Scenario
+CH,2020,12,
+
+@@DataNodeState,,
+DataNode,State,
+RP1.1,Active,
+RPR1.1,Active,
