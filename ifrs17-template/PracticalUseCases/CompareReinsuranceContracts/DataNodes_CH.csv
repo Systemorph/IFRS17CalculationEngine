@@ -1,0 +1,15 @@
+@@Main
+ReportingNode
+CH
+@@InsurancePortfolio
+SystemName,DisplayName,ContractualCurrency,LineOfBusiness,ValuationApproach,OciType,
+RP1,Insurance Portfolio,USD,ANN,BBA,Default,
+@@GroupOfInsuranceContract
+SystemName,DisplayName,InsurancePortfolio,AnnualCohort,LiabilityType,Profitability,
+RP1.1,Gross Business Reinsured,RP1,2020,LRC,O,
+@@ReinsurancePortfolio
+SystemName,DisplayName,ContractualCurrency,LineOfBusiness,ValuationApproach,OciType,
+RPR1,Reinsurance Portfolio,USD,ANN,BBA,Default,
+@@GroupOfReinsuranceContract
+SystemName,DisplayName,ReinsurancePortfolio,AnnualCohort,LiabilityType,Profitability,Partner
+RPR1.1,Reinsurance Contract,RPR1,2020,LRC,P,PT1
