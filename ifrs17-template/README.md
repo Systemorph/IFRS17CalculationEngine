@@ -63,7 +63,7 @@ For more information on our IFRS 17 initiative check out our [IFRS 17 page](http
 
 Interact with our IFRS 17 practical use cases. Analyze your data and create new use cases.
 
-<div style="display:grid; grid-gap: 8px; grid-auto-flow: column; grid-template-columns: repeat(2, 1fr); margin: 32px 0 40px;">
+<div style="display:grid; grid-gap: 8px; grid-auto-flow: column; grid-template-columns: repeat(3, 1fr); margin: 32px 0 40px;">
 
 <div style="border: 2px solid #AAE2F2; border-radius: 4px; padding: 6px 24px 8px">
 
@@ -77,6 +77,13 @@ Compare use-cases of [actuals](./PracticalUseCases/ActualsOutsideThePeriod/Actua
 ### Contractual service margin : single vs multiple switch
 
 Compare the effects of modelling the [CSM - LC switch](./PracticalUseCases/SingleVsMultipleCsmSwitch/CsmSwitchReports) with a single vs multiple switch logic.
+
+</div>
+<div style="border: 2px solid #AAE2F2; border-radius: 4px; padding: 6px 24px 8px">
+
+### Scenario analysis for re-insured contracts
+
+Compare Net results under IFRS 17 obtained for different [loss ratio](./PracticalUseCases/CompareReinsuranceContracts/Reports).
 
 </div>
 
