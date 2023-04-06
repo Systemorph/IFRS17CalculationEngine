@@ -1,0 +1,5 @@
+@@Main
+Month,ReportingNode,Scenario,Year
+12,CH,,2020
+@@LR
+AccidentYear,AmountType,AocType,DataNode,EconomicBasis,EstimateType,Novelty,Value
