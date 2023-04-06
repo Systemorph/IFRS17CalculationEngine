@@ -5,9 +5,9 @@ CH,2020,12
 @@SingleDataNodeParameter
 DataNode,PremiumAllocation,CashFlowPeriodicity,InterpolationMethod
 DT1.1,0.9,Monthly,InvalidEntry
-DT1.1,0.85,InvalidEntry,Uniform
-DT1.1,0.9,,Uniform
-DT1.1,0.85,Monthly,
+DT1.2,0.85,InvalidEntry,Uniform
+DT1.3,0.9,,Uniform
+DT1.4,0.85,Monthly,
 
 @@InterDataNodeParameter
 DataNode,LinkedDataNode,ReinsuranceCoverage
