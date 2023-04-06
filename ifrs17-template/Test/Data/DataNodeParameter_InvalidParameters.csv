@@ -8,6 +8,7 @@ DT1.1,0.9,Monthly,InvalidEntry
 DT1.2,0.85,InvalidEntry,Uniform
 DT1.3,0.9,,Uniform
 DT1.4,0.85,Monthly,
+DT1.5,0.9,Yearly,
 
 @@InterDataNodeParameter
 DataNode,LinkedDataNode,ReinsuranceCoverage

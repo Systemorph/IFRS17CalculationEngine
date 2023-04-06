@@ -5,9 +5,9 @@ CH,2020,12
 @@SingleDataNodeParameter
 DataNode,PremiumAllocation
 DT1.1,0.9
-DT1.1,0.85
-DT1.1,0.9
-DT1.1,0.85
+DT1.2,0.85
+DT1.3,0.9
+DT1.4,0.85
 
 @@InterDataNodeParameter
 DataNode,LinkedDataNode,ReinsuranceCoverage
