@@ -1,0 +1,10 @@
+@@Main,,
+ReportingNode,Year,Month
+FR,2020,12
+,,
+@@DataNodeState,,
+DataNode,State,
+EY52BBA.1,Active,
+EY52PPA.1,Active,
+EY57BBAG.1,Active,
+EY57BBAR.1,Active,

@@ -1,0 +1,13 @@
+@@Main,,
+ReportingNode,Year,Month
+FR,2020,12
+,,
+@@SingleDataNodeParameter,,
+DataNode,PremiumAllocation,
+EY52BBA.1,1,
+EY52PPA.1,1,
+EY57BBAG.1,1,
+,,
+@@InterDataNodeParameter,,
+DataNode,LinkedDataNode,ReinsuranceCoverage
+EY57BBAG.1,EY57BBAR.1,0.3
