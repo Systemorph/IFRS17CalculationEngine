@@ -6,8 +6,12 @@ FR,2020,12
 DataNode,PremiumAllocation,
 EY52BBA.1,1,
 EY52PPA.1,1,
-EY57BBAG.1,1,
+EY57G.1,1,
+EY58G.1,1,
+EY58G.2,1,
 ,,
 @@InterDataNodeParameter,,
 DataNode,LinkedDataNode,ReinsuranceCoverage
-EY57BBAG.1,EY57BBAR.1,0.3
+EY57G.1,EY57R.1,0.3
+EY58G.1,EY58R.1,0.3
+EY58G.2,EY58R.1,0.3
