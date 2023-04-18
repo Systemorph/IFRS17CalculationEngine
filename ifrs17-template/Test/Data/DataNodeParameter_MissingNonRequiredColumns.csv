@@ -1,0 +1,16 @@
+@@Main
+ReportingNode,Year,Month
+CH,2020,12
+
+@@SingleDataNodeParameter
+DataNode,PremiumAllocation
+DT1.1,0.9
+DT1.2,0.85
+DT1.3,0.9
+DT1.4,0.85
+
+@@InterDataNodeParameter
+DataNode,LinkedDataNode,ReinsuranceCoverage
+DTR1.1,DT1.1,1
+DTR1.2,DT1.2,1
+DTR1.3,DT1.3,1
