@@ -2,7 +2,7 @@
 Month,ReportingNode,Scenario,Year
 3,CH,,2021
 @@BEPA
-AccidentYear,AmountType,AocType,DataNode,EconomicBasis,EstimateType,Novelty,Value
+AccidentYear,AmountType,AocType,DataNode,EconomicBasis,EstimateType,Novelty,Value0
 ,PR,CF,DT1.1,L,BEPA,I,88
 ,PR,CF,DT1.1,L,BEPA,N,8
 ,PR,CF,DT1.3,L,BEPA,I,110

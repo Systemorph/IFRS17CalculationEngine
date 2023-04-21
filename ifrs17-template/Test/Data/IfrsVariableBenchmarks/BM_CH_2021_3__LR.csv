@@ -2,7 +2,7 @@
 Month,ReportingNode,Scenario,Year
 3,CH,,2021
 @@LR
-AccidentYear,AmountType,AocType,DataNode,EconomicBasis,EstimateType,Novelty,Value
+AccidentYear,AmountType,AocType,DataNode,EconomicBasis,EstimateType,Novelty,Value0
 ,,CL,DTR1.1,,LR,C,43.67753
 ,,BOP,DTR1.1,,LR,N,-15.9547
 ,,EV,DTR1.1,,LR,N,-27.7147
