@@ -1,0 +1,23 @@
+@@Main,,,,,,
+ReportingNode,,,,,,
+ES,,,,,,
+,,,,,,
+@@InsurancePortfolio,,,,,,
+SystemName,DisplayName,ContractualCurrency,LineOfBusiness,ValuationApproach,OciType,
+3BBBA,BBA,EUR,MOT,BBA,,
+3BPAA,PAA,EUR,MOT,PAA,,
+,,,,,,
+@@GroupOfInsuranceContract,,,,,,
+SystemName,DisplayName,InsurancePortfolio,AnnualCohort,LiabilityType,Profitability,YieldCurveName
+3BBBA.0,0 BBA,3BBBA,2020,LRC,P,3PCT
+3BPAA.0,0 PAA,3BPAA,2020,LRC,P,3PCT
+3BBBA.1,1 BBA,3BBBA,2020,LRC,P,NoDiscount
+3BPAA.1,1 PAA,3BPAA,2020,LRC,P,NoDiscount
+3BBBA.2,2 BBA,3BBBA,2020,LRC,P,NoDiscount
+3BPAA.2,2 PAA,3BPAA,2020,LRC,P,NoDiscount
+3BBBA.3,3 BBA,3BBBA,2020,LRC,P,NoDiscount
+3BPAA.3,3 PAA,3BPAA,2020,LRC,P,NoDiscount
+3BBBA.4,4 BBA,3BBBA,2020,LRC,P,NoDiscount
+3BPAA.4,4 PAA,3BPAA,2020,LRC,P,NoDiscount
+3BBBA.5,5 BBA,3BBBA,2020,LRC,P,NoDiscount
+3BPAA.5,5 PAA,3BPAA,2020,LRC,P,NoDiscount
