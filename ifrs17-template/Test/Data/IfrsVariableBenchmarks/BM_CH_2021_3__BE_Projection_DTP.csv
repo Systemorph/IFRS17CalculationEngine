@@ -2,7 +2,7 @@
 Month,ReportingNode,Scenario,Year,,,,,,,,,,,,,,,,
 3,CH,,2021,,,,,,,,,,,,,,,,
 @@BE,,,,,,,,,,,,,,,,,,,
-AccidentYear,AmountType,AocType,DataNode,EconomicBasis,EstimateType,Novelty,Value0,Value1,Value2,Value3,Value4,Value5,Value6,Value7,Value8,Value9,Value10,Value11,Value12
+AccidentYear,AmountType,AocType,DataNode,EconomicBasis,EstimateType,Novelty,Values0,Values1,Values2,Values3,Values4,Values5,Values6,Values7,Values8,Values9,Values10,Values11,Values12
 ,NIC,EOP,DTP1.1,C,BE,C,6227.90059,6148.63474,6069.26999,5989.80622,5670.95847,0,0,0,0,0,0,0,0
 ,NIC,BOP,DTP1.1,C,BE,I,299.67555,299.67555,299.67555,299.67555,5989.80622,0,0,0,0,0,0,0,0
 ,NIC,CF,DTP1.1,C,BE,I,-60,-120,-180,-240,-240,0,0,0,0,0,0,0,0
