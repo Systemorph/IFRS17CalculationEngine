@@ -5,5 +5,5 @@ ES,2020,12,,,
 DataNode,AocType,AmountType,EstimateType,AccidentYear,Value
 3BBBA.0,CF,PR,A,,1000
 3BBBA.0,CF,NIC,A,,-500
-3BBBA.0,CF,AE,A,,-150
+3BBBA.0,CF,AEM,A,,-150
 3BBBA.0,CF,DAE,DA,,120
