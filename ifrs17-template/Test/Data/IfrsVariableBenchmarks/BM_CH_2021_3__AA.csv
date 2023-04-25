@@ -2,7 +2,7 @@
 Month,ReportingNode,Scenario,Year
 3,CH,,2021
 @@AA
-AccidentYear,AmountType,AocType,DataNode,EconomicBasis,EstimateType,Novelty,Value
+AccidentYear,AmountType,AocType,DataNode,EconomicBasis,EstimateType,Novelty,Values0
 ,PR,CF,DT1.4,,AA,C,5
 ,NIC,WO,DT1.4,,AA,C,5
 ,PR,EOP,DT3.1,,AA,C,-1.5
