@@ -1,5 +1,5 @@
 ﻿@@Main,,,,,
-ReportingNode,Year,Month,Scenario ,,
+ReportingNode,Year,Month,Scenario
 CH,2020,12,,,
 @@Actual,,,,,
 DataNode,AocType,AmountType,EstimateType,AccidentYear,Value
