@@ -2,7 +2,7 @@
 Month,ReportingNode,Scenario,Year
 12,CH,,2020
 @@C
-AccidentYear,AmountType,AocType,DataNode,EconomicBasis,EstimateType,Novelty,Value
+AccidentYear,AmountType,AocType,DataNode,EconomicBasis,EstimateType,Novelty,Values0
 ,,AM,DT1.1,,C,C,-82.02271
 ,,EA,DT1.1,,C,C,-15
 ,,EOP,DT1.1,,C,C,42.96811
