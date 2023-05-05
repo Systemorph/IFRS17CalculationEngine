@@ -1,0 +1,38 @@
+@@Main,,,,,,
+ReportingNode,,,,,,
+FR,,,,,,
+,,,,,,
+@@InsurancePortfolio,,,,,,
+SystemName,DisplayName,ContractualCurrency,LineOfBusiness,ValuationApproach,OciType,
+EY52BBA,52 BBA,EUR,MOT,BBA,,
+EY52PPA,52 PAA,EUR,MOT,PAA,,
+EY57G,57 Gross,EUR,MOT,BBA,,
+EY58G,58 Gross,EUR,MOT,BBA,,
+EY59G,59 Gross,EUR,MOT,BBA,,
+EY63G,63 Gross,EUR,MOT,BBA,,
+,,,,,,
+@@GroupOfInsuranceContract,,,,,,
+SystemName,DisplayName,InsurancePortfolio,AnnualCohort,LiabilityType,Profitability,YieldCurveName
+EY52BBA.1,52 BBA,EY52BBA,2020,LRC,P,NoDiscount
+EY52PPA.1,52 PAA,EY52PPA,2020,LRC,P,NoDiscount
+EY57G.1,57 Gross Profitable,EY57G,2020,LRC,P,NoDiscount
+EY58G.1,58 Gross Profitable,EY58G,2020,LRC,P,NoDiscount
+EY58G.2,58 Gross Onerous,EY58G,2020,LRC,O,NoDiscount
+EY59G.1,59 Gross Example A,EY59G,2019,LRC,P,NoDiscount
+EY59G.2,59 Gross Example B,EY59G,2019,LRC,P,NoDiscount
+EY63G.1,63 Gross,EY63G,2019,LIC,U,NoDiscount
+,,,,,,
+@@ReinsurancePortfolio,,,,,,
+SystemName,DisplayName,ContractualCurrency,LineOfBusiness,ValuationApproach,OciType,
+EY57R,57 Reinsurance,EUR,MOT,BBA,,
+EY58R,58 Reinsurance,EUR,MOT,BBA,,
+EY59R,59 Reinsurance,EUR,MOT,BBA,,
+EY63R,63 Reinsurance,EUR,MOT,BBA,,
+,,,,,,
+@@GroupOfReinsuranceContract,,,,,,
+SystemName,DisplayName,ReinsurancePortfolio,AnnualCohort,LiabilityType,Profitability,Partner
+EY57R.1,57 Reinsurance,EY57R,2020,LRC,P,PTI
+EY58R.1,58 Reinsurance ,EY58R,2020,LRC,P,PTI
+EY59R.1,59 Reinsurance Example A,EY59R,2019,LRC,P,PTI
+EY59R.2,59 Reinsurance Example B,EY59R,2019,LRC,P,PTI
+EY63R.1,63 Reinsurance ,EY63R,2020,LRC,P,PTI
