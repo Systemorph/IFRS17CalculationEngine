@@ -1,0 +1,9 @@
+﻿@@Main,,,,,
+ReportingNode,Year,Month,Scenario ,,
+ES,2020,12,,,
+@@Actual,,,,,
+DataNode,AocType,AmountType,EstimateType,AccidentYear,Value
+3BBBA.0,CF,PR,A,,1000
+3BBBA.0,CF,NIC,A,,-500
+3BBBA.0,CF,AEM,A,,-150
+3BBBA.0,CF,AEA,A,,-200
