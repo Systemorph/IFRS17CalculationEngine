@@ -14,7 +14,7 @@ EY63G,63 Gross,EUR,MOT,BBA,,
 @@GroupOfInsuranceContract,,,,,,
 SystemName,DisplayName,InsurancePortfolio,AnnualCohort,LiabilityType,Profitability,YieldCurveName
 EY52BBA.1,52 BBA,EY52BBA,2020,LRC,P,NoDiscount
-EY52PAA.1,52 PAA,EY52PPA,2020,LRC,P,NoDiscount
+EY52PAA.1,52 PAA,EY52PAA,2020,LRC,P,NoDiscount
 EY57G.1,57 Gross Profitable,EY57G,2020,LRC,P,NoDiscount
 EY58G.1,58 Gross Profitable,EY58G,2020,LRC,P,NoDiscount
 EY58G.2,58 Gross Onerous,EY58G,2020,LRC,O,NoDiscount
