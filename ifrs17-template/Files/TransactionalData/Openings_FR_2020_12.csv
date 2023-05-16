@@ -1,0 +1,9 @@
+﻿@@Main,,,,
+ReportingNode,Year,Month,,
+FR,2020,12,,
+@@Opening,,,,
+DataNode,EstimateType,AmountType,AccidentYear,Value
+EY59G.1,C,,,100
+EY59G.2,C,,,100
+EY59R.1,C,,,-25
+EY59R.2,C,,,-25
