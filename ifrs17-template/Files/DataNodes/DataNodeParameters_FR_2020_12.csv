@@ -3,7 +3,7 @@ ReportingNode,Year,Month
 FR,2020,12
 ,,
 @@SingleDataNodeParameter,,
-DataNode,PremiumAllocation,
+DataNode,PremiumAllocation,CashFlowPeriodicity,InterpolationMethod,EconomicBasisDriver,AmortizationFactor0,AmortizationFactor1,AmortizationFactor2,AmortizationFactor3,AmortizationFactor4,AmortizationFactor5,AmortizationFactor6,AmortizationFactor7,AmortizationFactor8,AmortizationFactor9DataNode,PremiumAllocation,
 EY52BBA.1,1,
 EY52PPA.1,1,
 EY57G.1,1,
