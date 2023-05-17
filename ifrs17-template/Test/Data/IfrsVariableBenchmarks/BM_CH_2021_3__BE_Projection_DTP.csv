@@ -55,3 +55,5 @@ AccidentYear,AmountType,AocType,DataNode,EconomicBasis,EstimateType,Novelty,Valu
 ,PR,BOP,DTP1.1,N,BE,N,-760,-760,-760,-760,-720,0,0,0,0,0,0,0,0
 ,PR,CF,DTP1.1,N,BE,N,10,20,30,40,40,0,0,0,0,0,0,0,0
 ,PR,EV,DTP1.1,N,BE,N,375,370,365,360,340,0,0,0,0,0,0,0,0
+,NIC,CF,DTP1.1,,A,C,-20,-144,-216,-288,-288,0,0,0,0,0,0,0,0
+,PR,CF,DTP1.1,,A,C,100,240,360,480,480,0,0,0,0,0,0,0,0
