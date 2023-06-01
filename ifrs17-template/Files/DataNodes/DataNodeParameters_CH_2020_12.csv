@@ -3,7 +3,7 @@ ReportingNode,Year,Month
 CH,2020,12
 ,,
 @@SingleDataNodeParameter,,
-DataNode,PremiumAllocation,CashFlowPeriodicity,InterpolationMethod,ReleasePattern0,ReleasePattern1,ReleasePattern2,ReleasePattern3,ReleasePattern4
+DataNode,PremiumAllocation,CashFlowPeriodicity,InterpolationMethod,EconomicBasisDriver,ReleasePattern0,ReleasePattern1,ReleasePattern2,ReleasePattern3,ReleasePattern4
 GicComplex,0.8,Monthly,
 DT1.1,0.8,Monthly,
 DT1.2,0.8,Monthly,
@@ -15,7 +15,7 @@ DT2.2,0.8,Monthly,
 DT3.1,0.8,Monthly,
 DT4.1,0.8,Monthly,
 DT10.1,0,Yearly,Uniform,
-DT10.2,0,Yearly,Uniform,1.41,1.14,0.87,0.58
+DT10.2,0,Yearly,Uniform,N,1.41,1.14,0.87,0.58
 ,,
 @@InterDataNodeParameter,,
 DataNode,LinkedDataNode,ReinsuranceCoverage
