@@ -1,4 +1,4 @@
-@@ReportVariable
+@@ReportVariable,,,,,,,,,,,,,,,,,,,,,,
 AccidentYear,AmountType,AnnualCohort,ContractualCurrency,Currency,EconomicBasis,EstimateType,FunctionalCurrency,GroupOfContract,InitialProfitability,IsReinsurance,LiabilityType,LineOfBusiness,Novelty,OciType,Partner,Portfolio,Projection,ReportingNode,Scenario,ValuationApproach,Value,VariableType
 2020,NIC,2020,USD,USD,,A,CHF,DT1.2,P,FALSE,LIC,ANN,C,Default,,DT1,P0,CH,,BBA,-280,CF
 2020,NIC,2020,USD,USD,,A,CHF,DT1.2,P,FALSE,LIC,ANN,C,Default,,DT1,P0,CH,,BBA,-280,ISE2
