@@ -19,13 +19,6 @@ If you want to know more about the Calculation Engine than just its standard tec
 You will be introduced to:
 - [DataModel](./DataModel/DataStructure) with links to detailed description of individual data types, dimensions and partitions employed
 - [Import Calculation](./Import/1ImportScope-Identities) with in detail description using mathematical formulas and links to supporting material
-- Import scopes are divided in several notebooks:
-	- [Calculation of Identities](./Import/1ImportScope-Identities)
-	- [Calculation of Present Values](./Import/2ImportScope-PresentValue)
-	- [Calculation of Actuals](./Import/3ImportScope-Actuals)
-	- [Calculation of Technical Margin](./Import/4ImportScope-TechnicalMargin)
-	- [Creation of Ifrs Variables](./Import/5ImportScope-ToIfrsVar)
-	- [Calculation of Ifrs Variables](./Import/6ImportScope-Compute)
 
 <p style="margin-top: 24px; margin-bottom: 40px">
     <img width="900" src="https://stacdnsmcwe.blob.core.windows.net/content/IFRS17CalculationEngine/Images/IFRS17/BigPicture.png" alt="IFRS 17 Solution Overview">
