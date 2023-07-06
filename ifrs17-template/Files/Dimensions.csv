@@ -65,7 +65,6 @@ WO,C,Optional,2,Average,NotApplicable,NotApplicable,NotApplicable,NotApplicable,
 CL,C,Mandatory,4,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,180,1900,1
 EA,C,Calculated,4,EndOfPeriod,NotApplicable,NotApplicable,NotApplicable,EndOfPeriod,190,1900,1
 AM,C,Calculated,6,EndOfPeriod,NotApplicable,NotApplicable,NotApplicable,EndOfPeriod,200,1900,1
-FX,C,Calculated,0,NotApplicable,NotApplicable,NotApplicable,NotApplicable,NotApplicable,210,1900,1
 EOP,C,Calculated,6,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,1900,1
 ,,,,,,,,,,,
 @@CreditRiskRating,,,,,,,,,,,
