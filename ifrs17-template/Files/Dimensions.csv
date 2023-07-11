@@ -60,10 +60,10 @@ CF,N,4,4,Average,NotApplicable,EndOfPeriod,Delta,EndOfPeriod,110,1900,1
 IA,N,4,4,Average,EndOfPeriod,EndOfPeriod,Delta,EndOfPeriod,120,1900,1
 AU,N,1,4,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,130,1900,1
 EV,N,1,4,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,140,1900,1
-CF,C,5,2,Average,NotApplicable,NotApplicable,NotApplicable,NotApplicable,160,1900,1
-WO,C,1,2,Average,NotApplicable,NotApplicable,NotApplicable,NotApplicable,170,1900,1
 CL,C,2,4,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,180,1900,1
 EA,C,4,4,EndOfPeriod,NotApplicable,NotApplicable,NotApplicable,EndOfPeriod,190,1900,1
+CF,C,5,6,Average,NotApplicable,NotApplicable,NotApplicable,NotApplicable,193,1900,1
+WO,C,1,2,Average,NotApplicable,NotApplicable,NotApplicable,NotApplicable,195,1900,1
 AM,C,4,6,EndOfPeriod,NotApplicable,NotApplicable,NotApplicable,EndOfPeriod,200,1900,1
 EOP,C,4,6,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,1900,1
 ,,,,,,,,,,,
