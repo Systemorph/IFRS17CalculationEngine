@@ -10,6 +10,7 @@ AccidentYear,AmountType,AocType,DataNode,EconomicBasis,EstimateType,Novelty,Valu
 ,NIC,CF,DT1.1,,A,C,-280
 ,ACA,CF,DT1.1,,A,C,-10
 ,AEA,CF,DT1.1,,A,C,-5
+,DAE,CF,DT1.1,,A,C,-15
 2020,NIC,CF,DT1.2,,A,C,-280
 ,PR,CF,DT2.1,,A,C,400
 ,NIC,CF,DT2.1,,A,C,-280
