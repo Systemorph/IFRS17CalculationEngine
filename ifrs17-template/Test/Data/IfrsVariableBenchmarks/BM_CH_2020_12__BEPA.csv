@@ -3,7 +3,7 @@ Month,ReportingNode,Scenario,Year
 12,CH,,2020
 @@BEPA
 AccidentYear,AmountType,AocType,DataNode,EconomicBasis,EstimateType,Novelty,Values0
-,PR,CF,DT1.1,L,BEPA,N,320
+,PR,CF,DT1.1,N,BEPA,N,320
 ,PR,CF,DT1.3,L,BEPA,N,400
 ,PR,CF,DT2.1,L,BEPA,N,320
 ,PR,CF,DT3.1,L,BEPA,N,320

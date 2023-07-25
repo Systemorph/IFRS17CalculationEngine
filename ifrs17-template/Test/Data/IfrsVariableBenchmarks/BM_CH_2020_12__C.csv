@@ -3,9 +3,9 @@ Month,ReportingNode,Scenario,Year,,,,
 12,CH,,2020,,,,
 @@C,,,,,,,
 AccidentYear,AmountType,AocType,DataNode,EconomicBasis,EstimateType,Novelty,Values0
-,,AM,DT1.1,L,C,C,-180.457191
-,,EA,DT1.1,L,C,C,135
-,,EOP,DT1.1,L,C,C,94.533629
+,,AM,DT1.1,L,C,C,-98.42845682
+,,EA,DT1.1,L,C,C,10
+,,EOP,DT1.1,L,C,C,51.56236318
 ,,BOP,DT1.1,L,C,N,139.90849
 ,,IA,DT1.1,L,C,N,0.08233
 ,,AM,DT1.3,L,C,C,-82.02271
