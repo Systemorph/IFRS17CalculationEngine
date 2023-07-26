@@ -1,7 +1,7 @@
-@@Main
-Year,Month
-2020,1
-@@YieldCurve
-Currency,Values0,Values1,Values2,Values3
-USD,0.002,0.002,0.002,0.002
-
+@@Main,,,,,
+Year,Month,,,,
+2020,1,,,,
+@@YieldCurve,,,,,
+Currency,Name,Values0,Values1,Values2,Values3
+USD,,0.002,0.002,0.002,0.002
+USD,NoDiscount,0,,,
