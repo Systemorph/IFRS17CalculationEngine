@@ -1,0 +1,12 @@
+@@Main,,,,,,,,,,
+Month,ReportingNode,Scenario,Year,,,,,,,
+3,CH,,2021,,,,,,,
+@@L,,,,,,,,,,
+AccidentYear,AmountType,AocType,DataNode,EconomicBasis,EstimateType,Novelty,Values0,Values1,Values2,Values3
+,,AU,DTP1.1,L,L,N,-849.25,-829.5,-809.75,-790
+,,BOP,DTP1.1,L,L,I,260,0,0,0
+,,BOP,DTP1.1,L,L,N,220,220,220,220
+,,CL,DTP1.1,L,L,C,-1014.75,-1016,-1017.25,-1018.5
+,,EV,DTP1.1,L,L,N,795.5,777,758.5,740
+,,MC,DTP1.1,L,L,I,-260,0,0,0
+,,MC,DTP1.1,L,L,N,848.5,848.5,848.5,848.5
