@@ -242,7 +242,7 @@ AccidentYear,AmountType,AnnualCohort,ContractualCurrency,Currency,EconomicBasis,
 0,PR,2020,USD,USD,,A,CHF,DT1.1,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,90,IR1
 0,PR,2020,USD,USD,,A,CHF,DT1.1,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-90,IR77
 0,PR,2020,USD,USD,,A,CHF,DT1.1,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,18,IR79
-0,PR,2020,USD,USD,N,A,CHF,DT1.1,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-96,IR78
+0,PR,2020,USD,USD,L,A,CHF,DT1.1,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-96,IR78
 0,PR,2020,USD,USD,,BE,CHF,DT1.1,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,72,IR78
 0,DAE,2020,USD,USD,C,BE,CHF,DT1.1,P,False,LRC,ANN,I,Default,,DT1,P2,CH,,NotApplicable,BBA,149.83777,BOP
 0,DAE,2020,USD,USD,C,BE,CHF,DT1.1,P,False,LRC,ANN,N,Default,,DT1,P2,CH,,NotApplicable,BBA,23.93527,BOP
@@ -324,10 +324,9 @@ AccidentYear,AmountType,AnnualCohort,ContractualCurrency,Currency,EconomicBasis,
 0,PR,2020,USD,USD,L,BE,CHF,DT1.1,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,0.19963,IFIE1
 0,PR,2020,USD,USD,L,BE,CHF,DT1.1,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-55.06323,IR5
 0,PR,2020,USD,USD,L,BE,CHF,DT1.1,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,120,IR77
-0,PR,2020,USD,USD,L,BE,CHF,DT1.1,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-120,IR79
+0,PR,2020,USD,USD,L,BE,CHF,DT1.1,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-24,IR79
 0,PR,2020,USD,USD,L,BE,CHF,DT1.1,P,False,LRC,ANN,I,Default,,DT1,P2,CH,,NotApplicable,BBA,-39.96339,MC
 0,PR,2020,USD,USD,L,BE,CHF,DT1.1,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,54.86359,OCI1
-0,PR,2020,USD,USD,N,BE,CHF,DT1.1,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,96,IR79
 0,,2020,USD,USD,L,C,CHF,DT1.1,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-14.22248,AM
 0,,2020,USD,USD,L,C,CHF,DT1.1,P,False,LRC,ANN,I,Default,,DT1,P2,CH,,NotApplicable,BBA,51.56237,BOP
 0,,2020,USD,USD,L,C,CHF,DT1.1,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-87.43136,CL
@@ -391,7 +390,7 @@ AccidentYear,AmountType,AnnualCohort,ContractualCurrency,Currency,EconomicBasis,
 0,PR,2020,USD,USD,,A,CHF,DT1.3,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,90,IR1
 0,PR,2020,USD,USD,,A,CHF,DT1.3,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-90,IR77
 0,PR,2020,USD,USD,,A,CHF,DT1.3,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,0,IR79
-0,PR,2020,USD,USD,N,A,CHF,DT1.3,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-120,IR78
+0,PR,2020,USD,USD,L,A,CHF,DT1.3,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-120,IR78
 0,PR,2020,USD,USD,,BE,CHF,DT1.3,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,90,IR78
 0,DAE,2020,USD,USD,C,BE,CHF,DT1.3,P,False,LRC,ANN,I,Default,,DT1,P2,CH,,NotApplicable,BBA,149.83777,BOP
 0,DAE,2020,USD,USD,C,BE,CHF,DT1.3,P,False,LRC,ANN,N,Default,,DT1,P2,CH,,NotApplicable,BBA,23.93527,BOP
@@ -473,10 +472,9 @@ AccidentYear,AmountType,AnnualCohort,ContractualCurrency,Currency,EconomicBasis,
 0,PR,2020,USD,USD,L,BE,CHF,DT1.3,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,0.19963,IFIE1
 0,PR,2020,USD,USD,L,BE,CHF,DT1.3,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-55.06323,IR5
 0,PR,2020,USD,USD,L,BE,CHF,DT1.3,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,120,IR77
-0,PR,2020,USD,USD,L,BE,CHF,DT1.3,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-120,IR79
+0,PR,2020,USD,USD,L,BE,CHF,DT1.3,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,0,IR79
 0,PR,2020,USD,USD,L,BE,CHF,DT1.3,P,False,LRC,ANN,I,Default,,DT1,P2,CH,,NotApplicable,BBA,-39.96339,MC
 0,PR,2020,USD,USD,L,BE,CHF,DT1.3,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,54.86359,OCI1
-0,PR,2020,USD,USD,N,BE,CHF,DT1.3,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,120,IR79
 0,,2020,USD,USD,L,C,CHF,DT1.3,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-12.28752,AM
 0,,2020,USD,USD,L,C,CHF,DT1.3,P,False,LRC,ANN,I,Default,,DT1,P2,CH,,NotApplicable,BBA,51.56237,BOP
 0,,2020,USD,USD,L,C,CHF,DT1.3,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-87.43136,CL
@@ -540,7 +538,7 @@ AccidentYear,AmountType,AnnualCohort,ContractualCurrency,Currency,EconomicBasis,
 0,PR,2020,USD,USD,,A,CHF,DT1.4,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,90,IR1
 0,PR,2020,USD,USD,,A,CHF,DT1.4,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-90,IR77
 0,PR,2020,USD,USD,,A,CHF,DT1.4,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,18,IR79
-0,PR,2020,USD,USD,N,A,CHF,DT1.4,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-96,IR78
+0,PR,2020,USD,USD,L,A,CHF,DT1.4,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-96,IR78
 0,NIC,2020,USD,USD,,AA,CHF,DT1.4,P,False,LRC,ANN,I,Default,,DT1,P2,CH,,NotApplicable,BBA,-5,BOP
 0,NIC,2020,USD,USD,,AA,CHF,DT1.4,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,0,EOP
 0,NIC,2020,USD,USD,,AA,CHF,DT1.4,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-5,ISE2
@@ -629,10 +627,9 @@ AccidentYear,AmountType,AnnualCohort,ContractualCurrency,Currency,EconomicBasis,
 0,PR,2020,USD,USD,L,BE,CHF,DT1.4,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,0.19963,IFIE1
 0,PR,2020,USD,USD,L,BE,CHF,DT1.4,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-55.06323,IR5
 0,PR,2020,USD,USD,L,BE,CHF,DT1.4,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,120,IR77
-0,PR,2020,USD,USD,L,BE,CHF,DT1.4,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-120,IR79
+0,PR,2020,USD,USD,L,BE,CHF,DT1.4,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-24,IR79
 0,PR,2020,USD,USD,L,BE,CHF,DT1.4,P,False,LRC,ANN,I,Default,,DT1,P2,CH,,NotApplicable,BBA,-39.96339,MC
 0,PR,2020,USD,USD,L,BE,CHF,DT1.4,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,54.86359,OCI1
-0,PR,2020,USD,USD,N,BE,CHF,DT1.4,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,96,IR79
 0,,2020,USD,USD,L,C,CHF,DT1.4,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-14.22248,AM
 0,,2020,USD,USD,L,C,CHF,DT1.4,P,False,LRC,ANN,I,Default,,DT1,P2,CH,,NotApplicable,BBA,51.56237,BOP
 0,,2020,USD,USD,L,C,CHF,DT1.4,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-87.43136,CL
@@ -704,7 +701,7 @@ AccidentYear,AmountType,AnnualCohort,ContractualCurrency,Currency,EconomicBasis,
 0,PR,2020,USD,USD,,A,CHF,DT1.5,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,90,IR1
 0,PR,2020,USD,USD,,A,CHF,DT1.5,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-90,IR77
 0,PR,2020,USD,USD,,A,CHF,DT1.5,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,18,IR79
-0,PR,2020,USD,USD,N,A,CHF,DT1.5,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-96,IR78
+0,PR,2020,USD,USD,L,A,CHF,DT1.5,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-96,IR78
 0,PR,2020,USD,USD,,BE,CHF,DT1.5,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,72,IR78
 0,DAE,2020,USD,USD,C,BE,CHF,DT1.5,P,False,LRC,ANN,I,Default,,DT1,P2,CH,,NotApplicable,BBA,149.83777,BOP
 0,DAE,2020,USD,USD,C,BE,CHF,DT1.5,P,False,LRC,ANN,N,Default,,DT1,P2,CH,,NotApplicable,BBA,23.93527,BOP
@@ -786,10 +783,9 @@ AccidentYear,AmountType,AnnualCohort,ContractualCurrency,Currency,EconomicBasis,
 0,PR,2020,USD,USD,L,BE,CHF,DT1.5,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,0.19963,IFIE1
 0,PR,2020,USD,USD,L,BE,CHF,DT1.5,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-55.06323,IR5
 0,PR,2020,USD,USD,L,BE,CHF,DT1.5,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,120,IR77
-0,PR,2020,USD,USD,L,BE,CHF,DT1.5,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-120,IR79
+0,PR,2020,USD,USD,L,BE,CHF,DT1.5,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-24,IR79
 0,PR,2020,USD,USD,L,BE,CHF,DT1.5,P,False,LRC,ANN,I,Default,,DT1,P2,CH,,NotApplicable,BBA,-39.96339,MC
 0,PR,2020,USD,USD,L,BE,CHF,DT1.5,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,54.86359,OCI1
-0,PR,2020,USD,USD,N,BE,CHF,DT1.5,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,96,IR79
 0,,2020,USD,USD,L,C,CHF,DT1.5,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-14.22248,AM
 0,,2020,USD,USD,L,C,CHF,DT1.5,P,False,LRC,ANN,I,Default,,DT1,P2,CH,,NotApplicable,BBA,51.56237,BOP
 0,,2020,USD,USD,L,C,CHF,DT1.5,P,False,LRC,ANN,C,Default,,DT1,P2,CH,,NotApplicable,BBA,-87.43136,CL
@@ -857,7 +853,7 @@ AccidentYear,AmountType,AnnualCohort,ContractualCurrency,Currency,EconomicBasis,
 0,PR,2020,USD,USD,,A,CHF,DT2.1,P,False,LRC,ANN,C,,,DT2,P2,CH,,NotApplicable,BBA,90,IR1
 0,PR,2020,USD,USD,,A,CHF,DT2.1,P,False,LRC,ANN,C,,,DT2,P2,CH,,NotApplicable,BBA,-90,IR77
 0,PR,2020,USD,USD,,A,CHF,DT2.1,P,False,LRC,ANN,C,,,DT2,P2,CH,,NotApplicable,BBA,18,IR79
-0,PR,2020,USD,USD,N,A,CHF,DT2.1,P,False,LRC,ANN,C,,,DT2,P2,CH,,NotApplicable,BBA,-96,IR78
+0,PR,2020,USD,USD,L,A,CHF,DT2.1,P,False,LRC,ANN,C,,,DT2,P2,CH,,NotApplicable,BBA,-96,IR78
 0,PR,2020,USD,USD,,BE,CHF,DT2.1,P,False,LRC,ANN,C,,,DT2,P2,CH,,NotApplicable,BBA,72,IR78
 0,DAE,2020,USD,USD,C,BE,CHF,DT2.1,P,False,LRC,ANN,I,,,DT2,P2,CH,,NotApplicable,BBA,149.83777,BOP
 0,DAE,2020,USD,USD,C,BE,CHF,DT2.1,P,False,LRC,ANN,N,,,DT2,P2,CH,,NotApplicable,BBA,23.93527,BOP
@@ -937,8 +933,8 @@ AccidentYear,AmountType,AnnualCohort,ContractualCurrency,Currency,EconomicBasis,
 0,PR,2020,USD,USD,L,BE,CHF,DT2.1,P,False,LRC,ANN,N,,,DT2,P2,CH,,NotApplicable,BBA,14.99001,EV
 0,PR,2020,USD,USD,L,BE,CHF,DT2.1,P,False,LRC,ANN,I,,,DT2,P2,CH,,NotApplicable,BBA,-0.183,IA
 0,PR,2020,USD,USD,L,BE,CHF,DT2.1,P,False,LRC,ANN,N,,,DT2,P2,CH,,NotApplicable,BBA,-0.01664,IA
+0,PR,2020,USD,USD,L,BE,CHF,DT2.1,P,False,LRC,ANN,C,,,DT2,P2,CH,,NotApplicable,BBA,96,IR79
 0,PR,2020,USD,USD,L,BE,CHF,DT2.1,P,False,LRC,ANN,I,,,DT2,P2,CH,,NotApplicable,BBA,-39.96339,MC
-0,PR,2020,USD,USD,N,BE,CHF,DT2.1,P,False,LRC,ANN,C,,,DT2,P2,CH,,NotApplicable,BBA,96,IR79
 0,,2020,USD,USD,L,C,CHF,DT2.1,P,False,LRC,ANN,C,,,DT2,P2,CH,,NotApplicable,BBA,-14.22248,AM
 0,,2020,USD,USD,L,C,CHF,DT2.1,P,False,LRC,ANN,I,,,DT2,P2,CH,,NotApplicable,BBA,51.56237,BOP
 0,,2020,USD,USD,L,C,CHF,DT2.1,P,False,LRC,ANN,C,,,DT2,P2,CH,,NotApplicable,BBA,-87.43136,CL
@@ -1001,7 +997,7 @@ AccidentYear,AmountType,AnnualCohort,ContractualCurrency,Currency,EconomicBasis,
 0,PR,2020,USD,USD,,A,CHF,DT3.1,P,False,LRC,ANN,C,Default,,DT3,P2,CH,,NotApplicable,BBA,90,IR1
 0,PR,2020,USD,USD,,A,CHF,DT3.1,P,False,LRC,ANN,C,Default,,DT3,P2,CH,,NotApplicable,BBA,-90,IR77
 0,PR,2020,USD,USD,,A,CHF,DT3.1,P,False,LRC,ANN,C,Default,,DT3,P2,CH,,NotApplicable,BBA,18,IR79
-0,PR,2020,USD,USD,N,A,CHF,DT3.1,P,False,LRC,ANN,C,Default,,DT3,P2,CH,,NotApplicable,BBA,-96,IR78
+0,PR,2020,USD,USD,L,A,CHF,DT3.1,P,False,LRC,ANN,C,Default,,DT3,P2,CH,,NotApplicable,BBA,-96,IR78
 0,PR,2020,USD,USD,,AA,CHF,DT3.1,P,False,LRC,ANN,I,Default,,DT3,P2,CH,,NotApplicable,BBA,-1.5,BOP
 0,PR,2020,USD,USD,,AA,CHF,DT3.1,P,False,LRC,ANN,C,Default,,DT3,P2,CH,,NotApplicable,BBA,-1.5,EOP
 0,PR,2020,USD,USD,,BE,CHF,DT3.1,P,False,LRC,ANN,C,Default,,DT3,P2,CH,,NotApplicable,BBA,72,IR78
@@ -1093,10 +1089,9 @@ AccidentYear,AmountType,AnnualCohort,ContractualCurrency,Currency,EconomicBasis,
 0,PR,2020,USD,USD,L,BE,CHF,DT3.1,P,False,LRC,ANN,C,Default,,DT3,P2,CH,,NotApplicable,BBA,0.19963,IFIE1
 0,PR,2020,USD,USD,L,BE,CHF,DT3.1,P,False,LRC,ANN,C,Default,,DT3,P2,CH,,NotApplicable,BBA,-399.83356,IR5
 0,PR,2020,USD,USD,L,BE,CHF,DT3.1,P,False,LRC,ANN,C,Default,,DT3,P2,CH,,NotApplicable,BBA,120,IR77
-0,PR,2020,USD,USD,L,BE,CHF,DT3.1,P,False,LRC,ANN,C,Default,,DT3,P2,CH,,NotApplicable,BBA,-120,IR79
+0,PR,2020,USD,USD,L,BE,CHF,DT3.1,P,False,LRC,ANN,C,Default,,DT3,P2,CH,,NotApplicable,BBA,-24,IR79
 0,PR,2020,USD,USD,L,BE,CHF,DT3.1,P,False,LRC,ANN,I,Default,,DT3,P2,CH,,NotApplicable,BBA,-39.96339,MC
 0,PR,2020,USD,USD,L,BE,CHF,DT3.1,P,False,LRC,ANN,C,Default,,DT3,P2,CH,,NotApplicable,BBA,399.63393,OCI1
-0,PR,2020,USD,USD,N,BE,CHF,DT3.1,P,False,LRC,ANN,C,Default,,DT3,P2,CH,,NotApplicable,BBA,96,IR79
 0,,2020,USD,USD,L,C,CHF,DT3.1,P,False,LRC,ANN,C,Default,,DT3,P2,CH,,NotApplicable,BBA,-16.47025,AM
 0,,2020,USD,USD,L,C,CHF,DT3.1,P,False,LRC,ANN,I,Default,,DT3,P2,CH,,NotApplicable,BBA,76.43221,BOP
 0,,2020,USD,USD,L,C,CHF,DT3.1,P,False,LRC,ANN,C,Default,,DT3,P2,CH,,NotApplicable,BBA,-139.94507,CL
@@ -1165,7 +1160,7 @@ AccidentYear,AmountType,AnnualCohort,ContractualCurrency,Currency,EconomicBasis,
 0,PR,2020,USD,USD,,A,CHF,DT4.1,P,False,LRC,ANN,C,Default,,DT4,P2,CH,,NotApplicable,BBA,90,IR1
 0,PR,2020,USD,USD,,A,CHF,DT4.1,P,False,LRC,ANN,C,Default,,DT4,P2,CH,,NotApplicable,BBA,-90,IR77
 0,PR,2020,USD,USD,,A,CHF,DT4.1,P,False,LRC,ANN,C,Default,,DT4,P2,CH,,NotApplicable,BBA,18,IR79
-0,PR,2020,USD,USD,N,A,CHF,DT4.1,P,False,LRC,ANN,C,Default,,DT4,P2,CH,,NotApplicable,BBA,-104,IR78
+0,PR,2020,USD,USD,L,A,CHF,DT4.1,P,False,LRC,ANN,C,Default,,DT4,P2,CH,,NotApplicable,BBA,-104,IR78
 0,PR,2020,USD,USD,,BE,CHF,DT4.1,P,False,LRC,ANN,C,Default,,DT4,P2,CH,,NotApplicable,BBA,72,IR78
 0,DAE,2020,USD,USD,C,BE,CHF,DT4.1,P,False,LRC,ANN,I,Default,,DT4,P2,CH,,NotApplicable,BBA,149.83777,BOP
 0,DAE,2020,USD,USD,C,BE,CHF,DT4.1,P,False,LRC,ANN,N,Default,,DT4,P2,CH,,NotApplicable,BBA,23.93527,BOP
@@ -1247,10 +1242,9 @@ AccidentYear,AmountType,AnnualCohort,ContractualCurrency,Currency,EconomicBasis,
 0,PR,2020,USD,USD,L,BE,CHF,DT4.1,P,False,LRC,ANN,C,Default,,DT4,P2,CH,,NotApplicable,BBA,0.21627,IFIE1
 0,PR,2020,USD,USD,L,BE,CHF,DT4.1,P,False,LRC,ANN,C,Default,,DT4,P2,CH,,NotApplicable,BBA,28.86422,IR5
 0,PR,2020,USD,USD,L,BE,CHF,DT4.1,P,False,LRC,ANN,C,Default,,DT4,P2,CH,,NotApplicable,BBA,130,IR77
-0,PR,2020,USD,USD,L,BE,CHF,DT4.1,P,False,LRC,ANN,C,Default,,DT4,P2,CH,,NotApplicable,BBA,-130,IR79
+0,PR,2020,USD,USD,L,BE,CHF,DT4.1,P,False,LRC,ANN,C,Default,,DT4,P2,CH,,NotApplicable,BBA,-26,IR79
 0,PR,2020,USD,USD,L,BE,CHF,DT4.1,P,False,LRC,ANN,I,Default,,DT4,P2,CH,,NotApplicable,BBA,-39.96339,MC
 0,PR,2020,USD,USD,L,BE,CHF,DT4.1,P,False,LRC,ANN,C,Default,,DT4,P2,CH,,NotApplicable,BBA,-29.08049,OCI1
-0,PR,2020,USD,USD,N,BE,CHF,DT4.1,P,False,LRC,ANN,C,Default,,DT4,P2,CH,,NotApplicable,BBA,104,IR79
 0,,2020,USD,USD,L,C,CHF,DT4.1,P,False,LRC,ANN,C,Default,,DT4,P2,CH,,NotApplicable,BBA,-41.93883,AM
 0,,2020,USD,USD,L,C,CHF,DT4.1,P,False,LRC,ANN,I,Default,,DT4,P2,CH,,NotApplicable,BBA,51.56237,BOP
 0,,2020,USD,USD,L,C,CHF,DT4.1,P,False,LRC,ANN,N,Default,,DT4,P2,CH,,NotApplicable,BBA,8.00465,BOP
