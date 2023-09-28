@@ -4,4 +4,4 @@ Year,Month,,,,
 @@YieldCurve,,,,,
 Currency,Name,Values0,Values1,Values2,Values3
 USD,,0.002,0.002,0.002,0.002
-USD,NoDiscount,0,,,
+USD,NoDiscount,0,0,0,0
