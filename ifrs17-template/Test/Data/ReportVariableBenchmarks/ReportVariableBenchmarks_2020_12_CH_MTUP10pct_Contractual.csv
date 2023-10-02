@@ -666,10 +666,8 @@ AccidentYear,AmountType,AnnualCohort,ContractualCurrency,Currency,EconomicBasis,
 0,,2020,USD,USD,L,RA,CHF,DT4.1,P,False,LRC,ANN,C,Default,,DT4,P11,CH,MTUP10pct,NotApplicable,BBA,-29.87529,IR5
 0,,2020,USD,USD,L,RA,CHF,DT4.1,P,False,LRC,ANN,C,Default,,DT4,P11,CH,MTUP10pct,NotApplicable,BBA,29.96755,OCI1
 0,ACA,2020,USD,USD,,A,CHF,DT5.1,P,False,LRC,ANN,C,Default,,DT5,P11,CH,MTUP10pct,NotApplicable,BBA,-10,CF
-0,ACA,2020,USD,USD,,A,CHF,DT5.1,P,False,LRC,ANN,C,Default,,DT5,P11,CH,MTUP10pct,NotApplicable,BBA,-10,IR8
 0,ACA,2020,USD,USD,,A,CHF,DT5.1,P,False,LRC,ANN,C,Default,,DT5,P11,CH,MTUP10pct,NotApplicable,BBA,-10,ISE4
 0,AEA,2020,USD,USD,,A,CHF,DT5.1,P,False,LRC,ANN,C,Default,,DT5,P11,CH,MTUP10pct,NotApplicable,BBA,-5,CF
-0,AEA,2020,USD,USD,,A,CHF,DT5.1,P,False,LRC,ANN,C,Default,,DT5,P11,CH,MTUP10pct,NotApplicable,BBA,-5,IR8
 0,AEA,2020,USD,USD,,A,CHF,DT5.1,P,False,LRC,ANN,C,Default,,DT5,P11,CH,MTUP10pct,NotApplicable,BBA,-5,ISE3
 0,NIC,2020,USD,USD,,A,CHF,DT5.1,P,False,LRC,ANN,C,Default,,DT5,P11,CH,MTUP10pct,NotApplicable,BBA,-280,CF
 0,NIC,2020,USD,USD,,A,CHF,DT5.1,P,False,LRC,ANN,C,Default,,DT5,P11,CH,MTUP10pct,NotApplicable,BBA,-280,ISE2
