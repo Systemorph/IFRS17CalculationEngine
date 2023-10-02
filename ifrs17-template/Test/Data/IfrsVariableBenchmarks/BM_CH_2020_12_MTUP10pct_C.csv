@@ -4,11 +4,11 @@ Month,ReportingNode,Scenario,Year
 @@C
 AccidentYear,AmountType,AocType,DataNode,EconomicBasis,EstimateType,Novelty,Values0
 ,,AM,DT1.1,L,C,C,0
+,,BOP,DT1.1,L,C,N,0
 ,,EA,DT1.1,L,C,C,0
 ,,EOP,DT1.1,L,C,C,0
-,,BOP,DT1.1,L,C,N,0
 ,,IA,DT1.1,L,C,N,0
-,,AM,DTR1.1,L,C,C,26.28586
-,,EOP,DTR1.1,L,C,C,-13.77001
+,,AM,DTR1.1,L,C,C,26.34163
 ,,BOP,DTR1.1,L,C,N,-40.06074
-,,IA,DTR1.1,L,C,N,0.00487
+,,EOP,DTR1.1,L,C,C,-13.79923
+,,IA,DTR1.1,L,C,N,-0.08012
