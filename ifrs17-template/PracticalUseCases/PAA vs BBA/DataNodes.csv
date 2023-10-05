@@ -1,0 +1,31 @@
+@@Main,,,,,,
+ReportingNode,Scenario,,,,,
+T1,,,,,,
+,,,,,,
+@@InsurancePortfolio,,,,,,
+SystemName,DisplayName,ContractualCurrency,LineOfBusiness,ValuationApproach,OciType,
+G.BBA,Gross BBA,EUR,NL,BBA,,
+G.PAA,Gross PAA,EUR,NL,PAA,,
+,,,,,,
+@@GroupOfInsuranceContract,,,,,,
+SystemName,DisplayName,InsurancePortfolio,AnnualCohort,LiabilityType,Profitability,
+G.BBA.LIC.2023.O,G.BBA.LIC.2023.O,G.BBA,2023,LIC,O,
+G.BBA.LIC.2023.P,G.BBA.LIC.2023.P,G.BBA,2023,LIC,P,
+G.BBA.LRC.2023.O,G.BBA.LRC.2023.O,G.BBA,2023,LRC,O,
+G.BBA.LRC.2023.P,G.BBA.LRC.2023.P,G.BBA,2023,LRC,P,
+G.PAA.LIC.2023.O,G.PAA.LIC.2023.O,G.PAA,2023,LIC,O,
+G.PAA.LIC.2023.P,G.PAA.LIC.2023.P,G.PAA,2023,LIC,P,
+G.PAA.LRC.2023.O,G.PAA.LRC.2023.O,G.PAA,2023,LRC,O,
+G.PAA.LRC.2023.P,G.PAA.LRC.2023.P,G.PAA,2023,LRC,P,
+,,,,,,
+@@ReinsurancePortfolio,,,,,,
+SystemName,DisplayName,ContractualCurrency,LineOfBusiness,ValuationApproach,OciType,
+R.BBA,Reinsurance BBA,EUR,NL,BBA,,
+R.PAA,Reinsurance PAA,EUR,NL,PAA,,
+,,,,,,
+@@GroupOfReinsuranceContract,,,,,,
+SystemName,DisplayName,ReinsurancePortfolio,AnnualCohort,LiabilityType,Profitability,Partner
+R.BBA.LIC.2023,R.BBA.LIC.2023,R.BBA,2023,LIC,U,PT1
+R.BBA.LRC.2023,R.BBA.LRC.2023,R.BBA,2023,LRC,U,PT1
+R.PAA.LIC.2023,R.PAA.LIC.2023,R.PAA,2023,LIC,U,PT1
+R.PAA.LRC.2023,R.PAA.LRC.2023,R.PAA,2023,LRC,U,PT1
