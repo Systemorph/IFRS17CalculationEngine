@@ -3,8 +3,8 @@ Month,ReportingNode,Scenario,Year
 12,CH,MTUP10pct,2020
 @@L
 AccidentYear,AmountType,AocType,DataNode,EconomicBasis,EstimateType,Novelty,Values0
-,,AM,DT1.1,L,L,C,-137.66519
-,,BOP,DT1.1,L,L,N,219.34327
+,,AM,DT1.1,L,L,C,-137.69797
+,,BOP,DT1.1,L,L,N,219.39313
 ,,EA,DT1.1,L,L,C,-10
-,,EOP,DT1.1,L,L,C,72.11677
-,,IA,DT1.1,L,L,N,0.43869
+,,EOP,DT1.1,L,L,C,72.13395
+,,IA,DT1.1,L,L,N,0.43879
