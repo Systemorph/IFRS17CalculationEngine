@@ -1,0 +1,7 @@
+@@Main,,,
+Year,Month,,
+2022,12,,
+@@YieldCurve,,,
+Currency,Name,Values0,Values1
+CHF,,0,0.03
+EUR,,0,0.03
