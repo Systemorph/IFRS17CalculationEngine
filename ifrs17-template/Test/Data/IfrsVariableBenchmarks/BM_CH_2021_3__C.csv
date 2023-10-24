@@ -53,13 +53,6 @@ AccidentYear,AmountType,AocType,DataNode,EconomicBasis,EstimateType,Novelty,Valu
 ,,IA,DT4.1,L,C,I,0.0787
 ,,IA,DT4.1,L,C,N,0.004
 ,,MC,DT4.1,L,C,I,105.897
-,,AM,DTP1.1,L,C,C,-23.96875
-,,AU,DTP1.1,L,C,I,-89
-,,CL,DTP1.1,L,C,C,-1014.75
-,,EA,DTP1.1,L,C,C,-16
-,,EOP,DTP1.1,L,C,C,551.28125
-,,EV,DTP1.1,L,C,I,89
-,,MC,DTP1.1,L,C,I,1606
 ,,AM,DTR1.1,L,C,C,10.76486
 ,,BOP,DTR1.1,L,C,I,-24.1101
 ,,BOP,DTR1.1,L,C,N,15.97745
