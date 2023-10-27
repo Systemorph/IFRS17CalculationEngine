@@ -1,7 +1,0 @@
-@@Main,,,,,
-ReportingNode,Year,Month,,,
-CH,2021,3,,,
-@@Actual,,,,,
-DataNode,AmountType,EstimateType,AocType,AccidentYear,Value
-DTP1.1,PR,A,CF,,100
-DTP1.1,NIC,A,CF,,-20
