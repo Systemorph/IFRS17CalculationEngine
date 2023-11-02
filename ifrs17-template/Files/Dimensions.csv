@@ -45,27 +45,27 @@ EOP,Closing Balance,,170,,,,,,,,,
 ,,,,,,,,,,,,
 @@AocConfiguration,,,,,,,,,,,,
 AocType,Novelty,DataType,InputSource,StructureType,FxPeriod,YcPeriod,CdrPeriod,ValuationPeriod,RcPeriod,Order,Year,Month
-BOP,I,17,7,7,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,10,1900,1
-MC,I,1,4,5,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,20,1900,1
-RCU,I,4,4,4,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,EndOfPeriod,30,1900,1
-CF,I,20,4,1,Average,NotApplicable,BeginningOfPeriod,Delta,EndOfPeriod,40,1900,1
-IA,I,20,5,5,Average,BeginningOfPeriod,BeginningOfPeriod,Delta,EndOfPeriod,50,1900,1
-AU,I,1,4,5,EndOfPeriod,BeginningOfPeriod,BeginningOfPeriod,EndOfPeriod,EndOfPeriod,60,1900,1
-YCU,I,8,4,5,EndOfPeriod,EndOfPeriod,BeginningOfPeriod,EndOfPeriod,EndOfPeriod,70,1900,1
-CRU,I,8,4,5,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,80,1900,1
-EV,I,1,4,5,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,90,1900,1
-BOP,N,1,4,5,Average,EndOfPeriod,EndOfPeriod,BeginningOfPeriod,EndOfPeriod,100,1900,1
-MC,N,1,4,5,Average,EndOfPeriod,EndOfPeriod,BeginningOfPeriod,EndOfPeriod,105,1900,1
-CF,N,4,4,1,Average,NotApplicable,EndOfPeriod,Delta,EndOfPeriod,110,1900,1
-IA,N,4,4,5,Average,EndOfPeriod,EndOfPeriod,Delta,EndOfPeriod,120,1900,1
-AU,N,1,4,5,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,130,1900,1
-EV,N,1,4,5,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,140,1900,1
-CL,C,2,4,5,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,180,1900,1
-EA,C,4,4,4,EndOfPeriod,NotApplicable,NotApplicable,NotApplicable,EndOfPeriod,190,1900,1
-CF,C,17,6,2,Average,NotApplicable,NotApplicable,NotApplicable,NotApplicable,193,1900,1
-WO,C,17,2,2,Average,NotApplicable,NotApplicable,NotApplicable,NotApplicable,195,1900,1
-AM,C,4,6,4,EndOfPeriod,NotApplicable,NotApplicable,NotApplicable,EndOfPeriod,200,1900,1
-EOP,C,4,6,7,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,1900,1
+BOP,I,17,7,PV|AC|TM,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,10,1900,1
+MC,I,1,4,PV|TM,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,20,1900,1
+RCU,I,4,4,TM,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,EndOfPeriod,30,1900,1
+CF,I,20,4,PV,Average,NotApplicable,BeginningOfPeriod,Delta,EndOfPeriod,40,1900,1
+IA,I,20,5,PV|TM,Average,BeginningOfPeriod,BeginningOfPeriod,Delta,EndOfPeriod,50,1900,1
+AU,I,1,4,PV|TM,EndOfPeriod,BeginningOfPeriod,BeginningOfPeriod,EndOfPeriod,EndOfPeriod,60,1900,1
+YCU,I,8,4,PV|TM,EndOfPeriod,EndOfPeriod,BeginningOfPeriod,EndOfPeriod,EndOfPeriod,70,1900,1
+CRU,I,8,4,PV|TM,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,80,1900,1
+EV,I,1,4,PV|TM,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,90,1900,1
+BOP,N,1,4,PV|TM,Average,EndOfPeriod,EndOfPeriod,BeginningOfPeriod,EndOfPeriod,100,1900,1
+MC,N,1,4,PV|TM,Average,EndOfPeriod,EndOfPeriod,BeginningOfPeriod,EndOfPeriod,105,1900,1
+CF,N,4,4,PV,Average,NotApplicable,EndOfPeriod,Delta,EndOfPeriod,110,1900,1
+IA,N,4,4,PV|TM,Average,EndOfPeriod,EndOfPeriod,Delta,EndOfPeriod,120,1900,1
+AU,N,1,4,PV|TM,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,130,1900,1
+EV,N,1,4,PV|TM,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,140,1900,1
+CL,C,2,4,PV|TM,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,180,1900,1
+EA,C,4,4,TM,EndOfPeriod,NotApplicable,NotApplicable,NotApplicable,EndOfPeriod,190,1900,1
+CF,C,17,6,AC,Average,NotApplicable,NotApplicable,NotApplicable,NotApplicable,193,1900,1
+WO,C,17,2,AC,Average,NotApplicable,NotApplicable,NotApplicable,NotApplicable,195,1900,1
+AM,C,4,6,TM,EndOfPeriod,NotApplicable,NotApplicable,NotApplicable,EndOfPeriod,200,1900,1
+EOP,C,4,6,PV|AC|TM,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,1900,1
 ,,,,,,,,,,,,
 @@CreditRiskRating,,,,,,,,,,,,
 SystemName,DisplayName,,,,,,,,,,,
@@ -113,21 +113,21 @@ C,Current,20,,,,,,,,,,
 ,,,,,,,,,,,,
 @@EstimateType,,,,,,,,,,,,
 SystemName,DisplayName,Order,StructureType,InputSource,PeriodType,,,,,,,
-BE,Best Estimate of Present Value,1,1,4,EndOfPeriod,,,,,,,
-RA,Risk Adjustment,10,1,4,EndOfPeriod,,,,,,,
-P,Patterns,15,1,4,EndOfPeriod,,,,,,,
-C,Contractual Service Margin,20,4,7,NotApplicable,,,,,,,
-L,Loss Component,30,4,7,NotApplicable,,,,,,,
-LR,Loss Recovery Component,40,4,7,NotApplicable,,,,,,,
-PL,Profit and Loss,50,0,7,NotApplicable,,,,,,,
-AA,Advance Actuals,60,2,3,NotApplicable,,,,,,,
-OA,Overdue Actuals,70,2,3,NotApplicable,,,,,,,
-DA,Deferrable,80,4,7,NotApplicable,,,,,,,
-R,PAA Revenues,85,4,4,BeginningOfPeriod,,,,,,,
-A,Actuals,90,0,2,NotApplicable,,,,,,,
-F,Factors,100,0,4,NotApplicable,,,,,,,
-BEPA,Best Estimate of Present Value To Csm,110,0,4,NotApplicable,,,,,,,
-APA,Actuals To Csm,120,0,2,NotApplicable,,,,,,,
+BE,Best Estimate of Present Value,1,PV,4,EndOfPeriod,,,,,,,
+RA,Risk Adjustment,10,PV,4,EndOfPeriod,,,,,,,
+P,Patterns,15,PV,4,EndOfPeriod,,,,,,,
+C,Contractual Service Margin,20,TM,7,NotApplicable,,,,,,,
+L,Loss Component,30,TM,7,NotApplicable,,,,,,,
+LR,Loss Recovery Component,40,TM,7,NotApplicable,,,,,,,
+PL,Profit and Loss,50,NO,7,NotApplicable,,,,,,,
+AA,Advance Actuals,60,AC,3,NotApplicable,,,,,,,
+OA,Overdue Actuals,70,AC,3,NotApplicable,,,,,,,
+DA,Deferrable,80,TM,7,NotApplicable,,,,,,,
+R,PAA Revenues,85,TM,4,BeginningOfPeriod,,,,,,,
+A,Actuals,90,NO,2,NotApplicable,,,,,,,
+F,Factors,100,NO,4,NotApplicable,,,,,,,
+BEPA,Best Estimate of Present Value To Csm,110,NO,4,NotApplicable,,,,,,,
+APA,Actuals To Csm,120,NO,2,NotApplicable,,,,,,,
 ,,,,,,,,,,,,
 @@LiabilityType,,,,,,,,,,,,
 SystemName,DisplayName,,,,,,,,,,,
