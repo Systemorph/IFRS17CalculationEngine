@@ -1,0 +1,9 @@
+@@Main
+Month,ReportingNode,Scenario,Year
+12,CH,,2020
+@@L
+AccidentYear,AmountType,AocType,DataNode,EconomicBasis,EstimateType,Novelty,Values0,Values1
+,,AM,DTP1.1,L,L,C,0,-260
+,,BOP,DTP1.1,L,L,I,0,260
+,,EA,DTP1.1,L,L,C,260,0
+,,EOP,DTP1.1,L,L,C,260,0
