@@ -15,12 +15,20 @@
 //#r "nuget:Systemorph.Charting,1.6.5"
 //#r "nuget:Systemorph.SchemaMigrations,1.6.4"
 
-
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
+
 using OpenSmc.Ifrs17.Domain.Constants;
+
+using Systemorph.Vertex.Api;
+using Systemorph.Vertex.Api.Attributes;
+using Systemorph.Vertex.Arithmetics.Api;
+using Systemorph.Vertex.Attributes.Arithmetics;
+using Systemorph.Vertex.Partition;
+using Systemorph.Vertex.Persistence.EntityFramework.Conversions.Api;
+using Systemorph.Vertex.Persistence.EntityFramework.Conversions.Converters;
+using Systemorph.Vertex.Scopes.Api;
 
 namespace OpenSmc.Ifrs17.Domain.DataModel;
 

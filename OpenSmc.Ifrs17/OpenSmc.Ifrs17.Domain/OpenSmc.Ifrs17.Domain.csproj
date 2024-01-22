@@ -6,4 +6,20 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Systemorph.Activities" Version="1.6.5" />
+    <PackageReference Include="Systemorph.Arithmetics" Version="1.6.5" />
+    <PackageReference Include="Systemorph.DataSetReader" Version="1.6.6" />
+    <PackageReference Include="Systemorph.DataSource" Version="1.6.4" />
+    <PackageReference Include="Systemorph.DataSource.Conversions" Version="1.6.4" />
+    <PackageReference Include="Systemorph.Export" Version="1.6.7" />
+    <PackageReference Include="Systemorph.Import" Version="1.6.7" />
+    <PackageReference Include="Systemorph.InteractiveObjects" Version="1.6.5" />
+    <PackageReference Include="Systemorph.OneDrive" Version="1.6.5" />
+    <PackageReference Include="Systemorph.Scopes" Version="1.6.5" />
+    <PackageReference Include="Systemorph.SharePoint" Version="1.6.5" />
+    <PackageReference Include="Systemorph.Test" Version="1.6.5" />
+    <PackageReference Include="Systemorph.Workspace" Version="1.6.4" />
+  </ItemGroup>
+
 </Project>

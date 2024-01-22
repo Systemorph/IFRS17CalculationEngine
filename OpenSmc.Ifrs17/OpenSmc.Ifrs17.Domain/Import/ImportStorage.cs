@@ -1,7 +1,15 @@
-#!import "../Utils/EqualityComparers"
-#!import "../Utils/ImportCalculationMethods"
-#!import "../Utils/Queries"
+//#!import "../Utils/EqualityComparers"
+//#!import "../Utils/ImportCalculationMethods"
+//#!import "../Utils/Queries"
 
+using OpenSmc.Ifrs17.Domain.Constants;
+using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.Utils;
+
+using Systemorph.Vertex.Collections;
+using Systemorph.Vertex.DataSource.Common;
+using Systemorph.Vertex.Hierarchies;
+using Systemorph.Vertex.Workspace;
 
 public class ImportStorage
 {   
@@ -197,7 +205,7 @@ public class ImportStorage
                                     .Where(iv => iv.Partition == PreviousPeriodPartition && iv.AocType == AocTypes.EOP)
                                     .Where(v => allImportScopesNotAtInceptionYear.Contains(v.DataNode)).ToArrayAsync())
                                     .Select(iv => iv with {AocType = AocTypes.BOP, Novelty = Novelties.I, Partition = TargetPartition}),
-                                    EqualityComparer<IfrsVariable>.Instance);
+                                    OpenSmc.Ifrs17.Domain.Utils.EqualityComparer<IfrsVariable>.Instance);
             
             await querySource.Partition.SetAsync<PartitionByReportingNodeAndPeriod>(TargetPartition);
 
@@ -210,16 +218,16 @@ public class ImportStorage
             .Concat(await querySource.Query<RawVariable>().Where(rv => rv.Partition == TargetPartition)
             .Where(rv => addedToPrimaryScope.Contains(rv.DataNode)).ToArrayAsync());
         
-        var ifrsVariables = parsedIfrsVariables.Union(openingIfrsVariables, EqualityComparer<IfrsVariable>.Instance)
+        var ifrsVariables = parsedIfrsVariables.Union(openingIfrsVariables, OpenSmc.Ifrs17.Domain.Utils.EqualityComparer<IfrsVariable>.Instance)
             .Union(await querySource.Query<IfrsVariable>().Where(iv => iv.Partition == TargetPartition && !(iv.AocType == AocTypes.BOP && iv.Novelty == Novelties.I) && 
-            primaryScope.Contains(iv.DataNode) || secondaryScope.Contains(iv.DataNode)).ToArrayAsync(), EqualityComparer<IfrsVariable>.Instance);                                                                       
+            primaryScope.Contains(iv.DataNode) || secondaryScope.Contains(iv.DataNode)).ToArrayAsync(), OpenSmc.Ifrs17.Domain.Utils.EqualityComparer<IfrsVariable>.Instance);                                                                       
 
         if(DefaultPartition != TargetPartition) {
             await querySource.Partition.SetAsync<PartitionByReportingNodeAndPeriod>(DefaultPartition);
             var defaultRawVariables = await querySource.Query<RawVariable>().Where(rv => rv.Partition == DefaultPartition && primaryScope.Contains(rv.DataNode)).ToArrayAsync();
             var defaultIfrsVariables = await querySource.Query<IfrsVariable>().Where(iv => iv.Partition == DefaultPartition && allImportScopes.Contains(iv.DataNode)).ToArrayAsync();         
-            rawVariables = rawVariables.Union(defaultRawVariables, EqualityComparer<RawVariable>.Instance);
-            ifrsVariables = ifrsVariables.Union(defaultIfrsVariables, EqualityComparer<IfrsVariable>.Instance);
+            rawVariables = rawVariables.Union(defaultRawVariables, OpenSmc.Ifrs17.Domain.Utils.EqualityComparer<RawVariable>.Instance);
+            ifrsVariables = ifrsVariables.Union(defaultIfrsVariables, OpenSmc.Ifrs17.Domain.Utils.EqualityComparer<IfrsVariable>.Instance);
             await querySource.Partition.SetAsync<PartitionByReportingNodeAndPeriod>(TargetPartition);
         }
 
