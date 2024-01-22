@@ -576,8 +576,8 @@ public record DataNodeState : KeyedRecord, IPartitioned, IWithYearMonthAndScenar
     [NoArithmetics(ArithmeticOperation.Scale)]
     [Dimension(typeof(int), nameof(Month))]
     [Range(1, 12, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
-    [DefaultValue(DefaultDataNodeActivationMonth)]
-    public int Month { get; init; } = DefaultDataNodeActivationMonth;
+    [DefaultValue(Consts.DefaultDataNodeActivationMonth)]
+    public int Month { get; init; } = Consts.DefaultDataNodeActivationMonth;
 
     [Required]
     [DefaultValue(State.Active)]
@@ -607,8 +607,8 @@ public record DataNodeParameter : KeyedRecord, IPartitioned, IWithYearMonthAndSc
     [NoArithmetics(ArithmeticOperation.Scale)]
     [Dimension(typeof(int), nameof(Month))]
     [Range(1, 12, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
-    [DefaultValue(DefaultDataNodeActivationMonth)]
-    public int Month { get; init; } = DefaultDataNodeActivationMonth;
+    [DefaultValue(Consts.DefaultDataNodeActivationMonth)]
+    public int Month { get; init; } = Consts.DefaultDataNodeActivationMonth;
 
     [Required]
     [IdentityProperty]
@@ -624,10 +624,10 @@ public record DataNodeParameter : KeyedRecord, IPartitioned, IWithYearMonthAndSc
 
 public record SingleDataNodeParameter : DataNodeParameter
 {
-    [DefaultValue(DefaultPremiumExperienceAdjustmentFactor)]
+    [DefaultValue(Consts.DefaultPremiumExperienceAdjustmentFactor)]
     [Range(0, 1, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
     [Display(Order = 20)]
-    public double PremiumAllocation { get; init; } = DefaultPremiumExperienceAdjustmentFactor;
+    public double PremiumAllocation { get; init; } = Consts.DefaultPremiumExperienceAdjustmentFactor;
 
     [Dimension(typeof(CashFlowPeriodicity))]
     [Display(Order = 30)]
