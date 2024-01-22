@@ -1,5 +1,11 @@
-#!import "1ImportScope-Identities"
+//#!import "1ImportScope-Identities"
 
+
+using OpenSmc.Ifrs17.Domain.Constants;
+using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.Utils;
+using Systemorph.Vertex.Api.Attributes;
+using Systemorph.Vertex.Scopes;
 
 public interface MonthlyRate : IScope<ImportIdentity, ImportStorage>
 {
@@ -24,33 +30,33 @@ public interface NominalCashflow : IScope<(ImportIdentity Id, string AmountType,
                 (x.Identity.Id.AocType != AocTypes.CL && x.Identity.Id.AocType != AocTypes.EOP) && // if AocType is NOT CL AND NOT EOP AND
                 x.Identity.Id.Novelty != Novelties.I && // if Novelty is NOT inforce AND
                 x.Identity.Id.ProjectionPeriod >= x.GetStorage().FirstNextYearProjection && // if it is projection >= 1 Year AND
-                !(x.Identity.AccidentYear.HasValue && MonthInAYear * x.Identity.AccidentYear >= (MonthInAYear * x.GetStorage().CurrentReportingPeriod.Year + x.GetStorage().GetShift(x.Identity.Id.ProjectionPeriod))) // if it DOES NOT (have AY and with AY >= than projected FY)
+                !(x.Identity.AccidentYear.HasValue && Consts.MonthInAYear * x.Identity.AccidentYear >= (Consts.MonthInAYear * x.GetStorage().CurrentReportingPeriod.Year + x.GetStorage().GetShift(x.Identity.Id.ProjectionPeriod))) // if it DOES NOT (have AY and with AY >= than projected FY)
             )
             .WithApplicability<EmptyNominalCashflow>(x =>
                 (x.Identity.Id.AocType == AocTypes.BOP || x.Identity.Id.AocType == AocTypes.CF || x.Identity.Id.AocType == AocTypes.IA) && // if AocType is BOP, CF or IA (or not in telescopic) AND
                 x.Identity.Id.Novelty == Novelties.I && // if Novelty is inforce AND
                 x.Identity.Id.LiabilityType == LiabilityTypes.LIC && // if LiabilityType is LIC AND
                 x.Identity.Id.ProjectionPeriod >= x.GetStorage().FirstNextYearProjection && // if it is projection >= 1 Year AND
-                (x.Identity.AccidentYear.HasValue && MonthInAYear * x.Identity.AccidentYear >= (MonthInAYear * x.GetStorage().CurrentReportingPeriod.Year + x.GetStorage().GetShift(x.Identity.Id.ProjectionPeriod))) // if it DOES (have AY and with AY >= than projected FY)
+                (x.Identity.AccidentYear.HasValue && Consts.MonthInAYear * x.Identity.AccidentYear >= (Consts.MonthInAYear * x.GetStorage().CurrentReportingPeriod.Year + x.GetStorage().GetShift(x.Identity.Id.ProjectionPeriod))) // if it DOES (have AY and with AY >= than projected FY)
             )
             .WithApplicability<EmptyNominalCashflow>(x =>
                 x.Identity.Id.LiabilityType == LiabilityTypes.LRC && // if LiabilityType is LRC
                 x.Identity.Id.ProjectionPeriod >= x.GetStorage().FirstNextYearProjection && // if it is projection >= 1 Year AND
-                (x.Identity.AccidentYear.HasValue && MonthInAYear * x.Identity.AccidentYear < (MonthInAYear * x.GetStorage().CurrentReportingPeriod.Year + x.GetStorage().GetShift(x.Identity.Id.ProjectionPeriod))) // if it DOES (have AY and with AY < than projected FY)
+                (x.Identity.AccidentYear.HasValue && Consts.MonthInAYear * x.Identity.AccidentYear < (Consts.MonthInAYear * x.GetStorage().CurrentReportingPeriod.Year + x.GetStorage().GetShift(x.Identity.Id.ProjectionPeriod))) // if it DOES (have AY and with AY < than projected FY)
             )
             .WithApplicability<EmptyNominalCashflow>(x =>
                 (x.Identity.Id.AocType == AocTypes.BOP || x.Identity.Id.AocType == AocTypes.CF || x.Identity.Id.AocType == AocTypes.IA) && // if AocType is BOP, CF or IA (or not in telescopic) AND
                 (x.Identity.Id.Novelty != Novelties.I && x.Identity.Id.Novelty != Novelties.C) && // if Novelty is NOT inforce AND
                 x.Identity.Id.LiabilityType == LiabilityTypes.LRC && // if LiabilityType is LRC AND
                 x.Identity.Id.ProjectionPeriod >= x.GetStorage().FirstNextYearProjection && // if it is projection >= 1 Year AND
-                (x.Identity.AccidentYear.HasValue && MonthInAYear * x.Identity.AccidentYear >= (MonthInAYear * x.GetStorage().CurrentReportingPeriod.Year + x.GetStorage().GetShift(x.Identity.Id.ProjectionPeriod))) // if it DOES (have AY and with AY >= than projected FY)
+                (x.Identity.AccidentYear.HasValue && Consts.MonthInAYear * x.Identity.AccidentYear >= (Consts.MonthInAYear * x.GetStorage().CurrentReportingPeriod.Year + x.GetStorage().GetShift(x.Identity.Id.ProjectionPeriod))) // if it DOES (have AY and with AY >= than projected FY)
             )
             .WithApplicability<EmptyNominalCashflow>(x =>
                 (x.Identity.Id.AocType == AocTypes.CF) && // if AocType is CF AND
                 x.Identity.Id.LiabilityType == LiabilityTypes.LRC && x.Identity.AccidentYear.HasValue && // if LiabilityType is LRC with AY defined
                 x.Identity.Id.ProjectionPeriod < x.GetStorage().FirstNextYearProjection && //  if it is projection == 0 AND
                 //x.GetStorage().GetShift(x.Identity.Id.ProjectionPeriod) == 0 && // if it is projection == 0 AND
-                !(MonthInAYear * x.Identity.AccidentYear == (MonthInAYear * x.GetStorage().CurrentReportingPeriod.Year + x.GetStorage().GetShift(x.Identity.Id.ProjectionPeriod))) // if AY == projected FY
+                !(Consts.MonthInAYear * x.Identity.AccidentYear == (Consts.MonthInAYear * x.GetStorage().CurrentReportingPeriod.Year + x.GetStorage().GetShift(x.Identity.Id.ProjectionPeriod))) // if AY == projected FY
             )
             .WithApplicability<CreditDefaultRiskNominalCashflow>(x => x.GetStorage().GetCdr().Contains(x.Identity.AmountType) && x.Identity.Id.AocType == AocTypes.CF)
             .WithApplicability<AllClaimsCashflow>(x => x.GetStorage().GetCdr().Contains(x.Identity.AmountType))
@@ -400,7 +406,7 @@ public interface MonthlyAmortizationFactorCashflow : IScope<(ImportIdentity Id, 
     
     double[] MonthlyAmortizationFactors => Identity.Id.AocType switch {
         AocTypes.AM when releasePattern.Values?.Any() ?? false => releasePattern.Values.Zip(cdcPattern,  //Extract to an other scope with month in the identity to avoid Zip?
-            (nominal, discountedCumulated) => Math.Abs(discountedCumulated) >= Precision ? Math.Max(0, 1 - nominal / discountedCumulated) : 0).ToArray(),
+            (nominal, discountedCumulated) => Math.Abs(discountedCumulated) >= Consts.Precision ? Math.Max(0, 1 - nominal / discountedCumulated) : 0).ToArray(),
         _ => Enumerable.Empty<double>().ToArray(),
         };
 }
@@ -438,10 +444,10 @@ public interface AmfFromIfrsVariable : CurrentPeriodAmortizationFactor{
     private double amortizationFactorForCu => GetStorage().GetValue(Identity.Id, AmountTypes.CU, EstimateType, EconomicBasis, 
         Identity.patternShift == 0 ? null : Identity.patternShift, Identity.Id.ProjectionPeriod);
 
-    double CurrentPeriodAmortizationFactor.Value => Math.Abs(amortizationFactorForAmountType) >= Precision ? amortizationFactorForAmountType 
-        : Math.Abs(amortizationFactorFromPattern) >= Precision ? amortizationFactorFromPattern : amortizationFactorForCu;
-    string CurrentPeriodAmortizationFactor.EffectiveAmountType => Math.Abs(amortizationFactorForAmountType) >= Precision ? Identity.AmountType 
-        : Math.Abs(amortizationFactorFromPattern) >= Precision ? null : AmountTypes.CU;
+    double CurrentPeriodAmortizationFactor.Value => Math.Abs(amortizationFactorForAmountType) >= Consts.Precision ? amortizationFactorForAmountType 
+        : Math.Abs(amortizationFactorFromPattern) >= Consts.Precision ? amortizationFactorFromPattern : amortizationFactorForCu;
+    string CurrentPeriodAmortizationFactor.EffectiveAmountType => Math.Abs(amortizationFactorForAmountType) >= Consts.Precision ? Identity.AmountType 
+        : Math.Abs(amortizationFactorFromPattern) >= Consts.Precision ? null : AmountTypes.CU;
 }
 
 

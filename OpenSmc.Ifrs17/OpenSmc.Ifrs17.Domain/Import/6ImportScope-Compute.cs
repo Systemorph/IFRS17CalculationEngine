@@ -1,5 +1,9 @@
-#!import "5ImportScope-ToIfrsVar"
+//#!import "5ImportScope-ToIfrsVar"
 
+
+using OpenSmc.Ifrs17.Domain.Constants;
+using OpenSmc.Ifrs17.Domain.DataModel;
+using Systemorph.Vertex.Scopes;
 
 public interface ComputeIfrsVarsActuals : ActualToIfrsVariable, DeferrableToIfrsVariable, EaForPremiumToIfrsVariable, TmToIfrsVariable
 {

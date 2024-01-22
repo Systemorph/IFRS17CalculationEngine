@@ -5,7 +5,7 @@
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.Utils;
-
+using Systemorph.Vertex.Api;
 using Systemorph.Vertex.Collections;
 using Systemorph.Vertex.DataSource.Common;
 using Systemorph.Vertex.Hierarchies;
@@ -134,7 +134,7 @@ public class ImportStorage
         var primaryScopeFromLinkedReinsurance = primaryScopeFromParsedVariables
                                             .Where(goc => !DataNodeDataBySystemName[goc].IsReinsurance && DataNodeDataBySystemName[goc].LiabilityType == LiabilityTypes.LRC)
                                             .SelectMany(goc => InterDataNodeParametersByGoc.TryGetValue(goc, out var interDataNodeParamByPeriod)
-                                                                  ? interDataNodeParamByPeriod[CurrentPeriod].Select(param => param.DataNode == goc ? param.LinkedDataNode : param.DataNode).Where(goc => !primaryScopeFromParsedVariables.Contains(goc))
+                                                                  ? interDataNodeParamByPeriod[Consts.CurrentPeriod].Select(param => param.DataNode == goc ? param.LinkedDataNode : param.DataNode).Where(goc => !primaryScopeFromParsedVariables.Contains(goc))
                                                                   : Enumerable.Empty<string>())
                                             .Except(primaryScopeFromParsedVariables).ToHashSet();
         var primaryScopeForPaaLrc = DataNodeDataBySystemName.Values.Where(dn => dn.LiabilityType == LiabilityTypes.LRC && dn.ValuationApproach == ValuationApproaches.PAA).Select(dn => dn.DataNode).Except(primaryScopeFromParsedVariables).ToHashSet();
@@ -142,7 +142,7 @@ public class ImportStorage
         var primaryScope = primaryScopeFromParsedVariables.Concat(primaryScopeFromLinkedReinsurance).Concat(primaryScopeForPaaLrc).ToHashSet();
         var secondaryScope = InterDataNodeParametersByGoc
                             .Where(kvp => primaryScope.Contains(kvp.Key))
-                            .SelectMany(kvp => { var linkedGocs = kvp.Value[CurrentPeriod].Select(param => param.DataNode == kvp.Key ? param.LinkedDataNode : param.DataNode);
+                            .SelectMany(kvp => { var linkedGocs = kvp.Value[Consts.CurrentPeriod].Select(param => param.DataNode == kvp.Key ? param.LinkedDataNode : param.DataNode);
                                                 return linkedGocs.Where(goc => !primaryScope.Contains(goc));}).ToHashSet();
         var allImportScopes = new HashSet<string>(primaryScope.Concat(secondaryScope));
         
@@ -156,8 +156,8 @@ public class ImportStorage
         LockedInCreditDefaultRates = new Dictionary<int, Dictionary<string, CreditDefaultRate>>();
         foreach (var year in initialYears)
         {
-            LockedInPartnerRating[year] = await workspace.LoadCurrentParameterAsync<PartnerRating>(args with { Year = year, Month = args.Year == year ? args.Month : MonthInAYear }, x => x.Partner);
-            LockedInCreditDefaultRates[year] = await workspace.LoadCurrentParameterAsync<CreditDefaultRate>(args with { Year = year, Month = args.Year == year ? args.Month : MonthInAYear }, x => x.CreditRiskRating);
+            LockedInPartnerRating[year] = await workspace.LoadCurrentParameterAsync<PartnerRating>(args with { Year = year, Month = args.Year == year ? args.Month : Consts.MonthInAYear }, x => x.Partner);
+            LockedInCreditDefaultRates[year] = await workspace.LoadCurrentParameterAsync<CreditDefaultRate>(args with { Year = year, Month = args.Year == year ? args.Month : Consts.MonthInAYear }, x => x.CreditRiskRating);
         }
         SingleDataNodeParametersByGoc = await workspace.LoadSingleDataNodeParametersAsync(args);
         LockedInYieldCurve = await workspace.LoadLockedInYieldCurveAsync(args, allImportScopes.Select(dn => DataNodeDataBySystemName[dn]));
@@ -199,7 +199,7 @@ public class ImportStorage
                                    .Where(rv => rv.Partition == PreviousPeriodPartition && rv.AocType == AocTypes.CL)
                                    .Where(v => primaryScope.Contains(v.DataNode)).ToArrayAsync())
                                    .Select(rv => rv with {AocType = AocTypes.BOP, Novelty = Novelties.I, 
-                                                 Values = rv.Values.Skip(MonthInAYear).ToArray(), Partition = TargetPartition});
+                                                 Values = rv.Values.Skip(Consts.MonthInAYear).ToArray(), Partition = TargetPartition});
             
             openingIfrsVariables = openingIfrsVariables.Union((await querySource.Query<IfrsVariable>()
                                     .Where(iv => iv.Partition == PreviousPeriodPartition && iv.AocType == AocTypes.EOP)
@@ -251,9 +251,9 @@ public class ImportStorage
     public SingleDataNodeParameter GetSingleDataNodeParameter(ImportIdentity id, int period) => SingleDataNodeParametersByGoc.TryGetValue(id.DataNode, out var singleDataNodeParameter)
             ? singleDataNodeParameter[period] : (SingleDataNodeParameter)ApplicationMessage.Log(Error.MissingSingleDataNodeParameter, id.DataNode);
     
-    public (int Year, int Month) GetReportingPeriod(int period) => period == CurrentPeriod ?
+    public (int Year, int Month) GetReportingPeriod(int period) => period == Consts.CurrentPeriod ?
                                                                                 CurrentReportingPeriod :
-                                                                                period == PreviousPeriod ? 
+                                                                                period == Consts.PreviousPeriod ? 
                                                                                     PreviousReportingPeriod :
                                                                                     ((int, int))ApplicationMessage.Log(Error.PeriodNotFound, period.ToString());
     
@@ -269,7 +269,7 @@ public class ImportStorage
             (EconomicBases.C, PeriodType.BeginningOfPeriod ) => GetShift(id.ProjectionPeriod) > 0 
                                      ? GetCurrentYieldCurve(id.DataNode, Consts.CurrentPeriod) 
                                      : GetCurrentYieldCurve(id.DataNode, Consts.PreviousPeriod),
-            (EconomicBases.C, PeriodType.EndOfPeriod) => GetCurrentYieldCurve(id.DataNode, CurrentPeriod),            
+            (EconomicBases.C, PeriodType.EndOfPeriod) => GetCurrentYieldCurve(id.DataNode, Consts.CurrentPeriod),            
             (EconomicBases.L, _ ) => LockedInYieldCurve.TryGetValue(id.DataNode, out var yc) && yc != null ? yc : 
                                     (YieldCurve)ApplicationMessage.Log(Error.YieldCurveNotFound, id.DataNode, DataNodeDataBySystemName[id.DataNode].ContractualCurrency, 
                                                                 DataNodeDataBySystemName[id.DataNode].Year.ToString(), args.Month.ToString(), 
@@ -281,7 +281,7 @@ public class ImportStorage
     //Projection
     public int GetShift(int projectionPeriod) => ProjectionConfiguration[projectionPeriod].Shift;
     public int GetTimeStep(int projectionPeriod) => ProjectionConfiguration[projectionPeriod].TimeStep;
-    public int GetProjectionCount(string dataNode) => GetProjections(GetRawVariables(dataNode), GetIfrsVariables(dataNode), ImportFormat, ProjectionConfiguration);
+    public int GetProjectionCount(string dataNode) => ImportCalculationExtensions.GetProjections(GetRawVariables(dataNode), GetIfrsVariables(dataNode), ImportFormat, ProjectionConfiguration);
 
 
     public PeriodType GetPeriodType(string amountType, string estimateType) 
@@ -313,7 +313,7 @@ public class ImportStorage
         if(!DataNodeDataBySystemName.TryGetValue(dataNode, out var dataNodeData))       ApplicationMessage.Log(Error.DataNodeNotFound, dataNode);
         if (AccidentYearsByDataNode.TryGetValue(dataNode, out var accidentYears))
             return dataNodeData.LiabilityType == LiabilityTypes.LIC
-                ? accidentYears.Where(ay => MonthInAYear * ay <= (MonthInAYear * args.Year + GetShift(projectionPeriod)) || ay == default).ToHashSet()
+                ? accidentYears.Where(ay => Consts.MonthInAYear * ay <= (Consts.MonthInAYear * args.Year + GetShift(projectionPeriod)) || ay == default).ToHashSet()
                 : accidentYears;
         return new int?[] { default };
         }
@@ -327,7 +327,7 @@ public class ImportStorage
         double rate;
         if(cdrBasis == EconomicBases.C)
         { 
-            var period = GetCreditDefaultRiskPeriod(identity) == PeriodType.BeginningOfPeriod ? PreviousPeriod : CurrentPeriod;
+            var period = GetCreditDefaultRiskPeriod(identity) == PeriodType.BeginningOfPeriod ? Consts.PreviousPeriod : Consts.CurrentPeriod;
             // if Partner == Internal then return 0;
             if(!CurrentPartnerRating.TryGetValue(dataNodeData.Partner, out var currentRating))                          ApplicationMessage.Log(Error.RatingNotFound, dataNodeData.Partner);
             if(!CurrentCreditDefaultRates.TryGetValue(currentRating[period].CreditRiskRating, out var currentRate))     ApplicationMessage.Log(Error.CreditDefaultRateNotFound, currentRating[period].CreditRiskRating);
@@ -348,10 +348,10 @@ public class ImportStorage
         if (patternFromCashflow.Any())
             return (amountType, Enumerable.Repeat(0d, patternShift).Concat(patternFromCashflow).ToArray());
         
-        if(SingleDataNodeParametersByGoc.TryGetValue(identity.DataNode, out var dataNodeParameterByPeriod) && dataNodeParameterByPeriod[CurrentPeriod].ReleasePattern != null){
+        if(SingleDataNodeParametersByGoc.TryGetValue(identity.DataNode, out var dataNodeParameterByPeriod) && dataNodeParameterByPeriod[Consts.CurrentPeriod].ReleasePattern != null){
             var annualCohort = DataNodeDataBySystemName[identity.DataNode].AnnualCohort;
-            var skipMonthsToCurrentReportingPeriod = MonthInAYear * (CurrentReportingPeriod.Year - annualCohort);
-            var monthlyPattern = dataNodeParameterByPeriod[CurrentPeriod].ReleasePattern.Interpolate(dataNodeParameterByPeriod[CurrentPeriod].CashFlowPeriodicity, dataNodeParameterByPeriod[CurrentPeriod].InterpolationMethod);
+            var skipMonthsToCurrentReportingPeriod = Consts.MonthInAYear * (CurrentReportingPeriod.Year - annualCohort);
+            var monthlyPattern = dataNodeParameterByPeriod[Consts.CurrentPeriod].ReleasePattern.Interpolate(dataNodeParameterByPeriod[Consts.CurrentPeriod].CashFlowPeriodicity, dataNodeParameterByPeriod[CurrentPeriod].InterpolationMethod);
             return (null, Enumerable.Repeat(0d, patternShift).Concat(monthlyPattern.Normalize()).Skip(skipMonthsToCurrentReportingPeriod).ToArray());
         }
 
@@ -368,26 +368,26 @@ public class ImportStorage
     
     public double GetPremiumAllocationFactor(ImportIdentity id) => 
         SingleDataNodeParametersByGoc.TryGetValue(id.DataNode, out var singleDataNodeParameter) 
-            ? singleDataNodeParameter[CurrentPeriod].PremiumAllocation : DefaultPremiumExperienceAdjustmentFactor;
+            ? singleDataNodeParameter[Consts.CurrentPeriod].PremiumAllocation : Consts.DefaultPremiumExperienceAdjustmentFactor;
     
     public string GetEconomicBasisDriver(string dataNode) => 
         SingleDataNodeParametersByGoc.TryGetValue(dataNode, out var singleDataNodeParameter)
-            ? singleDataNodeParameter[CurrentPeriod].EconomicBasisDriver 
-            : GetDefaultEconomicBasisDriver(DataNodeDataBySystemName[dataNode].ValuationApproach, DataNodeDataBySystemName[dataNode].LiabilityType);
+            ? singleDataNodeParameter[Consts.CurrentPeriod].EconomicBasisDriver 
+            : ImportCalculationExtensions.GetDefaultEconomicBasisDriver(DataNodeDataBySystemName[dataNode].ValuationApproach, DataNodeDataBySystemName[dataNode].LiabilityType);
     
     public bool IsInceptionYear(string dataNode) => SingleDataNodeParametersByGoc.TryGetValue(dataNode, out var singleDataNodeParameter)
-            ? singleDataNodeParameter[CurrentPeriod].Year == CurrentReportingPeriod.Year : default;
+            ? singleDataNodeParameter[Consts.CurrentPeriod].Year == CurrentReportingPeriod.Year : default;
     
     // Data Node relationships
     public IEnumerable<string> GetUnderlyingGic(ImportIdentity id) => !InterDataNodeParametersByGoc.TryGetValue(id.DataNode, out var interDataNodeParameters)
         ? Enumerable.Empty<string>()
-        : interDataNodeParameters[CurrentPeriod].Select(x => x.DataNode != id.DataNode ? x.DataNode : x.LinkedDataNode).Where(goc => !DataNodeDataBySystemName[goc].IsReinsurance);
+        : interDataNodeParameters[Consts.CurrentPeriod].Select(x => x.DataNode != id.DataNode ? x.DataNode : x.LinkedDataNode).Where(goc => !DataNodeDataBySystemName[goc].IsReinsurance);
 
     public IEnumerable<string> GetUnderlyingGic(ImportIdentity id, string liabilityType) => GetUnderlyingGic(id).Where(goc => DataNodeDataBySystemName[goc].LiabilityType == liabilityType);
     
     public double GetReinsuranceCoverage (ImportIdentity id, string gic)  
     {
-        var targetPeriod = AocConfigurationByAocStep[new AocStep(id.AocType, id.Novelty)].RcPeriod == PeriodType.EndOfPeriod ? CurrentPeriod : PreviousPeriod;
+        var targetPeriod = AocConfigurationByAocStep[new AocStep(id.AocType, id.Novelty)].RcPeriod == PeriodType.EndOfPeriod ? Consts.CurrentPeriod : Consts.PreviousPeriod;
         return InterDataNodeParametersByGoc.TryGetValue(id.DataNode, out var interDataNodeParameters)
             ? interDataNodeParameters[targetPeriod].FirstOrDefault(x => x.DataNode == gic || x.LinkedDataNode == gic).ReinsuranceCoverage
             : (double)ApplicationMessage.Log(Error.ReinsuranceCoverage, id.DataNode);
@@ -406,7 +406,7 @@ public class ImportStorage
     
     // Other
     public Systemorph.Vertex.Hierarchies.IHierarchy<T> GetHierarchy<T>() where T : class, IHierarchicalDimension => hierarchyCache.Get<T>();
-    public IEnumerable<string> GetNonAttributableAmountType() => GetNonAttributableAmountTypes().SelectMany(at => hierarchyCache.Get<AmountType>(at).Descendants(includeSelf : true).Select(x => x.SystemName));
+    public IEnumerable<string> GetNonAttributableAmountType() => ImportCalculationExtensions.GetNonAttributableAmountTypes().SelectMany(at => hierarchyCache.Get<AmountType>(at).Descendants(includeSelf : true).Select(x => x.SystemName));
     public IEnumerable<string> GetAttributableExpenseAndCommissionAmountType() => hierarchyCache.Get<AmountType>(AmountTypes.ACA).Descendants(includeSelf : true).Select(x => x.SystemName)
                                                                                    .Concat(hierarchyCache.Get<AmountType>(AmountTypes.AEA).Descendants(includeSelf : true).Select(x => x.SystemName));
     public IEnumerable<string> GetInvestmentClaims() => hierarchyCache.Get<AmountType>(AmountTypes.ICO).Descendants(includeSelf : true).Select(x => x.SystemName);

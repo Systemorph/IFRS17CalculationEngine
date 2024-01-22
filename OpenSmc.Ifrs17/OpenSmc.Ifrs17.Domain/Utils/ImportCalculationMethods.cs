@@ -7,7 +7,7 @@ using Systemorph.Vertex.DataStructures;
 using Systemorph.Vertex.Workspace;
 
 //#!import "./Extensions"
-using OpenSmc.Ifrs17.Domain.Utils;
+namespace OpenSmc.Ifrs17.Domain.Utils;
 
 public static class ImportCalculationExtensions
 {

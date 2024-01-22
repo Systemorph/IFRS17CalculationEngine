@@ -1,30 +1,60 @@
-#!import "6ImportScope-Compute"
+using System.Diagnostics;
+using System.Linq.Expressions;
+using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.Graph.SecurityNamespace;
+using OpenSmc.Ifrs17.Domain.Constants;
+using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.Utils;
+using Systemorph.Vertex.Activities;
+using Systemorph.Vertex.Collections;
+using Systemorph.Vertex.DataSource.Common;
+using Systemorph.Vertex.DataStructures;
+using Systemorph.Vertex.Hierarchies;
+using Systemorph.Vertex.Workspace;
+using Debug = OpenSmc.Ifrs17.Domain.Constants.Debug;
+using Scenario = OpenSmc.Ifrs17.Domain.DataModel.Scenario;
+using Scenarios = OpenSmc.Ifrs17.Domain.Constants.Scenarios;
+
+//#!import "6ImportScope-Compute"
 
 
-public static int? ParseAccidentYear(this IDataSet dataSet, IDataRow dataRow, string tableName) => 
-    dataSet.Tables[tableName].Columns.Any(x => x.ColumnName == nameof(RawVariable.AccidentYear)) &&
-    !string.IsNullOrEmpty(dataRow.Field<string>(nameof(RawVariable.AccidentYear))) ? 
-    Int32.TryParse(dataRow.Field<string>(nameof(RawVariable.AccidentYear)), out var accidentYear) ? accidentYear : 
-    (int?)ApplicationMessage.Log(Error.AccidentYearTypeNotValid, dataRow.Field<string>(nameof(RawVariable.AccidentYear))) :null;
-
-
-public static TEnum ParseEnumerable<TEnum>(this IDataSet dataSet, IDataRow dataRow, string tableName, string dataNode, TEnum parserValue)
-where TEnum : struct, IConvertible
+public static class ImpoterUtils
 {
-    Type type = typeof(TEnum);
-    string typeName = type.ToString().Substring(type.ToString().IndexOf("+")+1);
-    if (dataSet.Tables[tableName].Columns.Any(x => x.ColumnName == typeName)){
-        string rawTableInput = dataRow.Field<string>(typeName);
-        if (Enum.TryParse<TEnum>(rawTableInput, out var rti)) return rti;
-        else return string.IsNullOrEmpty(rawTableInput) ? default : typeName switch {
-            nameof(CashFlowPeriodicity) => (TEnum)ApplicationMessage.Log(Error.MissingInterpolationMethod, dataNode), 
-            nameof(InterpolationMethod) => (TEnum)ApplicationMessage.Log(Error.InvalidInterpolationMethod, dataNode), 
-            _                           => (TEnum)ApplicationMessage.Log(Error.Generic, dataNode)
-        }; 
-    } 
-    else return parserValue;
-}
+    public static int? ParseAccidentYear(this IDataSet dataSet, IDataRow dataRow, string tableName) =>
+        dataSet.Tables[tableName].Columns.Any(x => x.ColumnName == nameof(RawVariable.AccidentYear)) &&
+        !string.IsNullOrEmpty(dataRow.Field<string>(nameof(RawVariable.AccidentYear)))
+            ? Int32.TryParse(dataRow.Field<string>(nameof(RawVariable.AccidentYear)), out var accidentYear)
+                ? accidentYear
+                : (int?) ApplicationMessage.Log(Error.AccidentYearTypeNotValid,
+                    dataRow.Field<string>(nameof(RawVariable.AccidentYear)))
+            : null;
 
+
+    public static TEnum ParseEnumerable<TEnum>(this IDataSet dataSet, IDataRow dataRow, string tableName,
+        string dataNode, TEnum parserValue)
+        where TEnum : struct, IConvertible
+    {
+        Type type = typeof(TEnum);
+        string typeName = type.ToString().Substring(type.ToString().IndexOf("+") + 1);
+        if (dataSet.Tables[tableName].Columns.Any(x => x.ColumnName == typeName))
+        {
+            string rawTableInput = dataRow.Field<string>(typeName);
+            if (Enum.TryParse<TEnum>(rawTableInput, out var rti)) return rti;
+            else
+                return string.IsNullOrEmpty(rawTableInput)
+                    ? default
+                    : typeName switch
+                    {
+                        nameof(CashFlowPeriodicity) => (TEnum) ApplicationMessage.Log(Error.MissingInterpolationMethod,
+                            dataNode),
+                        nameof(InterpolationMethod) => (TEnum) ApplicationMessage.Log(Error.InvalidInterpolationMethod,
+                            dataNode),
+                        _ => (TEnum) ApplicationMessage.Log(Error.Generic, dataNode)
+                    };
+        }
+        else return parserValue;
+    }
+}
 
 public class ParsingStorage
 {
@@ -47,8 +77,8 @@ public class ParsingStorage
     private HashSet<string> estimateTypes;
     private HashSet<string> amountTypes;
     private HashSet<string> economicBasis;
-    private Dictionary<string, HashSet<string>> amountTypesByEstimateType => GetAmountTypesByEstimateType(HierarchyCache);
-    public HashSet<string> TechnicalMarginEstimateTypes => GetTechnicalMarginEstimateType(); 
+    private Dictionary<string, HashSet<string>> amountTypesByEstimateType => ImportCalculationExtensions.GetAmountTypesByEstimateType(HierarchyCache);
+    public HashSet<string> TechnicalMarginEstimateTypes => ImportCalculationExtensions.GetTechnicalMarginEstimateType(); 
     public Dictionary<Type, Dictionary<string, string>> DimensionsWithExternalId;
     public Dictionary<string, Dictionary<int, SingleDataNodeParameter>> SingleDataNodeParametersByGoc { get; private set; }
 
@@ -116,8 +146,8 @@ public class ParsingStorage
                  _ => Enumerable.Empty<AocStep>().ToHashSet(),
         };
         DataNodeDataBySystemName = args.ImportFormat == ImportFormats.Opening 
-                                    ? (await LoadDataNodesAsync(dataSource, args)).Where(kvp => kvp.Value.Year == args.Year).ToDictionary(kvp => kvp.Key, kvp => kvp.Value)
-                                    : await LoadDataNodesAsync(dataSource, args);
+                                    ? (await dataSource.LoadDataNodesAsync(args)).Where(kvp => kvp.Value.Year == args.Year).ToDictionary(kvp => kvp.Key, kvp => kvp.Value)
+                                    : await dataSource.LoadDataNodesAsync(args);
 
         SingleDataNodeParametersByGoc = await dataSource.LoadSingleDataNodeParametersAsync(args);
 
@@ -170,13 +200,13 @@ public class ParsingStorage
     public CashFlowPeriodicity GetCashFlowPeriodicity(string goc) {
         if(!SingleDataNodeParametersByGoc.TryGetValue(goc, out var inner)) 
             return CashFlowPeriodicity.Monthly;
-        return inner[CurrentPeriod].CashFlowPeriodicity; 
+        return inner[Consts.CurrentPeriod].CashFlowPeriodicity; 
     }
 
     public InterpolationMethod GetInterpolationMethod(string goc) {
         if(!SingleDataNodeParametersByGoc.TryGetValue(goc, out var inner))
             return InterpolationMethod.NotApplicable;
-        return inner[CurrentPeriod].InterpolationMethod; 
+        return inner[Consts.CurrentPeriod].InterpolationMethod; 
     }
 
     // Validations
@@ -219,7 +249,7 @@ public class ParsingStorage
 
     public string ValidateEconomicBasisDriver(string eb, string goc){
         if(string.IsNullOrEmpty(eb))
-            return GetDefaultEconomicBasisDriver(DataNodeDataBySystemName[goc].ValuationApproach, DataNodeDataBySystemName[goc].LiabilityType);
+            return ImportCalculationExtensions.GetDefaultEconomicBasisDriver(DataNodeDataBySystemName[goc].ValuationApproach, DataNodeDataBySystemName[goc].LiabilityType);
         if(!economicBasis.Contains(eb)){
                 ApplicationMessage.Log(Error.InvalidEconomicBasisDriver, goc);
                 return null;

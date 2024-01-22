@@ -35,11 +35,11 @@ public interface GetCashflowIdentities : GetIdentities
     private bool isReinsurance => GetStorage().DataNodeDataBySystemName[Identity].IsReinsurance;
     private IEnumerable<ImportIdentity> ParsedIdentities => GetScope<GetParsedAocSteps>(Identity).Values.Select(aocStep => new ImportIdentity {AocType = aocStep.AocType, Novelty = aocStep.Novelty, DataNode = Identity});
     private IEnumerable<string> rawVariableNovelties => GetStorage().GetRawVariables(Identity).Select(rv => rv.Novelty).Concat(Novelties.C.RepeatOnce()).ToHashSet();
-    private IEnumerable<AocStep> calculatedAocSteps => GetStorage().AocConfigurationByAocStep.Values.Where(x => ComputationHelper.CurrentPeriodCalculatedDataTypes.Any(y => x.DataType.Contains(y)) &&
-        (!isReinsurance ? !ComputationHelper.ReinsuranceAocType.Contains(x.AocType) : true) && rawVariableNovelties.Contains(x.Novelty) 
+    private IEnumerable<AocStep> calculatedAocSteps => GetStorage().AocConfigurationByAocStep.Values.Where(x => ImportCalculationExtensions.ComputationHelper.CurrentPeriodCalculatedDataTypes.Any(y => x.DataType.Contains(y)) &&
+        (!isReinsurance ? !ImportCalculationExtensions.ComputationHelper.ReinsuranceAocType.Contains(x.AocType) : true) && rawVariableNovelties.Contains(x.Novelty) 
         || x.DataType.Contains(DataType.CalculatedProjection) ).Select(x => new AocStep(x.AocType, x.Novelty));
     private IEnumerable<ImportIdentity> specialIdentities => calculatedAocSteps.Select(x => new ImportIdentity {AocType = x.AocType, Novelty = x.Novelty, DataNode = Identity })
-        .Concat(GetStorage().AocConfigurationByAocStep.Values.Where(x => (!isReinsurance ? !ComputationHelper.ReinsuranceAocType.Contains(x.AocType) : true) && x.DataType.Contains(DataType.Calculated) && x.Novelty == Novelties.I)
+        .Concat(GetStorage().AocConfigurationByAocStep.Values.Where(x => (!isReinsurance ? !ImportCalculationExtensions.ComputationHelper.ReinsuranceAocType.Contains(x.AocType) : true) && x.DataType.Contains(DataType.Calculated) && x.Novelty == Novelties.I)
         .Select(aocStep => new ImportIdentity{AocType = aocStep.AocType, Novelty = aocStep.Novelty, DataNode = Identity}));
 
     IEnumerable<ImportIdentity> GetIdentities.allIdentities => ParsedIdentities.Concat(specialIdentities).Distinct();       
@@ -110,13 +110,13 @@ public interface ReferenceAocStep : IScope<ImportIdentity, ImportStorage>
                 builder.ForScope<ReferenceAocStep>(s => s.WithApplicability<ReferenceAocStepForProjections>(x => x.Identity.ProjectionPeriod >= x.GetStorage().FirstNextYearProjection));
 
     protected IEnumerable<AocStep> referenceForCalculated => GetScope<PreviousAocSteps>((Identity, StructureType.AocPresentValue)).Values
-        .GroupBy(g => g.Novelty, (g, val) => val.Last(aocStep => !ComputationHelper.CurrentPeriodCalculatedDataTypes.Any(dt => GetStorage().AocConfigurationByAocStep[aocStep].DataType.Contains(dt))));
+        .GroupBy(g => g.Novelty, (g, val) => val.Last(aocStep => !ImportCalculationExtensions.ComputationHelper.CurrentPeriodCalculatedDataTypes.Any(dt => GetStorage().AocConfigurationByAocStep[aocStep].DataType.Contains(dt))));
                 
-    protected bool IsCalculatedAocStep => ComputationHelper.CurrentPeriodCalculatedDataTypes.Any(dt => GetStorage().AocConfigurationByAocStep[Identity.AocStep].DataType.Contains(dt));
+    protected bool IsCalculatedAocStep => ImportCalculationExtensions.ComputationHelper.CurrentPeriodCalculatedDataTypes.Any(dt => GetStorage().AocConfigurationByAocStep[Identity.AocStep].DataType.Contains(dt));
     
     IEnumerable<AocStep> Values => (
         IsCalculatedAocStep, 
-        ComputationHelper.ReferenceAocSteps.TryGetValue(Identity.AocStep, out var CustomDefinedReferenceAocStep) //IsCustomDefined
+        ImportCalculationExtensions.ComputationHelper.ReferenceAocSteps.TryGetValue(Identity.AocStep, out var CustomDefinedReferenceAocStep) //IsCustomDefined
         ) switch {
             (true, false) => referenceForCalculated.Any(x => x.Novelty == Novelties.C) ? referenceForCalculated.Where(x => x.Novelty == Novelties.C) : referenceForCalculated,
             (true, true) => CustomDefinedReferenceAocStep,
@@ -130,7 +130,7 @@ public interface ReferenceAocStepForProjections : ReferenceAocStep
 
     IEnumerable<AocStep> ReferenceAocStep.Values => (
         IsCalculatedAocStep, 
-        ComputationHelper.ReferenceAocSteps.TryGetValue(Identity.AocStep, out var CustomDefinedReferenceAocStep), //IsCustomDefined
+        ImportCalculationExtensions.ComputationHelper.ReferenceAocSteps.TryGetValue(Identity.AocStep, out var CustomDefinedReferenceAocStep), //IsCustomDefined
         IsInforce
         ) switch {
             (true, false, false) => referenceForCalculated.Any(x => x.Novelty == Novelties.C) ? referenceForCalculated.Where(x => x.Novelty == Novelties.C) : referenceForCalculated,

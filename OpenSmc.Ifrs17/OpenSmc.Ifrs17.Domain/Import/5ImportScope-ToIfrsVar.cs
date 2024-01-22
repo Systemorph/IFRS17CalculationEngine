@@ -1,5 +1,11 @@
-#!import "4ImportScope-TechnicalMargin"
+//#!import "4ImportScope-TechnicalMargin"
 
+
+using OpenSmc.Ifrs17.Domain.Constants;
+using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.Utils;
+using Systemorph.Vertex.Collections;
+using Systemorph.Vertex.Scopes;
 
 public interface PvToIfrsVariable: IScope<ImportIdentity, ImportStorage>
 {

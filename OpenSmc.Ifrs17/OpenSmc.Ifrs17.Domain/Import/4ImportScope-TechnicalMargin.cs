@@ -1,5 +1,11 @@
-#!import "3ImportScope-Actuals"
+//#!import "3ImportScope-Actuals"
 
+
+using OpenSmc.Ifrs17.Domain.Constants;
+using OpenSmc.Ifrs17.Domain.DataModel;
+using Systemorph.Vertex.Api.Attributes;
+using Systemorph.Vertex.Collections;
+using Systemorph.Vertex.Scopes;
 
 public interface BeExperienceAdjustmentForPremium : IScope<ImportIdentity, ImportStorage>
 {
@@ -10,7 +16,7 @@ public interface BeExperienceAdjustmentForPremium : IScope<ImportIdentity, Impor
             .WithApplicability<BeExperienceAdjustmentForPremiumForPaa>(x => x.Identity.ValuationApproach == ValuationApproaches.PAA)
             );
 
-    [IdentityProperty][NotVisible][Dimension(typeof(EstimateType))] string EstimateType => ComputationHelper.ExperienceAdjustEstimateTypeMapping[EstimateTypes.BE];
+    [IdentityProperty][NotVisible][Dimension(typeof(EstimateType))] string EstimateType => ImportCalculationExtensions.ComputationHelper.ExperienceAdjustEstimateTypeMapping[EstimateTypes.BE];
     [IdentityProperty][NotVisible][Dimension(typeof(EconomicBasis))] string EconomicBasis => GetContext();
     [IdentityProperty][NotVisible][Dimension(typeof(AmountType))] string AmountType => AmountTypes.PR;
 
@@ -36,7 +42,7 @@ public interface ActualExperienceAdjustmentOnPremium : IScope<ImportIdentity, Im
             .WithApplicability<ActualExperienceAdjustmentOnPremiumForPaa>(x => x.Identity.ValuationApproach == ValuationApproaches.PAA));
     
     [IdentityProperty][NotVisible][Dimension(typeof(AmountType))] string AmountType => AmountTypes.PR;
-    [IdentityProperty][NotVisible][Dimension(typeof(EstimateType))] string EstimateType => ComputationHelper.ExperienceAdjustEstimateTypeMapping[EstimateTypes.A];
+    [IdentityProperty][NotVisible][Dimension(typeof(EstimateType))] string EstimateType => ImportCalculationExtensions.ComputationHelper.ExperienceAdjustEstimateTypeMapping[EstimateTypes.A];
     
     double Value => GetStorage().GetPremiumAllocationFactor(Identity) * 
         GetStorage().GetPremiums().Sum(pr => GetScope<WrittenActual>((Identity, pr, EstimateTypes.A, (int?)null)).Value);
@@ -173,7 +179,7 @@ public interface TechnicalMarginForAM : TechnicalMargin{
     static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>
         builder.ForScope<TechnicalMarginForAM>(s => s.WithApplicability<TechnicalMarginForAmForPaa>(x => x.Identity.ValuationApproach == ValuationApproaches.PAA));   
  
-    double TechnicalMargin.Value => Math.Abs(AggregatedValue) > Precision ? -1d * AggregatedValue * GetScope<CurrentPeriodAmortizationFactor>((Identity, AmountTypes.CU, 0), o => o.WithContext(EconomicBasis)).Value : default;
+    double TechnicalMargin.Value => Math.Abs(AggregatedValue) > Consts.Precision ? -1d * AggregatedValue * GetScope<CurrentPeriodAmortizationFactor>((Identity, AmountTypes.CU, 0), o => o.WithContext(EconomicBasis)).Value : default;
 }
 
 public interface TechnicalMarginForAmForPaa : TechnicalMargin{
@@ -227,7 +233,7 @@ public interface AllocateTechnicalMargin: IScope<ImportIdentity, ImportStorage>
             _ => default
         };
     
-    string ComputeEstimateType(double aggregatedTechnicalMargin) => aggregatedTechnicalMargin > Precision ? EstimateTypes.L : EstimateTypes.C;
+    string ComputeEstimateType(double aggregatedTechnicalMargin) => aggregatedTechnicalMargin > Consts.Precision ? EstimateTypes.L : EstimateTypes.C;
 }
 
 public interface ComputeAllocateTechnicalMarginWithIfrsVariable : AllocateTechnicalMargin
@@ -246,7 +252,7 @@ public interface AllocateTechnicalMarginForCl : AllocateTechnicalMargin
                                                    GetScope<AllocateTechnicalMargin>(id).TechnicalMargin + GetScope<AllocateTechnicalMargin>(id).AggregatedTechnicalMargin
                                                    : (double)default; });
 
-    [NotVisible] bool AllocateTechnicalMargin.HasSwitch => Math.Abs(balancingValue) > Precision;
+    [NotVisible] bool AllocateTechnicalMargin.HasSwitch => Math.Abs(balancingValue) > Consts.Precision;
     [NotVisible] double AllocateTechnicalMargin.AggregatedTechnicalMargin => balancingValue;
 }
 
@@ -312,7 +318,7 @@ public interface LossRecoveryComponent : IScope<ImportIdentity, ImportStorage>
     private double aggregatedLoReCoBoundary => GetScope<LoReCoBoundary>(Identity).AggregatedValue;
     private double reinsuranceCsm => GetScope<TechnicalMargin>(Identity, o => o.WithContext(EstimateType)).Value;
     private double aggregatedLoReCoProjectionWithFm => AggregatedValue + reinsuranceCsm;   
-    private bool isAboveUpperBoundary => aggregatedLoReCoProjectionWithFm >= Precision;
+    private bool isAboveUpperBoundary => aggregatedLoReCoProjectionWithFm >= Consts.Precision;
     private bool isBelowLowerBoundary => aggregatedLoReCoProjectionWithFm < -1d * (aggregatedLoReCoBoundary + loReCoBoundaryValue);
     private double marginToLowerBoundary => -1d * (AggregatedValue + aggregatedLoReCoBoundary + loReCoBoundaryValue);
     
@@ -343,7 +349,7 @@ public interface LossRecoveryComponentPaa : LossRecoveryComponent{
 
 public interface LossRecoveryComponentForAm : LossRecoveryComponent{
     private string economicBasis => GetScope<TechnicalMargin>(Identity).EconomicBasis;
-    double LossRecoveryComponent.Value  => Math.Abs(AggregatedValue) > Precision ? -1d * AggregatedValue * GetScope<CurrentPeriodAmortizationFactor>((Identity, AmountTypes.CU, 0), o => o.WithContext(economicBasis)).Value : default;
+    double LossRecoveryComponent.Value  => Math.Abs(AggregatedValue) > Consts.Precision ? -1d * AggregatedValue * GetScope<CurrentPeriodAmortizationFactor>((Identity, AmountTypes.CU, 0), o => o.WithContext(economicBasis)).Value : default;
 }
 
 public interface LossRecoveryComponentForEop : LossRecoveryComponent{

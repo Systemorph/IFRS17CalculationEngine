@@ -1,4 +1,10 @@
-#!import "2ImportScope-PresentValue"
+using AngleSharp.Text;
+using OpenSmc.Ifrs17.Domain.Constants;
+using OpenSmc.Ifrs17.Domain.DataModel;
+using Systemorph.Vertex.Api.Attributes;
+using Systemorph.Vertex.Scopes;
+
+//#!import "2ImportScope-PresentValue"
 
 
 public interface WrittenActual : IScope<(ImportIdentity Id, string AmountType, string EstimateType, int? AccidentYear), ImportStorage>{
@@ -6,7 +12,7 @@ public interface WrittenActual : IScope<(ImportIdentity Id, string AmountType, s
         builder.ForScope<WrittenActual>(s => s
             .WithApplicability<ActualEmptyValue>(x => !(x.Identity.Id.AocType == AocTypes.CF && x.Identity.Id.Novelty == Novelties.C))
             .WithApplicability<ActualProjection>(x => !x.GetStorage().IsSecondaryScope(x.Identity.Id.DataNode) && x.Identity.Id.ProjectionPeriod > 0)
-            .WithApplicability<ActualFromPaymentPattern>(x => !x.GetStorage().IsSecondaryScope(x.Identity.Id.DataNode) && Math.Abs(x.Value) < Precision));
+            .WithApplicability<ActualFromPaymentPattern>(x => !x.GetStorage().IsSecondaryScope(x.Identity.Id.DataNode) && Math.Abs(x.Value) < Consts.Precision));
 
     double Value => GetStorage().GetValue(Identity.Id, Identity.AmountType, Identity.EstimateType, Identity.AccidentYear, Identity.Id.ProjectionPeriod);
 }
@@ -188,7 +194,7 @@ public interface DeferrableAm : DiscountedDeferrable {
     private double amortizationFactor => GetScope<DiscountedAmortizationFactorForDeferrals>(Identity, o => o.WithContext(EconomicBasis)).Value;
     private double aggregatedValue => GetScope<PreviousAocSteps>((Identity, StructureType.AocTechnicalMargin)).Values
                                             .Sum(aocStep => GetScope<DiscountedDeferrable>(Identity with {AocType = aocStep.AocType, Novelty = aocStep.Novelty}).Value);
-    double DiscountedDeferrable.Value => Math.Abs(aggregatedValue) > Precision ? -1d * aggregatedValue * amortizationFactor : default;
+    double DiscountedDeferrable.Value => Math.Abs(aggregatedValue) > Consts.Precision ? -1d * aggregatedValue * amortizationFactor : default;
 }
 
 public interface DeferrableEop : DiscountedDeferrable {
@@ -245,14 +251,14 @@ public interface AmReferenceDeferrable: IScope<(ImportIdentity Id, int MonthlySh
         .Sum(aoc => GetScope<NominalCashflow>((Identity.Id with {AocType = aoc.AocType, Novelty = aoc.Novelty}, AmountTypes.DAE, EstimateTypes.BE, (int?)null)).Values
         .Skip(projectionShift + Identity.MonthlyShift).FirstOrDefault());
     //if no previous RawVariable, use IfrsVariable
-    double Value => Math.Abs(referenceCashflow) >= Precision ? referenceCashflow : GetStorage().GetNovelties(AocTypes.BOP, StructureType.AocPresentValue).Sum(n => GetScope<NominalDeferrable>((Identity.Id with {AocType = AocTypes.BOP, Novelty = n}, Identity.MonthlyShift)).Value);
+    double Value => Math.Abs(referenceCashflow) >= Consts.Precision ? referenceCashflow : GetStorage().GetNovelties(AocTypes.BOP, StructureType.AocPresentValue).Sum(n => GetScope<NominalDeferrable>((Identity.Id with {AocType = AocTypes.BOP, Novelty = n}, Identity.MonthlyShift)).Value);
 }
 
 public interface AmDeferrable : NominalDeferrable{
     private IEnumerable<AocStep> referenceAocSteps => GetScope<ReferenceAocStep>(Identity.Id).Values; //Reference step of AM,C is CL,C
     private double referenceCashflow => referenceAocSteps.Sum(refAocStep => GetScope<AmReferenceDeferrable>((Identity.Id with {AocType = refAocStep.AocType, Novelty = refAocStep.Novelty}, Identity.MonthlyShift)).Value);
 
-    double NominalDeferrable.Value => Math.Abs(referenceCashflow) > Precision ? -1d * referenceCashflow * GetScope<CurrentPeriodAmortizationFactor>((Identity.Id, AmountTypes.DAE, Identity.MonthlyShift), o => o.WithContext(EconomicBasis)).Value : default;
+    double NominalDeferrable.Value => Math.Abs(referenceCashflow) > Consts.Precision ? -1d * referenceCashflow * GetScope<CurrentPeriodAmortizationFactor>((Identity.Id, AmountTypes.DAE, Identity.MonthlyShift), o => o.WithContext(EconomicBasis)).Value : default;
 }
 
 public interface EopDeferrable : NominalDeferrable{
@@ -342,7 +348,7 @@ public interface PremiumRevenueDefaultValue : PremiumRevenue {
 public interface PremiumRevenueAm : PremiumRevenue {
     private double AmortizationFactor => GetScope<DiscountedAmortizationFactorForRevenues>(Identity, o => o.WithContext(EconomicBasis)).Value;
     private double aggregatedValue => GetScope<AggregatedPremiumRevenue>(Identity).AggregatedValue;
-    double PremiumRevenue.Value => Math.Abs(aggregatedValue) > Precision ? -1d * aggregatedValue * AmortizationFactor : default;
+    double PremiumRevenue.Value => Math.Abs(aggregatedValue) > Consts.Precision ? -1d * aggregatedValue * AmortizationFactor : default;
 }
 
 public interface PremiumRevenueEop : PremiumRevenue {
