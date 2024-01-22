@@ -3,6 +3,7 @@
 
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.Utils;
 using Systemorph.Vertex.Scopes;
 
 public interface ComputeIfrsVarsActuals : ActualToIfrsVariable, DeferrableToIfrsVariable, EaForPremiumToIfrsVariable, TmToIfrsVariable
@@ -18,7 +19,7 @@ public interface ComputeIfrsVarsCashflows : PvToIfrsVariable, RaToIfrsVariable, 
     IEnumerable<IfrsVariable> amortizationFactors => Identity.ValuationApproach switch {
         ValuationApproaches.PAA => AmortizationFactor.Union(DeferrableAmFactor, EqualityComparer<IfrsVariable>.Instance),
 //.Union(RevenueAmFactor, EqualityComparer<IfrsVariable>.Instance),//No need to RevenueAmFactor as long as Revenue depends only on Cashflow
-        _ => AmortizationFactor.Union(DeferrableAmFactor, EqualityComparer<IfrsVariable>.Instance),
+        _ => AmortizationFactor.Union(DeferrableAmFactor, OpenSmc.Ifrs17.Domain.Utils.EqualityComparer<IfrsVariable>.Instance),
     };
     
     IEnumerable<IfrsVariable> CalculatedIfrsVariables => ( (Identity.ValuationApproach, GetStorage().DataNodeDataBySystemName[Identity.DataNode].LiabilityType) switch {
