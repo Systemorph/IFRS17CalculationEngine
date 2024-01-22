@@ -150,7 +150,7 @@ public interface IWithGetValueFromValues : IScope<(ImportIdentity Id, string Amo
     private int timeStep => 
         Identity.Id.LiabilityType == LiabilityTypes.LRC && 
         Identity.AccidentYear.HasValue && 
-        (MonthInAYear * Identity.AccidentYear == (MonthInAYear * GetStorage().CurrentReportingPeriod.Year + GetStorage().GetShift(Identity.Id.ProjectionPeriod)))
+        (Consts.MonthInAYear * Identity.AccidentYear == (Consts.MonthInAYear * GetStorage().CurrentReportingPeriod.Year + GetStorage().GetShift(Identity.Id.ProjectionPeriod)))
     ? int.MaxValue
     : GetStorage().GetTimeStep(Identity.Id.ProjectionPeriod);
 

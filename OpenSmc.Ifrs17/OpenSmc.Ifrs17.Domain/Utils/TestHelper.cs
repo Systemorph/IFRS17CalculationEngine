@@ -75,19 +75,25 @@ public static class Utils
         if (d1 == null && d2 == null) return true;
         else return CheckEquality((double) d1, (double) d2);
     }
-}
 
 
 
 
 
-public static Systemorph.Vertex.Pivot.Reporting.Builder.ReportBuilder<IfrsVariable,IfrsVariable,IfrsVariable> WithGridOptionsForIfrsVariable
-(this Systemorph.Vertex.Pivot.Builder.PivotBuilder<IfrsVariable,IfrsVariable,IfrsVariable> reportBuilder, int reportHeight = 650)
-{
-    return reportBuilder.ToTable().WithOptions(go => 
-        go.WithColumns(cols => cols.Modify("Value", c => c.WithWidth(300)
-                                   .WithFormat("new Intl.NumberFormat('en',{ minimumFractionDigits:2, maximumFractionDigits:2 }).format(value)")))
-          .WithRows(rows => rows.Where(r => !r.RowGroup.SystemName.EndsWith("NullGroup")).ToList())
-          .WithAutoGroupColumn(c => c.WithWidth(250) with { Pinned = "left" }) with { Height = reportHeight, GroupDefaultExpanded = 2, OnGridReady = null }
-    );
+    public static ReportBuilder<IfrsVariable, IfrsVariable, IfrsVariable>
+        WithGridOptionsForIfrsVariable
+        (this Systemorph.Vertex.Pivot.Builder.PivotBuilder<IfrsVariable, IfrsVariable, IfrsVariable> reportBuilder,
+            int reportHeight = 650)
+    {
+        return reportBuilder.ToTable().WithOptions(go =>
+            go.WithColumns(cols => cols.Modify("Value", c => c.WithWidth(300)
+                        .WithFormat(
+                            "new Intl.NumberFormat('en',{ minimumFractionDigits:2, maximumFractionDigits:2 }).format(value)")))
+                    .WithRows(rows => rows.Where(r => !r.RowGroup.SystemName.EndsWith("NullGroup")).ToList())
+                    .WithAutoGroupColumn(c => c.WithWidth(250) with {Pinned = "left"}) with
+                {
+                    Height = reportHeight, GroupDefaultExpanded = 2, OnGridReady = null
+                }
+        );
+    }
 }

@@ -1,5 +1,16 @@
-#!import "ReportMutableScopesInteractive"
-#!import "ParameterReportsQueries"
+using OpenSmc.Ifrs17.Domain.Constants;
+using OpenSmc.Ifrs17.Domain.DataModel;
+using Systemorph.InteractiveObjects;
+using Systemorph.Vertex.Export.Factory;
+using Systemorph.Vertex.Grid.Model;
+using Systemorph.Vertex.InteractiveObjects;
+using Systemorph.Vertex.InteractiveObjects.Dropdown;
+using Systemorph.Vertex.Pivot.Builder.Interfaces;
+using Systemorph.Vertex.Scopes;
+using Systemorph.Vertex.Workspace;
+
+//#!import "ReportMutableScopesInteractive"
+//#!import "ParameterReportsQueries"
 
 
 public interface ParameterReportFormsEntity<TStorage> : MutableScopeWithWorkspace<TStorage>

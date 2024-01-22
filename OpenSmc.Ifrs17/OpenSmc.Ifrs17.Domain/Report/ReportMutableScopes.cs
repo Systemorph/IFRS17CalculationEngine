@@ -1,4 +1,16 @@
-#!import "ReportScopes"
+using OpenSmc.Ifrs17.Domain.Constants;
+using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.Utils;
+using Systemorph.Vertex.Arithmetics.Aggregation;
+using Systemorph.Vertex.Collections;
+using Systemorph.Vertex.DataCubes;
+using Systemorph.Vertex.DataCubes.Api;
+using Systemorph.Vertex.Export.Factory;
+using Systemorph.Vertex.Grid.Model;
+using Systemorph.Vertex.Scopes;
+using Systemorph.Vertex.Workspace;
+
+//#!import "ReportScopes"
 
 
 public interface ReportUniverse : IMutableScopeWithStorage<ReportStorage>{}

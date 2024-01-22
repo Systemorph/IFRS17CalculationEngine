@@ -1,4 +1,20 @@
-#!import "ReportStorage"
+using OpenSmc.Ifrs17.Domain.Constants;
+using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.Utils;
+using Systemorph.Vertex.Arithmetics.Aggregation;
+using Systemorph.Vertex.DataCubes;
+using Systemorph.Vertex.DataCubes.Api;
+using Systemorph.Vertex.Scopes;
+using AmountTypes = OpenSmc.Ifrs17.Domain.Constants.AmountTypes;
+using AocTypes = OpenSmc.Ifrs17.Domain.Constants.AocTypes;
+using EconomicBases = OpenSmc.Ifrs17.Domain.Constants.EconomicBases;
+using EstimateTypes = OpenSmc.Ifrs17.Domain.Constants.EstimateTypes;
+using FxPeriod = OpenSmc.Ifrs17.Domain.Constants.FxPeriod;
+using LiabilityTypes = OpenSmc.Ifrs17.Domain.Constants.LiabilityTypes;
+using Novelties = OpenSmc.Ifrs17.Domain.Constants.Novelties;
+using ValuationApproaches = OpenSmc.Ifrs17.Domain.Constants.ValuationApproaches;
+
+//#!import "ReportStorage"
 
 
 public interface IUniverse: IScopeWithStorage<ReportStorage> {}
@@ -28,14 +44,14 @@ public interface DataWrittenActual: Data {
 }
 
 
-public interface Fx: IScope<(string ContractualCurrency, string FunctionalCurrency, FxPeriod FxPeriod, (int, int) Period, CurrencyType CurrencyType), ReportStorage> {   
+public interface Fx: IScope<(string ContractualCurrency, string FunctionalCurrency, OpenSmc.Ifrs17.Domain.Constants.FxPeriod FxPeriod, (int, int) Period, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage> {   
     private double groupFxRate => Identity.CurrencyType switch {
-            CurrencyType.Group => GetStorage().GetFx(Identity.Period, Identity.FunctionalCurrency, GroupCurrency, FxPeriod.Average),
+            OpenSmc.Ifrs17.Domain.Constants.CurrencyType.Group => GetStorage().GetFx(Identity.Period, Identity.FunctionalCurrency, GroupCurrency, FxPeriod.Average),
             _ => 1
     };
     
     private double GetFunctionalFxRate(FxPeriod fxPeriod) => Identity.CurrencyType switch {
-            CurrencyType.Contractual => 1,
+            OpenSmc.Ifrs17.Domain.Constants.CurrencyType.Contractual => 1,
             _ => GetStorage().GetFx(Identity.Period, Identity.ContractualCurrency, Identity.FunctionalCurrency, fxPeriod)
     };
     
@@ -43,7 +59,7 @@ public interface Fx: IScope<(string ContractualCurrency, string FunctionalCurren
 }
 
 
-public interface FxData: IScope<(ReportIdentity ReportIdentity, CurrencyType CurrencyType, string EstimateType), ReportStorage>, IDataCube<ReportVariable> {
+public interface FxData: IScope<(ReportIdentity ReportIdentity, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType, string EstimateType), ReportStorage>, IDataCube<ReportVariable> {
     static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>
         builder.ForScope<FxData>(s => s.WithApplicability<FxDataWrittenActual>(x => x.GetStorage().EstimateTypesWithoutAoc.Contains(x.Identity.EstimateType)));
     
@@ -53,8 +69,8 @@ public interface FxData: IScope<(ReportIdentity ReportIdentity, CurrencyType Cur
                                                        GetStorage().GetFxPeriod(GetStorage().Args.Period, Identity.ReportIdentity.Projection, x.VariableType, x.Novelty),
                                                        (Identity.ReportIdentity.Year, Identity.ReportIdentity.Month),
                                                        Identity.CurrencyType)).Fx, x ) with { Currency = Identity.CurrencyType switch {
-                                                                                                                    CurrencyType.Contractual => x.ContractualCurrency,
-                                                                                                                    CurrencyType.Functional => x.FunctionalCurrency,
+                                                                                                                    OpenSmc.Ifrs17.Domain.Constants.CurrencyType.Contractual => x.ContractualCurrency,
+                                                                                                                    OpenSmc.Ifrs17.Domain.Constants.CurrencyType.Functional => x.FunctionalCurrency,
                                                                                                                     _ => GroupCurrency }});
     
     private IDataCube<ReportVariable> Eops => Data.Filter(("VariableType", AocTypes.EOP));
@@ -88,74 +104,74 @@ public static T[] GetAllPublicConstantValues<T>(this Type type,
 }
 
 
-public interface BestEstimate: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
+public interface BestEstimate: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
     IDataCube<ReportVariable> BestEstimate => Identity.Id switch {
             { ValuationApproach: ValuationApproaches.PAA, LiabilityType: LiabilityTypes.LRC } => GetScope<LockedBestEstimate>(Identity).LockedBestEstimate, //TODO we should use the economic basis driver to decide which Economic basis to use
             { ValuationApproach: ValuationApproaches.BBA, IsOci: true } => GetScope<LockedBestEstimate>(Identity).LockedBestEstimate,
             _ => GetScope<CurrentBestEstimate>(Identity).CurrentBestEstimate };
 }
 
-public interface LockedBestEstimate: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
+public interface LockedBestEstimate: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
     IDataCube<ReportVariable> LockedBestEstimate => GetScope<FxData>((Identity.Id, Identity.CurrencyType, EstimateTypes.BE)).FxData
         .Filter(("LiabilityType", Identity.Id.LiabilityType), ("EconomicBasis", EconomicBases.L), ("AmountType", "!CDRI"));
 }
 
-public interface CurrentBestEstimate: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
+public interface CurrentBestEstimate: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
     IDataCube<ReportVariable> CurrentBestEstimate => GetScope<FxData>((Identity.Id, Identity.CurrencyType, EstimateTypes.BE)).FxData
         .Filter(("LiabilityType", Identity.Id.LiabilityType), ("EconomicBasis", EconomicBases.C), ("AmountType", "!CDRI"));
 }
 
-public interface NominalBestEstimate: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
+public interface NominalBestEstimate: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
     IDataCube<ReportVariable> NominalBestEstimate => GetScope<FxData>((Identity.Id, Identity.CurrencyType, EstimateTypes.BE)).FxData
         .Filter(("LiabilityType", Identity.Id.LiabilityType), ("EconomicBasis", EconomicBases.N), ("AmountType", "!CDRI"));
 }
 
 
-public interface RiskAdjustment: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
+public interface RiskAdjustment: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
     IDataCube<ReportVariable> RiskAdjustment => Identity.Id switch {
             { ValuationApproach: ValuationApproaches.PAA, LiabilityType: LiabilityTypes.LRC } => GetScope<LockedRiskAdjustment>(Identity).LockedRiskAdjustment, //TODO we should use the economic basis driver to decide which Economic basis to use
             { ValuationApproach: ValuationApproaches.BBA, IsOci: true } => GetScope<LockedRiskAdjustment>(Identity).LockedRiskAdjustment,
             _ => GetScope<CurrentRiskAdjustment>(Identity).CurrentRiskAdjustment };
 }
 
-public interface LockedRiskAdjustment: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
+public interface LockedRiskAdjustment: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
     IDataCube<ReportVariable> LockedRiskAdjustment => GetScope<FxData>((Identity.Id, Identity.CurrencyType, EstimateTypes.RA)).FxData
         .Filter(("LiabilityType", Identity.Id.LiabilityType), ("EconomicBasis", EconomicBases.L));
 }
 
-public interface CurrentRiskAdjustment: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
+public interface CurrentRiskAdjustment: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
     IDataCube<ReportVariable> CurrentRiskAdjustment =>  GetScope<FxData>((Identity.Id, Identity.CurrencyType, EstimateTypes.RA)).FxData
         .Filter(("LiabilityType", Identity.Id.LiabilityType), ("EconomicBasis", EconomicBases.C));
 }
 
-public interface NominalRiskAdjustment: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
+public interface NominalRiskAdjustment: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
     IDataCube<ReportVariable> NominalRiskAdjustment => GetScope<FxData>((Identity.Id, Identity.CurrencyType, EstimateTypes.RA)).FxData
         .Filter(("LiabilityType", Identity.Id.LiabilityType), ("EconomicBasis", EconomicBases.N));
 }
 
 
-public interface Fcf: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
+public interface Fcf: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
     private IDataCube<ReportVariable> BestEstimate => GetScope<BestEstimate>(Identity).BestEstimate;
     private IDataCube<ReportVariable> RiskAdjustment => GetScope<RiskAdjustment>(Identity).RiskAdjustment;
     
     IDataCube<ReportVariable> Fcf => BestEstimate + RiskAdjustment;
 }
 
-public interface CurrentFcf: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {  
+public interface CurrentFcf: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {  
     private IDataCube<ReportVariable> BestEstimate => GetScope<CurrentBestEstimate>(Identity).CurrentBestEstimate;
     private IDataCube<ReportVariable> RiskAdjustment => GetScope<CurrentRiskAdjustment>(Identity).CurrentRiskAdjustment;
     
     IDataCube<ReportVariable> CurrentFcf => BestEstimate + RiskAdjustment;
 }
 
-public interface LockedFcf: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {   
+public interface LockedFcf: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {   
     private IDataCube<ReportVariable> BestEstimate => GetScope<LockedBestEstimate>(Identity).LockedBestEstimate;
     private IDataCube<ReportVariable> RiskAdjustment => GetScope<LockedRiskAdjustment>(Identity).LockedRiskAdjustment;
     
     IDataCube<ReportVariable> LockedFcf => BestEstimate + RiskAdjustment;
 }
 
-public interface NominalFcf: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {   
+public interface NominalFcf: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {   
     private IDataCube<ReportVariable> BestEstimate => GetScope<NominalBestEstimate>(Identity).NominalBestEstimate;
     private IDataCube<ReportVariable> RiskAdjustment => GetScope<NominalRiskAdjustment>(Identity).NominalRiskAdjustment;
     
@@ -163,22 +179,22 @@ public interface NominalFcf: IScope<(ReportIdentity Id, CurrencyType CurrencyTyp
 }
 
 
-public interface Csm: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
+public interface Csm: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
     IDataCube<ReportVariable> Csm => GetScope<FxData>((Identity.Id, Identity.CurrencyType, EstimateTypes.C)).FxData;
 }
 
 
-public interface Lc: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
+public interface Lc: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
     IDataCube<ReportVariable> Lc => GetScope<FxData>((Identity.Id, Identity.CurrencyType, EstimateTypes.L)).FxData;
 }
 
 
-public interface Loreco: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
+public interface Loreco: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
     IDataCube<ReportVariable> Loreco => GetScope<FxData>((Identity.Id, Identity.CurrencyType, EstimateTypes.LR)).FxData;
 }
 
 
-public interface LrcTechnicalMargin: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
+public interface LrcTechnicalMargin: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
     private IDataCube<ReportVariable> Csm => GetScope<Csm>(Identity).Csm;
     private IDataCube<ReportVariable> Lc => GetScope<Lc>(Identity).Lc;
     private IDataCube<ReportVariable> Loreco => GetScope<Loreco>(Identity).Loreco;
@@ -187,24 +203,24 @@ public interface LrcTechnicalMargin: IScope<(ReportIdentity Id, CurrencyType Cur
 }
 
 
-public interface WrittenAndAccruals: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
+public interface WrittenAndAccruals: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
     IDataCube<ReportVariable> Written => GetScope<FxData>((Identity.Id, Identity.CurrencyType, EstimateTypes.A)).FxData;
     IDataCube<ReportVariable> Advance => GetScope<FxData>((Identity.Id, Identity.CurrencyType, EstimateTypes.AA)).FxData;
     IDataCube<ReportVariable> Overdue => GetScope<FxData>((Identity.Id, Identity.CurrencyType, EstimateTypes.OA)).FxData;
 }
 
 
-public interface Deferrals: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
+public interface Deferrals: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
     IDataCube<ReportVariable> Deferrals => GetScope<FxData>((Identity.Id, Identity.CurrencyType, EstimateTypes.DA)).FxData;
 }
 
 
-public interface Revenues: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
+public interface Revenues: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
     IDataCube<ReportVariable> Revenues => GetScope<FxData>((Identity.Id, Identity.CurrencyType, EstimateTypes.R)).FxData;
 }
 
 
-public interface ExperienceAdjustment: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
+public interface ExperienceAdjustment: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
     private IDataCube<ReportVariable> WrittenCashflow => GetScope<WrittenAndAccruals>(Identity).Written
         .Filter(("VariableType", AocTypes.CF));
     
@@ -216,12 +232,12 @@ public interface ExperienceAdjustment: IScope<(ReportIdentity Id, CurrencyType C
 }
 
 
-public interface LicActuarial: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
+public interface LicActuarial: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
     IDataCube<ReportVariable> LicActuarial => GetScope<CurrentFcf>(Identity).CurrentFcf.Filter(("LiabilityType", LiabilityTypes.LIC));
 }
 
 
-public interface Lic: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
+public interface Lic: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
     private IDataCube<ReportVariable> licActuarial => GetScope<LicActuarial>(Identity).LicActuarial;
     private IDataCube<ReportVariable> accrual => GetScope<WrittenAndAccruals>(Identity).Advance.Filter(("LiabilityType", LiabilityTypes.LIC)) + 
         GetScope<WrittenAndAccruals>(Identity).Overdue.Filter(("LiabilityType", LiabilityTypes.LIC));
@@ -237,7 +253,7 @@ public interface Lic: IScope<(ReportIdentity Id, CurrencyType CurrencyType), Rep
 }
 
 
-public interface LrcActuarial: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
+public interface LrcActuarial: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
     static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>
         builder.ForScope<LrcActuarial>(s => s.WithApplicability<LrcActuarialPaa>(x => x.Identity.Id.ValuationApproach == ValuationApproaches.PAA));
 
@@ -257,7 +273,7 @@ public interface LrcActuarialPaa: LrcActuarial{
 }
 
 
-public interface Lrc: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
+public interface Lrc: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
     protected IDataCube<ReportVariable> lrcActuarial => GetScope<LrcActuarial>(Identity).LrcActuarial;
     protected IDataCube<ReportVariable> accrual => GetScope<WrittenAndAccruals>(Identity).Advance.Filter(("LiabilityType", LiabilityTypes.LRC)) + 
                                                  GetScope<WrittenAndAccruals>(Identity).Overdue.Filter(("LiabilityType", LiabilityTypes.LRC));
@@ -273,7 +289,7 @@ public interface Lrc: IScope<(ReportIdentity Id, CurrencyType CurrencyType), Rep
 }
 
 
-public interface FcfChangeInEstimate: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
+public interface FcfChangeInEstimate: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
     private IDataCube<ReportVariable> FcfDeltas => GetScope<Fcf>(Identity).Fcf.Filter(("VariableType", "!BOP"),("VariableType", "!EOP")) +
                                                    GetScope<Fcf>(Identity).Fcf.Filter(("VariableType", AocTypes.BOP),("Novelty", "!I"))
                                                    .Where(x => string.IsNullOrWhiteSpace(x.AmountType) ? true : !GetStorage().GetHierarchy<AmountType>().Ancestors(x.AmountType, includeSelf: true).Any(x => x.SystemName == AmountTypes.DE))
@@ -334,7 +350,7 @@ public interface FcfChangeInEstimate: IScope<(ReportIdentity Id, CurrencyType Cu
 }
 
 
-public interface CsmChangeInEstimate: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
+public interface CsmChangeInEstimate: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
     
     private (string amortization, string nonFinancial) variableType => Identity.Id switch {
             { IsReinsurance: false} => ("IR3", "IR5"),
@@ -363,7 +379,7 @@ public interface CsmChangeInEstimate: IScope<(ReportIdentity Id, CurrencyType Cu
 }
 
 
-public interface LcChangeInEstimate: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
+public interface LcChangeInEstimate: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
     
     private IDataCube<ReportVariable> Lc => GetScope<Lc>(Identity).Lc.Filter(("VariableType", "!BOP"),("VariableType", "!EOP")) +
                                             GetScope<Lc>(Identity).Lc.Filter(("VariableType", AocTypes.BOP),("Novelty", "!I"));
@@ -391,7 +407,7 @@ public interface LcChangeInEstimate: IScope<(ReportIdentity Id, CurrencyType Cur
 }
 
 
-public interface LorecoChangeInEstimate: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
+public interface LorecoChangeInEstimate: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
     
     private IDataCube<ReportVariable> Loreco => GetScope<Loreco>(Identity).Loreco.Filter(("VariableType", "!BOP"),("VariableType", "!EOP")) +
                                                 GetScope<Loreco>(Identity).Loreco.Filter(("VariableType", AocTypes.BOP),("Novelty", "!I"));
@@ -415,7 +431,7 @@ public interface LorecoChangeInEstimate: IScope<(ReportIdentity Id, CurrencyType
 }
 
 
-public interface IncurredActuals: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
+public interface IncurredActuals: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
     private IDataCube<ReportVariable> WrittenCashflow => GetScope<WrittenAndAccruals>(Identity).Written.Filter(("VariableType", "CF"));
     private IDataCube<ReportVariable> AdvanceWriteOff => GetScope<WrittenAndAccruals>(Identity).Advance.Filter(("VariableType", "WO"));
     private IDataCube<ReportVariable> OverdueWriteOff => GetScope<WrittenAndAccruals>(Identity).Overdue.Filter(("VariableType", "WO"));
@@ -454,7 +470,7 @@ public interface IncurredActuals: IScope<(ReportIdentity Id, CurrencyType Curren
 }
 
 
-public interface IncurredDeferrals: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
+public interface IncurredDeferrals: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
     private IDataCube<ReportVariable> Deferrals => GetScope<Deferrals>(Identity).Filter(("VariableType", "!BOP"),("VariableType", "!EOP"));
         
     private IDataCube<ReportVariable> Amortization => -1 * Deferrals
@@ -465,7 +481,7 @@ public interface IncurredDeferrals: IScope<(ReportIdentity Id, CurrencyType Curr
 }
 
 
-public interface ExperienceAdjustmentOnPremium: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
+public interface ExperienceAdjustmentOnPremium: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
     static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>
         builder.ForScope<ExperienceAdjustmentOnPremium>(s => s.WithApplicability<ExperienceAdjustmentOnPremiumNotApplicable>(x => x.Identity.Id.IsReinsurance || x.Identity.Id.LiabilityType == LiabilityTypes.LIC));
 
@@ -521,7 +537,7 @@ public interface ExperienceAdjustmentOnPremiumNotApplicable: ExperienceAdjustmen
 // }
 
 
-public interface FinancialPerformance: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
+public interface FinancialPerformance: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
     
     private IDataCube<ReportVariable> FcfChangeInEstimate => GetScope<FcfChangeInEstimate>(Identity);
     private IDataCube<ReportVariable> CsmChangeInEstimate => GetScope<CsmChangeInEstimate>(Identity);
@@ -536,7 +552,7 @@ public interface FinancialPerformance: IScope<(ReportIdentity Id, CurrencyType C
 }
 
 
-public interface InsuranceRevenue: IScope<(ReportIdentity Id, CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
+public interface InsuranceRevenue: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage>, IDataCube<ReportVariable> {
     static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>
         builder.ForScope<InsuranceRevenue>(s => s.WithApplicability<InsuranceRevenueNotApplicable>(x => x.Identity.Id.IsReinsurance || x.Identity.Id.LiabilityType == LiabilityTypes.LIC));
 
