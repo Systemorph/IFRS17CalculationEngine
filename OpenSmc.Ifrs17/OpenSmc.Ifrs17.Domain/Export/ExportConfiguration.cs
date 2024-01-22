@@ -1,8 +1,8 @@
-#!import "../DataModel/DataStructure"
 
 
-using Systemorph.Vertex.Export.Builders.Interfaces;
-using Systemorph.Vertex.Export.Excel.Builders.Interfaces;
+using OpenSmc.Ifrs17.Domain.DataModel;
+
+namespace OpenSmc.Ifrs17.Domain.Export;
 
 
 public static IDocumentBuilder MainTabConfiguration<T>(this IDocumentBuilder builder, T args) where T : IfrsPartition

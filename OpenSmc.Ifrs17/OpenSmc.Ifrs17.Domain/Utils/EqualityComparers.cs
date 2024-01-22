@@ -1,6 +1,8 @@
-#!import "../DataModel/DataStructure"
-using System;
+using System.Linq.Expressions;
+using OpenSmc.Ifrs17.Domain.Constants;
+using OpenSmc.Ifrs17.Domain.DataModel;
 
+namespace OpenSmc.Ifrs17.Domain.Utils;
 
 public static bool SequenceEqual(this double[] defaultArray, double[] testArray, double precision)
 {
@@ -23,7 +25,7 @@ class RawVariableComparer: IEqualityComparer<RawVariable>
 
     public bool Equals(RawVariable x, RawVariable y) =>
         x.AccidentYear == y.AccidentYear && x.AmountType == y.AmountType && x.DataNode == y.DataNode && x.AocType == y.AocType && 
-        x.Novelty == y.Novelty && x.EstimateType == y.EstimateType && (IgnoreValues ? true : x.Values.SequenceEqual(y.Values, Precision));
+        x.Novelty == y.Novelty && x.EstimateType == y.EstimateType && (IgnoreValues ? true : x.Values.SequenceEqual(y.Values, Consts.Precision));
 
     public int GetHashCode(RawVariable v) => 0;
 
@@ -61,7 +63,7 @@ class IfrsVariableComparer: IEqualityComparer<IfrsVariable>
 
     public int GetHashCode(IfrsVariable v) => 0;
 
-    public static IfrsVariableComparer Instance(bool ignoreValues = false, double precision = Precision) => new IfrsVariableComparer(ignoreValues, precision);
+    public static IfrsVariableComparer Instance(bool ignoreValues = false, double precision = Consts.Precision) => new IfrsVariableComparer(ignoreValues, precision);
 }
 
 
@@ -78,10 +80,10 @@ class YieldCurveComparer: IEqualityComparer<YieldCurve>
         if (!(x.Scenario == y.Scenario && x.Currency == y.Currency && x.Name == y.Name))
             return false; 
         if (x.Year == y.Year)
-            return x.Values.SequenceEqual(y.Values, YieldCurvePrecision); 
+            return x.Values.SequenceEqual(y.Values, Consts.YieldCurvePrecision); 
         return x.Year > y.Year
-            ? x.Values.SequenceEqual(y.Values.Skip(x.Year - y.Year).ToArray(), YieldCurvePrecision)
-            : x.Values.Skip(y.Year - x.Year).ToArray().SequenceEqual(y.Values, YieldCurvePrecision);
+            ? x.Values.SequenceEqual(y.Values.Skip(x.Year - y.Year).ToArray(), Consts.YieldCurvePrecision)
+            : x.Values.Skip(y.Year - x.Year).ToArray().SequenceEqual(y.Values, Consts.YieldCurvePrecision);
     }
 	
     public int GetHashCode (YieldCurve x) => 0;
@@ -114,18 +116,6 @@ class ParametersComparer: IEqualityComparer<DataNodeParameter>
 
     public static ParametersComparer Instance() => new ParametersComparer();
 }
-
-
-using System;
-using System.Collections.Generic;
-using System.Diagnostics; 
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Threading;
-//using Systemorph.Domain;
-//using Systemorph.Utils.Reflection;
-using static Systemorph.Vertex.Equality.IdentityPropertyExtensions;
 
 
 class EqualityComparer<T> : IEqualityComparer<T>

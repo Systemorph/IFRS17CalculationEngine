@@ -21,7 +21,8 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 using OpenSmc.Ifrs17.Domain.Constants;
-using DataType = System.ComponentModel.DataAnnotations.DataType;
+
+namespace OpenSmc.Ifrs17.Domain.DataModel;
 
 public interface IKeyed
 {
@@ -246,7 +247,7 @@ public record AocConfiguration : KeyedRecord, IWithYearAndMonth, IOrdered
     [Dimension(typeof(Novelty))]
     public string Novelty { get; init; }
 
-    [Dimension(typeof(DataType))] public DataType DataType { get; init; }
+    [Dimension(typeof(Constants.DataType))] public Constants.DataType DataType { get; init; }
 
     [Dimension(typeof(StructureType))] public StructureType StructureType { get; init; }
 
