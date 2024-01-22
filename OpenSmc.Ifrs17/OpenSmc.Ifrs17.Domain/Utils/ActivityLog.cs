@@ -2,14 +2,34 @@ using OpenSmc.Ifrs17.Domain.DataModel;
 using System.IO;
 using System.Text;
 using System.Text.Json.Serialization;
+using Microsoft.Graph.CallRecords;
+using Microsoft.Graph.SecurityNamespace;
+using Systemorph.Vertex.Activities;
+using Systemorph.Vertex.Collections;
+using Systemorph.Vertex.DataSetReader;
+using Systemorph.Vertex.DataSetReader.Csv;
+using Systemorph.Vertex.DataSource.Common;
+using Systemorph.Vertex.Export;
+using Systemorph.Vertex.Export.Builders;
+using Systemorph.Vertex.Export.Builders.Interfaces;
+using Systemorph.Vertex.FileStorage;
+using Systemorph.Vertex.Import.Builders;
+using Systemorph.Vertex.Import.Mappings;
+using Systemorph.Vertex.Persistence.EntityFramework.Conversions.Api;
+using Systemorph.Vertex.Session;
 
 namespace OpenSmc.Ifrs17.Domain.Utils;
 
 public record StreamWrapper(Stream Stream, bool WillBeReused);
 
-public static string ProcessNotification(this object obj)
+public static class ActivityLogMethods
 {
-    return obj is ActivityMessageNotification amn ? amn.Message : "";
+
+    public static string ProcessNotification(this object obj)
+    {
+        return obj is ActivityMessageNotification amn ? amn.Message : "";
+    }
+
 }
 
 public record IOActivity : KeyedRecord
@@ -402,9 +422,9 @@ public record ImportBuilderWriter(ImportOptionsBuilder Builder)
     }
 }
 
-ImportBuilderWriter.Session = Session;
-ImportBuilderWriter.DataSource = DataSource;
-ImportBuilderWriter.ImportVariable = DataSetReader;
+//ImportBuilderWriter.Session = Session;
+//ImportBuilderWriter.DataSource = DataSource;
+//ImportBuilderWriter.ImportVariable = DataSetReader;
 
 public record ExportBuilderWriter(DocumentBuilder Builder)
 {
@@ -428,18 +448,20 @@ public record ExportBuilderWriter(DocumentBuilder Builder)
     }
 }
 
-ExportBuilderWriter.Session = Session;
-ExportBuilderWriter.DataSource = DataSource;
-ExportBuilderWriter.ImportVariable = DataSetReader;
+//ExportBuilderWriter.Session = Session;
+//ExportBuilderWriter.DataSource = DataSource;
+//ExportBuilderWriter.ImportVariable = DataSetReader;
 
-
-public static ImportBuilderWriter WithActivityLog(this ImportOptionsBuilder builder)
+public static class WithActivityExtensions
 {
-    return new ImportBuilderWriter(builder);
-}
+    public static ImportBuilderWriter WithActivityLog(this ImportOptionsBuilder builder)
+    {
+        return new ImportBuilderWriter(builder);
+    }
 
 
-public static ExportBuilderWriter WithActivityLog(this IDocumentBuilder builder)
-{
-    return new ExportBuilderWriter(builder as DocumentBuilder);
+    public static ExportBuilderWriter WithActivityLog(this IDocumentBuilder builder)
+    {
+        return new ExportBuilderWriter(builder as DocumentBuilder);
+    }
 }

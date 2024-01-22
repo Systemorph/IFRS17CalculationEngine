@@ -1,6 +1,10 @@
 using System.Linq.Expressions;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
+using Systemorph.Vertex.Collections;
+using Systemorph.Vertex.DataSource.Api;
+using Systemorph.Vertex.DataSource.Common;
+using Systemorph.Vertex.Workspace;
 
 
 namespace OpenSmc.Ifrs17.Domain.Utils;
@@ -204,7 +208,7 @@ public static class Queries
     }
 
 
-    public static async Task<T[]> LoadPartitionedDataAsync<T, P>(this IDataSource querySource, Guid partition)
+    public static async Task<T[]> LoadPartitionedDataAsync<T, P>(this Systemorph.Vertex.DataSource.Common.IDataSource querySource, Guid partition)
         where T : IPartitioned
         where P : IPartition
     {

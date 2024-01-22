@@ -7,13 +7,14 @@ using OpenSmc.Ifrs17.Domain.DataModel;
 using Systemorph.Vertex.DataCubes;
 using Systemorph.Vertex.DataCubes.Api;
 using Systemorph.Vertex.Equality;
-using static MoreLinq.Extensions.ZipLongestExtension;
+//using static MoreLinq.Extensions.ZipLongestExtension;
+//using MoreLinq.Extensions.ZipLongestExtension;
 
 namespace OpenSmc.Ifrs17.Domain.Utils;
 
 public static class Utils
 {
-    private static T GetValidElement<T>(this ICollection<T> collection, int index)
+    public static T? GetValidElement<T>(this ICollection<T> collection, int index)
     {
         var count = collection.Count;
         if (collection == null || count == 0)
@@ -64,10 +65,10 @@ public static class Utils
     }
 
 
-    public static double[] AggregateDoubleArray(this IEnumerable<IEnumerable<double>> source)
+    /*public static double[] AggregateDoubleArray(this IEnumerable<IEnumerable<double>> source)
     {
         return source.Where(x => x is not null).DefaultIfEmpty(Enumerable.Empty<double>()).Aggregate((x, y) => x.ZipLongest(y, (a, b) => a + b)).ToArray();
-    }
+    }*/
 
 
     public static double[] Normalize(this IEnumerable<double> source)

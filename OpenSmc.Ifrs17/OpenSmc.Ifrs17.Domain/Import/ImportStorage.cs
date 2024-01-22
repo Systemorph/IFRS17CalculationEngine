@@ -23,7 +23,7 @@ public class ImportStorage
     
     //Time Periods 
     public (int Year, int Month) CurrentReportingPeriod => (args.Year, args.Month);
-    public (int Year, int Month) PreviousReportingPeriod => (args.Year - 1, MonthInAYear); // YTD Logic
+    public (int Year, int Month) PreviousReportingPeriod => (args.Year - 1, Consts.MonthInAYear); // YTD Logic
 
     //Partitions
     public Guid PartitionByRn;
@@ -96,7 +96,7 @@ public class ImportStorage
         //ProjectionConfiguration : Current Period + projection for every Quarter End for current Year and next Years as in projectionConfiguration.csv
         ProjectionConfiguration = (await workspace.Query<ProjectionConfiguration>().ToArrayAsync()).SortRelevantProjections(args.Month);
         FirstNextYearProjection = ProjectionConfiguration.TakeWhile(x => x.Shift <= CurrentReportingPeriod.Month).Count() + 
-            (CurrentReportingPeriod.Month == MonthInAYear ? -1 : 0);
+            (CurrentReportingPeriod.Month == Consts.MonthInAYear ? -1 : 0);
         
         //Get Partitions
         PartitionByRn = (await querySource.Query<PartitionByReportingNode>().Where(p => p.ReportingNode == args.ReportingNode).ToArrayAsync()).Single().Id;
@@ -267,8 +267,8 @@ public class ImportStorage
     // Modify this getter
     public YieldCurve GetYieldCurve(ImportIdentity id, string economicBasis) => (economicBasis, GetYieldCurvePeriod(id)) switch {
             (EconomicBases.C, PeriodType.BeginningOfPeriod ) => GetShift(id.ProjectionPeriod) > 0 
-                                     ? GetCurrentYieldCurve(id.DataNode, CurrentPeriod) 
-                                     : GetCurrentYieldCurve(id.DataNode, PreviousPeriod),
+                                     ? GetCurrentYieldCurve(id.DataNode, Consts.CurrentPeriod) 
+                                     : GetCurrentYieldCurve(id.DataNode, Consts.PreviousPeriod),
             (EconomicBases.C, PeriodType.EndOfPeriod) => GetCurrentYieldCurve(id.DataNode, CurrentPeriod),            
             (EconomicBases.L, _ ) => LockedInYieldCurve.TryGetValue(id.DataNode, out var yc) && yc != null ? yc : 
                                     (YieldCurve)ApplicationMessage.Log(Error.YieldCurveNotFound, id.DataNode, DataNodeDataBySystemName[id.DataNode].ContractualCurrency, 

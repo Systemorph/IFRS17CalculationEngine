@@ -1,17 +1,23 @@
 using System.Linq.Expressions;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
+using Systemorph.Vertex.Equality;
 
 namespace OpenSmc.Ifrs17.Domain.Utils;
 
-public static bool SequenceEqual(this double[] defaultArray, double[] testArray, double precision)
+public static class SequenceEqualExtension
 {
-    if ( defaultArray == null || testArray == null ) return false; 
-    if (defaultArray.Length != testArray.Length) return false;
-    for (int i = 0; i < defaultArray.Length; i++){
-        if(Math.Abs(defaultArray[i]-testArray[i]) >= precision) return false;
+    public static bool SequenceEqual(this double[] defaultArray, double[] testArray, double precision)
+    {
+        if (defaultArray == null || testArray == null) return false;
+        if (defaultArray.Length != testArray.Length) return false;
+        for (int i = 0; i < defaultArray.Length; i++)
+        {
+            if (Math.Abs(defaultArray[i] - testArray[i]) >= precision) return false;
+        }
+
+        return true;
     }
-    return true;
 }
 
 
