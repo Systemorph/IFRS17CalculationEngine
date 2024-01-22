@@ -17,7 +17,7 @@ public interface ComputeIfrsVarsCashflows : PvToIfrsVariable, RaToIfrsVariable, 
     TmToIfrsVariable, NominalToIfrsVariable, RevenueToIfrsVariable, ActualToIfrsVariable
 {
     IEnumerable<IfrsVariable> amortizationFactors => Identity.ValuationApproach switch {
-        ValuationApproaches.PAA => AmortizationFactor.Union(DeferrableAmFactor, EqualityComparer<IfrsVariable>.Instance),
+        ValuationApproaches.PAA => AmortizationFactor.Union(DeferrableAmFactor, OpenSmc.Ifrs17.Domain.Utils.EqualityComparer<IfrsVariable>.Instance),
 //.Union(RevenueAmFactor, EqualityComparer<IfrsVariable>.Instance),//No need to RevenueAmFactor as long as Revenue depends only on Cashflow
         _ => AmortizationFactor.Union(DeferrableAmFactor, OpenSmc.Ifrs17.Domain.Utils.EqualityComparer<IfrsVariable>.Instance),
     };

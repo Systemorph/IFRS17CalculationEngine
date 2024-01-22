@@ -1,6 +1,7 @@
 //#!import "4ImportScope-TechnicalMargin"
 
 
+using Microsoft.Graph.ExternalConnectors;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.Utils;
@@ -22,7 +23,7 @@ public interface PvToIfrsVariable: IScope<ImportIdentity, ImportStorage>
                       Novelty = x.Identity.Novelty, 
                       AccidentYear = pv.AccidentYear,
                       AmountType = pv.AmountType,
-                      Values = SetProjectionValue(pv.Value, x.Identity.ProjectionPeriod),
+                      Values = ImportCalculationExtensions.SetProjectionValue(pv.Value, x.Identity.ProjectionPeriod),
                       Partition = GetStorage().TargetPartition }));
   IEnumerable<IfrsVariable> PvCurrent => GetScope<PvCurrent>(Identity).RepeatOnce().SelectMany(x => 
     x.PresentValues.Select(pv =>
@@ -33,7 +34,7 @@ public interface PvToIfrsVariable: IScope<ImportIdentity, ImportStorage>
                       Novelty = x.Identity.Novelty, 
                       AccidentYear = pv.AccidentYear,
                       AmountType = pv.AmountType,
-                      Values = SetProjectionValue(pv.Value, x.Identity.ProjectionPeriod),
+                      Values = ImportCalculationExtensions.SetProjectionValue(pv.Value, x.Identity.ProjectionPeriod),
                       Partition = GetStorage().TargetPartition }));
 }
 
@@ -59,7 +60,7 @@ public interface NominalToIfrsVariable: IScope<ImportIdentity, ImportStorage>
                               Novelty = x.Identity.Novelty, 
                               AccidentYear = pv.AccidentYear,
                               AmountType = pv.AmountType,
-                              Values = SetProjectionValue(pv.Value, x.Identity.ProjectionPeriod),
+                              Values = ImportCalculationExtensions.SetProjectionValue(pv.Value, x.Identity.ProjectionPeriod),
                               Partition = GetStorage().TargetPartition}))
     .Concat(GetScope<CumulatedNominalRA>(Identity).RepeatOnce().SelectMany(x => 
         x.PresentValues.Select(pv => 
@@ -70,7 +71,7 @@ public interface NominalToIfrsVariable: IScope<ImportIdentity, ImportStorage>
                               Novelty = x.Identity.Novelty, 
                               AccidentYear = pv.AccidentYear,
                               AmountType = pv.AmountType,
-                              Values = SetProjectionValue(pv.Value, x.Identity.ProjectionPeriod),
+                              Values = ImportCalculationExtensions.SetProjectionValue(pv.Value, x.Identity.ProjectionPeriod),
                               Partition = GetStorage().TargetPartition})));
 }
 
@@ -94,7 +95,7 @@ public interface RaToIfrsVariable: IScope<ImportIdentity, ImportStorage>
                               Novelty = x.Identity.Novelty, 
                               AccidentYear = pv.AccidentYear,
                               AmountType = pv.AmountType,
-                              Values = SetProjectionValue(pv.Value, x.Identity.ProjectionPeriod),
+                              Values = ImportCalculationExtensions.SetProjectionValue(pv.Value, x.Identity.ProjectionPeriod),
                               Partition = GetStorage().TargetPartition}));
                         
     IEnumerable<IfrsVariable> RaLocked => GetScope<RaLocked>(Identity).RepeatOnce().SelectMany(x => 
@@ -106,7 +107,7 @@ public interface RaToIfrsVariable: IScope<ImportIdentity, ImportStorage>
                               Novelty = x.Identity.Novelty, 
                               AccidentYear = pv.AccidentYear,
                               AmountType = pv.AmountType,
-                              Values = SetProjectionValue(pv.Value, x.Identity.ProjectionPeriod),
+                              Values = ImportCalculationExtensions.SetProjectionValue(pv.Value, x.Identity.ProjectionPeriod),
                               Partition = GetStorage().TargetPartition}));
 }
 
@@ -126,7 +127,7 @@ public interface ActualToIfrsVariable: IScope<ImportIdentity, ImportStorage>
                         Novelty = Identity.Novelty,
                         AccidentYear = written.AccidentYear,
                         AmountType = written.AmountType,
-                        Values = SetProjectionValue(written.Value, Identity.ProjectionPeriod),
+                        Values = ImportCalculationExtensions.SetProjectionValue(written.Value, Identity.ProjectionPeriod),
                         Partition = GetStorage().TargetPartition })
       : Enumerable.Empty<IfrsVariable>();
                         
@@ -138,7 +139,7 @@ public interface ActualToIfrsVariable: IScope<ImportIdentity, ImportStorage>
                         Novelty = Identity.Novelty,
                         AccidentYear = advance.AccidentYear,
                         AmountType = advance.AmountType,
-                        Values = SetProjectionValue(advance.Value, Identity.ProjectionPeriod),
+                        Values = ImportCalculationExtensions.SetProjectionValue(advance.Value, Identity.ProjectionPeriod),
                         Partition = GetStorage().TargetPartition })
       : Enumerable.Empty<IfrsVariable>();
 
@@ -150,7 +151,7 @@ public interface ActualToIfrsVariable: IScope<ImportIdentity, ImportStorage>
                         Novelty = Identity.Novelty,
                         AccidentYear = overdue.AccidentYear,
                         AmountType = overdue.AmountType,
-                        Values = SetProjectionValue(overdue.Value, Identity.ProjectionPeriod),
+                        Values = ImportCalculationExtensions.SetProjectionValue(overdue.Value, Identity.ProjectionPeriod),
                         Partition = GetStorage().TargetPartition })
       : Enumerable.Empty<IfrsVariable>();
 }
@@ -170,7 +171,7 @@ public interface DeferrableToIfrsVariable: IScope<ImportIdentity, ImportStorage>
                           AocType = x.Identity.Id.AocType,
                           Novelty = x.Identity.Id.Novelty,
                           AccidentYear = shift,
-                          Values = SetProjectionValue(x.Value, x.Identity.Id.ProjectionPeriod),
+                          Values = ImportCalculationExtensions.SetProjectionValue(x.Value, x.Identity.Id.ProjectionPeriod),
                           Partition = GetStorage().TargetPartition })),
         _ => GetScope<DiscountedDeferrable>(Identity).RepeatOnce()
                 .Select(x => new IfrsVariable{ EstimateType = x.EstimateType,
@@ -178,11 +179,11 @@ public interface DeferrableToIfrsVariable: IScope<ImportIdentity, ImportStorage>
                           DataNode = x.Identity.DataNode,
                           AocType = x.Identity.AocType,
                           Novelty = x.Identity.Novelty,
-                          Values = SetProjectionValue(x.Value, x.Identity.ProjectionPeriod),
+                          Values = ImportCalculationExtensions.SetProjectionValue(x.Value, x.Identity.ProjectionPeriod),
                           Partition = GetStorage().TargetPartition }),
     };
 
-    private IEnumerable<IfrsVariable> amortizationStep => Deferrable.Where(iv => iv.Values != null).Where(iv => Math.Abs(iv.Values.GetValidElement(Identity.ProjectionPeriod)) > Precision);
+    private IEnumerable<IfrsVariable> amortizationStep => Deferrable.Where(iv => iv.Values != null).Where(iv => Math.Abs(iv.Values.GetValidElement(Identity.ProjectionPeriod)) > Consts.Precision);
 
     IEnumerable<IfrsVariable> DeferrableAmFactor => (Identity.AocType, amortizationStep.Any(), EconomicBasis) switch {
         (AocTypes.AM, true, EconomicBases.N) => amortizationStep.Select(x => x.AccidentYear.Value).SelectMany(shift => 
@@ -194,7 +195,7 @@ public interface DeferrableToIfrsVariable: IScope<ImportIdentity, ImportStorage>
                           Novelty = Identity.Novelty,
                           AmountType = x.EffectiveAmountType,
                           AccidentYear = shift,
-                          Values = SetProjectionValue(x.Value, x.Identity.Id.ProjectionPeriod),
+                          Values = ImportCalculationExtensions.SetProjectionValue(x.Value, x.Identity.Id.ProjectionPeriod),
                           Partition = GetStorage().TargetPartition })),
         (AocTypes.AM, true, _) => GetScope<DiscountedAmortizationFactorForDeferrals>(Identity, o => o.WithContext(EconomicBasis)).RepeatOnce()
             .Select(x => new IfrsVariable{ EstimateType = EstimateTypes.F,
@@ -203,7 +204,7 @@ public interface DeferrableToIfrsVariable: IScope<ImportIdentity, ImportStorage>
                           AocType = x.Identity.AocType,
                           Novelty = x.Identity.Novelty,
                           AmountType = x.EffectiveAmountType,
-                          Values = SetProjectionValue(x.Value, x.Identity.ProjectionPeriod),
+                          Values = ImportCalculationExtensions.SetProjectionValue(x.Value, x.Identity.ProjectionPeriod),
                           Partition = GetStorage().TargetPartition }),
         (_) => Enumerable.Empty<IfrsVariable>(),
     };
@@ -225,10 +226,10 @@ public interface RevenueToIfrsVariable: IScope<ImportIdentity, ImportStorage>
                           DataNode = x.Identity.DataNode,
                           AocType = x.Identity.AocType,
                           Novelty = x.Identity.Novelty,
-                          Values = SetProjectionValue(x.Value, x.Identity.ProjectionPeriod),
+                          Values = ImportCalculationExtensions.SetProjectionValue(x.Value, x.Identity.ProjectionPeriod),
                           Partition = GetStorage().TargetPartition });
     
-    private bool hasAmortizationStep => Revenue.Where(iv => iv.Values != null).Any(iv => Math.Abs(iv.Values.GetValidElement(Identity.ProjectionPeriod)) > Precision);
+    private bool hasAmortizationStep => Revenue.Where(iv => iv.Values != null).Any(iv => Math.Abs(iv.Values.GetValidElement(Identity.ProjectionPeriod)) > Consts.Precision);
 
     IEnumerable<IfrsVariable> RevenueAmFactor =>  Identity.AocType == AocTypes.AM && hasAmortizationStep
         ? GetScope<DiscountedAmortizationFactorForRevenues>(Identity, o => o.WithContext(EconomicBasis)).RepeatOnce()
@@ -238,7 +239,7 @@ public interface RevenueToIfrsVariable: IScope<ImportIdentity, ImportStorage>
                           AocType = x.Identity.AocType,
                           Novelty = x.Identity.Novelty,
                           AmountType = x.EffectiveAmountType,
-                          Values = SetProjectionValue(x.Value, x.Identity.ProjectionPeriod),
+                          Values = ImportCalculationExtensions.SetProjectionValue(x.Value, x.Identity.ProjectionPeriod),
                           Partition = GetStorage().TargetPartition })
         : Enumerable.Empty<IfrsVariable>();
 }
@@ -259,7 +260,7 @@ public interface EaForPremiumToIfrsVariable: IScope<ImportIdentity, ImportStorag
                                       Novelty = sc.Identity.Novelty, 
                                       EconomicBasis = sc.EconomicBasis,
                                       AmountType = sc.AmountType,
-                                      Values = SetProjectionValue(sc.Value, sc.Identity.ProjectionPeriod),
+                                      Values = ImportCalculationExtensions.SetProjectionValue(sc.Value, sc.Identity.ProjectionPeriod),
                                       Partition = sc.GetStorage().TargetPartition })
     : Enumerable.Empty<IfrsVariable>();
     
@@ -270,7 +271,7 @@ public interface EaForPremiumToIfrsVariable: IScope<ImportIdentity, ImportStorag
                          AocType = sc.Identity.AocType, 
                          Novelty = sc.Identity.Novelty, 
                          AmountType = sc.AmountType,
-                         Values = SetProjectionValue(sc.Value, sc.Identity.ProjectionPeriod),
+                         Values = ImportCalculationExtensions.SetProjectionValue(sc.Value, sc.Identity.ProjectionPeriod),
                          Partition = GetStorage().TargetPartition })
     : Enumerable.Empty<IfrsVariable>();
 }
@@ -300,7 +301,7 @@ public interface TmToIfrsVariable: IScope<ImportIdentity, ImportStorage>
                AocType = x.Identity.AocType,
                Novelty = x.Identity.Novelty,
                EconomicBasis = economicBasis,
-               Values = SetProjectionValue(x.Value, x.Identity.ProjectionPeriod),
+               Values = ImportCalculationExtensions.SetProjectionValue(x.Value, x.Identity.ProjectionPeriod),
                Partition = GetStorage().TargetPartition
             });
 
@@ -313,7 +314,7 @@ public interface TmToIfrsVariable: IScope<ImportIdentity, ImportStorage>
                                               AocType = x.Identity.AocType,
                                               Novelty = x.Identity.Novelty,
                                               EconomicBasis = economicBasis,
-                                              Values = SetProjectionValue(x.Value, x.Identity.ProjectionPeriod),
+                                              Values = ImportCalculationExtensions.SetProjectionValue(x.Value, x.Identity.ProjectionPeriod),
                                               Partition = GetStorage().TargetPartition
                                            })
            : GetScope<LossComponent>(Identity).RepeatOnce()
@@ -322,11 +323,11 @@ public interface TmToIfrsVariable: IScope<ImportIdentity, ImportStorage>
                                               AocType = x.Identity.AocType,
                                               Novelty = x.Identity.Novelty,
                                               EconomicBasis = economicBasis,
-                                              Values = SetProjectionValue(x.Value, x.Identity.ProjectionPeriod),
+                                              Values = ImportCalculationExtensions.SetProjectionValue(x.Value, x.Identity.ProjectionPeriod),
                                               Partition = GetStorage().TargetPartition
                                            });
     
-    IEnumerable<IfrsVariable> AmortizationFactor =>  Identity.AocType == AocTypes.AM && Loss.Concat(Csms).Where(x => x.Values != null).Any(x => Math.Abs(x.Values.GetValidElement(Identity.ProjectionPeriod)) > Precision)
+    IEnumerable<IfrsVariable> AmortizationFactor =>  Identity.AocType == AocTypes.AM && Loss.Concat(Csms).Where(x => x.Values != null).Any(x => Math.Abs(x.Values.GetValidElement(Identity.ProjectionPeriod)) > Consts.Precision)
         && GetStorage().DataNodeDataBySystemName[Identity.DataNode].LiabilityType == LiabilityTypes.LRC
         ? GetScope<CurrentPeriodAmortizationFactor>((Identity, AmountTypes.CU, 0), o => o.WithContext(economicBasis)).RepeatOnce()
             .Select(x => new IfrsVariable{ EstimateType = x.EstimateType,
@@ -335,7 +336,7 @@ public interface TmToIfrsVariable: IScope<ImportIdentity, ImportStorage>
                                            Novelty = x.Identity.Id.Novelty,
                                            AmountType = x.EffectiveAmountType,
                                            EconomicBasis = x.EconomicBasis,
-                                           Values = SetProjectionValue(x.Value, x.Identity.Id.ProjectionPeriod),
+                                           Values = ImportCalculationExtensions.SetProjectionValue(x.Value, x.Identity.Id.ProjectionPeriod),
                                            Partition = GetStorage().TargetPartition
                                            })
         : Enumerable.Empty<IfrsVariable>();
