@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Linq.Expressions;
-using DocumentFormat.OpenXml.Spreadsheet;
-using Microsoft.Graph.SecurityNamespace;
+//using DocumentFormat.OpenXml.Spreadsheet;
+//using Microsoft.Graph.SecurityNamespace;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.Utils;
@@ -11,6 +11,8 @@ using Systemorph.Vertex.DataSource.Common;
 using Systemorph.Vertex.DataStructures;
 using Systemorph.Vertex.Hierarchies;
 using Systemorph.Vertex.Workspace;
+using DataSource = Systemorph.DataSource;
+using Systemorph.Import;
 using Debug = OpenSmc.Ifrs17.Domain.Constants.Debug;
 using Scenario = OpenSmc.Ifrs17.Domain.DataModel.Scenario;
 using Scenarios = OpenSmc.Ifrs17.Domain.Constants.Scenarios;
@@ -258,259 +260,377 @@ public class ParsingStorage
     }
 }
 
-
-public static async Task CleanAsync<T> (this IDataSource dataSource, Guid partitionId = default, Expression<Func<T, bool>> filter = null) where T : class, IPartitioned
+public static class ImportTasks
 {
-    var loadData = partitionId != (Guid)default
-                        ? await dataSource.Query<T>().Where(x => x.Partition == partitionId ).Where(filter?? (Expression<Func<T, bool>>)(x => true)).ToListAsync()
-                        : await dataSource.Query<T>().Where(filter ?? (Expression<Func<T, bool>>)(x => true)).ToListAsync();
-    await dataSource.DeleteAsync(loadData);
-}
-
-
-public static async Task CommitToAsync<TData, TPartition> (this IDataSource source, IDataSource target, Guid partitionId = default, bool snapshot = true, Expression<Func<TData, bool>> filter = null) 
-where TData : class, IPartitioned
-where TPartition : IfrsPartition
-{
-    if(partitionId != (Guid)default) {
-        await target.Partition.SetAsync<TPartition>(partitionId);
-        await source.Partition.SetAsync<TPartition>(partitionId);
+    public static async Task CleanAsync<T>(this IDataSource dataSource, Guid partitionId = default,
+        Expression<Func<T, bool>> filter = null) where T : class, IPartitioned
+    {
+        var loadData = partitionId != (Guid) default
+            ? await dataSource.Query<T>().Where(x => x.Partition == partitionId)
+                .Where(filter ?? (Expression<Func<T, bool>>) (x => true)).ToListAsync()
+            : await dataSource.Query<T>().Where(filter ?? (Expression<Func<T, bool>>) (x => true)).ToListAsync();
+        await dataSource.DeleteAsync(loadData);
     }
-    if(snapshot) await CleanAsync<TData>(target, partitionId, filter);
-    await target.UpdateAsync<TData>( await source.Query<TData>().ToArrayAsync() );
-    await target.CommitAsync();
-}
 
 
-public ImportArgs GetArgsFromMain(IDataSet dataSet) {
-    var mainTab = dataSet.Tables[Main];
-    if(mainTab == null) ApplicationMessage.Log(Error.NoMainTab);
-    if(!mainTab.Rows.Any()) ApplicationMessage.Log(Error.IncompleteMainTab);
-    if(ApplicationMessage.HasErrors()) return null;
+    public static async Task CommitToAsync<TData, TPartition>(this IDataSource source, IDataSource target,
+        Guid partitionId = default, bool snapshot = true, Expression<Func<TData, bool>> filter = null)
+        where TData : class, IPartitioned
+        where TPartition : IfrsPartition
+    {
+        if (partitionId != (Guid) default)
+        {
+            await target.Partition.SetAsync<TPartition>(partitionId);
+            await source.Partition.SetAsync<TPartition>(partitionId);
+        }
 
-    var main = mainTab.Rows.First();
-    var reportingNode = mainTab.Columns.Any(x => x.ColumnName == nameof(Args.ReportingNode)) && main[nameof(Args.ReportingNode)] != null ? (string)main[nameof(ReportingNode)] : default(string);
-    var scenario = mainTab.Columns.Any(x => x.ColumnName == nameof(Args.Scenario)) && main[nameof(Args.Scenario)] != null ? (string)main[nameof(Scenario)] : default(string);
-    var year = mainTab.Columns.Any(x => x.ColumnName == nameof(Args.Year)) && main[nameof(Args.Year)] != null ? (int)Convert.ChangeType(main[nameof(Args.Year)], typeof(int)) : default(int);
-    var month = mainTab.Columns.Any(x => x.ColumnName == nameof(Args.Month)) && main[nameof(Args.Month)] != null ? (int)Convert.ChangeType(main[nameof(Args.Month)], typeof(int)) : default(int);
-
-    return new ImportArgs(reportingNode, year, month, default(Periodicity), scenario, default(string));
-}
-
-
-public async static void ValidateArgsForPeriodAsync(this ImportArgs args, IDataSource targetDataSource) {
-    if(args.Year == default(int)) ApplicationMessage.Log(Error.YearInMainNotFound);
-    if(args.Month == default(int)) ApplicationMessage.Log(Error.MonthInMainNotFound);
-    var availableScenarios = await targetDataSource.Query<Scenario>().Select(x => x.SystemName).ToArrayAsync();
-    if(!(args.Scenario == default(string) || availableScenarios.Contains(args.Scenario))) ApplicationMessage.Log(Error.DimensionNotFound, "Scenario", args.Scenario);
-}
+        if (snapshot) await CleanAsync<TData>(target, partitionId, filter);
+        await target.UpdateAsync<TData>(await source.Query<TData>().ToArrayAsync());
+        await target.CommitAsync();
+    }
 
 
-public async Task CommitPartitionAsync<IPartition>(ImportArgs args, params IDataSource[] dataSources)
-{
-    foreach (var dataSource in dataSources) {
-        switch(typeof(IPartition).Name) {
-            case nameof(PartitionByReportingNode) : {
-                await dataSource.UpdateAsync<PartitionByReportingNode>( new[] { new PartitionByReportingNode { 
-                                    Id = (Guid)(await DataSource.Partition.GetKeyForInstanceAsync<PartitionByReportingNode>(args)),
-                                    ReportingNode = args.ReportingNode } } );
+    public static ImportArgs GetArgsFromMain(IDataSet dataSet)
+    {
+        var mainTab = dataSet.Tables[Main];
+        if (mainTab == null) ApplicationMessage.Log(Error.NoMainTab);
+        if (!mainTab.Rows.Any()) ApplicationMessage.Log(Error.IncompleteMainTab);
+        if (ApplicationMessage.HasErrors()) return null;
+
+        var main = mainTab.Rows.First();
+        var reportingNode =
+            mainTab.Columns.Any(x => x.ColumnName == nameof(Args.ReportingNode)) &&
+            main[nameof(Args.ReportingNode)] != null
+                ? (string) main[nameof(ReportingNode)]
+                : default(string);
+        var scenario =
+            mainTab.Columns.Any(x => x.ColumnName == nameof(Args.Scenario)) && main[nameof(Args.Scenario)] != null
+                ? (string) main[nameof(Scenario)]
+                : default(string);
+        var year = mainTab.Columns.Any(x => x.ColumnName == nameof(Args.Year)) && main[nameof(Args.Year)] != null
+            ? (int) Convert.ChangeType(main[nameof(Args.Year)], typeof(int))
+            : default(int);
+        var month = mainTab.Columns.Any(x => x.ColumnName == nameof(Args.Month)) && main[nameof(Args.Month)] != null
+            ? (int) Convert.ChangeType(main[nameof(Args.Month)], typeof(int))
+            : default(int);
+
+        return new ImportArgs(reportingNode, year, month, default(Periodicity), scenario, default(string));
+    }
+
+
+    public async static void ValidateArgsForPeriodAsync(this ImportArgs args, IDataSource targetDataSource)
+    {
+        if (args.Year == default(int)) ApplicationMessage.Log(Error.YearInMainNotFound);
+        if (args.Month == default(int)) ApplicationMessage.Log(Error.MonthInMainNotFound);
+        var availableScenarios = await targetDataSource.Query<Scenario>().Select(x => x.SystemName).ToArrayAsync();
+        if (!(args.Scenario == default(string) || availableScenarios.Contains(args.Scenario)))
+            ApplicationMessage.Log(Error.DimensionNotFound, "Scenario", args.Scenario);
+    }
+
+
+    public static async Task CommitPartitionAsync<IPartition>(ImportArgs args, params IDataSource[] dataSources)
+    {
+        foreach (var dataSource in dataSources)
+        {
+            switch (typeof(IPartition).Name)
+            {
+                case nameof(PartitionByReportingNode):
+                {
+                    await dataSource.UpdateAsync<PartitionByReportingNode>(new[]
+                    {
+                        new PartitionByReportingNode
+                        {
+                            Id = (Guid) (await DataSource.Partition.GetKeyForInstanceAsync<PartitionByReportingNode>(
+                                args)),
+                            ReportingNode = args.ReportingNode
+                        }
+                    });
+                    break;
+                }
+                case nameof(PartitionByReportingNodeAndPeriod):
+                {
+                    args.ValidateArgsForPeriodAsync(dataSource);
+                    if (ApplicationMessage.HasErrors()) return;
+
+                    await dataSource.UpdateAsync<PartitionByReportingNodeAndPeriod>(new[]
+                    {
+                        new PartitionByReportingNodeAndPeriod
+                        {
+                            Id = (Guid) (await DataSource.Partition
+                                .GetKeyForInstanceAsync<PartitionByReportingNodeAndPeriod>(args)),
+                            Year = args.Year,
+                            Month = args.Month,
+                            ReportingNode = args.ReportingNode,
+                            Scenario = args.Scenario
+                        }
+                    });
+                    break;
+                }
+                default:
+                {
+                    ApplicationMessage.Log(Error.PartitionTypeNotFound, typeof(IPartition).Name);
+                    return;
+                }
+            }
+
+            await dataSource.CommitAsync();
+        }
+    }
+
+
+    public static async Task<ImportArgs> GetArgsAndCommitPartitionAsync<IPartition>(IDataSet dataSet,
+        IDataSource targetDataSource)
+    {
+        var args = GetArgsFromMain(dataSet);
+        if (ApplicationMessage.HasErrors()) return null;
+        if (args.ReportingNode == default(string))
+        {
+            ApplicationMessage.Log(Error.ReportingNodeInMainNotFound);
+            return null;
+        }
+
+        await CommitPartitionAsync<IPartition>(args, targetDataSource);
+        return args;
+    }
+
+
+    public static async Task DataNodeFactoryAsync(IDataSet dataSet, string tableName, ImportArgs args,
+        IDataSource targetDataSource)
+    {
+        var partition =
+            (await DataSource.Query<PartitionByReportingNode>().Where(p => p.ReportingNode == args.ReportingNode)
+                .ToArrayAsync()).FirstOrDefault();
+        if (partition == null)
+        {
+            ApplicationMessage.Log(Error.ParsedPartitionNotFound, args.ReportingNode);
+            return;
+        }
+
+        var table = dataSet.Tables[tableName];
+
+        var dataNodesImported = table.Rows.Select(x => x.Field<string>(nameof(RawVariable.DataNode))).ToHashSet();
+        var dataNodesDefined = await targetDataSource.Query<GroupOfContract>()
+            .Where(x => dataNodesImported.Contains(x.SystemName)).ToArrayAsync();
+        var dataNodeStatesDefined =
+            await targetDataSource.Query<DataNodeState>().Select(x => x.DataNode).ToArrayAsync();
+        var dataNodeParametersDefined =
+            await targetDataSource.Query<SingleDataNodeParameter>().Select(x => x.DataNode).ToArrayAsync();
+        var dataNodeStatesUndefined =
+            dataNodesImported.Where(x => x != null && !dataNodeStatesDefined.Contains(x)).ToHashSet();
+        var dataNodeSingleParametersUndefined = dataNodesImported.Where(x => x != null &&
+                                                                             !dataNodeParametersDefined.Contains(x) &&
+                                                                             dataNodesDefined.SingleOrDefault(y =>
+                                                                                     y.SystemName == x) is
+                                                                                 GroupOfInsuranceContract).ToHashSet();
+        if ((dataNodeStatesUndefined?.Any() ?? false))
+            await targetDataSource.UpdateAsync(dataNodeStatesUndefined.Select(x =>
+                    new DataNodeState
+                    {
+                        DataNode = x,
+                        Year = args.Year,
+                        Month = Consts.DefaultDataNodeActivationMonth,
+                        State = State.Active,
+                        Partition = partition.Id
+                    })
+                .ToArray());
+        if ((dataNodeSingleParametersUndefined?.Any() ?? false))
+            await targetDataSource.UpdateAsync(dataNodeSingleParametersUndefined.Select(x =>
+                    new SingleDataNodeParameter
+                    {
+                        DataNode = x,
+                        Year = args.Year,
+                        Month = Consts.DefaultDataNodeActivationMonth,
+                        PremiumAllocation = Consts.DefaultPremiumExperienceAdjustmentFactor,
+                        EconomicBasisDriver = ImportCalculationExtensions.GetDefaultEconomicBasisDriver(
+                            dataNodesDefined.SingleOrDefault(y => y.SystemName == x)?.ValuationApproach,
+                            dataNodesDefined.SingleOrDefault(y => y.SystemName == x)?.LiabilityType),
+                        Partition = partition.Id
+                    })
+                .ToArray());
+        await targetDataSource.CommitAsync();
+    }
+
+
+    public static async Task<ImportArgs[]> GetAllArgsAsync(ImportArgs args, IDataSource dataSource, string format)
+    {
+        ImportArgs[] allArgs;
+        switch (format)
+        {
+            case ImportFormats.YieldCurve:
+            {
+                if (args.Scenario == null)
+                {
+                    var scenarios = await dataSource.Query<YieldCurve>()
+                        .Where(x => x.Year == args.Year && x.Month == args.Month && x.Scenario != null)
+                        .Select(x => x.Scenario).Distinct().ToArrayAsync();
+                    var targetPartitions = await dataSource.Query<PartitionByReportingNodeAndPeriod>()
+                        .Where(x => x.Year == args.Year && x.Month == args.Month && !scenarios.Contains(x.Scenario))
+                        .OrderBy(x => x.Scenario).ToArrayAsync();
+                    var targetScenarios = targetPartitions.Where(x => x.Scenario != null).Select(x => x.Scenario);
+                    if (targetScenarios.Any())
+                        ApplicationMessage.Log(Warning.ScenarioReCalculations, String.Join(", ", targetScenarios));
+                    allArgs = targetPartitions.Select(x => new ImportArgs(x.ReportingNode, x.Year, x.Month,
+                        default(Periodicity), x.Scenario, ImportFormats.Cashflow)).ToArray();
+                }
+                else
+                {
+                    allArgs = (await dataSource.Query<PartitionByReportingNodeAndPeriod>()
+                            .Where(x => x.Year == args.Year && x.Month == args.Month && x.Scenario == null)
+                            .ToArrayAsync())
+                        .Select(x => new ImportArgs(x.ReportingNode, x.Year, x.Month, default(Periodicity),
+                            args.Scenario, ImportFormats.Cashflow)).ToArray();
+                }
+
                 break;
             }
-            case nameof(PartitionByReportingNodeAndPeriod) : {
-                args.ValidateArgsForPeriodAsync(dataSource);
-                if(ApplicationMessage.HasErrors()) return;
+            case ImportFormats.DataNodeParameter:
+            {
+                if (args.Scenario != null)
+                    return (args with {ImportFormat = ImportFormats.Cashflow}).RepeatOnce().ToArray();
+                else
+                {
+                    var partitionByReportingNode = (await dataSource.Query<PartitionByReportingNode>()
+                        .Where(x => x.ReportingNode == args.ReportingNode).ToArrayAsync()).Single().Id;
+                    var scenarios = await dataSource.Query<DataNodeParameter>()
+                        .Where(x => x.Partition == partitionByReportingNode && x.Year == args.Year &&
+                                    x.Month == args.Month && x.Scenario != null).Select(x => x.Scenario).Distinct()
+                        .ToArrayAsync();
+                    var targetPartitions = await dataSource.Query<PartitionByReportingNodeAndPeriod>()
+                        .Where(x => x.ReportingNode == args.ReportingNode && x.Year == args.Year &&
+                                    x.Month == args.Month && !scenarios.Contains(x.Scenario)).OrderBy(x => x.Scenario)
+                        .ToArrayAsync();
+                    var targetScenarios = targetPartitions.Where(x => x.Scenario != null).Select(x => x.Scenario);
+                    if (targetScenarios.Any())
+                        ApplicationMessage.Log(Warning.ScenarioReCalculations, String.Join(", ", targetScenarios));
+                    allArgs = targetPartitions.Select(x => new ImportArgs(x.ReportingNode, x.Year, x.Month,
+                        default(Periodicity), x.Scenario, ImportFormats.Cashflow)).ToArray();
+                }
 
-                await dataSource.UpdateAsync<PartitionByReportingNodeAndPeriod>( new[]{ new PartitionByReportingNodeAndPeriod { 
-                                    Id = (Guid)(await DataSource.Partition.GetKeyForInstanceAsync<PartitionByReportingNodeAndPeriod>(args)),
-                                    Year = args.Year,
-                                    Month = args.Month,
-                                    ReportingNode = args.ReportingNode, 
-                                    Scenario = args.Scenario } } );
                 break;
             }
-            default : {
-                ApplicationMessage.Log(Error.PartitionTypeNotFound, typeof(IPartition).Name); 
-                return;
+            default:
+            {
+                if (args.Scenario != null) return args.RepeatOnce().ToArray();
+                var secondaryArgs = await dataSource.Query<PartitionByReportingNodeAndPeriod>()
+                    .Where(x => x.ReportingNode == args.ReportingNode && x.Year == args.Year && x.Month == args.Month &&
+                                x.Scenario != null)
+                    .Select(x =>
+                        new ImportArgs(x.ReportingNode, x.Year, x.Month, default(Periodicity), x.Scenario, format))
+                    .ToArrayAsync();
+
+                if (secondaryArgs.Any())
+                    ApplicationMessage.Log(Warning.ScenarioReCalculations,
+                        String.Join(", ", secondaryArgs.Select(x => x.Scenario)));
+                allArgs = args.RepeatOnce().Concat(secondaryArgs).ToArray();
+                break;
             }
         }
-        await dataSource.CommitAsync();
+
+        return allArgs.Where(x => (!Scenarios.EnableScenario && x.Scenario == null) || Scenarios.EnableScenario)
+            .ToArray();
     }
-}
 
 
-public async Task<ImportArgs> GetArgsAndCommitPartitionAsync<IPartition>(IDataSet dataSet, IDataSource targetDataSource)
-{
-    var args = GetArgsFromMain(dataSet);
-    if(ApplicationMessage.HasErrors()) return null;
-    if(args.ReportingNode == default(string)) { ApplicationMessage.Log(Error.ReportingNodeInMainNotFound); return null; }
-    await CommitPartitionAsync<IPartition>(args, targetDataSource);
-    return args;
-}
-
-
-public async Task DataNodeFactoryAsync(IDataSet dataSet, string tableName, ImportArgs args, IDataSource targetDataSource)
-{
-    var partition = (await DataSource.Query<PartitionByReportingNode>().Where(p => p.ReportingNode == args.ReportingNode).ToArrayAsync()).FirstOrDefault();
-    if(partition == null) { ApplicationMessage.Log(Error.ParsedPartitionNotFound, args.ReportingNode); return; }
-    
-    var table = dataSet.Tables[tableName];
-    
-    var dataNodesImported = table.Rows.Select(x => x.Field<string>(nameof(RawVariable.DataNode))).ToHashSet();
-    var dataNodesDefined = await targetDataSource.Query<GroupOfContract>().Where(x => dataNodesImported.Contains(x.SystemName)).ToArrayAsync();
-    var dataNodeStatesDefined = await targetDataSource.Query<DataNodeState>().Select(x => x.DataNode).ToArrayAsync();
-    var dataNodeParametersDefined = await targetDataSource.Query<SingleDataNodeParameter>().Select(x => x.DataNode).ToArrayAsync();  
-    var dataNodeStatesUndefined = dataNodesImported.Where(x => x != null && !dataNodeStatesDefined.Contains(x)).ToHashSet();
-    var dataNodeSingleParametersUndefined = dataNodesImported.Where(x => x != null &&
-                                                                    !dataNodeParametersDefined.Contains(x) && 
-                                                                    dataNodesDefined.SingleOrDefault(y => y.SystemName == x) is GroupOfInsuranceContract).ToHashSet();
-    if ((dataNodeStatesUndefined?.Any() ?? false))
-        await targetDataSource.UpdateAsync( dataNodeStatesUndefined.Select(x => 
-            new DataNodeState {DataNode = x, 
-                            Year = args.Year, 
-                            Month = DefaultDataNodeActivationMonth, 
-                            State = State.Active, 
-                            Partition = partition.Id})
-                        .ToArray() );
-    if ((dataNodeSingleParametersUndefined?.Any() ?? false))
-        await targetDataSource.UpdateAsync( dataNodeSingleParametersUndefined.Select(x => 
-            new SingleDataNodeParameter {DataNode = x, 
-                                        Year = args.Year, 
-                                        Month = DefaultDataNodeActivationMonth, 
-                                        PremiumAllocation = DefaultPremiumExperienceAdjustmentFactor, 
-                                        EconomicBasisDriver = GetDefaultEconomicBasisDriver(dataNodesDefined.SingleOrDefault(y => y.SystemName == x)?.ValuationApproach, 
-                                                            dataNodesDefined.SingleOrDefault(y => y.SystemName == x)?.LiabilityType),
-                                        Partition = partition.Id})
-                        .ToArray() );
-    await targetDataSource.CommitAsync();
-}
-
-
-public async Task<ImportArgs[]> GetAllArgsAsync(ImportArgs args, IDataSource dataSource, string format)
-{
-    ImportArgs[] allArgs;
-    switch(format)
+    public static async Task<ActivityLog> ComputeAsync(ImportArgs args, IWorkspace workspace,
+        IWorkspace workspaceToCompute, bool saveRawVariables)
     {
-        case ImportFormats.YieldCurve:
-        {
-            if(args.Scenario == null) {
-                var scenarios = await dataSource.Query<YieldCurve>().Where(x => x.Year == args.Year && x.Month == args.Month && x.Scenario != null).Select(x => x.Scenario).Distinct().ToArrayAsync();
-                var targetPartitions = await dataSource.Query<PartitionByReportingNodeAndPeriod>().Where(x => x.Year == args.Year && x.Month == args.Month && !scenarios.Contains(x.Scenario)).OrderBy(x => x.Scenario).ToArrayAsync();
-                var targetScenarios = targetPartitions.Where(x => x.Scenario != null).Select(x => x.Scenario);
-                if(targetScenarios.Any()) ApplicationMessage.Log(Warning.ScenarioReCalculations, String.Join(", ", targetScenarios));
-                allArgs = targetPartitions.Select(x => new ImportArgs(x.ReportingNode, x.Year, x.Month, default(Periodicity), x.Scenario, ImportFormats.Cashflow)).ToArray();
-            }
-            else {
-                allArgs = (await dataSource.Query<PartitionByReportingNodeAndPeriod>()
-                    .Where(x => x.Year == args.Year && x.Month == args.Month && x.Scenario == null).ToArrayAsync())
-                    .Select(x => new ImportArgs(x.ReportingNode, x.Year, x.Month, default(Periodicity), args.Scenario, ImportFormats.Cashflow)).ToArray();
-            }
-            break;
-        }
-        case ImportFormats.DataNodeParameter:
-        {
-            if(args.Scenario != null)
-                return (args with {ImportFormat = ImportFormats.Cashflow}).RepeatOnce().ToArray();
-            else {
-                var partitionByReportingNode = (await dataSource.Query<PartitionByReportingNode>().Where(x => x.ReportingNode == args.ReportingNode).ToArrayAsync()).Single().Id;
-                var scenarios = await dataSource.Query<DataNodeParameter>().Where(x => x.Partition == partitionByReportingNode && x.Year == args.Year && x.Month == args.Month && x.Scenario != null).Select(x => x.Scenario).Distinct().ToArrayAsync();
-                var targetPartitions = await dataSource.Query<PartitionByReportingNodeAndPeriod>().Where(x => x.ReportingNode == args.ReportingNode && x.Year == args.Year && x.Month == args.Month && !scenarios.Contains(x.Scenario)).OrderBy(x => x.Scenario).ToArrayAsync();
-                var targetScenarios = targetPartitions.Where(x => x.Scenario != null).Select(x => x.Scenario);
-                if(targetScenarios.Any()) ApplicationMessage.Log(Warning.ScenarioReCalculations, String.Join(", ", targetScenarios));
-                allArgs = targetPartitions.Select(x => new ImportArgs(x.ReportingNode, x.Year, x.Month, default(Periodicity), x.Scenario, ImportFormats.Cashflow)).ToArray();
-            }
-            break;
-        }
-        default: 
-        {
-            if(args.Scenario != null) return args.RepeatOnce().ToArray();
-            var secondaryArgs = await dataSource.Query<PartitionByReportingNodeAndPeriod>() 
-                .Where(x => x.ReportingNode == args.ReportingNode && x.Year == args.Year && x.Month == args.Month && x.Scenario != null)
-                .Select(x => new ImportArgs(x.ReportingNode, x.Year, x.Month, default(Periodicity), x.Scenario, format)).ToArrayAsync();
-   
-            if(secondaryArgs.Any()) ApplicationMessage.Log(Warning.ScenarioReCalculations, String.Join(", ", secondaryArgs.Select(x => x.Scenario)));
-            allArgs = args.RepeatOnce().Concat(secondaryArgs).ToArray();
-            break;
-        }
-    }
-    return allArgs.Where(x => (!Scenarios.EnableScenario && x.Scenario == null) || Scenarios.EnableScenario).ToArray();
-}
+        Activity.Start();
+        var storage = new ImportStorage(args, workspaceToCompute, workspace);
+        await storage.InitializeAsync();
+        if (Activity.HasErrors()) return Activity.Finish();
 
+        var universe = Scopes.ForStorage(storage).ToScope<IModel>();
+        var ivs = universe.GetScopes<ComputeAllScopes>(storage.DataNodesByImportScope[ImportScope.Primary])
+            .SelectMany(x => x.CalculatedIfrsVariables);
+        if (Activity.HasErrors()) return Activity.Finish();
 
-public async Task<ActivityLog> ComputeAsync(ImportArgs args, IWorkspace workspace, IWorkspace workspaceToCompute, bool saveRawVariables)
-{
-    Activity.Start();
-    var storage = new ImportStorage(args, workspaceToCompute, workspace);
-    await storage.InitializeAsync();
-    if(Activity.HasErrors()) return Activity.Finish();
-   
-    var universe = Scopes.ForStorage(storage).ToScope<IModel>();
-    var ivs = universe.GetScopes<ComputeAllScopes>(storage.DataNodesByImportScope[ImportScope.Primary]).SelectMany(x => x.CalculatedIfrsVariables);
-    if(Activity.HasErrors()) return Activity.Finish();
+        if (storage.DefaultPartition != storage.TargetPartition)
+        {
+            var bestEstimateIvs =
+                await workspaceToCompute.LoadPartitionedDataAsync<IfrsVariable, PartitionByReportingNodeAndPeriod>(
+                    storage.DefaultPartition);
+            ivs = ivs.Where(iv => iv.Values.Any(y => Math.Abs(y) >= Consts.Precision)).ToArray()
+                .Except(bestEstimateIvs, IfrsVariableComparer.Instance(ignoreValues: false))
+                .Concat(bestEstimateIvs
+                    .Intersect(ivs.Where(iv => iv.Values.All(y => Math.Abs(y) < Consts.Precision)).ToArray(),
+                        IfrsVariableComparer.Instance(ignoreValues: true))
+                    .Select(x => x with
+                    {
+                        Values = Enumerable.Repeat(0d, x.Values.Length).ToArray(),
+                        Partition = storage.TargetPartition
+                    }).ToArray());
+        }
 
-    if(storage.DefaultPartition != storage.TargetPartition) {
-        var bestEstimateIvs = await workspaceToCompute.LoadPartitionedDataAsync<IfrsVariable,PartitionByReportingNodeAndPeriod>(storage.DefaultPartition);
-        ivs = ivs.Where(iv => iv.Values.Any(y => Math.Abs(y) >= Precision)).ToArray()
-            .Except(bestEstimateIvs, IfrsVariableComparer.Instance(ignoreValues: false))
-            .Concat(bestEstimateIvs.Intersect(ivs.Where(iv => iv.Values.All(y => Math.Abs(y) < Precision)).ToArray(), IfrsVariableComparer.Instance(ignoreValues: true))
-                   .Select(x => x with {Values = Enumerable.Repeat(0d, x.Values.Length).ToArray(), Partition = storage.TargetPartition}).ToArray());
+        workspace.Reset(x => x.ResetType<IfrsVariable>());
+        await workspace.UpdateAsync<IfrsVariable>(ivs.Where(x =>
+            storage.DefaultPartition != storage.TargetPartition || x.Values.Any(v => Math.Abs(v) >= Precision)));
+        await workspace.CommitToAsync<IfrsVariable, PartitionByReportingNodeAndPeriod>(workspaceToCompute,
+            storage.TargetPartition, snapshot: true,
+            filter: x => storage.EstimateTypesByImportFormat[args.ImportFormat].Contains(x.EstimateType)
+                         && storage.DataNodesByImportScope[ImportScope.Primary].Contains(x.DataNode));
+        if (saveRawVariables)
+        {
+            if (args.Scenario == null)
+                await workspace.DeleteAsync(await workspace.Query<RawVariable>()
+                    .Where(rv => rv.Values.All(x => Math.Abs(x) < Consts.Precision)).ToArrayAsync());
+            await workspace.CommitToAsync<RawVariable, PartitionByReportingNodeAndPeriod>(workspaceToCompute,
+                storage.TargetPartition, snapshot: true,
+                filter: x =>
+                    storage.DataNodesByImportScope[ImportScope.Primary]
+                        .Except(storage.DataNodesByImportScope[ImportScope.AddedToPrimary]).Contains(x.DataNode));
+        }
+
+        return Activity.Finish();
     }
 
-    workspace.Reset(x => x.ResetType<IfrsVariable>());
-    await workspace.UpdateAsync<IfrsVariable>(ivs.Where(x => storage.DefaultPartition != storage.TargetPartition || x.Values.Any(v => Math.Abs(v) >= Precision)));
-    await workspace.CommitToAsync<IfrsVariable,PartitionByReportingNodeAndPeriod>(workspaceToCompute, storage.TargetPartition, snapshot : true, 
-                filter : x => storage.EstimateTypesByImportFormat[args.ImportFormat].Contains(x.EstimateType) 
-                              && storage.DataNodesByImportScope[ImportScope.Primary].Contains(x.DataNode));
-    if(saveRawVariables) {
-        if(args.Scenario == null) await workspace.DeleteAsync(await workspace.Query<RawVariable>().Where(rv => rv.Values.All(x => Math.Abs(x) < Precision)).ToArrayAsync());
-        await workspace.CommitToAsync<RawVariable, PartitionByReportingNodeAndPeriod>(workspaceToCompute, storage.TargetPartition, snapshot : true, 
-                filter : x => storage.DataNodesByImportScope[ImportScope.Primary].Except(storage.DataNodesByImportScope[ImportScope.AddedToPrimary]).Contains(x.DataNode));
-    }
-    return Activity.Finish();
-}
 
-
-public async static Task ValidateForDataNodeStateActiveAsync<T>(this IWorkspace workspace, Dictionary<string, DataNodeData> dataNodes) where T : BaseDataRecord
-{   
-    foreach(var item in (await workspace.Query<T>().ToArrayAsync()).GroupBy(x => x.DataNode))
-        if(!dataNodes.ContainsKey(item.First().DataNode))
-            ApplicationMessage.Log(Error.InactiveDataNodeState, item.First().DataNode);
-}
-
-
-
-public async static Task ValidateDataNodeStatesAsync(this IWorkspace workspace, Dictionary<string, DataNodeData> persistentDataNodeByDataNode)
-{
-    foreach(var importedDataNodeState in await workspace.Query<DataNodeState>().ToArrayAsync())
+    public async static Task ValidateForDataNodeStateActiveAsync<T>(this IWorkspace workspace,
+        Dictionary<string, DataNodeData> dataNodes) where T : BaseDataRecord
     {
-        if(persistentDataNodeByDataNode.TryGetValue(importedDataNodeState.DataNode, out var currentPersistentDataNode))
-        {
-            if(importedDataNodeState.State < currentPersistentDataNode.State)
-                ApplicationMessage.Log(Error.ChangeDataNodeState, importedDataNodeState.DataNode, 
-                                                                  currentPersistentDataNode.State.ToString(), 
-                                                                  importedDataNodeState.State.ToString());
+        foreach (var item in (await workspace.Query<T>().ToArrayAsync()).GroupBy(x => x.DataNode))
+            if (!dataNodes.ContainsKey(item.First().DataNode))
+                ApplicationMessage.Log(Error.InactiveDataNodeState, item.First().DataNode);
+    }
 
-            if(importedDataNodeState.State == currentPersistentDataNode.State)
-                await workspace.DeleteAsync<DataNodeState>(importedDataNodeState);
+
+
+    public async static Task ValidateDataNodeStatesAsync(this IWorkspace workspace,
+        Dictionary<string, DataNodeData> persistentDataNodeByDataNode)
+    {
+        foreach (var importedDataNodeState in await workspace.Query<DataNodeState>().ToArrayAsync())
+        {
+            if (persistentDataNodeByDataNode.TryGetValue(importedDataNodeState.DataNode,
+                    out var currentPersistentDataNode))
+            {
+                if (importedDataNodeState.State < currentPersistentDataNode.State)
+                    ApplicationMessage.Log(Error.ChangeDataNodeState, importedDataNodeState.DataNode,
+                        currentPersistentDataNode.State.ToString(),
+                        importedDataNodeState.State.ToString());
+
+                if (importedDataNodeState.State == currentPersistentDataNode.State)
+                    await workspace.DeleteAsync<DataNodeState>(importedDataNodeState);
+            }
         }
+    }
+
+
+    public async static Task ValidateForMandatoryAocSteps(this IWorkspace workspace, IDataSet dataSet,
+        HashSet<AocStep> mandatoryAocSteps)
+    {
+        var ignoreProperties = new[] {nameof(AocType), nameof(Novelty)};
+        var missingAocStepsByIdentityProperties = (await workspace.Query<RawVariable>().ToListAsync())
+            .GroupBy(x => x.ToIdentityString(ignoreProperties),
+                x => new AocStep(x.AocType, x.Novelty),
+                (properties, parsedAocSteps) => (properties, mandatoryAocSteps.Except(parsedAocSteps))
+            );
+        foreach ((var properties, var missingSteps) in missingAocStepsByIdentityProperties)
+        foreach (var missingStep in missingSteps)
+            ApplicationMessage.Log(Warning.MandatoryAocStepMissing, missingStep.AocType, missingStep.Novelty,
+                properties);
     }
 }
 
-
-using static Systemorph.Vertex.Equality.IdentityPropertyExtensions;
-public async static Task ValidateForMandatoryAocSteps(this IWorkspace workspace, IDataSet dataSet, HashSet<AocStep> mandatoryAocSteps)
-{   
-    var ignoreProperties = new[]{nameof(AocType), nameof(Novelty)};
-    var missingAocStepsByIdentityProperties = (await workspace.Query<RawVariable>().ToListAsync())
-                     .GroupBy(x => x.ToIdentityString(ignoreProperties),
-                              x => new AocStep(x.AocType, x.Novelty),
-                              (properties, parsedAocSteps) => (properties, mandatoryAocSteps.Except(parsedAocSteps))
-                             );
-    foreach((var properties, var missingSteps) in missingAocStepsByIdentityProperties) 
-        foreach(var missingStep in missingSteps)  ApplicationMessage.Log(Warning.MandatoryAocStepMissing, missingStep.AocType, missingStep.Novelty, properties);
-}
-
-
-Import.DefineFormat(ImportFormats.AocConfiguration, async (options, dataSet) => {
+DefineFormat(ImportFormats.AocConfiguration, async (options, dataSet) => {
     Activity.Start();
     var workspace = Workspace.CreateNew();
     workspace.InitializeFrom(options.TargetDataSource);

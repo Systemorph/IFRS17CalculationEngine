@@ -1,12 +1,25 @@
-#!import "ReportScopes"
+//#!import "ReportScopes"
 
 
+using System.ComponentModel.DataAnnotations;
+using OpenSmc.Ifrs17.Domain.Constants;
+using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.Utils;
 using Systemorph.Vertex.Pivot.Builder.Interfaces;
 using Systemorph.InteractiveObjects;
+using Systemorph.Vertex.Api.Attributes;
+using Systemorph.Vertex.Arithmetics.Aggregation;
+using Systemorph.Vertex.Collections;
+using Systemorph.Vertex.DataCubes;
+using Systemorph.Vertex.DataCubes.Api;
 using Systemorph.Vertex.Session;
 using Systemorph.Vertex.Export;
 using Systemorph.Vertex.Export.Factory;
+using Systemorph.Vertex.Grid.Model;
 using Systemorph.Vertex.InteractiveObjects;
+using Systemorph.Vertex.InteractiveObjects.Dropdown;
+using Systemorph.Vertex.Scopes;
+using Systemorph.Vertex.Workspace;
 
 
 public interface MutableScopeWithWorkspace<TStorage> : IMutableScopeWithStorage<TStorage> 

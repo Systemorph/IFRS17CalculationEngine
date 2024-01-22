@@ -1,4 +1,18 @@
-#!import "ReportConfigurationAndUtils"
+using OpenSmc.Ifrs17.Domain.Constants;
+using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.Utils;
+using Systemorph.Vertex.Api;
+using Systemorph.Vertex.Api.Attributes;
+using Systemorph.Vertex.Attributes.Arithmetics;
+using Systemorph.Vertex.Collections;
+using Systemorph.Vertex.DataCubes;
+using Systemorph.Vertex.DataCubes.Api;
+using Systemorph.Vertex.Export.Factory;
+using Systemorph.Vertex.Hierarchies;
+using Systemorph.Vertex.Scopes.Api;
+using Systemorph.Vertex.Workspace;
+
+//#!import "ReportConfigurationAndUtils"
 
 
 [IdentityAggregationBehaviour(IdentityAggregationBehaviour.Aggregate)]
@@ -38,7 +52,6 @@ public record ReportIdentity {
 }
 
 
-using Systemorph.Vertex.Export.Factory;
 public class ReportStorage {
     protected readonly IWorkspace workspace;
     protected readonly IExportVariable export;
@@ -170,8 +183,8 @@ public class ReportStorage {
         if (currentCurrency == targetCurrency) return 1;
         if(!exchangeRatesByCurrencyByFxTypeAndPeriod.TryGetValue(period, out var exchangeRatesByCurrencyByFxType))
             throw new Exception ($"No exchange rates for Period {period} were found.");
-         return GetCurrencyToGroupFx(exchangeRatesByCurrencyByFxType, currentCurrency, fxPeriod, GroupCurrency)
-              / GetCurrencyToGroupFx(exchangeRatesByCurrencyByFxType, targetCurrency, fxPeriod, GroupCurrency);
+         return ReportConfigExtensions.GetCurrencyToGroupFx(exchangeRatesByCurrencyByFxType, currentCurrency, fxPeriod, GroupCurrency)
+              / ReportConfigExtensions.GetCurrencyToGroupFx(exchangeRatesByCurrencyByFxType, targetCurrency, fxPeriod, GroupCurrency);
     }
     
     public FxPeriod GetFxPeriod((int year, int month) period, string projection, string aocType, string novelty) => 

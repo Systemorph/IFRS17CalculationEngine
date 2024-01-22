@@ -1,3 +1,4 @@
+using System.Reflection;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.Utils;
@@ -88,7 +89,6 @@ public interface FxDataWrittenActual: FxData {
 }
 
 
-using System.Reflection;
 public static T[] GetAllPublicConstantValues<T>(this Type type, 
                             IList<T> excludedTerms = null)
 {
