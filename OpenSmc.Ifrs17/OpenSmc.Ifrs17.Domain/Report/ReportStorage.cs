@@ -183,8 +183,8 @@ public class ReportStorage {
         if (currentCurrency == targetCurrency) return 1;
         if(!exchangeRatesByCurrencyByFxTypeAndPeriod.TryGetValue(period, out var exchangeRatesByCurrencyByFxType))
             throw new Exception ($"No exchange rates for Period {period} were found.");
-         return ReportConfigExtensions.GetCurrencyToGroupFx(exchangeRatesByCurrencyByFxType, currentCurrency, fxPeriod, GroupCurrency)
-              / ReportConfigExtensions.GetCurrencyToGroupFx(exchangeRatesByCurrencyByFxType, targetCurrency, fxPeriod, GroupCurrency);
+         return ReportConfigExtensions.GetCurrencyToGroupFx(exchangeRatesByCurrencyByFxType, currentCurrency, fxPeriod, Consts.GroupCurrency)
+              / ReportConfigExtensions.GetCurrencyToGroupFx(exchangeRatesByCurrencyByFxType, targetCurrency, fxPeriod, Consts.GroupCurrency);
     }
     
     public FxPeriod GetFxPeriod((int year, int month) period, string projection, string aocType, string novelty) => 

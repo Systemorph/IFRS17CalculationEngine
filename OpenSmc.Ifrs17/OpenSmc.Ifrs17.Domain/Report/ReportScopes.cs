@@ -6,6 +6,8 @@ using Systemorph.Vertex.Arithmetics.Aggregation;
 using Systemorph.Vertex.DataCubes;
 using Systemorph.Vertex.DataCubes.Api;
 using Systemorph.Vertex.Scopes;
+using Systemorph.Arithmetics;
+using Systemorph.Vertex.Arithmetics;
 using AmountTypes = OpenSmc.Ifrs17.Domain.Constants.AmountTypes;
 using AocTypes = OpenSmc.Ifrs17.Domain.Constants.AocTypes;
 using EconomicBases = OpenSmc.Ifrs17.Domain.Constants.EconomicBases;
@@ -21,9 +23,9 @@ using ValuationApproaches = OpenSmc.Ifrs17.Domain.Constants.ValuationApproaches;
 public interface IUniverse: IScopeWithStorage<ReportStorage> {}
 
 
-public interface Data: IScope<(ReportIdentity ReportIdentity, string EstimateType), ReportStorage>, IDataCube<ReportVariable> {
+public interface DataScope: IScope<(ReportIdentity ReportIdentity, string EstimateType), ReportStorage>, IDataCube<ReportVariable> {
     static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>
-        builder.ForScope<Data>(s => s.WithApplicability<DataWrittenActual>(x => x.GetStorage().EstimateTypesWithoutAoc.Contains(x.Identity.EstimateType)));
+        builder.ForScope<DataScope>(s => s.WithApplicability<DataWrittenActual>(x => x.GetStorage().EstimateTypesWithoutAoc.Contains(x.Identity.EstimateType)));
     
     protected IDataCube<ReportVariable> RawData => GetStorage().GetVariables(Identity.ReportIdentity, Identity.EstimateType);
 
@@ -32,7 +34,7 @@ public interface Data: IScope<(ReportIdentity ReportIdentity, string EstimateTyp
     
     private IDataCube<ReportVariable> CalculatedCl => (RawEops - NotEopsNotCls)
                                                         .AggregateOver(nameof(Novelty), nameof(VariableType))
-                                                        .SelectToDataCube(x => Math.Abs(x.Value) >= Precision, x => x with { Novelty = Novelties.C, VariableType = AocTypes.CL });
+                                                        .SelectToDataCube(x => Math.Abs(x.Value) >= Consts.Precision, x => x with { Novelty = Novelties.C, VariableType = AocTypes.CL });
     
     private IDataCube<ReportVariable> CalculatedEops => (NotEopsNotCls + CalculatedCl)
                                                         .AggregateOver(nameof(Novelty), nameof(VariableType))
@@ -40,14 +42,14 @@ public interface Data: IScope<(ReportIdentity ReportIdentity, string EstimateTyp
       
     IDataCube<ReportVariable> Data => NotEopsNotCls + CalculatedCl + CalculatedEops;
 }
-public interface DataWrittenActual: Data {
-    IDataCube<ReportVariable> Data.Data => RawData;
+public interface DataWrittenActual: DataScope {
+    IDataCube<ReportVariable> DataScope.Data => RawData;
 }
 
 
 public interface Fx: IScope<(string ContractualCurrency, string FunctionalCurrency, OpenSmc.Ifrs17.Domain.Constants.FxPeriod FxPeriod, (int, int) Period, OpenSmc.Ifrs17.Domain.Constants.CurrencyType CurrencyType), ReportStorage> {   
     private double groupFxRate => Identity.CurrencyType switch {
-            OpenSmc.Ifrs17.Domain.Constants.CurrencyType.Group => GetStorage().GetFx(Identity.Period, Identity.FunctionalCurrency, GroupCurrency, FxPeriod.Average),
+            OpenSmc.Ifrs17.Domain.Constants.CurrencyType.Group => GetStorage().GetFx(Identity.Period, Identity.FunctionalCurrency, Consts.GroupCurrency, FxPeriod.Average),
             _ => 1
     };
     
@@ -64,22 +66,22 @@ public interface FxData: IScope<(ReportIdentity ReportIdentity, OpenSmc.Ifrs17.D
     static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>
         builder.ForScope<FxData>(s => s.WithApplicability<FxDataWrittenActual>(x => x.GetStorage().EstimateTypesWithoutAoc.Contains(x.Identity.EstimateType)));
     
-    protected IDataCube<ReportVariable> Data => GetScope<Data>((Identity.ReportIdentity, Identity.EstimateType)).Data
-        .SelectToDataCube(x => Multiply( GetScope<Fx>((Identity.ReportIdentity.ContractualCurrency, 
+    protected IDataCube<ReportVariable> Data => GetScope<DataScope>((Identity.ReportIdentity, Identity.EstimateType)).Data
+        .SelectToDataCube(x => ArithmeticOperations.Multiply( GetScope<Fx>((Identity.ReportIdentity.ContractualCurrency, 
                                                        Identity.ReportIdentity.FunctionalCurrency, 
                                                        GetStorage().GetFxPeriod(GetStorage().Args.Period, Identity.ReportIdentity.Projection, x.VariableType, x.Novelty),
                                                        (Identity.ReportIdentity.Year, Identity.ReportIdentity.Month),
                                                        Identity.CurrencyType)).Fx, x ) with { Currency = Identity.CurrencyType switch {
                                                                                                                     OpenSmc.Ifrs17.Domain.Constants.CurrencyType.Contractual => x.ContractualCurrency,
                                                                                                                     OpenSmc.Ifrs17.Domain.Constants.CurrencyType.Functional => x.FunctionalCurrency,
-                                                                                                                    _ => GroupCurrency }});
+                                                                                                                    _ => Consts.GroupCurrency }});
     
     private IDataCube<ReportVariable> Eops => Data.Filter(("VariableType", AocTypes.EOP));
     private IDataCube<ReportVariable> NotEops => Data.Filter(("VariableType", "!EOP")); // TODO negation must be hardcoded (also to avoid string concatenation)
     
     private IDataCube<ReportVariable> Fx => (Eops - NotEops)
         .AggregateOver(nameof(Novelty), nameof(VariableType))
-        .SelectToDataCube(x => Math.Abs(x.Value) >= Precision, x => x with { Novelty = Novelties.C, VariableType = AocTypes.FX });
+        .SelectToDataCube(x => Math.Abs(x.Value) >= Consts.Precision, x => x with { Novelty = Novelties.C, VariableType = AocTypes.FX });
     
     IDataCube<ReportVariable> FxData => Data + Fx;
 }
@@ -88,19 +90,21 @@ public interface FxDataWrittenActual: FxData {
     IDataCube<ReportVariable> FxData.FxData => Data;
 }
 
-
-public static T[] GetAllPublicConstantValues<T>(this Type type, 
-                            IList<T> excludedTerms = null)
+public static class GetAllPublicConstantValuesWrapper
 {
-    var selection =  type
-        .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
-        .Where(fi => fi.IsLiteral && !fi.IsInitOnly && fi.FieldType == typeof(T))
-        .Select(x => (T)x.GetRawConstantValue())
-        .ToArray();
-    if (excludedTerms == null)
-        return selection;
-    else 
-        return selection.Where(x => !excludedTerms.Contains(x)).ToArray();
+    public static T[] GetAllPublicConstantValues<T>(this Type type,
+        IList<T> excludedTerms = null)
+    {
+        var selection = type
+            .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+            .Where(fi => fi.IsLiteral && !fi.IsInitOnly && fi.FieldType == typeof(T))
+            .Select(x => (T) x.GetRawConstantValue())
+            .ToArray();
+        if (excludedTerms == null)
+            return selection;
+        else
+            return selection.Where(x => !excludedTerms.Contains(x)).ToArray();
+    }
 }
 
 
@@ -246,7 +250,7 @@ public interface Lic: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants
     private IDataCube<ReportVariable> bop => licData.Filter(("VariableType", AocTypes.BOP), ("Novelty", Novelties.I));
     private IDataCube<ReportVariable> delta => (licData.Filter(("VariableType","!BOP"),("VariableType","!EOP")) + licData.Filter(("VariableType", AocTypes.BOP), ("Novelty", "!I")))
         .AggregateOver(nameof(Novelty), nameof(VariableType))
-        .SelectToDataCube(x => Math.Abs(x.Value) >= Precision, x => x with { Novelty = Novelties.C, VariableType = "D" });
+        .SelectToDataCube(x => Math.Abs(x.Value) >= Consts.Precision, x => x with { Novelty = Novelties.C, VariableType = "D" });
     private IDataCube<ReportVariable> eop => licData.Filter(("VariableType",AocTypes.EOP));
     
     IDataCube<ReportVariable> Lic => bop + delta + eop;
@@ -282,7 +286,7 @@ public interface Lrc: IScope<(ReportIdentity Id, OpenSmc.Ifrs17.Domain.Constants
     private IDataCube<ReportVariable> bop => lrcData.Filter(("VariableType", AocTypes.BOP), ("Novelty", Novelties.I));
     private IDataCube<ReportVariable> delta => (lrcData.Filter(("VariableType","!BOP"),("VariableType","!EOP")) + lrcData.Filter(("VariableType", AocTypes.BOP), ("Novelty", "!I")))
         .AggregateOver(nameof(Novelty), nameof(VariableType))
-        .SelectToDataCube(x => Math.Abs(x.Value) >= Precision, x => x with { Novelty = Novelties.C, VariableType = "D" });
+        .SelectToDataCube(x => Math.Abs(x.Value) >= Consts.Precision, x => x with { Novelty = Novelties.C, VariableType = "D" });
     private IDataCube<ReportVariable> eop => lrcData.Filter(("VariableType",AocTypes.EOP));
     
     IDataCube<ReportVariable> Lrc => bop + delta + eop;
