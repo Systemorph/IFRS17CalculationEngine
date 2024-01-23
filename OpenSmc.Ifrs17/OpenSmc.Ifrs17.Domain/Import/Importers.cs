@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Linq.Expressions;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
@@ -9,6 +10,7 @@ using Systemorph.Vertex.Hierarchies;
 using Systemorph.Vertex.Workspace;
 using Systemorph.Vertex.Activities;
 using Systemorph.Vertex.Import;
+using Debug = OpenSmc.Ifrs17.Domain.Constants.Debug;
 using Scenario = OpenSmc.Ifrs17.Domain.DataModel.Scenario;
 using Scenarios = OpenSmc.Ifrs17.Domain.Constants.Scenarios;
 
@@ -256,6 +258,13 @@ public class ParsingStorage
 
 public static class ImportTasks
 {
+    private static IDataSource DataSource { get; set; }
+
+    public static void WithDataSource(IDataSource dataSource)
+    {
+        DataSource = dataSource;
+    }
+
     public static async Task CleanAsync<T>(this IDataSource dataSource, Guid partitionId = default,
         Expression<Func<T, bool>> filter = null) where T : class, IPartitioned
     {
@@ -526,17 +535,17 @@ public static class ImportTasks
 
 
     public static async Task<ActivityLog> ComputeAsync(ImportArgs args, IWorkspace workspace,
-        IWorkspace workspaceToCompute, bool saveRawVariables)
+        IWorkspace workspaceToCompute, bool saveRawVariables, IActivityVariable activity)
     {
-        Activity.Start();
+        activity.Start();
         var storage = new ImportStorage(args, workspaceToCompute, workspace);
         await storage.InitializeAsync();
-        if (Activity.HasErrors()) return Activity.Finish();
+        if (activity.HasErrors()) return activity.Finish();
 
         var universe = Scopes.ForStorage(storage).ToScope<IModel>();
         var ivs = universe.GetScopes<ComputeAllScopes>(storage.DataNodesByImportScope[ImportScope.Primary])
             .SelectMany(x => x.CalculatedIfrsVariables);
-        if (Activity.HasErrors()) return Activity.Finish();
+        if (activity.HasErrors()) return activity.Finish();
 
         if (storage.DefaultPartition != storage.TargetPartition)
         {
@@ -574,7 +583,7 @@ public static class ImportTasks
                         .Except(storage.DataNodesByImportScope[ImportScope.AddedToPrimary]).Contains(x.DataNode));
         }
 
-        return Activity.Finish();
+        return activity.Finish();
     }
 
 
@@ -625,7 +634,7 @@ public static class ImportTasks
 
 
 
-    public static Task DefineAocFormats(IImportVariable import, IActivityService activity, IWorkspace work)
+    public static async Task DefineAocFormats(IImportVariable import, IActivityVariable activity, IWorkspaceVariable work)
     {
         import.DefineFormat(ImportFormats.AocConfiguration, async (options, dataSet) =>
         {
@@ -736,19 +745,21 @@ public static class ImportTasks
 
             await workspace.CommitToTargetAsync(options.TargetDataSource);
             workspace.Dispose();
-            return Activity.Finish().Merge(logConfig);
+            return activity.Finish().Merge(logConfig);
         });
+    }
 
-
+    public static async Task DefineYycFormat(IImportVariable import, IActivityVariable activity, IWorkspaceVariable work)
+    {
         import.DefineFormat(ImportFormats.YieldCurve, async (options, dataSet) =>
         {
-            Activity.Start();
+            activity.Start();
             var primaryArgs = GetArgsFromMain(dataSet) with {ImportFormat = ImportFormats.YieldCurve};
             primaryArgs.ValidateArgsForPeriodAsync(options.TargetDataSource);
             if (!dataSet.Tables.Contains(primaryArgs.ImportFormat))
                 ApplicationMessage.Log(Error.TableNotFound, primaryArgs.ImportFormat);
-            if (ApplicationMessage.HasErrors()) return Activity.Finish();
-            var workspace = Workspace.CreateNew();
+            if (ApplicationMessage.HasErrors()) return activity.Finish();
+            var workspace = work.CreateNew();
             workspace.Initialize(x => x.FromSource(options.TargetDataSource)
                 .DisableInitialization<RawVariable>()
                 .DisableInitialization<IfrsVariable>());
@@ -775,21 +786,21 @@ public static class ImportTasks
                 }
             ).WithTarget(workspace).ExecuteAsync();
 
-            if (log.Errors.Any()) return Activity.Finish().Merge(log);
+            if (log.Errors.Any()) return activity.Finish().Merge(log);
             var toCommitYieldCurves =
                 (await workspace.Query<YieldCurve>().ToArrayAsync()).Except(committedYieldCurves,
                     YieldCurveComparer.Instance());
             if (!toCommitYieldCurves.Any())
             {
                 ApplicationMessage.Log(Warning.VariablesAlreadyImported);
-                return Activity.Finish().Merge(log);
+                return activity.Finish().Merge(log);
             }
 
             var allArgs = await GetAllArgsAsync(primaryArgs, options.TargetDataSource, ImportFormats.YieldCurve);
             var updatedCurrencies = toCommitYieldCurves.Select(x => x.Currency).Distinct();
             var dataNodesToUpdate = await workspace.Query<GroupOfContract>()
                 .Where(x => updatedCurrencies.Contains(x.ContractualCurrency)).Select(x => x.SystemName).ToArrayAsync();
-            var workspaceToCompute = Workspace.CreateNew();
+            var workspaceToCompute = work.CreateNew();
             workspaceToCompute.Initialize(x => x.FromSource(options.TargetDataSource));
             foreach (var args in allArgs)
             {
@@ -799,7 +810,7 @@ public static class ImportTasks
                 var defaultPartition =
                     (Guid) (await options.TargetDataSource.Partition
                         .GetKeyForInstanceAsync<PartitionByReportingNodeAndPeriod>(args with {Scenario = null}));
-                if (ApplicationMessage.HasErrors()) return Activity.Finish().Merge(log);
+                if (ApplicationMessage.HasErrors()) return activity.Finish().Merge(log);
 
                 // Avoid starting the computation if no best estimate cash flow has ever been imported 
                 if (args.Scenario == null)
@@ -814,18 +825,18 @@ public static class ImportTasks
                 // await workspaceToCompute.DeleteAsync( await workspaceToCompute.Query<RawVariable>()
                 //     .Where(x => !(dataNodesToUpdate.Contains(x.DataNode) && (x.Partition == targetPartition || x.Partition == defaultPartition))).ToArrayAsync() );
 
-                log = log.Merge(await ComputeAsync(args, workspace, workspaceToCompute, false));
-                if (log.Errors.Any()) return Activity.Finish().Merge(log);
+                log = log.Merge(await ComputeAsync(args, work, workspaceToCompute, false, activity));
+                if (log.Errors.Any()) return activity.Finish().Merge(log);
             }
 
             await workspaceToCompute.UpdateAsync<YieldCurve>(toCommitYieldCurves);
             await workspaceToCompute.CommitToTargetAsync(options.TargetDataSource);
-            return Activity.Finish().Merge(log);
+            return activity.Finish().Merge(log);
         });
     }
 
 
-    public static async Task<ActivityLog> UploadDataNodesToWorkspaceAsync(IDataSet dataSet, IWorkspace workspace, IDataSource targetDataSource)
+    public static async Task<ActivityLog> UploadDataNodesToWorkspaceAsync(IDataSet dataSet, IWorkspace workspace, IDataSource targetDataSource, IActivityVariable activity, IImportVariable import)
     {
         workspace.Reset(x => x.ResetInitializationRules().ResetCurrentPartitions());
         workspace.Initialize(x => x.FromSource(targetDataSource)
@@ -834,16 +845,16 @@ public static class ImportTasks
                                .DisableInitialization<DataNodeState>()
                                .DisableInitialization<DataNodeParameter>());
     
-        Activity.Start();
+        activity.Start();
         var args = await GetArgsAndCommitPartitionAsync<PartitionByReportingNode>(dataSet, targetDataSource);
 
-        if(Activity.HasErrors()) return Activity.Finish();
+        if(activity.HasErrors()) return activity.Finish();
     
         var storage = new ParsingStorage(args, targetDataSource, workspace);
         await storage.InitializeAsync();
-        if(Activity.HasErrors()) return Activity.Finish();
+        if(activity.HasErrors()) return activity.Finish();
        
-        var importLogPortfolios = await Import.FromDataSet(dataSet)
+        var importLogPortfolios = await import.FromDataSet(dataSet)
             .WithType<InsurancePortfolio>((dataset, datarow) => {
                 var pf = new InsurancePortfolio { SystemName = datarow.Field<string>(nameof(DataNode.SystemName)),
                                      DisplayName = datarow.Field<string>(nameof(DataNode.DisplayName)),
@@ -853,7 +864,7 @@ public static class ImportTasks
                                      LineOfBusiness = datarow.Field<string>(nameof(DataNode.LineOfBusiness)),
                                      ValuationApproach = datarow.Field<string>(nameof(DataNode.ValuationApproach)),
                                      OciType = datarow.Field<string>(nameof(DataNode.OciType)) };
-                return ExtendPortfolio(pf, datarow);
+                return ImportCalculationExtensions.ExtendPortfolio(pf, datarow);
             })
             .WithType<ReinsurancePortfolio>((dataset, datarow) => {
                 var pf = new ReinsurancePortfolio {  SystemName = datarow.Field<string>(nameof(DataNode.SystemName)),
@@ -864,7 +875,7 @@ public static class ImportTasks
                                         LineOfBusiness = datarow.Field<string>(nameof(DataNode.LineOfBusiness)),
                                         ValuationApproach = datarow.Field<string>(nameof(DataNode.ValuationApproach)),
                                         OciType = datarow.Field<string>(nameof(DataNode.OciType)) };
-                return ExtendPortfolio(pf, datarow);
+                return ImportCalculationExtensions.ExtendPortfolio(pf, datarow);
             })
             .WithTarget(workspace)
             .ExecuteAsync();
@@ -873,7 +884,7 @@ public static class ImportTasks
         var yieldCurveColumnGroupOfInsuranceContract = dataSet.Tables.Contains(nameof(GroupOfInsuranceContract)) && dataSet.Tables[nameof(GroupOfInsuranceContract)].Columns.Any(x => x.ColumnName == nameof(GroupOfInsuranceContract.YieldCurveName));
         var yieldCurveColumnGroupOfReinsuranceContract = dataSet.Tables.Contains(nameof(GroupOfReinsuranceContract)) && dataSet.Tables[nameof(GroupOfReinsuranceContract)].Columns.Any(x => x.ColumnName == nameof(GroupOfReinsuranceContract.YieldCurveName));
 
-        var importLogGroupOfContracts = await Import.FromDataSet(dataSet)
+        var importLogGroupOfContracts = await import.FromDataSet(dataSet)
             .WithType<GroupOfInsuranceContract>((dataset, datarow) => {
                 var gicSystemName = datarow.Field<string>(nameof(DataNode.SystemName));
                 var pf = datarow.Field<string>(nameof(InsurancePortfolio));
@@ -896,7 +907,7 @@ public static class ImportTasks
                                                      YieldCurveName = yieldCurveColumnGroupOfInsuranceContract
                                                                     ? datarow.Field<string>(nameof(GroupOfContract.YieldCurveName)) 
                                                                     : (string)null };
-            return ExtendGroupOfContract(gic, datarow);
+            return ImportCalculationExtensions.ExtendGroupOfContract(gic, datarow);
         })
         .WithType<GroupOfReinsuranceContract>((dataset, datarow) => {
             var gricSystemName = datarow.Field<string>(nameof(DataNode.SystemName));
@@ -921,12 +932,12 @@ public static class ImportTasks
                                                         YieldCurveName = yieldCurveColumnGroupOfReinsuranceContract
                                                                         ? datarow.Field<string>(nameof(GroupOfContract.YieldCurveName)) 
                                                                         : (string)null };
-            return ExtendGroupOfContract(gric, datarow);
+            return ImportCalculationExtensions.ExtendGroupOfContract(gric, datarow);
         })
         .WithTarget(workspace)
         .ExecuteAsync();
    
-        return Activity.Finish().Merge(importLogPortfolios).Merge(importLogGroupOfContracts);
+        return activity.Finish().Merge(importLogPortfolios).Merge(importLogGroupOfContracts);
     }
 
 
@@ -950,21 +961,21 @@ public static class ImportTasks
     }
 
 
-    public static async Task<ActivityLog> UploadDataNodeStateToWorkspaceAsync(IDataSet dataSet, IWorkspace workspace, IDataSource targetDataSource)
+    public static async Task<ActivityLog> UploadDataNodeStateToWorkspaceAsync(IDataSet dataSet, IWorkspace workspace, IDataSource targetDataSource, IActivityVariable activity, IImportVariable import)
     {
         workspace.Reset(x => x.ResetInitializationRules().ResetCurrentPartitions());
         workspace.Initialize(x => x.FromSource(targetDataSource)
                                .DisableInitialization<RawVariable>()
                                .DisableInitialization<IfrsVariable>()
                                .DisableInitialization<DataNodeState>());
-        Activity.Start();
+        activity.Start();
         var args = await GetArgsAndCommitPartitionAsync<PartitionByReportingNodeAndPeriod>(dataSet, targetDataSource) with {ImportFormat = ImportFormats.DataNodeState};
         if (!dataSet.Tables.Contains(args.ImportFormat)) ApplicationMessage.Log(Error.TableNotFound, args.ImportFormat);
-        if(Activity.HasErrors()) return Activity.Finish();
+        if(activity.HasErrors()) return activity.Finish();
     
         var storage = new ParsingStorage(args, targetDataSource, workspace);
         await storage.InitializeAsync();
-        if(Activity.HasErrors()) return Activity.Finish();
+        if(activity.HasErrors()) return activity.Finish();
 
         var importLog = await import.FromDataSet(dataSet).WithType<DataNodeState>(
             (dataset, datarow) => new DataNodeState {
