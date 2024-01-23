@@ -5,7 +5,10 @@ using FluentAssertions;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using Systemorph.Vertex.Collections;
 using Systemorph.Vertex.Pivot;
-    //.Reporting.Builder;
+using Systemorph.Vertex.Pivot.Reporting;
+using Systemorph.Vertex.Pivot.Reporting.Builder;
+
+//.Reporting.Builder;
 
 
 public static class Utils
