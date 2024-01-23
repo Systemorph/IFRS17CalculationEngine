@@ -563,7 +563,7 @@ public static class ImportTasks
 
         workspace.Reset(x => x.ResetType<IfrsVariable>());
         await workspace.UpdateAsync<IfrsVariable>(ivs.Where(x =>
-            storage.DefaultPartition != storage.TargetPartition || x.Values.Any(v => Math.Abs(v) >= Precision)));
+            storage.DefaultPartition != storage.TargetPartition || x.Values.Any(v => Math.Abs(v) >= Consts.Precision)));
         await workspace.CommitToAsync<IfrsVariable, PartitionByReportingNodeAndPeriod>(workspaceToCompute,
             storage.TargetPartition, snapshot: true,
             filter: x => storage.EstimateTypesByImportFormat[args.ImportFormat].Contains(x.EstimateType)
@@ -631,12 +631,12 @@ public static class ImportTasks
 
 
 
-    public static Task DefineAocFormats(IImportVariable import, IActivityService activity)
+    public static Task DefineAocFormats(IImportVariable import, IActivityService activity, IWorkspace work)
     {
         import.DefineFormat(ImportFormats.AocConfiguration, async (options, dataSet) =>
         {
-            Activity.Start();
-            var workspace = Workspace.CreateNew();
+            activity.Start();
+            var workspace = work.CreateNew();
             workspace.InitializeFrom(options.TargetDataSource);
 
             var aocTypes = await options.TargetDataSource.Query<AocType>().OrderBy(x => x.Order).ToArrayAsync();
@@ -646,9 +646,9 @@ public static class ImportTasks
             //     return Activity.Finish();
             // }
 
-            var logConfig = await Import.FromDataSet(dataSet).WithType<AocConfiguration>().WithTarget(workspace)
+            var logConfig = await import.FromDataSet(dataSet).WithType<AocConfiguration>().WithTarget(workspace)
                 .ExecuteAsync();
-            if (logConfig.Errors.Any()) return Activity.Finish().Merge(logConfig);
+            if (logConfig.Errors.Any()) return activity.Finish().Merge(logConfig);
 
             var orderByName = aocTypes.ToDictionary(x => x.SystemName, x => x.Order);
 
