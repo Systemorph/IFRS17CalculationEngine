@@ -6,6 +6,7 @@ using Systemorph.Vertex.Grid.Model;
 using Systemorph.Vertex.InteractiveObjects;
 using Systemorph.Vertex.InteractiveObjects.Dropdown;
 using Systemorph.Vertex.Pivot.Builder.Interfaces;
+using Systemorph.Vertex.Pivot.Reporting;
 using Systemorph.Vertex.Scopes;
 using Systemorph.Vertex.Workspace;
 
@@ -13,7 +14,7 @@ using Systemorph.Vertex.Workspace;
 //#!import "ParameterReportsQueries"
 
 
-public interface ParameterReportFormsEntity<TStorage> : MutableScopeWithWorkspace<TStorage>
+public interface ParameterReportFormsEntityInteractive<TStorage> : MutableScopeWithWorkspace<TStorage>
 where TStorage : ReportStorage
 {
     [DropdownMethod(nameof(GetParameterReportTypes))]
@@ -24,12 +25,12 @@ where TStorage : ReportStorage
 
 
 [InitializeScope(nameof(Init))]
-public interface ParameterReportScope: IMutableScope<string>, 
+public interface ParameterReportScopeInteractive: IMutableScope<string>, 
                                     ReportingNodeFormsEntity<ReportStorage>, 
                                     MonthlyPeriodFormsEntity<ReportStorage>, 
                                     ScenarioParameterFormsEntity<ReportStorage>,
                                     CurrencyFormsEntity, 
-                                    ParameterReportFormsEntity<ReportStorage>
+                                    ParameterReportFormsEntityInteractive<ReportStorage>
 {
     protected IPivotFactory report => GetStorage().Report;
     protected IExportVariable export => GetStorage().Export;
@@ -177,7 +178,7 @@ public interface ParameterReportScope: IMutableScope<string>,
 }
 
 
-class InteractiveParameterReports
+class InteractiveParameterReportsFull
 {
     private IPivotFactory report;
     private IExportVariable export;
@@ -186,7 +187,7 @@ class InteractiveParameterReports
 
     private IDictionary<string, InteractiveObjectView> interactiveObjectCache = new Dictionary<string, InteractiveObjectView>();
     
-    public InteractiveParameterReports(IWorkspace workspace, 
+    public InteractiveParameterReportsFull(IWorkspace workspace, 
                                     IPivotFactory report, 
                                     IExportVariable export, 
                                     InteractiveObjectVariable interactiveObject)
@@ -203,11 +204,12 @@ class InteractiveParameterReports
         interactiveObjectCache = new Dictionary<string, InteractiveObjectView>() {};
     }
 
-    public ParameterReportScope GetReportScope<T>(string name = null) where T : ParameterReportScope => 
+    public ParameterReportScopeInteractive GetReportScope<T>(string name = null) 
+        where T : ParameterReportScopeInteractive => 
         interactiveObject.State.GetScope<T>(name ?? typeof(T).Name, o => o.WithStorage(storage));
 
     public InteractiveObjectView GetFormsEntity<T>(string name = null)
-    where T : ParameterReportScope
+    where T : ParameterReportScopeInteractive
     {
         var key = name ?? typeof(T).Name;
         if (!interactiveObjectCache.TryGetValue($"{key}FormsEntity", out var ret))
@@ -217,7 +219,7 @@ class InteractiveParameterReports
     }
 
     public InteractiveObjectView GetReport<T>(string name = null)
-    where T : ParameterReportScope
+    where T : ParameterReportScopeInteractive
     {
         var key = name ?? typeof(T).Name;
         if (!interactiveObjectCache.TryGetValue(key, out var ret))
