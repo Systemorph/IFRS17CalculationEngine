@@ -1,9 +1,6 @@
 using OpenSmc.Ifrs17.Domain.DataModel;
-using System.IO;
 using System.Text;
 using System.Text.Json.Serialization;
-using Microsoft.Graph.CallRecords;
-using Microsoft.Graph.SecurityNamespace;
 using Systemorph.Vertex.Activities;
 using Systemorph.Vertex.Collections;
 using Systemorph.Vertex.DataSetReader;
@@ -24,12 +21,10 @@ public record StreamWrapper(Stream Stream, bool WillBeReused);
 
 public static class ActivityLogMethods
 {
-
     public static string ProcessNotification(this object obj)
     {
         return obj is ActivityMessageNotification amn ? amn.Message : "";
     }
-
 }
 
 public record IOActivity : KeyedRecord
@@ -227,7 +222,7 @@ public record ImportFile : KeyedImport
         Options = options;
         DataSetReader = importVariable;
         Session = session;
-        string fileName = options.FileName;
+        var fileName = options.FileName;
         Id = Guid.NewGuid();
         Name = Path.GetFileName(fileName);
         Directory = Path.GetDirectoryName(fileName);
@@ -241,7 +236,7 @@ public record ImportFile : KeyedImport
     {
         if (options is FileImportOptions fio)
         {
-            string fileName = fio.FileName;
+            var fileName = fio.FileName;
             return this with
             {
                 Options = fio,

@@ -1,8 +1,3 @@
-//#!import "../Utils/EqualityComparers"
-//#!import "../Utils/Queries"
-//#!import "../Utils/ActivityLog"
-
-
 using Systemorph.Vertex.Pivot.Builder;
 using System.Collections.Immutable;
 using OpenSmc.Ifrs17.Domain.Constants;
@@ -16,6 +11,8 @@ using Systemorph.Vertex.DataCubes.Api;
 using Systemorph.Vertex.Pivot.Reporting;
 using Systemorph.Vertex.Pivot.Reporting.Builder;
 using Systemorph.Vertex.Workspace;
+
+namespace OpenSmc.Ifrs17.Domain.Report;
 
 public static class ReportConfigExtensions
 {

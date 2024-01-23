@@ -10,10 +10,7 @@ using Systemorph.Vertex.Pivot.Reporting;
 using Systemorph.Vertex.Scopes;
 using Systemorph.Vertex.Workspace;
 
-//#!import "ReportMutableScopesInteractive"
-//#!import "ParameterReportsQueries"
-
-
+namespace OpenSmc.Ifrs17.Domain.Report;
 public interface ParameterReportFormsEntityInteractive<TStorage> : MutableScopeWithWorkspace<TStorage>
 where TStorage : ReportStorage
 {

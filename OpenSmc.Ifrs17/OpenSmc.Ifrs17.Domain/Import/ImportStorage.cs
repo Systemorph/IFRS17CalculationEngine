@@ -1,7 +1,3 @@
-//#!import "../Utils/EqualityComparers"
-//#!import "../Utils/ImportCalculationMethods"
-//#!import "../Utils/Queries"
-
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.Utils;
@@ -10,6 +6,8 @@ using Systemorph.Vertex.Collections;
 using Systemorph.Vertex.DataSource.Common;
 using Systemorph.Vertex.Hierarchies;
 using Systemorph.Vertex.Workspace;
+
+namespace OpenSmc.Ifrs17.Domain.Import;
 
 public class ImportStorage
 {   

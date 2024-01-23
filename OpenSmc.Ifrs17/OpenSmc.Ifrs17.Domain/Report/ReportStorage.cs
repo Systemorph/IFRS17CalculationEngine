@@ -12,7 +12,7 @@ using Systemorph.Vertex.Hierarchies;
 using Systemorph.Vertex.Scopes.Api;
 using Systemorph.Vertex.Workspace;
 
-//#!import "ReportConfigurationAndUtils"
+namespace OpenSmc.Ifrs17.Domain.Report;
 
 
 [IdentityAggregationBehaviour(IdentityAggregationBehaviour.Aggregate)]

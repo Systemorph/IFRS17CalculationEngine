@@ -1,12 +1,10 @@
-//#!import "4ImportScope-TechnicalMargin"
-
-
-using Microsoft.Graph.ExternalConnectors;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.Utils;
 using Systemorph.Vertex.Collections;
 using Systemorph.Vertex.Scopes;
+
+namespace OpenSmc.Ifrs17.Domain.Import;
 
 public interface PvToIfrsVariable: IScope<ImportIdentity, ImportStorage>
 {

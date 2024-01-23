@@ -1,11 +1,9 @@
-//#!import "5ImportScope-ToIfrsVar"
-
-
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.Utils;
 using Systemorph.Vertex.Scopes;
 
+namespace OpenSmc.Ifrs17.Domain.Import;
 public interface ComputeIfrsVarsActuals : ActualToIfrsVariable, DeferrableToIfrsVariable, EaForPremiumToIfrsVariable, TmToIfrsVariable
 {
     IEnumerable<IfrsVariable> CalculatedIfrsVariables => Actual.Concat(AdvanceActual).Concat(OverdueActual)

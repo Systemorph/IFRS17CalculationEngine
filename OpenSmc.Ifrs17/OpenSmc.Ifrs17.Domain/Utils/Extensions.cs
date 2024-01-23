@@ -1,14 +1,12 @@
 using System.Globalization;
 using System.Linq.Expressions;
-
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
-
 using Systemorph.Vertex.DataCubes;
 using Systemorph.Vertex.DataCubes.Api;
 using Systemorph.Vertex.Equality;
-//using static MoreLinq.Extensions.ZipLongestExtension;
-//using MoreLinq.Extensions.ZipLongestExtension;
+using static MoreLinq.Extensions.ZipLongestExtension;
+
 
 namespace OpenSmc.Ifrs17.Domain.Utils;
 
@@ -65,10 +63,10 @@ public static class Utils
     }
 
 
-    /*public static double[] AggregateDoubleArray(this IEnumerable<IEnumerable<double>> source)
+    public static double[] AggregateDoubleArray(this IEnumerable<IEnumerable<double>> source)
     {
         return source.Where(x => x is not null).DefaultIfEmpty(Enumerable.Empty<double>()).Aggregate((x, y) => x.ZipLongest(y, (a, b) => a + b)).ToArray();
-    }*/
+    }
 
 
     public static double[] Normalize(this IEnumerable<double> source)

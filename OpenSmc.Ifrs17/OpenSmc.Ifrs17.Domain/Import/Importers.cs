@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Linq.Expressions;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
@@ -8,17 +7,12 @@ using Systemorph.Vertex.DataSource.Common;
 using Systemorph.Vertex.DataStructures;
 using Systemorph.Vertex.Hierarchies;
 using Systemorph.Vertex.Workspace;
-using Systemorph.Activities;
-using DataSource = Systemorph.DataSource;
-using Systemorph.Import;
 using Systemorph.Vertex.Activities;
 using Systemorph.Vertex.Import;
-using Debug = OpenSmc.Ifrs17.Domain.Constants.Debug;
 using Scenario = OpenSmc.Ifrs17.Domain.DataModel.Scenario;
 using Scenarios = OpenSmc.Ifrs17.Domain.Constants.Scenarios;
 
-//#!import "6ImportScope-Compute"
-
+namespace OpenSmc.Ifrs17.Domain.Import;
 
 public static class ImpoterUtils
 {
@@ -292,7 +286,7 @@ public static class ImportTasks
 
     public static ImportArgs GetArgsFromMain(IDataSet dataSet)
     {
-        var mainTab = dataSet.Tables[Main];
+        var mainTab = dataSet.Tables[Consts.Main];
         if (mainTab == null) ApplicationMessage.Log(Error.NoMainTab);
         if (!mainTab.Rows.Any()) ApplicationMessage.Log(Error.IncompleteMainTab);
         if (ApplicationMessage.HasErrors()) return null;

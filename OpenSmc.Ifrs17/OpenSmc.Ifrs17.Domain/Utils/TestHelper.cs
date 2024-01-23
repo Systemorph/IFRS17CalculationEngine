@@ -1,17 +1,13 @@
-//#!import "../DataModel/DataStructure"
-
-
 using FluentAssertions;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using Systemorph.Vertex.Collections;
-using Systemorph.Vertex.Pivot;
+
 using Systemorph.Vertex.Pivot.Reporting;
 using Systemorph.Vertex.Pivot.Reporting.Builder;
 
-//.Reporting.Builder;
+namespace OpenSmc.Ifrs17.Domain.Utils;
 
-
-public static class Utils
+public static class TestUtils
 {
     public const double NumericalPrecisionEqualityChecker = 1.0E-10;
 

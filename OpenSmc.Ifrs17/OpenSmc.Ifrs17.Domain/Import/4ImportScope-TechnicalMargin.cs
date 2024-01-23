@@ -1,12 +1,11 @@
-//#!import "3ImportScope-Actuals"
-
-
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.Utils;
 using Systemorph.Vertex.Api.Attributes;
 using Systemorph.Vertex.Collections;
 using Systemorph.Vertex.Scopes;
 
+namespace OpenSmc.Ifrs17.Domain.Import;
 public interface BeExperienceAdjustmentForPremium : IScope<ImportIdentity, ImportStorage>
 {
     static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>

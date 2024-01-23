@@ -6,11 +6,10 @@ using Systemorph.Vertex.Api.Attributes;
 using Systemorph.Vertex.Attributes.Arithmetics;
 using Systemorph.Vertex.Workspace;
 
-//#!import "../Utils/Queries"
 
+namespace OpenSmc.Ifrs17.Domain.Report;
 
 public enum Period { Previous = -1, Current = 0 };
-
 
 public abstract record ReportParameter {
     [Display(Order = -100)]

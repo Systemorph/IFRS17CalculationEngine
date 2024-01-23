@@ -10,7 +10,7 @@ using Systemorph.Vertex.Grid.Model;
 using Systemorph.Vertex.Scopes;
 using Systemorph.Vertex.Workspace;
 
-//#!import "ReportScopes"
+namespace OpenSmc.Ifrs17.Domain.Report;
 
 
 public interface ReportUniverse : IMutableScopeWithStorage<ReportStorage>{}

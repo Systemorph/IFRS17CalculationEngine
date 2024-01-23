@@ -1,9 +1,7 @@
-//#!import "ReportScopes"
-
-
 using System.ComponentModel.DataAnnotations;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.Report;
 using OpenSmc.Ifrs17.Domain.Utils;
 using Systemorph.Vertex.Pivot.Builder.Interfaces;
 using Systemorph.InteractiveObjects;
@@ -22,6 +20,8 @@ using Systemorph.Vertex.InteractiveObjects.Dropdown;
 using Systemorph.Vertex.Scopes;
 using Systemorph.Vertex.Workspace;
 
+
+namespace OpenSmc.Ifrs17.Domain.Report;
 
 public interface MutableScopeWithWorkspace<TStorage> : IMutableScopeWithStorage<TStorage> 
 where TStorage : ReportStorage

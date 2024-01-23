@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="morelinq" Version="4.1.0" />
     <PackageReference Include="Systemorph.Activities" Version="1.6.5" />
     <PackageReference Include="Systemorph.Arithmetics" Version="1.6.5" />
     <PackageReference Include="Systemorph.DataSetReader" Version="1.6.7" />

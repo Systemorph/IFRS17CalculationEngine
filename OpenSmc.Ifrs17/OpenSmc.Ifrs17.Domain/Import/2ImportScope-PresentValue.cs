@@ -1,13 +1,11 @@
-//#!import "1ImportScope-Identities"
-
-
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.Utils;
 using Systemorph.Vertex.Api.Attributes;
 using Systemorph.Vertex.Scopes;
-using Systemorph.Arithmetics;
 using Systemorph.Vertex.Arithmetics;
+
+namespace OpenSmc.Ifrs17.Domain.Import;
 
 public interface MonthlyRate : IScope<ImportIdentity, ImportStorage>
 {

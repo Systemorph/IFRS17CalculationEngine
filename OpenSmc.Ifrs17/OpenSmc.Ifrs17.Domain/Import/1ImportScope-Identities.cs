@@ -1,12 +1,11 @@
-//#!import "ImportStorage"
-
-
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.Utils;
 using Systemorph.Vertex.Collections;
 using Systemorph.Vertex.Scopes;
 using AocStep = OpenSmc.Ifrs17.Domain.DataModel.AocStep;
 using ImportIdentity = OpenSmc.Ifrs17.Domain.DataModel.ImportIdentity;
+
+namespace OpenSmc.Ifrs17.Domain.Import;
 
 public interface IModel : IMutableScopeWithStorage<ImportStorage>{}
 

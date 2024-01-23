@@ -1,11 +1,8 @@
-
-
 using DocumentFormat.OpenXml.Spreadsheet;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using Systemorph.Vertex.Collections;
 using Systemorph.Vertex.Export.Builders.Interfaces;
 using Systemorph.Vertex.Export.Excel.Builders.Interfaces;
-using Systemorph.Vertex.Export;
 using Scenario = OpenSmc.Ifrs17.Domain.DataModel.Scenario;
 
 namespace OpenSmc.Ifrs17.Domain.Export;
@@ -14,15 +11,18 @@ public static class ExportConfigurations
 {
     public static IDocumentBuilder MainTabConfiguration<T>(this IDocumentBuilder builder, T args)
         where T : IfrsPartition
-        => builder.WithTable<T>(config => config.AtBeginning()
+    {
+        return builder.WithTable<T>(config => config.AtBeginning()
             //.WithName(Main) Find where this comes from 
             .WithSource(source => args.RepeatOnce().AsQueryable())
             .WithColumn(x => x.Id, x => x.Delete()));
+    }
 
 
     public static IDocumentBuilder PortfolioConfiguration<T>(this IDocumentBuilder builder,
         Type DependsOnType = default) where T : Portfolio
-        => builder.WithTable<T>(config =>
+    {
+        return builder.WithTable<T>(config =>
         {
             if (DependsOnType != default)
                 config = config.DependsOn(DependsOnType);
@@ -32,11 +32,13 @@ public static class ExportConfigurations
                 .WithColumn(x => x.Partition, x => x.Delete())
                 .WithColumn(x => x.FunctionalCurrency, x => x.Delete());
         });
+    }
 
 
     public static IDocumentBuilder GroupofContractConfiguration<T>(this IDocumentBuilder builder,
         Type DependsOnType = default) where T : GroupOfContract
-        => builder.WithTable<T>(config =>
+    {
+        return builder.WithTable<T>(config =>
         {
             if (DependsOnType != default)
                 config = config.DependsOn(DependsOnType);
@@ -52,9 +54,7 @@ public static class ExportConfigurations
                 .WithColumn(x => x.OciType, x => x.Delete())
                 .WithColumn(x => x.ValuationApproach, x => x.Delete());
         });
-
-
-
+    }
 
 
     public record HelperState
@@ -65,7 +65,8 @@ public static class ExportConfigurations
 
     public static IExcelDocumentBuilder DataNodeStateConfiguration(this IExcelDocumentBuilder builder,
         DataNodeState[] data)
-        => builder
+    {
+        return builder
             .WithTable<LiabilityType>(x => x.Delete())
             .WithTable<Profitability>(x => x.Delete())
             .WithTable<Portfolio>(x => x.Delete())
@@ -87,11 +88,12 @@ public static class ExportConfigurations
                 .WithColumn(x => x.State,
                     y => y.WithDataValidation(z => z.WithReferenceTo<HelperState, string>(t => t.State)))
             );
+    }
 
 
     public static IExcelDocumentBuilder StateEnumConfiguration(this IExcelDocumentBuilder builder)
     {
-        var helperState = new[] {new HelperState {State = "Active"}, new HelperState {State = "Inactive"}};
+        var helperState = new[] { new HelperState { State = "Active" }, new HelperState { State = "Inactive" } };
         return builder.WithTable<HelperState>(config => config.WithSheetVisibility(SheetStateValues.Hidden)
             //.WithColumn(x => x.State, z => z.WithNamedRange(y => y.WithName("HelperState_State")))
             .WithColumn(x => x.State, z => z.WithDefaultNamedRange())
@@ -101,7 +103,8 @@ public static class ExportConfigurations
 
     public static IExcelDocumentBuilder DataNodeParameterConfiguration(this IExcelDocumentBuilder builder,
         Dictionary<string, DataNodeParameter[]> data)
-        => builder
+    {
+        return builder
             .WithTable<LiabilityType>(x => x.Delete())
             .WithTable<Profitability>(x => x.Delete())
             .WithTable<Portfolio>(x => x.Delete())
@@ -133,7 +136,5 @@ public static class ExportConfigurations
                 .WithColumn(x => x.Id, x => x.Delete())
                 .WithColumn(x => x.Scenario, x => x.Delete())
             );
+    }
 }
-
-
-

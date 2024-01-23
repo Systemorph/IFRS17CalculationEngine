@@ -1,11 +1,9 @@
-using AngleSharp.Text;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using Systemorph.Vertex.Api.Attributes;
 using Systemorph.Vertex.Scopes;
 
-//#!import "2ImportScope-PresentValue"
-
+namespace OpenSmc.Ifrs17.Domain.Import;
 
 public interface WrittenActual : IScope<(ImportIdentity Id, string AmountType, string EstimateType, int? AccidentYear), ImportStorage>{
     static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>

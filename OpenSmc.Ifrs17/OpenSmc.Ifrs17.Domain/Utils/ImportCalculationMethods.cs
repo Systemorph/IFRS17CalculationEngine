@@ -1,12 +1,11 @@
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
-using OpenSmc.Ifrs17.Domain.Utils;
 using Systemorph.Vertex.DataCubes;
 using Systemorph.Vertex.DataCubes.Api;
 using Systemorph.Vertex.DataStructures;
 using Systemorph.Vertex.Workspace;
 
-//#!import "./Extensions"
+
 namespace OpenSmc.Ifrs17.Domain.Utils;
 
 public static class ImportCalculationExtensions
