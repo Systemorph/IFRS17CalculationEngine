@@ -6,6 +6,8 @@ using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.Utils;
 using Systemorph.Vertex.Api.Attributes;
 using Systemorph.Vertex.Scopes;
+using Systemorph.Arithmetics;
+using Systemorph.Vertex.Arithmetics;
 
 public interface MonthlyRate : IScope<ImportIdentity, ImportStorage>
 {
@@ -88,7 +90,7 @@ public interface CreditDefaultRiskNominalCashflow : NominalCashflow
             ret[i] = Math.Exp(-nonPerformanceRiskRate) * ret.ElementAtOrDefault(i + 1) + NominalClaimsCashflow[i] - NominalClaimsCashflow.ElementAtOrDefault(i + 1);
         return ret; } } 
         
-    double[] NominalCashflow.Values => Subtract(PvCdrDecumulated, NominalClaimsCashflow);
+    double[] NominalCashflow.Values => ArithmeticOperations.Subtract(PvCdrDecumulated, NominalClaimsCashflow);
 }
 
 public interface AllClaimsCashflow : NominalCashflow
@@ -113,14 +115,14 @@ public interface DiscountedCashflow : IScope<(ImportIdentity Id, string AmountTy
     protected double[] MonthlyDiscounting => GetScope<MonthlyRate>(Identity.Id, o => o.WithContext(EconomicBasis)).Discount;
     protected double[] NominalValues => GetScope<NominalCashflow>(Identity).Values;
 
-    double[] Values => Multiply(-1d, NominalValues.ComputeDiscountAndCumulate(MonthlyDiscounting, periodType)); // we need to flip the sign to create a reserve view
+    double[] Values => ArithmeticOperations.Multiply(-1d, NominalValues.ComputeDiscountAndCumulate(MonthlyDiscounting, periodType)); // we need to flip the sign to create a reserve view
 }
 
 public interface DiscountedCreditRiskCashflow : DiscountedCashflow{
     private string cdrBasis => Identity.AmountType == AmountTypes.CDR ? EconomicBases.C : EconomicBases.L;
     private double nonPerformanceRiskRate => GetStorage().GetNonPerformanceRiskRate(Identity.Id, cdrBasis);
         
-    double[] DiscountedCashflow.Values => Multiply(-1d, NominalValues.ComputeDiscountAndCumulateWithCreditDefaultRisk(MonthlyDiscounting, nonPerformanceRiskRate)); // we need to flip the sign to create a reserve view
+    double[] DiscountedCashflow.Values => ArithmeticOperations.Multiply(-1d, NominalValues.ComputeDiscountAndCumulateWithCreditDefaultRisk(MonthlyDiscounting, nonPerformanceRiskRate)); // we need to flip the sign to create a reserve view
 }
 
 public interface DiscountedCashflowNextYearsProjection : DiscountedCashflow{
@@ -140,7 +142,7 @@ public interface TelescopicDifference : IScope<(ImportIdentity Id, string Amount
                                             .Where(cf => cf.Count() > 0)
                                             .AggregateDoubleArray();
     
-    double[] Values => Subtract(CurrentValues, PreviousValues);
+    double[] Values => ArithmeticOperations.Subtract(CurrentValues, PreviousValues);
 }
 
 
@@ -170,7 +172,7 @@ public interface IWithGetValueFromValues : IScope<(ImportIdentity Id, string Amo
 
 public interface IWithInterestAccretion : IScope<(ImportIdentity Id, string AmountType, string EstimateType, int? AccidentYear), ImportStorage>
 {
-    private double[] parentDiscountedValues => Multiply(-1d, GetScope<DiscountedCashflow>(Identity).Values);    
+    private double[] parentDiscountedValues => ArithmeticOperations.Multiply(-1d, GetScope<DiscountedCashflow>(Identity).Values);    
     private double[] parentNominalValues => GetScope<NominalCashflow>(Identity).Values;
     private double[] monthlyInterestFactor => GetScope<MonthlyRate>(Identity.Id).Interest;
     
@@ -199,7 +201,7 @@ public interface IWithInterestAccretion : IScope<(ImportIdentity Id, string Amou
 public interface IWithInterestAccretionForCreditRisk : IScope<(ImportIdentity Id, string AmountType, string EstimateType, int? AccidentYear), ImportStorage>
 {
     private double[] nominalClaimsCashflow => GetScope<AllClaimsCashflow>(Identity).Values;
-    private double[] nominalValuesCreditRisk => Multiply(-1, GetScope<CreditDefaultRiskNominalCashflow>(Identity with {Id = Identity.Id with {AocType = AocTypes.CF}}).Values);
+    private double[] nominalValuesCreditRisk => ArithmeticOperations.Multiply(-1, GetScope<CreditDefaultRiskNominalCashflow>(Identity with {Id = Identity.Id with {AocType = AocTypes.CF}}).Values);
     private double[] monthlyInterestFactor => GetScope<MonthlyRate>(Identity.Id).Interest;
     private string cdrBasis => Identity.AmountType == AmountTypes.CDR ? EconomicBases.C : EconomicBases.L;
     private double nonPerformanceRiskRate => GetStorage().GetNonPerformanceRiskRate(Identity.Id, cdrBasis);
@@ -218,7 +220,7 @@ public interface IWithInterestAccretionForCreditRisk : IScope<(ImportIdentity Id
             effectCreditRisk[i] = interestOnClaimsCashflow[i] - interestOnClaimsCashflowCreditRisk[i];
         }
             
-        return Subtract(nominalValuesCreditRisk, effectCreditRisk);
+        return ArithmeticOperations.Subtract(nominalValuesCreditRisk, effectCreditRisk);
     }
 }
 
