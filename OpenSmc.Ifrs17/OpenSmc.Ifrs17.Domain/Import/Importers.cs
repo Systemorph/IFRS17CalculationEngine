@@ -10,8 +10,9 @@ using Systemorph.Vertex.Hierarchies;
 using Systemorph.Vertex.Workspace;
 using Systemorph.Vertex.Activities;
 using Systemorph.Vertex.Import;
-using Systemorph.Arithmetics;
+using Systemorph.Scopes;
 using Systemorph.Vertex.Arithmetics;
+using Systemorph.Vertex.Scopes.Proxy;
 using Debug = OpenSmc.Ifrs17.Domain.Constants.Debug;
 using Scenario = OpenSmc.Ifrs17.Domain.DataModel.Scenario;
 using Scenarios = OpenSmc.Ifrs17.Domain.Constants.Scenarios;
@@ -537,14 +538,14 @@ public static class ImportTasks
 
 
     public static async Task<ActivityLog> ComputeAsync(ImportArgs args, IWorkspace workspace,
-        IWorkspace workspaceToCompute, bool saveRawVariables, IActivityVariable activity)
+        IWorkspace workspaceToCompute, bool saveRawVariables, IActivityVariable activity, IScopeFactory scopes)
     {
         activity.Start();
         var storage = new ImportStorage(args, workspaceToCompute, workspace);
         await storage.InitializeAsync();
         if (activity.HasErrors()) return activity.Finish();
 
-        var universe = Scopes.ForStorage(storage).ToScope<IModel>();
+        var universe = scopes.ForStorage(storage).ToScope<IModel>();
         var ivs = universe.GetScopes<ComputeAllScopes>(storage.DataNodesByImportScope[ImportScope.Primary])
             .SelectMany(x => x.CalculatedIfrsVariables);
         if (activity.HasErrors()) return activity.Finish();
@@ -751,7 +752,7 @@ public static class ImportTasks
         });
     }
 
-    public static async Task DefineYycFormat(IImportVariable import, IActivityVariable activity, IWorkspaceVariable work)
+    public static async Task DefineYycFormat(IImportVariable import, IActivityVariable activity, IWorkspaceVariable work, IScopeFactory scopes)
     {
         import.DefineFormat(ImportFormats.YieldCurve, async (options, dataSet) =>
         {
@@ -827,7 +828,7 @@ public static class ImportTasks
                 // await workspaceToCompute.DeleteAsync( await workspaceToCompute.Query<RawVariable>()
                 //     .Where(x => !(dataNodesToUpdate.Contains(x.DataNode) && (x.Partition == targetPartition || x.Partition == defaultPartition))).ToArrayAsync() );
 
-                log = log.Merge(await ComputeAsync(args, work, workspaceToCompute, false, activity));
+                log = log.Merge(await ComputeAsync(args, work, workspaceToCompute, false, activity, scopes));
                 if (log.Errors.Any()) return activity.Finish().Merge(log);
             }
 
@@ -1118,7 +1119,7 @@ public static class ImportTasks
         return activity.Finish().Merge(importLog);
     }
 
-    public static async Task DefineDataNodeParameterFormat(IImportVariable import, IActivityVariable activity, IWorkspaceVariable work)
+    public static async Task DefineDataNodeParameterFormat(IImportVariable import, IActivityVariable activity, IWorkspaceVariable work, IScopeFactory scopes)
     {
         import.DefineFormat(ImportFormats.DataNodeParameter, async (options, dataSet) =>
         {
@@ -1186,7 +1187,7 @@ public static class ImportTasks
                      x.Partition == previousPartition)).ToArrayAsync();
                 if (nominals.Any()) await workspaceToCompute.UpdateAsync(nominals);
 
-                log = log.Merge(await ComputeAsync(args, workspace, workspaceToCompute, false, activity));
+                log = log.Merge(await ComputeAsync(args, workspace, workspaceToCompute, false, activity, scopes));
                 if (log.Errors.Any()) return activity.Finish().Merge(log);
             }
 
@@ -1315,7 +1316,7 @@ public static class ImportTasks
     }
 
 
-    public static async Task DefineCashflowFormat(IImportVariable import, IActivityVariable activity, IWorkspaceVariable work)
+    public static async Task DefineCashflowFormat(IImportVariable import, IActivityVariable activity, IWorkspaceVariable work, IScopeFactory scopes)
     {
         import.DefineFormat(ImportFormats.Cashflow, async (options, dataSet) =>
         {
@@ -1354,7 +1355,7 @@ public static class ImportTasks
             else
                 foreach (var args in allArgs)
                 {
-                    log = log.Merge(await ComputeAsync(args, workspace, workspaceToCompute, args == primaryArgs, activity));
+                    log = log.Merge(await ComputeAsync(args, workspace, workspaceToCompute, args == primaryArgs, activity, scopes));
                     if (log.Errors.Any()) return activity.Finish().Merge(log);
                 }
 
@@ -1426,7 +1427,7 @@ public static class ImportTasks
     return activity.Finish().Merge(importLog);
 }
 
-    public static async Task DefineActualFormat(IImportVariable import, IActivityVariable activity, IWorkspaceVariable work)
+    public static async Task DefineActualFormat(IImportVariable import, IActivityVariable activity, IWorkspaceVariable work, IScopeFactory scopes)
     {
         import.DefineFormat(ImportFormats.Actual, async (options, dataSet) =>
         {
@@ -1463,7 +1464,7 @@ public static class ImportTasks
             else
                 foreach (var args in allArgs)
                 {
-                    log = log.Merge(await ComputeAsync(args, workspace, workspaceToCompute, false, activity));
+                    log = log.Merge(await ComputeAsync(args, workspace, workspaceToCompute, false, activity, scopes));
                     if (log.Errors.Any()) return activity.Finish().Merge(log);
                 }
 
@@ -1580,7 +1581,7 @@ public static class ImportTasks
         });
     }
 
-    public static async Task DefineOpeningFormat(IImportVariable import, IActivityVariable activity, IWorkspaceVariable work)
+    public static async Task DefineOpeningFormat(IImportVariable import, IActivityVariable activity, IWorkspaceVariable work, IScopeFactory scopes)
     {
         import.DefineFormat(ImportFormats.Opening, async (options, dataSet) =>
         {
@@ -1620,7 +1621,7 @@ public static class ImportTasks
             else
                 foreach (var args in allArgs)
                 {
-                    log = log.Merge(await ComputeAsync(args, workspace, workspaceToCompute, false, activity));
+                    log = log.Merge(await ComputeAsync(args, workspace, workspaceToCompute, false, activity, scopes));
                     if (log.Errors.Any()) return activity.Finish().Merge(log);
                 }
 
