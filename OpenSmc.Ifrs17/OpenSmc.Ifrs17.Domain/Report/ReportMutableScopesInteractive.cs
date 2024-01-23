@@ -12,8 +12,9 @@ using Systemorph.Vertex.Arithmetics.Aggregation;
 using Systemorph.Vertex.Collections;
 using Systemorph.Vertex.DataCubes;
 using Systemorph.Vertex.DataCubes.Api;
-using Systemorph.Vertex.Session;
 using Systemorph.Vertex.Export;
+using Systemorph.Vertex.Export.Csv.Pivot;
+using Systemorph.Vertex.Export.Excel.Pivot;
 using Systemorph.Vertex.Export.Factory;
 using Systemorph.Vertex.Grid.Model;
 using Systemorph.Vertex.InteractiveObjects;
@@ -92,7 +93,7 @@ where TStorage : ReportStorage
     }
 
     void InitReportingNode() {
-        ReportingNodeControl = ParseDimensionToDisplayString(GetStorage().InitialReportingNode.SystemName, GetStorage().InitialReportingNode.DisplayName);
+        ReportingNodeControl = ReportConfigExtensions.ParseDimensionToDisplayString(GetStorage().InitialReportingNode.SystemName, GetStorage().InitialReportingNode.DisplayName);
     }
 }
 
@@ -118,12 +119,12 @@ where TStorage : ReportStorage
             .Where(x => x.Scenario == null)
             .OrderByDescending(x => x.Year)
             .ThenByDescending(x => x.Month)
-            .Select(x => ParseReportingPeriodToDisplayString(x.Year, x.Month, separator))
+            .Select(x => ReportConfigExtensions.ParseReportingPeriodToDisplayString(x.Year, x.Month, separator))
             .Where(x => userInput == null || x.Contains(userInput, StringComparison.OrdinalIgnoreCase))
             .ToArrayAsync();
 
     void InitReportingPeriod() {
-        ReportingPeriod = ParseReportingPeriodToDisplayString(GetStorage().InitialReportingPeriod.Year, GetStorage().InitialReportingPeriod.Month, separator);
+        ReportingPeriod = ReportConfigExtensions.ParseReportingPeriodToDisplayString(GetStorage().InitialReportingPeriod.Year, GetStorage().InitialReportingPeriod.Month, separator);
     }
 }
 
@@ -268,7 +269,7 @@ where TStorage : ReportStorage
 }
 
 
-public interface Data : IMutableScope<((int year, int month) reportingPeriod, string reportingNode, string scenario, CurrencyType currencyType, (string filterName, object filterValue)[] dataFilter)> {
+public interface IData : IMutableScope<((int year, int month) reportingPeriod, string reportingNode, string scenario, CurrencyType currencyType, (string filterName, object filterValue)[] dataFilter)> {
     IDataCube<ReportVariable> InputDataCube { get; set; }
     IDataCube<ReportVariable> DataCube { get {
         if(InputDataCube is null) return Enumerable.Empty<ReportVariable>().ToDataCube();
@@ -309,7 +310,7 @@ public interface ReportScope : IMutableScope<string>,
 
     async Task<GridOptions> ToReportAsync() {
         await GetStorage().InitializeAsync((Year, Month), ReportingNode, Scenario, CurrencyType);
-        var dataScope = GetScope<Data>(((Year, Month), ReportingNode, Scenario, CurrencyType, dataFilter));
+        var dataScope = GetScope<IData>(((Year, Month), ReportingNode, Scenario, CurrencyType, dataFilter));
         var dataCube = GetData();
         // This is a temporary solution to avoid an error from the empty report
         // Remove when the issue is solved on the platform - A.K.
@@ -322,7 +323,7 @@ public interface ReportScope : IMutableScope<string>,
     // Avoid using these methods if working with the DB -- it will trigger synchronization error in access to the DB
     async Task<ExportResult> ToCsvAsync(string fileName){
         await GetStorage().InitializeAsync((Year, Month), ReportingNode, Scenario, CurrencyType);
-        var dataScope = GetScope<Data>(((Year, Month), ReportingNode, Scenario, CurrencyType, dataFilter));
+        var dataScope = GetScope<IData>(((Year, Month), ReportingNode, Scenario, CurrencyType, dataFilter));
         dataScope.InputDataCube = GetData();
         return await export.ToCsv(fileName)
                         .ForDataCube(dataScope.DataCube, config => config.WithQuerySource(workspace)
@@ -334,7 +335,7 @@ public interface ReportScope : IMutableScope<string>,
 
     async Task<ExportResult> ToExcelAsync(string fileName){
         await GetStorage().InitializeAsync((Year, Month), ReportingNode, Scenario, CurrencyType);
-        var dataScope = GetScope<Data>(((Year, Month), ReportingNode, Scenario, CurrencyType, dataFilter));
+        var dataScope = GetScope<IData>(((Year, Month), ReportingNode, Scenario, CurrencyType, dataFilter));
         dataScope.InputDataCube = GetData();
         return await export.ToExcel(fileName)
                         .ForDataCube(dataScope.DataCube, config => config.WithQuerySource(workspace) 
@@ -365,7 +366,7 @@ public interface ReportScope : IMutableScope<string>,
 
 
 [InitializeScope(nameof(Init))]
-public interface PvReport : ReportScope {
+public interface IPvReport : ReportScope {
     
     IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<LockedBestEstimate>(GetDataIdentities()).Aggregate().LockedBestEstimate + GetScopes<CurrentBestEstimate>(GetDataIdentities()).Aggregate().CurrentBestEstimate;
 
@@ -380,7 +381,7 @@ public interface PvReport : ReportScope {
 
 
 [InitializeScope(nameof(Init))]
-public interface RaReport : ReportScope {
+public interface IRaReport : ReportScope {
     
     IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<LockedRiskAdjustment>(GetDataIdentities()).Aggregate().LockedRiskAdjustment + GetScopes<CurrentRiskAdjustment>(GetDataIdentities()).Aggregate().CurrentRiskAdjustment;
 
@@ -394,7 +395,7 @@ public interface RaReport : ReportScope {
 
 
 [InitializeScope(nameof(Init))]
-public interface FcfReport : ReportScope {
+public interface IFcfReport : ReportScope {
     
     IDataCube<ReportVariable> ReportScope.GetData() =>  GetScopes<Fcf>(GetDataIdentities()).Aggregate().Fcf;
 
@@ -408,7 +409,7 @@ public interface FcfReport : ReportScope {
 
 
 [InitializeScope(nameof(Init))]
-public interface WrittenReport : ReportScope {
+public interface IWrittenReport : ReportScope {
     
     IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<WrittenAndAccruals>(GetDataIdentities()).Aggregate().Written;
 
@@ -422,7 +423,7 @@ public interface WrittenReport : ReportScope {
 
 
 [InitializeScope(nameof(Init))]
-public interface AccrualReport : ReportScope {
+public interface IAccrualReport : ReportScope {
     
     IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<WrittenAndAccruals>(GetDataIdentities()).Aggregate().Advance + GetScopes<WrittenAndAccruals>(GetDataIdentities()).Aggregate().Overdue;
 
@@ -437,7 +438,7 @@ public interface AccrualReport : ReportScope {
 
 
 [InitializeScope(nameof(Init))]
-public interface DeferralReport : ReportScope {
+public interface IDeferralReport : ReportScope {
     
     IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<Deferrals>(GetDataIdentities()).Aggregate().Deferrals;
 
@@ -451,7 +452,7 @@ public interface DeferralReport : ReportScope {
 
 
 [InitializeScope(nameof(Init))]
-public interface ExpAdjReport: ReportScope {
+public interface IExpAdjReport: ReportScope {
     
     IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<ExperienceAdjustment>(GetDataIdentities()).Aggregate().ActuarialExperienceAdjustment;
 
@@ -466,7 +467,7 @@ public interface ExpAdjReport: ReportScope {
 
 
 [InitializeScope(nameof(Init))]
-public interface TmReport : ReportScope {
+public interface ITmReport : ReportScope {
     
     IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<LrcTechnicalMargin>(GetDataIdentities()).Aggregate().LrcTechnicalMargin;
 
@@ -480,7 +481,7 @@ public interface TmReport : ReportScope {
 
 
 [InitializeScope(nameof(Init))]
-public interface CsmReport : ReportScope {
+public interface ICsmReport : ReportScope {
     
     IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<Csm>(GetDataIdentities()).Aggregate().Csm + GetScopes<Lc>(GetDataIdentities()).Aggregate().Lc + GetScopes<Loreco>(GetDataIdentities()).Aggregate().Loreco;
 
@@ -494,7 +495,7 @@ public interface CsmReport : ReportScope {
 
 
 [InitializeScope(nameof(Init))]
-public interface ActLrcReport : ReportScope {
+public interface IActLrcReport : ReportScope {
     
     IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<LrcActuarial>(GetDataIdentities()).Aggregate().LrcActuarial;
 
@@ -508,7 +509,7 @@ public interface ActLrcReport : ReportScope {
 
 
 [InitializeScope(nameof(Init))]
-public interface LrcReport : ReportScope {
+public interface ILrcReport : ReportScope {
     
     IDataCube<ReportVariable> ReportScope.GetData() =>GetScopes<Lrc>(GetDataIdentities()).Aggregate().Lrc;
 
@@ -522,7 +523,7 @@ public interface LrcReport : ReportScope {
 
 
 [InitializeScope(nameof(Init))]
-public interface ActLicReport : ReportScope {
+public interface IActLicReport : ReportScope {
     
     IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<LicActuarial>(GetDataIdentities()).Aggregate().LicActuarial;
 
@@ -536,7 +537,7 @@ public interface ActLicReport : ReportScope {
 
 
 [InitializeScope(nameof(Init))]
-public interface LicReport : ReportScope {
+public interface ILicReport : ReportScope {
     
     IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<Lic>(GetDataIdentities()).Aggregate().Lic;
 
@@ -550,7 +551,7 @@ public interface LicReport : ReportScope {
 
 
 [InitializeScope(nameof(Init))]
-public interface FpReport : ReportScope {
+public interface IFpReport : ReportScope {
     
     IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<FinancialPerformance>(GetDataIdentities()).Aggregate().FinancialPerformance;
 
@@ -563,9 +564,9 @@ public interface FpReport : ReportScope {
 }
 
 
-using Systemorph.Vertex.Pivot.Builder.Interfaces;
-using Systemorph.InteractiveObjects;
-using Systemorph.Vertex.Session;
+//using Systemorph.Vertex.Pivot.Builder.Interfaces;
+//using Systemorph.InteractiveObjects;
+//using Systemorph.Vertex.Session;
 public class Ifrs17Interactive {
     private IPivotFactory report;
     private IExportVariable export;
@@ -658,20 +659,20 @@ public class Ifrs17Interactive {
     public ReportScope GetReportScope<T>(string name = null) where T : ReportScope => interactiveObject.State.GetScope<T>(name ?? typeof(T).Name, o => o.WithStorage(storage));
 
     // Keeping the old API
-    public ReportScope PresentValues => GetReportScope<PvReport>();
-    public ReportScope RiskAdjustments => GetReportScope<RaReport>();
-    public ReportScope FulfillmentCashflows => GetReportScope<FcfReport>();
-    public ReportScope WrittenActuals => GetReportScope<WrittenReport>();
-    public ReportScope AccrualActuals => GetReportScope<AccrualReport>();
-    public ReportScope DeferralActuals => GetReportScope<DeferralReport>();
-    public ReportScope ExperienceAdjustments => GetReportScope<ExpAdjReport>();
-    public ReportScope TechnicalMargins => GetReportScope<TmReport>();
-    public ReportScope AllocatedTechnicalMargins => GetReportScope<CsmReport>();
-    public ReportScope ActuarialLrc => GetReportScope<ActLrcReport>();
-    public ReportScope Lrc => GetReportScope<LrcReport>();
-    public ReportScope ActuarialLic => GetReportScope<ActLicReport>();
-    public ReportScope Lic => GetReportScope<LicReport>();
-    public ReportScope FinancialPerformance => GetReportScope<FpReport>();  
+    public ReportScope PresentValues => GetReportScope<IPvReport>();
+    public ReportScope RiskAdjustments => GetReportScope<IRaReport>();
+    public ReportScope FulfillmentCashflows => GetReportScope<IFcfReport>();
+    public ReportScope WrittenActuals => GetReportScope<IWrittenReport>();
+    public ReportScope AccrualActuals => GetReportScope<IAccrualReport>();
+    public ReportScope DeferralActuals => GetReportScope<IDeferralReport>();
+    public ReportScope ExperienceAdjustments => GetReportScope<IExpAdjReport>();
+    public ReportScope TechnicalMargins => GetReportScope<ITmReport>();
+    public ReportScope AllocatedTechnicalMargins => GetReportScope<ICsmReport>();
+    public ReportScope ActuarialLrc => GetReportScope<IActLrcReport>();
+    public ReportScope Lrc => GetReportScope<ILrcReport>();
+    public ReportScope ActuarialLic => GetReportScope<IActLicReport>();
+    public ReportScope Lic => GetReportScope<ILicReport>();
+    public ReportScope FinancialPerformance => GetReportScope<IFpReport>();  
 }
 
 
