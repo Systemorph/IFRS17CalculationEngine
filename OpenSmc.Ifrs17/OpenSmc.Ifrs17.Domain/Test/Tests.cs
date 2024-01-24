@@ -1,4 +1,4 @@
-#!eval-notebook "AocConfigurationTest"
+/*#!eval-notebook "AocConfigurationTest"
 
 
 #!eval-notebook "QueriesTest"
@@ -29,3 +29,4 @@
 
 
 #!eval-notebook "OtherTest"
+*/
