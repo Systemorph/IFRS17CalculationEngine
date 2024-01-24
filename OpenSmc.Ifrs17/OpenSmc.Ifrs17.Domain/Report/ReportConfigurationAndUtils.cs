@@ -134,7 +134,7 @@ public static class ReportConfigExtensions
             : (await workspace.QueryReportVariablesSingleScenarioAsync(
                 (args.Year, args.Month, args.ReportingNode, args.Scenario), orderedProjectionConfigurations))
             .Union(bestEstimate.Select(x => x with {Scenario = args.Scenario}),
-                System.Collections.Generic.EqualityComparer<ReportVariable>.Instance).ToArray();
+                Utils.EqualityComparer<ReportVariable>.Instance).ToArray();
     }
 
 

@@ -1,7 +1,6 @@
 //#!import "../CalculationEngine"
 
 using FluentAssertions;
-using Microsoft.Graph.SecurityNamespace;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using Systemorph.Vertex.Activities;
@@ -14,11 +13,11 @@ namespace OpenSmc.Ifrs17.Domain.Tests;
 
 public class AocConfigurationTest
 {
-    private IImportVariable Import;
-    private Workspace Workspace;
-    private IDataSource DataSource;
+    protected IImportVariable Import;
+    protected Workspace Workspace;
+    protected IDataSource DataSource;
 
-    string novelties =
+    protected string novelties =
         @"@@Novelty
         SystemName,DisplayName,Parent,Order
         I,In Force,,1
@@ -27,7 +26,7 @@ public class AocConfigurationTest
 
 
 
-    string canonicalAocTypes =
+    protected string canonicalAocTypes =
         @"@@AocType,,,,,,,,,,,
         SystemName,DisplayName,Parent,Order,,,,,,,,
         BOP,Opening Balance,,10,,,,,,,,
