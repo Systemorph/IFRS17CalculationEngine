@@ -11,7 +11,6 @@ using Systemorph.Vertex.Workspace;
 public class QueriesTest
 {
     protected IWorkspaceVariable Workspace;
-    protected TestData td;
     protected IActivityVariable Activity;
     private string gic;
     private string scenario;
@@ -23,7 +22,6 @@ public class QueriesTest
     {
         gic = "DT1.1";
         scenario = "MTUP";
-        td = new TestData();
         Workspace = workspace;
         Workspace.Reset(x => x.ResetInitializationRules().ResetCurrentPartitions());
         gic2 = "gic2";
