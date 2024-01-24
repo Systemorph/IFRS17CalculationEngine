@@ -28,11 +28,15 @@ public class AocStructureTest : AocConfigurationTest
     private TestData testData = new TestData();
     private RawVariable[] inputRawVariables;
     public IScopeFactory Scopes;
+    private Dictionary<AocStep, IEnumerable<AocStep>> parentBm { get; set; }
+    private Dictionary<AocStep, IEnumerable<AocStep>> fullAocBm { get; set; }
+    private Dictionary<AocStep, IEnumerable<AocStep>> referenceBm { get; set; }
+    private Dictionary<AocStep, IEnumerable<AocStep>> parentBm_CDr { get; set; }
 
     public AocStructureTest(IImportVariable import, IWorkspaceVariable work, IActivityVariable activity) : base(import,
         work)
     {
-        Activity = activity; 
+        Activity = activity;
     }
 
     private async Task InitializeDataSourceAsync()
@@ -112,9 +116,9 @@ public class AocStructureTest : AocConfigurationTest
 
     private async Task<ActivityLog> CheckAocStepStructureAsync(IEnumerable<BaseDataRecord> inputVariables,
         IActivityVariable activity,
-        Dictionary<AocStep, IEnumerable<AocStep>> parentBm,
+        Dictionary<AocStep, IEnumerable<AocStep>> parentBmInner,
         Dictionary<AocStep, IEnumerable<AocStep>> referenceBm,
-        Dictionary<AocStep, IEnumerable<AocStep>> fullAocBm,
+        Dictionary<AocStep, IEnumerable<AocStep>> fullAocBmInner,
         StructureType structureType = StructureType.AocPresentValue,
         Dictionary<AocStep, IEnumerable<AocStep>> parentBmCdr = null)
     {
@@ -158,16 +162,16 @@ public class AocStructureTest : AocConfigurationTest
             var parents = testUniverse
                 .GetScopes<ParentAocStep>(identities.Select(id => (object) (id, "PR", structureType)),
                     o => o.WithStorage(testStorage)).Where(x => x.Values.Any()).ToArray();
-            if (parentBm.Count() != parents.Count())
+            if (parentBmInner.Count() != parents.Count())
             {
                 var computedIds =
                     parents.Select(s => $"AocType:{s.Identity.Id.AocType}, Novelty:{s.Identity.Id.Novelty}");
-                var expectedIds = parentBm.Keys.Select(aoc => $"AocType:{aoc.AocType}, Novelty:{aoc.Novelty}");
+                var expectedIds = parentBmInner.Keys.Select(aoc => $"AocType:{aoc.AocType}, Novelty:{aoc.Novelty}");
                 errors.Add(
-                    $"Parent count does not match expected: \n Computed {parents.Count()} \n {string.Join("\n", computedIds)} \n Expected {parentBm.Count()} \n {string.Join("\n", expectedIds)}.");
+                    $"Parent count does not match expected: \n Computed {parents.Count()} \n {string.Join("\n", computedIds)} \n Expected {parentBmInner.Count()} \n {string.Join("\n", expectedIds)}.");
             }
 
-            foreach (var kvp in parentBm)
+            foreach (var kvp in parentBmInner)
             {
                 var scopeParents = parents.Where(y =>
                     y.Identity.Id.AocType == kvp.Key.AocType && y.Identity.Id.Novelty == kvp.Key.Novelty);
@@ -198,7 +202,7 @@ public class AocStructureTest : AocConfigurationTest
                 var countP = parentsCdr.Where(x => x.Values.Any()).Count();
                 if (parentBmCdr.Count() != countP)
                     errors.Add(
-                        $"Parent count for AmountType CDR does not match expected: \n Computed {countP} \n Expected {parentBm.Count()}.");
+                        $"Parent count for AmountType CDR does not match expected: \n Computed {countP} \n Expected {parentBmInner.Count()}.");
 
                 foreach (var kvp in parentBmCdr)
                 {
@@ -261,17 +265,18 @@ public class AocStructureTest : AocConfigurationTest
             .GetScopes<PreviousAocSteps>(identities.Select(id => (object) (id, structureType)),
                 o => o.WithStorage(testStorage)).Where(s => s.Values.Any());
         var count = fullAoc.Count();
-        if (fullAocBm.Count() != count)
+        if (fullAocBmInner.Count() != count)
         {
             var computedAocSteps =
                 fullAoc.Select(x => $"AocType:{x.Identity.Id.AocType}, Novelty:{x.Identity.Id.Novelty}");
-            var benchmarkKeys = fullAocBm.Keys.Select(aoc => $"AocType:{aoc.AocType}, Novelty:{aoc.Novelty}");
-            errors.Add($"Full AoC count does not match expected: \n Computed {count} \n Expected {fullAocBm.Count()}.");
+            var benchmarkKeys = fullAocBmInner.Keys.Select(aoc => $"AocType:{aoc.AocType}, Novelty:{aoc.Novelty}");
+            errors.Add(
+                $"Full AoC count does not match expected: \n Computed {count} \n Expected {fullAocBmInner.Count()}.");
             errors.Add(
                 $"In particular, \n Computed Identities \n {string.Join("\n", computedAocSteps)} \n Expected \n {string.Join("\n", benchmarkKeys)}.");
         }
         else
-            foreach (var kvp in fullAocBm)
+            foreach (var kvp in fullAocBmInner)
             {
                 var scopeAocFulls = fullAoc.Where(y =>
                     y.Identity.Id.AocType == kvp.Key.AocType && y.Identity.Id.Novelty == kvp.Key.Novelty);
@@ -341,7 +346,7 @@ public class AocStructureTest : AocConfigurationTest
             },
         };
 
-        var parentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
+        parentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
         {
             {new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}},
             {new AocStep("YCU", "I"), new AocStep[] {new AocStep("MC", "I")}},
@@ -377,56 +382,57 @@ public class AocStructureTest : AocConfigurationTest
 
     public async Task SecondCheckAsync()
     {
-        inputRawVariables = new RawVariable[] {
+        inputRawVariables = new RawVariable[]
+        {
             new RawVariable
             {
-                Partition = testData.partition.Id, Values = new[] {1.0}, 
+                Partition = testData.partition.Id, Values = new[] {1.0},
                 DataNode = testData.groupOfReinsuranceContracts, AocType = "BOP",
                 Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = testData.partition.Id, Values = new[] {1.0}, 
+                Partition = testData.partition.Id, Values = new[] {1.0},
                 DataNode = testData.groupOfReinsuranceContracts, AocType = "MC",
                 Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = testData.partition.Id, Values = new[] {1.0}, 
+                Partition = testData.partition.Id, Values = new[] {1.0},
                 DataNode = testData.groupOfReinsuranceContracts, AocType = "BOP",
                 Novelty = "N", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = testData.partition.Id, Values = new[] {1.0}, 
+                Partition = testData.partition.Id, Values = new[] {1.0},
                 DataNode = testData.groupOfReinsuranceContracts, AocType = "EV",
                 Novelty = "N", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = testData.partition.Id, Values = new[] {1.0}, 
+                Partition = testData.partition.Id, Values = new[] {1.0},
                 DataNode = testData.groupOfReinsuranceContracts, AocType = "CL",
                 Novelty = "C", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
         };
 
 
-        var parentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
+        parentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
         {
             {
-            new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}
+                new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}
             },
             {
-            new AocStep("YCU", "I"), new AocStep[] {new AocStep("MC", "I")}
+                new AocStep("YCU", "I"), new AocStep[] {new AocStep("MC", "I")}
             },
             {
-            new AocStep("CRU", "I"), new AocStep[] {new AocStep("YCU", "I")}
+                new AocStep("CRU", "I"), new AocStep[] {new AocStep("YCU", "I")}
             },
             {
-            new AocStep("EV", "N"), new AocStep[] {new AocStep("BOP", "N")}
+                new AocStep("EV", "N"), new AocStep[] {new AocStep("BOP", "N")}
             },
             {
-            new AocStep("CL", "C"), new AocStep[] {new AocStep("YCU", "I"), new AocStep("EV", "N"),}
+                new AocStep("CL", "C"), new AocStep[] {new AocStep("YCU", "I"), new AocStep("EV", "N"),}
             },
         };
 
@@ -496,8 +502,7 @@ public class AocStructureTest : AocConfigurationTest
             },
         };
 
-
-        var fullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
+        fullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
         {
             {
                 new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}
@@ -507,11 +512,11 @@ public class AocStructureTest : AocConfigurationTest
             },
             {
                 new AocStep("IA", "I"), new AocStep[]
-                {new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I")}
+                    {new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I")}
             },
             {
-            new AocStep("YCU", "I"), new AocStep[]
-                {new AocStep("IA", "I"), new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I")}
+                new AocStep("YCU", "I"), new AocStep[]
+                    {new AocStep("IA", "I"), new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I")}
             },
             {
                 new AocStep("CRU", "I"), new AocStep[]
@@ -528,7 +533,7 @@ public class AocStructureTest : AocConfigurationTest
             },
             {
                 new AocStep("EV", "N"), new AocStep[]
-                {new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N")}
+                    {new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N")}
             },
             {
                 new AocStep("CL", "C"), new AocStep[]
@@ -548,7 +553,7 @@ public class AocStructureTest : AocConfigurationTest
                 }
             },
         };
-        var activity = await CheckAocStepStructureAsync(inputRawVariables, Activity, 
+        var activity = await CheckAocStepStructureAsync(inputRawVariables, Activity,
             parentBm, referenceBm, fullAocBm,
             StructureType.AocPresentValue, parentBm_CDR);
 
@@ -557,9 +562,9 @@ public class AocStructureTest : AocConfigurationTest
     }
 
 
-    public Task ThirdCheckAsync()
+    public async Task ThirdCheckAsync()
     {
-        var fullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
+        fullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
         {
             {
                 new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}
@@ -628,8 +633,9 @@ public class AocStructureTest : AocConfigurationTest
         };
 
 
-        var activity = await CheckAocStepStructureAsync(inputRawVariables, parentBm, referenceBm, fullAocBm,
-            StructureType.AocTechnicalMargin, parentBm_CDR);
+        var activity = await CheckAocStepStructureAsync(inputRawVariables, Activity, parentBm,
+            referenceBm, fullAocBm,
+            StructureType.AocTechnicalMargin, parentBm_CDr);
 
 
 
@@ -642,32 +648,32 @@ public class AocStructureTest : AocConfigurationTest
         {
             new RawVariable
             {
-                Partition = testData.partition.Id, Values = new[] {1.0}, 
+                Partition = testData.partition.Id, Values = new[] {1.0},
                 DataNode = testData.groupOfInsuranceContracts, AocType = "BOP",
                 Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = testData.partition.Id, Values = new[] {1.0}, 
+                Partition = testData.partition.Id, Values = new[] {1.0},
                 DataNode = testData.groupOfInsuranceContracts, AocType = "MC",
                 Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = testData.partition.Id, Values = new[] {1.0}, 
+                Partition = testData.partition.Id, Values = new[] {1.0},
                 DataNode = testData.groupOfInsuranceContracts, AocType = "EV",
                 Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = testData.partition.Id, Values = new[] {1.0}, 
+                Partition = testData.partition.Id, Values = new[] {1.0},
                 DataNode = testData.groupOfInsuranceContracts, AocType = "CL",
                 Novelty = "C", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
         };
 
 
-        var parentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
+        parentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
         {
             {
                 new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}
@@ -767,12 +773,12 @@ public class AocStructureTest : AocConfigurationTest
         };
 
 
-        var activity = await CheckAocStepStructureAsync(inputRawVariables, Activity, 
+        var activity = await CheckAocStepStructureAsync(inputRawVariables, Activity,
             parentBm, referenceBm, fullAocBm);
 
 
         activity.Status.Should().Be(ActivityLogStatus.Succeeded);
-        }
+    }
 
     public async Task FifthCheckAsync()
     {
@@ -811,25 +817,25 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
         {
             new RawVariable
             {
-                Partition = testData.partition.Id, Values = new[] {1.0}, 
+                Partition = testData.partition.Id, Values = new[] {1.0},
                 DataNode = testData.groupOfInsuranceContracts, AocType = "BOP",
                 Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = testData.partition.Id, Values = new[] {1.0}, 
+                Partition = testData.partition.Id, Values = new[] {1.0},
                 DataNode = testData.groupOfInsuranceContracts, AocType = "MC",
                 Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = testData.partition.Id, Values = new[] {1.0}, 
+                Partition = testData.partition.Id, Values = new[] {1.0},
                 DataNode = testData.groupOfInsuranceContracts, AocType = "CL",
                 Novelty = "C", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = testData.partition.Id, Values = new[] {1.0}, 
+                Partition = testData.partition.Id, Values = new[] {1.0},
                 DataNode = testData.groupOfInsuranceContracts, AocType = "EV",
                 Novelty = "C", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
@@ -938,255 +944,274 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
         };
 
 
-        var activity = await CheckAocStepStructureAsync(inputRawVariables, Activity, 
+        var activity = await CheckAocStepStructureAsync(inputRawVariables, Activity,
             parentBm, referenceBm, fullAocBm);
 
 
         activity.Status.Should().Be(ActivityLogStatus.Succeeded);
     }
 
-
-    inputRawVariables = new RawVariable[] {
-    new RawVariable
+    public async Task SixthCheckAsync()
     {
-        Partition = partition.Id, Values = new[] {1.0}, DataNode = groupOfInsuranceContracts, AocType = "BOP",
-        Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
-    },
-    new RawVariable
-    {
-        Partition = partition.Id, Values = new[] {1.0}, DataNode = groupOfInsuranceContracts, AocType = "MC",
-        Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
-    },
-    new RawVariable
-    {
-        Partition = partition.Id, Values = new[] {1.0}, DataNode = groupOfInsuranceContracts, AocType = "BOP",
-        Novelty = "N", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
-    },
-    new RawVariable
-    {
-        Partition = partition.Id, Values = new[] {1.0}, DataNode = groupOfInsuranceContracts, AocType = "AU",
-        Novelty = "N", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
-    },
-    new RawVariable
-    {
-        Partition = partition.Id, Values = new[] {1.0}, DataNode = groupOfInsuranceContracts, AocType = "CL",
-        Novelty = "C", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
-    },
-    new RawVariable
-    {
-        Partition = partition.Id, Values = new[] {1.0}, DataNode = groupOfInsuranceContracts, AocType = "EV",
-        Novelty = "C", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
-    },
-};
-
-
-parentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
-{
-    {
-        new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}
-    },
-    {
-        new AocStep("YCU", "I"), new AocStep[] {new AocStep("MC", "I")}
-    },
-    {
-        new AocStep("AU", "N"), new AocStep[] {new AocStep("BOP", "N")}
-    },
-    {
-        new AocStep("EV", "C"), new AocStep[] {new AocStep("YCU", "I"), new AocStep("AU", "N")}
-    },
-    {
-        new AocStep("CL", "C"), new AocStep[] {new AocStep("EV", "C")}
-    },
-};
-
-
-referenceBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
-{
-    {
-        new AocStep("BOP", "I"), new AocStep[] {new AocStep("BOP", "I")}
-    },
-    {
-        new AocStep("MC", "I"), new AocStep[] {new AocStep("MC", "I")}
-    },
-    {
-        new AocStep("CF", "I"), new AocStep[] {new AocStep("MC", "I")}
-    },
-    {
-        new AocStep("IA", "I"), new AocStep[] {new AocStep("MC", "I")}
-    },
-    {
-        new AocStep("YCU", "I"), new AocStep[] {new AocStep("MC", "I")}
-    },
-    {
-        new AocStep("BOP", "N"), new AocStep[] {new AocStep("BOP", "N")}
-    },
-    {
-        new AocStep("CF", "N"), new AocStep[] {new AocStep("BOP", "N")}
-    },
-    {
-        new AocStep("IA", "N"), new AocStep[] {new AocStep("BOP", "N")}
-    },
-    {
-        new AocStep("AU", "N"), new AocStep[] {new AocStep("AU", "N")}
-    },
-    {
-        new AocStep("EV", "C"), new AocStep[] {new AocStep("EV", "C")}
-    },
-    {
-        new AocStep("CL", "C"), new AocStep[] {new AocStep("CL", "C")}
-    },
-    {
-        new AocStep("EA", "C"), new AocStep[] {new AocStep("CF", "C")}
-    },
-    {
-        new AocStep("AM", "C"), new AocStep[] {new AocStep("CL", "C")}
-    },
-    {
-        new AocStep("EOP", "C"), new AocStep[] {new AocStep("CL", "C")}
-    },
-    {
-        new AocStep("CF", "C"), new AocStep[] {new AocStep("CF", "C")}
-    },
-    {
-        new AocStep("WO", "C"), new AocStep[] {new AocStep("WO", "C")}
-    },
-};
-
-
-fullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
-{
-    {
-        new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}
-    },
-    {
-        new AocStep("CF", "I"), new AocStep[] {new AocStep("BOP", "I"), new AocStep("MC", "I")}
-    },
-    {
-        new AocStep("IA", "I"), new AocStep[]
-            {new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I")}
-    },
-    {
-        new AocStep("YCU", "I"), new AocStep[]
-            {new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I"), new AocStep("IA", "I")}
-    },
-
-    {
-        new AocStep("CF", "N"), new AocStep[] {new AocStep("BOP", "N")}
-    },
-    {
-        new AocStep("IA", "N"), new AocStep[] {new AocStep("BOP", "N"), new AocStep("CF", "N")}
-    },
-    {
-        new AocStep("AU", "N"), new AocStep[]
-            {new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N")}
-    },
-
-    {
-        new AocStep("EV", "C"), new AocStep[]
+        inputRawVariables = new RawVariable[]
         {
-            new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
-            new AocStep("YCU", "I"),
-            new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"), new AocStep("AU", "N"),
-        }
-    },
-    {
-        new AocStep("CL", "C"), new AocStep[]
+            new RawVariable
+            {
+                Partition = testData.partition.Id, Values = new[] {1.0},
+                DataNode = testData.groupOfInsuranceContracts, AocType = "BOP",
+                Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
+            },
+            new RawVariable
+            {
+                Partition = testData.partition.Id, Values = new[] {1.0},
+                DataNode = testData.groupOfInsuranceContracts, AocType = "MC",
+                Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
+            },
+            new RawVariable
+            {
+                Partition = testData.partition.Id, Values = new[] {1.0},
+                DataNode = testData.groupOfInsuranceContracts, AocType = "BOP",
+                Novelty = "N", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
+            },
+            new RawVariable
+            {
+                Partition = testData.partition.Id, Values = new[] {1.0},
+                DataNode = testData.groupOfInsuranceContracts, AocType = "AU",
+                Novelty = "N", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
+            },
+            new RawVariable
+            {
+                Partition = testData.partition.Id, Values = new[] {1.0},
+                DataNode = testData.groupOfInsuranceContracts, AocType = "CL",
+                Novelty = "C", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
+            },
+            new RawVariable
+            {
+                Partition = testData.partition.Id, Values = new[] {1.0},
+                DataNode = testData.groupOfInsuranceContracts, AocType = "EV",
+                Novelty = "C", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
+            },
+        };
+
+
+        parentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
         {
-            new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
-            new AocStep("YCU", "I"),
-            new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"), new AocStep("AU", "N"),
-            new AocStep("EV", "C"),
-        }
-    },
-    {
-        new AocStep("EOP", "C"), new AocStep[]
+            {
+                new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}
+            },
+            {
+                new AocStep("YCU", "I"), new AocStep[] {new AocStep("MC", "I")}
+            },
+            {
+                new AocStep("AU", "N"), new AocStep[] {new AocStep("BOP", "N")}
+            },
+            {
+                new AocStep("EV", "C"), new AocStep[] {new AocStep("YCU", "I"), new AocStep("AU", "N")}
+            },
+            {
+                new AocStep("CL", "C"), new AocStep[] {new AocStep("EV", "C")}
+            },
+        };
+
+
+        var referenceBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
         {
-            new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
-            new AocStep("YCU", "I"),
-            new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"), new AocStep("AU", "N"),
-            new AocStep("EV", "C"), new AocStep("CL", "C"),
-        }
-    },
-};
+            {
+                new AocStep("BOP", "I"), new AocStep[] {new AocStep("BOP", "I")}
+            },
+            {
+                new AocStep("MC", "I"), new AocStep[] {new AocStep("MC", "I")}
+            },
+            {
+                new AocStep("CF", "I"), new AocStep[] {new AocStep("MC", "I")}
+            },
+            {
+                new AocStep("IA", "I"), new AocStep[] {new AocStep("MC", "I")}
+            },
+            {
+                new AocStep("YCU", "I"), new AocStep[] {new AocStep("MC", "I")}
+            },
+            {
+                new AocStep("BOP", "N"), new AocStep[] {new AocStep("BOP", "N")}
+            },
+            {
+                new AocStep("CF", "N"), new AocStep[] {new AocStep("BOP", "N")}
+            },
+            {
+                new AocStep("IA", "N"), new AocStep[] {new AocStep("BOP", "N")}
+            },
+            {
+                new AocStep("AU", "N"), new AocStep[] {new AocStep("AU", "N")}
+            },
+            {
+                new AocStep("EV", "C"), new AocStep[] {new AocStep("EV", "C")}
+            },
+            {
+                new AocStep("CL", "C"), new AocStep[] {new AocStep("CL", "C")}
+            },
+            {
+                new AocStep("EA", "C"), new AocStep[] {new AocStep("CF", "C")}
+            },
+            {
+                new AocStep("AM", "C"), new AocStep[] {new AocStep("CL", "C")}
+            },
+            {
+                new AocStep("EOP", "C"), new AocStep[] {new AocStep("CL", "C")}
+            },
+            {
+                new AocStep("CF", "C"), new AocStep[] {new AocStep("CF", "C")}
+            },
+            {
+                new AocStep("WO", "C"), new AocStep[] {new AocStep("WO", "C")}
+            },
+        };
 
 
-var activity = await CheckAocStepStructureAsync(inputRawVariables, parentBm, referenceBm, fullAocBm);
+        var fullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
+        {
+            {
+                new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}
+            },
+            {
+                new AocStep("CF", "I"), new AocStep[] {new AocStep("BOP", "I"), new AocStep("MC", "I")}
+            },
+            {
+                new AocStep("IA", "I"), new AocStep[]
+                    {new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I")}
+            },
+            {
+                new AocStep("YCU", "I"), new AocStep[]
+                    {new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I"), new AocStep("IA", "I")}
+            },
 
-activity
+            {
+                new AocStep("CF", "N"), new AocStep[] {new AocStep("BOP", "N")}
+            },
+            {
+                new AocStep("IA", "N"), new AocStep[] {new AocStep("BOP", "N"), new AocStep("CF", "N")}
+            },
+            {
+                new AocStep("AU", "N"), new AocStep[]
+                    {new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N")}
+            },
+
+            {
+                new AocStep("EV", "C"), new AocStep[]
+                {
+                    new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
+                    new AocStep("YCU", "I"),
+                    new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"), new AocStep("AU", "N"),
+                }
+            },
+            {
+                new AocStep("CL", "C"), new AocStep[]
+                {
+                    new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
+                    new AocStep("YCU", "I"),
+                    new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"), new AocStep("AU", "N"),
+                    new AocStep("EV", "C"),
+                }
+            },
+            {
+                new AocStep("EOP", "C"), new AocStep[]
+                {
+                    new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
+                    new AocStep("YCU", "I"),
+                    new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"), new AocStep("AU", "N"),
+                    new AocStep("EV", "C"), new AocStep("CL", "C"),
+                }
+            },
+        };
 
 
-    activity.Status.Should().Be(ActivityLogStatus.Succeeded);
+        var activity = await CheckAocStepStructureAsync(inputRawVariables, Activity,
+            parentBm, referenceBm, fullAocBm);
 
 
-await DataSource.DeleteAsync(DataSource.Query<AocConfiguration>());
-await Import.FromString(canonicalAocConfig).WithType<AocConfiguration>().WithTarget(DataSource).ExecuteAsync();
+        activity.Status.Should().Be(ActivityLogStatus.Succeeded);
+    }
 
-
-var inputIfrsVariables = new IfrsVariable[]
-{
-    new IfrsVariable
+    public async Task SeventhCheckAsync()
     {
-        Partition = partition.Id, Values = new double[] {1.0}, DataNode = groupOfInsuranceContracts,
-        AocType = "BOP", Novelty = "C", AccidentYear = null, AmountType = "PR", EstimateType = "AA"
-    },
-    new IfrsVariable
+        await DataSource.DeleteAsync(DataSource.Query<AocConfiguration>());
+        await Import.FromString(canonicalAocConfig).WithType<AocConfiguration>().WithTarget(DataSource).ExecuteAsync();
+
+
+        var inputIfrsVariables = new IfrsVariable[]
+        {
+            new IfrsVariable
+            {
+                Partition = testData.partition.Id, Values = new double[] {1.0},
+                DataNode = testData.groupOfInsuranceContracts,
+                AocType = "BOP", Novelty = "C", AccidentYear = null, AmountType = "PR",
+                EstimateType = "AA"
+            },
+            new IfrsVariable
+            {
+                Partition = testData.partition.Id, Values = new double[] {1.0},
+                DataNode = testData.groupOfInsuranceContracts,
+                AocType = "CF",
+                Novelty = "C", AccidentYear = null, AmountType = "PR", EstimateType = "AA"
+            },
+            new IfrsVariable
+            {
+                Partition = testData.partition.Id, Values = new double[] {1.0},
+                DataNode = testData.groupOfInsuranceContracts,
+                AocType = "CF",
+                Novelty = "C", AccidentYear = null, AmountType = "ACA", EstimateType = "A"
+            },
+            new IfrsVariable
+            {
+                Partition = testData.partition.Id, Values = new double[] {1.0},
+                DataNode = testData.groupOfInsuranceContracts,
+                AocType = "WO",
+                Novelty = "C", AccidentYear = null, AmountType = "PR", EstimateType = "OA"
+            },
+        };
+
+
+        parentBm = null;
+
+
+        referenceBm = null;
+
+
+        fullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
+        {
+            {
+                new AocStep("CF", "C"), new AocStep[] {new AocStep("BOP", "I"),}
+            },
+            {
+                new AocStep("WO", "C"), new AocStep[] {new AocStep("BOP", "I"), new AocStep("CF", "C"),}
+            },
+            {
+                new AocStep("EOP", "C"), new AocStep[]
+                    {new AocStep("BOP", "I"), new AocStep("CF", "C"), new AocStep("WO", "C")}
+            },
+        };
+
+
+        var activity = await CheckAocStepStructureAsync(inputIfrsVariables, Activity,
+            parentBm, referenceBm, fullAocBm,
+            StructureType.AocAccrual);
+
+
+
+        activity.Status.Should().Be(ActivityLogStatus.Succeeded);
+    }
+
+    public async Task EighthCheckAsync()
     {
-        Partition = partition.Id, Values = new double[] {1.0}, DataNode = groupOfInsuranceContracts, AocType = "CF",
-        Novelty = "C", AccidentYear = null, AmountType = "PR", EstimateType = "AA"
-    },
-    new IfrsVariable
-    {
-        Partition = partition.Id, Values = new double[] {1.0}, DataNode = groupOfInsuranceContracts, AocType = "CF",
-        Novelty = "C", AccidentYear = null, AmountType = "ACA", EstimateType = "A"
-    },
-    new IfrsVariable
-    {
-        Partition = partition.Id, Values = new double[] {1.0}, DataNode = groupOfInsuranceContracts, AocType = "WO",
-        Novelty = "C", AccidentYear = null, AmountType = "PR", EstimateType = "OA"
-    },
-};
-
-
-parentBm = null;
-
-
-referenceBm = null;
-
-
-fullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
-{
-    {
-        new AocStep("CF", "C"), new AocStep[] {new AocStep("BOP", "I"),}
-    },
-    {
-        new AocStep("WO", "C"), new AocStep[] {new AocStep("BOP", "I"), new AocStep("CF", "C"),}
-    },
-    {
-        new AocStep("EOP", "C"), new AocStep[]
-            {new AocStep("BOP", "I"), new AocStep("CF", "C"), new AocStep("WO", "C")}
-    },
-};
-
-
-var activity = await CheckAocStepStructureAsync(inputIfrsVariables, parentBm, referenceBm, fullAocBm,
-    StructureType.AocAccrual);
-
-activity
-
-
-    activity.Status.Should().Be(ActivityLogStatus.Succeeded);
-
-
-string newNovelties =
-    @"@@Novelty
+        string newNovelties =
+            @"@@Novelty
 SystemName,DisplayName,Parent,Order
 I,In Force,,1
 N,New Business,,10
 A,Aquisition,,15
 C,Combined,,20";
 
-string newAocConfig =
-    @"@@AocConfiguration,,,,,,,,,,,
+        string newAocConfig =
+            @"@@AocConfiguration,,,,,,,,,,,
 AocType,Novelty,DataType,InputSource,StructureType,FxPeriod,YcPeriod,CdrPeriod,ValuationPeriod,RcPeriod,Order,Year,Month
 BOP,I,17,7,14,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,10,1900,1
 MC,I,1,4,10,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,20,1900,1
@@ -1220,146 +1245,156 @@ AM,C,4,6,8,EndOfPeriod,NotApplicable,NotApplicable,NotApplicable,EndOfPeriod,200
 EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,1900,1";
 
 
-await DataSource.DeleteAsync(DataSource.Query<Novelty>());
-await DataSource.DeleteAsync(DataSource.Query<AocConfiguration>());
-await Import.FromString(newNovelties).WithType<Novelty>().WithTarget(DataSource).ExecuteAsync();
-await Import.FromString(newAocConfig).WithType<AocConfiguration>().WithTarget(DataSource).ExecuteAsync();
+        await DataSource.DeleteAsync(DataSource.Query<Novelty>());
+        await DataSource.DeleteAsync(DataSource.Query<AocConfiguration>());
+        await Import.FromString(newNovelties).WithType<Novelty>().WithTarget(DataSource).ExecuteAsync();
+        await Import.FromString(newAocConfig).WithType<AocConfiguration>().WithTarget(DataSource).ExecuteAsync();
 
 
-inputRawVariables = new RawVariable[] {
-    new RawVariable
-    {
-        Partition = partition.Id, Values = new[] {1.0}, DataNode = groupOfInsuranceContracts, AocType = "BOP",
-        Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
-    },
-    new RawVariable
-    {
-        Partition = partition.Id, Values = new[] {1.0}, DataNode = groupOfInsuranceContracts, AocType = "MC",
-        Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
-    },
-    new RawVariable
-    {
-        Partition = partition.Id, Values = new[] {1.0}, DataNode = groupOfInsuranceContracts, AocType = "BOP",
-        Novelty = "N", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
-    },
-    new RawVariable
-    {
-        Partition = partition.Id, Values = new[] {1.0}, DataNode = groupOfInsuranceContracts, AocType = "EV",
-        Novelty = "N", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
-    },
-    new RawVariable
-    {
-        Partition = partition.Id, Values = new[] {1.0}, DataNode = groupOfInsuranceContracts, AocType = "BOP",
-        Novelty = "A", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
-    },
-    new RawVariable
-    {
-        Partition = partition.Id, Values = new[] {1.0}, DataNode = groupOfInsuranceContracts, AocType = "AU",
-        Novelty = "A", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
-    },
-    new RawVariable
-    {
-        Partition = partition.Id, Values = new[] {1.0}, DataNode = groupOfInsuranceContracts, AocType = "CL",
-        Novelty = "C", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
-    },
-};
-
-
-var parentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
-{
-    {new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}},
-    {new AocStep("YCU", "I"), new AocStep[] {new AocStep("MC", "I")}},
-    {new AocStep("EV", "N"), new AocStep[] {new AocStep("BOP", "N")}},
-    {new AocStep("AU", "A"), new AocStep[] {new AocStep("BOP", "A")}},
-    {
-        new AocStep("CL", "C"),
-        new AocStep[] {new AocStep("YCU", "I"), new AocStep("EV", "N"), new AocStep("AU", "A"),}
-    },
-};
-
-
-var referenceBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
-{
-    {new AocStep("BOP", "I"), new AocStep[] {new AocStep("BOP", "I")}},
-    {new AocStep("MC", "I"), new AocStep[] {new AocStep("MC", "I")}},
-    {new AocStep("CF", "I"), new AocStep[] {new AocStep("MC", "I")}},
-    {new AocStep("IA", "I"), new AocStep[] {new AocStep("MC", "I")}},
-    {new AocStep("YCU", "I"), new AocStep[] {new AocStep("MC", "I")}},
-    {new AocStep("BOP", "N"), new AocStep[] {new AocStep("BOP", "N")}},
-    {new AocStep("CF", "N"), new AocStep[] {new AocStep("BOP", "N")}},
-    {new AocStep("IA", "N"), new AocStep[] {new AocStep("BOP", "N")}},
-    {new AocStep("EV", "N"), new AocStep[] {new AocStep("EV", "N")}},
-    {new AocStep("BOP", "A"), new AocStep[] {new AocStep("BOP", "A")}},
-    {new AocStep("CF", "A"), new AocStep[] {new AocStep("BOP", "A")}},
-    {new AocStep("IA", "A"), new AocStep[] {new AocStep("BOP", "A")}},
-    {new AocStep("AU", "A"), new AocStep[] {new AocStep("AU", "A")}},
-    {new AocStep("CL", "C"), new AocStep[] {new AocStep("CL", "C")}},
-    {new AocStep("EA", "C"), new AocStep[] {new AocStep("CF", "C")}},
-    {new AocStep("AM", "C"), new AocStep[] {new AocStep("CL", "C")}},
-    {new AocStep("EOP", "C"), new AocStep[] {new AocStep("CL", "C")}},
-    {new AocStep("CF", "C"), new AocStep[] {new AocStep("CF", "C")}},
-    {new AocStep("WO", "C"), new AocStep[] {new AocStep("WO", "C")}},
-};
-
-
-var fullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
-{
-    {new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}},
-    {new AocStep("CF", "I"), new AocStep[] {new AocStep("BOP", "I"), new AocStep("MC", "I")}},
-    {
-        new AocStep("IA", "I"),
-        new AocStep[] {new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I")}
-    },
-    {
-        new AocStep("YCU", "I"),
-        new AocStep[]
-            {new AocStep("IA", "I"), new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I")}
-    },
-    {new AocStep("CF", "N"), new AocStep[] {new AocStep("BOP", "N")}},
-    {new AocStep("IA", "N"), new AocStep[] {new AocStep("BOP", "N"), new AocStep("CF", "N")}},
-    {
-        new AocStep("EV", "N"),
-        new AocStep[] {new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N")}
-    },
-    {new AocStep("CF", "A"), new AocStep[] {new AocStep("BOP", "A")}},
-    {new AocStep("IA", "A"), new AocStep[] {new AocStep("BOP", "A"), new AocStep("CF", "A")}},
-    {
-        new AocStep("AU", "A"),
-        new AocStep[] {new AocStep("BOP", "A"), new AocStep("CF", "A"), new AocStep("IA", "A")}
-    },
-    {
-        new AocStep("CL", "C"), new AocStep[]
+        inputRawVariables = new RawVariable[]
         {
-            new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
-            new AocStep("YCU", "I"),
-            new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"), new AocStep("EV", "N"),
-            new AocStep("BOP", "A"), new AocStep("CF", "A"), new AocStep("IA", "A"), new AocStep("AU", "A"),
-        }
-    },
-    {
-        new AocStep("EOP", "C"), new AocStep[]
+            new RawVariable
+            {
+                Partition = testData.partition.Id, Values = new[] {1.0},
+                DataNode = testData.groupOfInsuranceContracts, AocType = "BOP",
+                Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
+            },
+            new RawVariable
+            {
+                Partition = testData.partition.Id, Values = new[] {1.0},
+                DataNode = testData.groupOfInsuranceContracts, AocType = "MC",
+                Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
+            },
+            new RawVariable
+            {
+                Partition = testData.partition.Id, Values = new[] {1.0},
+                DataNode = testData.groupOfInsuranceContracts, AocType = "BOP",
+                Novelty = "N", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
+            },
+            new RawVariable
+            {
+                Partition = testData.partition.Id, Values = new[] {1.0},
+                DataNode = testData.groupOfInsuranceContracts, AocType = "EV",
+                Novelty = "N", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
+            },
+            new RawVariable
+            {
+                Partition = testData.partition.Id, Values = new[] {1.0},
+                DataNode = testData.groupOfInsuranceContracts, AocType = "BOP",
+                Novelty = "A", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
+            },
+            new RawVariable
+            {
+                Partition = testData.partition.Id, Values = new[] {1.0},
+                DataNode = testData.groupOfInsuranceContracts, AocType = "AU",
+                Novelty = "A", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
+            },
+            new RawVariable
+            {
+                Partition = testData.partition.Id, Values = new[] {1.0},
+                DataNode = testData.groupOfInsuranceContracts, AocType = "CL",
+                Novelty = "C", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
+            },
+        };
+
+
+        parentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
         {
-            new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
-            new AocStep("YCU", "I"),
-            new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"), new AocStep("EV", "N"),
-            new AocStep("BOP", "A"), new AocStep("CF", "A"), new AocStep("IA", "A"), new AocStep("AU", "A"),
-            new AocStep("CL", "C"),
-        }
-    },
-};
+            {new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}},
+            {new AocStep("YCU", "I"), new AocStep[] {new AocStep("MC", "I")}},
+            {new AocStep("EV", "N"), new AocStep[] {new AocStep("BOP", "N")}},
+            {new AocStep("AU", "A"), new AocStep[] {new AocStep("BOP", "A")}},
+            {
+                new AocStep("CL", "C"),
+                new AocStep[] {new AocStep("YCU", "I"), new AocStep("EV", "N"), new AocStep("AU", "A"),}
+            },
+        };
+
+
+        referenceBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
+        {
+            {new AocStep("BOP", "I"), new AocStep[] {new AocStep("BOP", "I")}},
+            {new AocStep("MC", "I"), new AocStep[] {new AocStep("MC", "I")}},
+            {new AocStep("CF", "I"), new AocStep[] {new AocStep("MC", "I")}},
+            {new AocStep("IA", "I"), new AocStep[] {new AocStep("MC", "I")}},
+            {new AocStep("YCU", "I"), new AocStep[] {new AocStep("MC", "I")}},
+            {new AocStep("BOP", "N"), new AocStep[] {new AocStep("BOP", "N")}},
+            {new AocStep("CF", "N"), new AocStep[] {new AocStep("BOP", "N")}},
+            {new AocStep("IA", "N"), new AocStep[] {new AocStep("BOP", "N")}},
+            {new AocStep("EV", "N"), new AocStep[] {new AocStep("EV", "N")}},
+            {new AocStep("BOP", "A"), new AocStep[] {new AocStep("BOP", "A")}},
+            {new AocStep("CF", "A"), new AocStep[] {new AocStep("BOP", "A")}},
+            {new AocStep("IA", "A"), new AocStep[] {new AocStep("BOP", "A")}},
+            {new AocStep("AU", "A"), new AocStep[] {new AocStep("AU", "A")}},
+            {new AocStep("CL", "C"), new AocStep[] {new AocStep("CL", "C")}},
+            {new AocStep("EA", "C"), new AocStep[] {new AocStep("CF", "C")}},
+            {new AocStep("AM", "C"), new AocStep[] {new AocStep("CL", "C")}},
+            {new AocStep("EOP", "C"), new AocStep[] {new AocStep("CL", "C")}},
+            {new AocStep("CF", "C"), new AocStep[] {new AocStep("CF", "C")}},
+            {new AocStep("WO", "C"), new AocStep[] {new AocStep("WO", "C")}},
+        };
+
+
+        fullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
+        {
+            {new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}},
+            {new AocStep("CF", "I"), new AocStep[] {new AocStep("BOP", "I"), new AocStep("MC", "I")}},
+            {
+                new AocStep("IA", "I"),
+                new AocStep[] {new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I")}
+            },
+            {
+                new AocStep("YCU", "I"),
+                new AocStep[]
+                    {new AocStep("IA", "I"), new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I")}
+            },
+            {new AocStep("CF", "N"), new AocStep[] {new AocStep("BOP", "N")}},
+            {new AocStep("IA", "N"), new AocStep[] {new AocStep("BOP", "N"), new AocStep("CF", "N")}},
+            {
+                new AocStep("EV", "N"),
+                new AocStep[] {new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N")}
+            },
+            {new AocStep("CF", "A"), new AocStep[] {new AocStep("BOP", "A")}},
+            {new AocStep("IA", "A"), new AocStep[] {new AocStep("BOP", "A"), new AocStep("CF", "A")}},
+            {
+                new AocStep("AU", "A"),
+                new AocStep[] {new AocStep("BOP", "A"), new AocStep("CF", "A"), new AocStep("IA", "A")}
+            },
+            {
+                new AocStep("CL", "C"), new AocStep[]
+                {
+                    new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
+                    new AocStep("YCU", "I"),
+                    new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"), new AocStep("EV", "N"),
+                    new AocStep("BOP", "A"), new AocStep("CF", "A"), new AocStep("IA", "A"), new AocStep("AU", "A"),
+                }
+            },
+            {
+                new AocStep("EOP", "C"), new AocStep[]
+                {
+                    new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
+                    new AocStep("YCU", "I"),
+                    new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"), new AocStep("EV", "N"),
+                    new AocStep("BOP", "A"), new AocStep("CF", "A"), new AocStep("IA", "A"), new AocStep("AU", "A"),
+                    new AocStep("CL", "C"),
+                }
+            },
+        };
 
 
 
-var activity = await CheckAocStepStructureAsync(inputRawVariables, parentBm, referenceBm, fullAocBm);
-
-activity
-
-
-    activity.Status.Should().Be(ActivityLogStatus.Succeeded);
+        var activity = await CheckAocStepStructureAsync(inputRawVariables, Activity,
+            parentBm, referenceBm, fullAocBm);
 
 
-string newAocTypes =
-    @"@@AocType
+
+        activity.Status.Should().Be(ActivityLogStatus.Succeeded);
+    }
+
+    public async Task NincthCheckAsync()
+    {
+        string newAocTypes =
+            @"@@AocType
 SystemName,DisplayName,Parent,Order
 BOP,Opening Balance,,10
 MC,Model Correction,,20
@@ -1372,8 +1407,8 @@ CL,Combined Liabilities,,80
 AM,Amortization,,85
 EOP,Closing Balance,,90";
 
-string newAocConfiguration =
-    @"@@AocConfiguration,,,,,,,,,,,
+        string newAocConfiguration =
+            @"@@AocConfiguration,,,,,,,,,,,
 AocType,Novelty,DataType,InputSource,StructureType,FxPeriod,YcPeriod,CdrPeriod,ValuationPeriod,RcPeriod,Order,Year,Month
 BOP,I,17,7,14,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,10,1900,1
 MC,I,1,4,10,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,20,1900,1
@@ -1391,215 +1426,228 @@ AM,C,4,6,8,EndOfPeriod,NotApplicable,NotApplicable,NotApplicable,EndOfPeriod,200
 EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,1900,1";
 
 
-await DataSource.DeleteAsync(DataSource.Query<AocType>());
-await DataSource.DeleteAsync(DataSource.Query<AocConfiguration>());
-((await Import.FromString(newAocTypes).WithType<AocType>().WithTarget(DataSource).ExecuteAsync()).Status,
-(await Import.FromString(newAocConfiguration).WithType<AocConfiguration>().WithTarget(DataSource).ExecuteAsync())
-    .Status)
+        await DataSource.DeleteAsync(DataSource.Query<AocType>());
+        await DataSource.DeleteAsync(DataSource.Query<AocConfiguration>());
+        await Import.FromString(newAocTypes).WithType<AocType>().WithTarget(DataSource).ExecuteAsync();
+        await Import.FromString(newAocConfiguration).WithType<AocConfiguration>()
+            .WithTarget(DataSource).ExecuteAsync();
 
 
-var inputVariables = new RawVariable[]
-{
-    new RawVariable
-    {
-        AocType = "BOP", Novelty = "N", AccidentYear = null, AmountType = "CL", EstimateType = "BE",
-        Partition = partition.Id, Values = new double[] {1.0}, DataNode = groupOfInsuranceContracts
-    },
-    new RawVariable
-    {
-        AocType = "EV", Novelty = "C", AccidentYear = null, AmountType = "CL", EstimateType = "BE",
-        Partition = partition.Id, Values = new double[] {1.0}, DataNode = groupOfInsuranceContracts
-    },
-    new RawVariable
-    {
-        AocType = "CL", Novelty = "C", AccidentYear = null, AmountType = "CL", EstimateType = "BE",
-        Partition = partition.Id, Values = new double[] {1.0}, DataNode = groupOfInsuranceContracts
-    },
-};
-
-
-var parentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
-{
-    {new AocStep("YCU", "C"), new AocStep[] {new AocStep("BOP", "I"), new AocStep("BOP", "N")}},
-    {new AocStep("EV", "C"), new AocStep[] {new AocStep("YCU", "C")}},
-    {new AocStep("CL", "C"), new AocStep[] {new AocStep("EV", "C"),}},
-};
-
-var referenceBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
-{
-    {new AocStep("BOP", "N"), new AocStep[] {new AocStep("BOP", "N")}},
-    {new AocStep("CF", "N"), new AocStep[] {new AocStep("BOP", "N")}},
-    {new AocStep("IA", "N"), new AocStep[] {new AocStep("BOP", "N")}},
-    {new AocStep("YCU", "C"), new AocStep[] {new AocStep("BOP", "N"), new AocStep("BOP", "I")}},
-    {new AocStep("EV", "C"), new AocStep[] {new AocStep("EV", "C")}},
-    {new AocStep("CL", "C"), new AocStep[] {new AocStep("CL", "C")}},
-    {new AocStep("AM", "C"), new AocStep[] {new AocStep("CL", "C")}},
-    {new AocStep("EOP", "C"), new AocStep[] {new AocStep("CL", "C")}},
-    {new AocStep("CF", "C"), new AocStep[] {new AocStep("CF", "C")}},
-    {new AocStep("CF", "I"), new AocStep[] {new AocStep("BOP", "I")}},
-    {new AocStep("IA", "I"), new AocStep[] {new AocStep("BOP", "I")}},
-    {new AocStep("BOP", "I"), new AocStep[] {new AocStep("BOP", "I")}},
-};
-
-var fullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
-{
-    {new AocStep("CF", "I"), new AocStep[] {new AocStep("BOP", "I"),}},
-    {new AocStep("IA", "I"), new AocStep[] {new AocStep("BOP", "I"), new AocStep("CF", "I")}},
-    {new AocStep("CF", "N"), new AocStep[] {new AocStep("BOP", "N")}},
-    {new AocStep("IA", "N"), new AocStep[] {new AocStep("BOP", "N"), new AocStep("CF", "N")}},
-
-    {
-        new AocStep("YCU", "C"), new AocStep[]
+        var inputVariables = new RawVariable[]
         {
-            new AocStep("BOP", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
-            new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"),
-        }
-    },
-    {
-        new AocStep("EV", "C"), new AocStep[]
+            new RawVariable
+            {
+                AocType = "BOP", Novelty = "N", AccidentYear = null, AmountType = "CL",
+                EstimateType = "BE",
+                Partition = testData.partition.Id, Values = new double[] {1.0},
+                DataNode = testData.groupOfInsuranceContracts
+            },
+            new RawVariable
+            {
+                AocType = "EV", Novelty = "C", AccidentYear = null, AmountType = "CL", EstimateType = "BE",
+                Partition = testData.partition.Id, Values = new double[] {1.0},
+                DataNode = testData.groupOfInsuranceContracts
+            },
+            new RawVariable
+            {
+                AocType = "CL", Novelty = "C", AccidentYear = null, AmountType = "CL", EstimateType = "BE",
+                Partition = testData.partition.Id, Values = new double[] {1.0},
+                DataNode = testData.groupOfInsuranceContracts
+            },
+        };
+
+
+        parentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
         {
-            new AocStep("BOP", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
-            new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"),
-            new AocStep("YCU", "C"),
-        }
-    },
-    {
-        new AocStep("CL", "C"), new AocStep[]
+            {new AocStep("YCU", "C"), new AocStep[] {new AocStep("BOP", "I"), new AocStep("BOP", "N")}},
+            {new AocStep("EV", "C"), new AocStep[] {new AocStep("YCU", "C")}},
+            {new AocStep("CL", "C"), new AocStep[] {new AocStep("EV", "C"),}},
+        };
+
+        referenceBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
         {
-            new AocStep("BOP", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
-            new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"),
-            new AocStep("YCU", "C"), new AocStep("EV", "C")
-        }
-    },
-    {
-        new AocStep("EOP", "C"), new AocStep[]
+            {new AocStep("BOP", "N"), new AocStep[] {new AocStep("BOP", "N")}},
+            {new AocStep("CF", "N"), new AocStep[] {new AocStep("BOP", "N")}},
+            {new AocStep("IA", "N"), new AocStep[] {new AocStep("BOP", "N")}},
+            {new AocStep("YCU", "C"), new AocStep[] {new AocStep("BOP", "N"), new AocStep("BOP", "I")}},
+            {new AocStep("EV", "C"), new AocStep[] {new AocStep("EV", "C")}},
+            {new AocStep("CL", "C"), new AocStep[] {new AocStep("CL", "C")}},
+            {new AocStep("AM", "C"), new AocStep[] {new AocStep("CL", "C")}},
+            {new AocStep("EOP", "C"), new AocStep[] {new AocStep("CL", "C")}},
+            {new AocStep("CF", "C"), new AocStep[] {new AocStep("CF", "C")}},
+            {new AocStep("CF", "I"), new AocStep[] {new AocStep("BOP", "I")}},
+            {new AocStep("IA", "I"), new AocStep[] {new AocStep("BOP", "I")}},
+            {new AocStep("BOP", "I"), new AocStep[] {new AocStep("BOP", "I")}},
+        };
+
+        fullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
         {
-            new AocStep("BOP", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
-            new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"),
-            new AocStep("YCU", "C"), new AocStep("EV", "C"), new AocStep("CL", "C"),
-        }
-    },
-};
+            {new AocStep("CF", "I"), new AocStep[] {new AocStep("BOP", "I"),}},
+            {new AocStep("IA", "I"), new AocStep[] {new AocStep("BOP", "I"), new AocStep("CF", "I")}},
+            {new AocStep("CF", "N"), new AocStep[] {new AocStep("BOP", "N")}},
+            {new AocStep("IA", "N"), new AocStep[] {new AocStep("BOP", "N"), new AocStep("CF", "N")}},
+
+            {
+                new AocStep("YCU", "C"), new AocStep[]
+                {
+                    new AocStep("BOP", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
+                    new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"),
+                }
+            },
+            {
+                new AocStep("EV", "C"), new AocStep[]
+                {
+                    new AocStep("BOP", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
+                    new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"),
+                    new AocStep("YCU", "C"),
+                }
+            },
+            {
+                new AocStep("CL", "C"), new AocStep[]
+                {
+                    new AocStep("BOP", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
+                    new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"),
+                    new AocStep("YCU", "C"), new AocStep("EV", "C")
+                }
+            },
+            {
+                new AocStep("EOP", "C"), new AocStep[]
+                {
+                    new AocStep("BOP", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
+                    new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"),
+                    new AocStep("YCU", "C"), new AocStep("EV", "C"), new AocStep("CL", "C"),
+                }
+            },
+        };
 
 
-var activity = await CheckAocStepStructureAsync(inputVariables, parentBm, referenceBm, fullAocBm);
-
-activity
-
-
-    activity.Status.Should().Be(ActivityLogStatus.Succeeded);
+        var activity = await CheckAocStepStructureAsync(inputVariables, Activity,
+            parentBm, referenceBm, fullAocBm);
 
 
-var inputVariables = new RawVariable[]
-{
-    new RawVariable
+
+        activity.Status.Should().Be(ActivityLogStatus.Succeeded);
+    }
+
+
+    public async Task TenthCheckAsync()
     {
-        AocType = "BOP", Novelty = "N", AccidentYear = null, AmountType = "CL", EstimateType = "BE",
-        Partition = partition.Id, Values = new double[] {1.0}, DataNode = groupOfInsuranceContracts
-    },
-    new RawVariable
-    {
-        AocType = "AU", Novelty = "C", AccidentYear = null, AmountType = "CL", EstimateType = "BE",
-        Partition = partition.Id, Values = new double[] {1.0}, DataNode = groupOfInsuranceContracts
-    },
-    new RawVariable
-    {
-        AocType = "EV", Novelty = "C", AccidentYear = null, AmountType = "CL", EstimateType = "BE",
-        Partition = partition.Id, Values = new double[] {1.0}, DataNode = groupOfInsuranceContracts
-    },
-    new RawVariable
-    {
-        AocType = "CL", Novelty = "C", AccidentYear = null, AmountType = "CL", EstimateType = "BE",
-        Partition = partition.Id, Values = new double[] {1.0}, DataNode = groupOfInsuranceContracts
-    },
-};
-
-
-var parentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
-{
-    {new AocStep("AU", "C"), new AocStep[] {new AocStep("BOP", "I"), new AocStep("BOP", "N")}},
-    {new AocStep("YCU", "C"), new AocStep[] {new AocStep("AU", "C"),}},
-    {new AocStep("EV", "C"), new AocStep[] {new AocStep("YCU", "C")}},
-    {new AocStep("CL", "C"), new AocStep[] {new AocStep("EV", "C"),}},
-};
-
-var referenceBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
-{
-    {new AocStep("BOP", "N"), new AocStep[] {new AocStep("BOP", "N")}},
-    {new AocStep("CF", "N"), new AocStep[] {new AocStep("BOP", "N")}},
-    {new AocStep("IA", "N"), new AocStep[] {new AocStep("BOP", "N")}},
-
-    {new AocStep("AU", "C"), new AocStep[] {new AocStep("AU", "C")}},
-    {new AocStep("YCU", "C"), new AocStep[] {new AocStep("AU", "C")}},
-    {new AocStep("EV", "C"), new AocStep[] {new AocStep("EV", "C")}},
-    {new AocStep("CL", "C"), new AocStep[] {new AocStep("CL", "C")}},
-    {new AocStep("AM", "C"), new AocStep[] {new AocStep("CL", "C")}},
-    {new AocStep("EOP", "C"), new AocStep[] {new AocStep("CL", "C")}},
-    {new AocStep("CF", "C"), new AocStep[] {new AocStep("CF", "C")}},
-    {new AocStep("CF", "I"), new AocStep[] {new AocStep("BOP", "I")}},
-    {new AocStep("IA", "I"), new AocStep[] {new AocStep("BOP", "I")}},
-    {new AocStep("BOP", "I"), new AocStep[] {new AocStep("BOP", "I")}},
-};
-
-var fullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
-{
-    {new AocStep("CF", "I"), new AocStep[] {new AocStep("BOP", "I"),}},
-    {new AocStep("IA", "I"), new AocStep[] {new AocStep("BOP", "I"), new AocStep("CF", "I")}},
-    {new AocStep("CF", "N"), new AocStep[] {new AocStep("BOP", "N")}},
-    {new AocStep("IA", "N"), new AocStep[] {new AocStep("BOP", "N"), new AocStep("CF", "N")}},
-
-    {
-        new AocStep("AU", "C"), new AocStep[]
+        var inputVariables = new RawVariable[]
         {
-            new AocStep("BOP", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
-            new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"),
-        }
-    },
-    {
-        new AocStep("YCU", "C"), new AocStep[]
+            new RawVariable
+            {
+                AocType = "BOP", Novelty = "N", AccidentYear = null, AmountType = "CL", EstimateType = "BE",
+                Partition = testData.partition.Id, Values = new double[] {1.0},
+                DataNode = testData.groupOfInsuranceContracts
+            },
+            new RawVariable
+            {
+                AocType = "AU", Novelty = "C", AccidentYear = null, AmountType = "CL", EstimateType = "BE",
+                Partition = testData.partition.Id, Values = new double[] {1.0},
+                DataNode = testData.groupOfInsuranceContracts
+            },
+            new RawVariable
+            {
+                AocType = "EV", Novelty = "C", AccidentYear = null, AmountType = "CL", EstimateType = "BE",
+                Partition = testData.partition.Id, Values = new double[] {1.0},
+                DataNode = testData.groupOfInsuranceContracts
+            },
+            new RawVariable
+            {
+                AocType = "CL", Novelty = "C", AccidentYear = null, AmountType = "CL", EstimateType = "BE",
+                Partition = testData.partition.Id, Values = new double[] {1.0},
+                DataNode = testData.groupOfInsuranceContracts
+            },
+        };
+
+
+        parentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
         {
-            new AocStep("BOP", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
-            new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"),
-            new AocStep("AU", "C"),
-        }
-    },
-    {
-        new AocStep("EV", "C"), new AocStep[]
+            {new AocStep("AU", "C"), new AocStep[] {new AocStep("BOP", "I"), new AocStep("BOP", "N")}},
+            {new AocStep("YCU", "C"), new AocStep[] {new AocStep("AU", "C"),}},
+            {new AocStep("EV", "C"), new AocStep[] {new AocStep("YCU", "C")}},
+            {new AocStep("CL", "C"), new AocStep[] {new AocStep("EV", "C"),}},
+        };
+
+        referenceBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
         {
-            new AocStep("BOP", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
-            new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"),
-            new AocStep("AU", "C"), new AocStep("YCU", "C"),
-        }
-    },
-    {
-        new AocStep("CL", "C"), new AocStep[]
+            {new AocStep("BOP", "N"), new AocStep[] {new AocStep("BOP", "N")}},
+            {new AocStep("CF", "N"), new AocStep[] {new AocStep("BOP", "N")}},
+            {new AocStep("IA", "N"), new AocStep[] {new AocStep("BOP", "N")}},
+
+            {new AocStep("AU", "C"), new AocStep[] {new AocStep("AU", "C")}},
+            {new AocStep("YCU", "C"), new AocStep[] {new AocStep("AU", "C")}},
+            {new AocStep("EV", "C"), new AocStep[] {new AocStep("EV", "C")}},
+            {new AocStep("CL", "C"), new AocStep[] {new AocStep("CL", "C")}},
+            {new AocStep("AM", "C"), new AocStep[] {new AocStep("CL", "C")}},
+            {new AocStep("EOP", "C"), new AocStep[] {new AocStep("CL", "C")}},
+            {new AocStep("CF", "C"), new AocStep[] {new AocStep("CF", "C")}},
+            {new AocStep("CF", "I"), new AocStep[] {new AocStep("BOP", "I")}},
+            {new AocStep("IA", "I"), new AocStep[] {new AocStep("BOP", "I")}},
+            {new AocStep("BOP", "I"), new AocStep[] {new AocStep("BOP", "I")}},
+        };
+
+        fullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
         {
-            new AocStep("BOP", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
-            new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"),
-            new AocStep("AU", "C"), new AocStep("YCU", "C"), new AocStep("EV", "C")
-        }
-    },
+            {new AocStep("CF", "I"), new AocStep[] {new AocStep("BOP", "I"),}},
+            {new AocStep("IA", "I"), new AocStep[] {new AocStep("BOP", "I"), new AocStep("CF", "I")}},
+            {new AocStep("CF", "N"), new AocStep[] {new AocStep("BOP", "N")}},
+            {new AocStep("IA", "N"), new AocStep[] {new AocStep("BOP", "N"), new AocStep("CF", "N")}},
+
+            {
+                new AocStep("AU", "C"), new AocStep[]
+                {
+                    new AocStep("BOP", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
+                    new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"),
+                }
+            },
+            {
+                new AocStep("YCU", "C"), new AocStep[]
+                {
+                    new AocStep("BOP", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
+                    new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"),
+                    new AocStep("AU", "C"),
+                }
+            },
+            {
+                new AocStep("EV", "C"), new AocStep[]
+                {
+                    new AocStep("BOP", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
+                    new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"),
+                    new AocStep("AU", "C"), new AocStep("YCU", "C"),
+                }
+            },
+            {
+                new AocStep("CL", "C"), new AocStep[]
+                {
+                    new AocStep("BOP", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
+                    new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"),
+                    new AocStep("AU", "C"), new AocStep("YCU", "C"), new AocStep("EV", "C")
+                }
+            },
+            {
+                new AocStep("EOP", "C"), new AocStep[]
+                {
+                    new AocStep("BOP", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
+                    new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"),
+                    new AocStep("AU", "C"), new AocStep("YCU", "C"), new AocStep("EV", "C"), new AocStep("CL", "C"),
+                }
+            },
+        };
+
+
+        var activity = await CheckAocStepStructureAsync(inputVariables, Activity,
+            parentBm, referenceBm, fullAocBm);
+
+
+
+        activity.Status.Should().Be(ActivityLogStatus.Succeeded);
+    }
+
+    public async Task Check11Async()
     {
-        new AocStep("EOP", "C"), new AocStep[]
-        {
-            new AocStep("BOP", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
-            new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"),
-            new AocStep("AU", "C"), new AocStep("YCU", "C"), new AocStep("EV", "C"), new AocStep("CL", "C"),
-        }
-    },
-};
-
-
-var activity = await CheckAocStepStructureAsync(inputVariables, parentBm, referenceBm, fullAocBm);
-
-activity
-
-
-    activity.Status.Should().Be(ActivityLogStatus.Succeeded);
-
-
-string newAocTypes =
-    @"@@AocType
+        string newAocTypes =
+            @"@@AocType
 SystemName,DisplayName,Parent,Order
 BOP,Opening Balance,,10
 MC,Model Correction,,20
@@ -1614,8 +1662,8 @@ EA,Experience Adjustment,,81,
 AM,Amortization,,85
 EOP,Closing Balance,,90";
 
-string newAocConfiguration =
-    @"@@AocConfiguration,,,,,,,,,,,
+        string newAocConfiguration =
+            @"@@AocConfiguration,,,,,,,,,,,
 AocType,Novelty,DataType,InputSource,StructureType,FxPeriod,YcPeriod,CdrPeriod,ValuationPeriod,RcPeriod,Order,Year,Month
 BOP,I,17,7,14,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,10,1900,1
 MC,I,1,4,10,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,20,1900,1
@@ -1635,165 +1683,171 @@ AM,C,4,6,8,EndOfPeriod,NotApplicable,NotApplicable,NotApplicable,EndOfPeriod,200
 EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,1900,1";
 
 
-await DataSource.DeleteAsync(DataSource.Query<AocType>());
-await DataSource.DeleteAsync(DataSource.Query<AocConfiguration>());
-((await Import.FromString(newAocTypes).WithType<AocType>().WithTarget(DataSource).ExecuteAsync()).Status,
-(await Import.FromString(newAocConfiguration).WithType<AocConfiguration>().WithTarget(DataSource).ExecuteAsync())
-    .Status)
+        await DataSource.DeleteAsync(DataSource.Query<AocType>());
+        await DataSource.DeleteAsync(DataSource.Query<AocConfiguration>());
+        await Import.FromString(newAocTypes).WithType<AocType>().WithTarget(DataSource).ExecuteAsync();
+        await Import.FromString(newAocConfiguration).WithType<AocConfiguration>()
+            .WithTarget(DataSource)
+            .ExecuteAsync();
 
 
-inputRawVariables = new RawVariable[] {
-    new RawVariable
-    {
-        Partition = partition.Id, Values = new[] {1.0}, DataNode = groupOfReinsuranceContracts, AocType = "BOP",
-        Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
-    },
-    new RawVariable
-    {
-        Partition = partition.Id, Values = new[] {1.0}, DataNode = groupOfReinsuranceContracts, AocType = "MC",
-        Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
-    },
-    new RawVariable
-    {
-        Partition = partition.Id, Values = new[] {1.0}, DataNode = groupOfReinsuranceContracts, AocType = "BOP",
-        Novelty = "N", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
-    },
-    new RawVariable
-    {
-        Partition = partition.Id, Values = new[] {1.0}, DataNode = groupOfReinsuranceContracts, AocType = "CL",
-        Novelty = "C", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
-    },
-};
-
-
-parentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
-{
-    {
-        new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}
-    },
-    {
-        new AocStep("CRU", "I"), new AocStep[] {new AocStep("MC", "I")}
-    },
-    {
-        new AocStep("YCU", "C"), new AocStep[] {new AocStep("MC", "I"), new AocStep("BOP", "N"),}
-    },
-    {
-        new AocStep("CL", "C"), new AocStep[] {new AocStep("YCU", "C"),}
-    },
-};
-
-var parentBm_CDR = new Dictionary<AocStep, IEnumerable<AocStep>>()
-{
-    {new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}},
-    {new AocStep("CRU", "I"), new AocStep[] {new AocStep("MC", "I")}},
-    {new AocStep("YCU", "C"), new AocStep[] {new AocStep("CRU", "I"), new AocStep("BOP", "N")}},
-    {new AocStep("CL", "C"), new AocStep[] {new AocStep("YCU", "C"),}},
-};
-
-referenceBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
-{
-    {
-        new AocStep("BOP", "I"), new AocStep[] {new AocStep("BOP", "I")}
-    },
-    {
-        new AocStep("MC", "I"), new AocStep[] {new AocStep("MC", "I")}
-    },
-    {
-        new AocStep("CF", "I"), new AocStep[] {new AocStep("MC", "I")}
-    },
-    {
-        new AocStep("IA", "I"), new AocStep[] {new AocStep("MC", "I")}
-    },
-    {
-        new AocStep("CRU", "I"), new AocStep[] {new AocStep("MC", "I")}
-    },
-    {
-        new AocStep("BOP", "N"), new AocStep[] {new AocStep("BOP", "N")}
-    },
-    {
-        new AocStep("CF", "N"), new AocStep[] {new AocStep("BOP", "N")}
-    },
-    {
-        new AocStep("IA", "N"), new AocStep[] {new AocStep("BOP", "N")}
-    },
-    {
-        new AocStep("YCU", "C"), new AocStep[] {new AocStep("MC", "I"), new AocStep("BOP", "N")}
-    },
-    {
-        new AocStep("CL", "C"), new AocStep[] {new AocStep("CL", "C")}
-    },
-    {
-        new AocStep("EA", "C"), new AocStep[] {new AocStep("CF", "C")}
-    },
-    {
-        new AocStep("AM", "C"), new AocStep[] {new AocStep("CL", "C")}
-    },
-    {
-        new AocStep("EOP", "C"), new AocStep[] {new AocStep("CL", "C")}
-    },
-    {
-        new AocStep("CF", "C"), new AocStep[] {new AocStep("CF", "C")}
-    },
-};
-fullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
-{
-    {
-        new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}
-    },
-    {
-        new AocStep("CF", "I"), new AocStep[] {new AocStep("BOP", "I"), new AocStep("MC", "I")}
-    },
-    {
-        new AocStep("IA", "I"), new AocStep[]
-            {new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I")}
-    },
-    {
-        new AocStep("CRU", "I"), new AocStep[]
-            {new AocStep("IA", "I"), new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I")}
-    },
-    {
-        new AocStep("CF", "N"), new AocStep[] {new AocStep("BOP", "N")}
-    },
-    {
-        new AocStep("IA", "N"), new AocStep[] {new AocStep("BOP", "N"), new AocStep("CF", "N")}
-    },
-
-    {
-        new AocStep("YCU", "C"), new AocStep[]
+        inputRawVariables = new RawVariable[]
         {
-            new AocStep("IA", "I"), new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I"),
-            new AocStep("CRU", "I"),
-            new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"),
-        }
-    },
-    {
-        new AocStep("CL", "C"), new AocStep[]
+            new RawVariable
+            {
+                Partition = testData.partition.Id, Values = new[] {1.0}, 
+                DataNode = testData.groupOfReinsuranceContracts, AocType = "BOP",
+                Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
+            },
+            new RawVariable
+            {
+                Partition = testData.partition.Id, Values = new[] {1.0}, 
+                DataNode = testData.groupOfReinsuranceContracts, AocType = "MC",
+                Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
+            },
+            new RawVariable
+            {
+                Partition = testData.partition.Id, Values = new[] {1.0}, 
+                DataNode = testData.groupOfReinsuranceContracts, AocType = "BOP",
+                Novelty = "N", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
+            },
+            new RawVariable
+            {
+                Partition = testData.partition.Id, Values = new[] {1.0}, 
+                DataNode = testData.groupOfReinsuranceContracts, AocType = "CL",
+                Novelty = "C", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
+            },
+        };
+
+
+        parentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
         {
-            new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
-            new AocStep("CRU", "I"),
-            new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"),
-            new AocStep("YCU", "C"),
-        }
-    },
-    {
-        new AocStep("EOP", "C"), new AocStep[]
+            {
+                new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}
+            },
+            {
+                new AocStep("CRU", "I"), new AocStep[] {new AocStep("MC", "I")}
+            },
+            {
+                new AocStep("YCU", "C"), new AocStep[] {new AocStep("MC", "I"), new AocStep("BOP", "N"),}
+            },
+            {
+                new AocStep("CL", "C"), new AocStep[] {new AocStep("YCU", "C"),}
+            },
+        };
+
+        var parentBm_CDR = new Dictionary<AocStep, IEnumerable<AocStep>>()
         {
-            new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
-            new AocStep("CRU", "I"),
-            new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"),
-            new AocStep("YCU", "C"), new AocStep("CL", "C"),
-        }
-    },
-};
+            {new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}},
+            {new AocStep("CRU", "I"), new AocStep[] {new AocStep("MC", "I")}},
+            {new AocStep("YCU", "C"), new AocStep[] {new AocStep("CRU", "I"), new AocStep("BOP", "N")}},
+            {new AocStep("CL", "C"), new AocStep[] {new AocStep("YCU", "C"),}},
+        };
+
+        referenceBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
+        {
+            {
+                new AocStep("BOP", "I"), new AocStep[] {new AocStep("BOP", "I")}
+            },
+            {
+                new AocStep("MC", "I"), new AocStep[] {new AocStep("MC", "I")}
+            },
+            {
+                new AocStep("CF", "I"), new AocStep[] {new AocStep("MC", "I")}
+            },
+            {
+                new AocStep("IA", "I"), new AocStep[] {new AocStep("MC", "I")}
+            },
+            {
+                new AocStep("CRU", "I"), new AocStep[] {new AocStep("MC", "I")}
+            },
+            {
+                new AocStep("BOP", "N"), new AocStep[] {new AocStep("BOP", "N")}
+            },
+            {
+                new AocStep("CF", "N"), new AocStep[] {new AocStep("BOP", "N")}
+            },
+            {
+                new AocStep("IA", "N"), new AocStep[] {new AocStep("BOP", "N")}
+            },
+            {
+                new AocStep("YCU", "C"), new AocStep[] {new AocStep("MC", "I"), new AocStep("BOP", "N")}
+            },
+            {
+                new AocStep("CL", "C"), new AocStep[] {new AocStep("CL", "C")}
+            },
+            {
+                new AocStep("EA", "C"), new AocStep[] {new AocStep("CF", "C")}
+            },
+            {
+                new AocStep("AM", "C"), new AocStep[] {new AocStep("CL", "C")}
+            },
+            {
+                new AocStep("EOP", "C"), new AocStep[] {new AocStep("CL", "C")}
+            },
+            {
+                new AocStep("CF", "C"), new AocStep[] {new AocStep("CF", "C")}
+            },
+        };
+        fullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
+        {
+            {
+                new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}
+            },
+            {
+                new AocStep("CF", "I"), new AocStep[] {new AocStep("BOP", "I"), new AocStep("MC", "I")}
+            },
+            {
+                new AocStep("IA", "I"), new AocStep[]
+                    {new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I")}
+            },
+            {
+                new AocStep("CRU", "I"), new AocStep[]
+                    {new AocStep("IA", "I"), new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I")}
+            },
+            {
+                new AocStep("CF", "N"), new AocStep[] {new AocStep("BOP", "N")}
+            },
+            {
+                new AocStep("IA", "N"), new AocStep[] {new AocStep("BOP", "N"), new AocStep("CF", "N")}
+            },
+
+            {
+                new AocStep("YCU", "C"), new AocStep[]
+                {
+                    new AocStep("IA", "I"), new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I"),
+                    new AocStep("CRU", "I"),
+                    new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"),
+                }
+            },
+            {
+                new AocStep("CL", "C"), new AocStep[]
+                {
+                    new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
+                    new AocStep("CRU", "I"),
+                    new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"),
+                    new AocStep("YCU", "C"),
+                }
+            },
+            {
+                new AocStep("EOP", "C"), new AocStep[]
+                {
+                    new AocStep("BOP", "I"), new AocStep("MC", "I"), new AocStep("CF", "I"), new AocStep("IA", "I"),
+                    new AocStep("CRU", "I"),
+                    new AocStep("BOP", "N"), new AocStep("CF", "N"), new AocStep("IA", "N"),
+                    new AocStep("YCU", "C"), new AocStep("CL", "C"),
+                }
+            },
+        };
 
 
-var activity = await CheckAocStepStructureAsync(inputRawVariables, parentBm, referenceBm, fullAocBm,
-    StructureType.AocPresentValue, parentBm_CDR);
+        var activity = await CheckAocStepStructureAsync(inputRawVariables, Activity,
+            parentBm, referenceBm, fullAocBm,
+            StructureType.AocPresentValue, parentBm_CDR);
 
-activity
 
-
-    activity.Status.Should().Be(ActivityLogStatus.Succeeded);/*
+        activity.Status.Should().Be(ActivityLogStatus.Succeeded);
+    }
 }
 
 
