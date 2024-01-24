@@ -16,6 +16,7 @@ public class AocConfigurationTest
     protected IImportVariable Import;
     protected Workspace Workspace;
     protected IDataSource DataSource;
+    protected IActivityVariable Activity;
 
     protected string novelties =
         @"@@Novelty
@@ -47,7 +48,7 @@ public class AocConfigurationTest
         EOP,Closing Balance,,170,,,,,,,,";
 
 
-    string canonicalAocConfig =
+    protected string canonicalAocConfig =
         @"@@AocConfiguration,,,,,,,,,,,
         AocType,Novelty,DataType,InputSource,StructureType,FxPeriod,YcPeriod,CdrPeriod,ValuationPeriod,RcPeriod,Order,Year,Month
         BOP,I,17,7,14,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,10,1900,1
