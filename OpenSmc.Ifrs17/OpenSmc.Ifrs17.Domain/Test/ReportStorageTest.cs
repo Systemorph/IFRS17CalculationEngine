@@ -1,5 +1,15 @@
-#!import "../Report/ReportStorage"
-#!import "TestData"
+using System.Diagnostics;
+using FluentAssertions;
+using Microsoft.Graph;
+using Microsoft.Graph.SecurityNamespace;
+using OpenSmc.Ifrs17.Domain.Constants;
+using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.Report;
+using Systemorph.Vertex.Activities;
+using Systemorph.Vertex.Workspace;
+
+//#!import "../Report/ReportStorage"
+//#!import "TestData"
 
 
 await DataSource.UpdateAsync(reportingNodes);
