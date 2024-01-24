@@ -25,7 +25,7 @@ using Error = OpenSmc.Ifrs17.Domain.Constants.Error;
 
 public class AocStructureTest : AocConfigurationTest
 {
-    private TestData testData = new TestData();
+    private TestData testData { get; set; }
     private RawVariable[] inputRawVariables;
     public IScopeFactory Scopes;
     private Dictionary<AocStep, IEnumerable<AocStep>> parentBm { get; set; }
@@ -37,6 +37,7 @@ public class AocStructureTest : AocConfigurationTest
         work)
     {
         Activity = activity;
+        testData = new TestData();
     }
 
     private async Task InitializeDataSourceAsync()

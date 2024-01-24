@@ -35,7 +35,7 @@ public class TestData
         FX,FX Impact,,160,,,,,,,,
         EOP,Closing Balance,,170,,,,,,,,";
 
-    string canonicalAocConfig =
+    public string canonicalAocConfig =
         @"@@AocConfiguration,,,,,,,,,,,
         AocType,Novelty,DataType,InputSource,StructureType,FxPeriod,YcPeriod,CdrPeriod,ValuationPeriod,RcPeriod,Order,Year,Month
         BOP,I,17,7,14,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,10,1900,1
