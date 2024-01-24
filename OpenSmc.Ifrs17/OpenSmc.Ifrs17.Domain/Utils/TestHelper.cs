@@ -50,10 +50,10 @@ public static class TestUtils
         {
             double d1 = arr1[i];
             double d2 = arr2[i];
-            if (Math.Abs(d1) < Utils.NumericalPrecisionEqualityChecker &&
-                Math.Abs(d1) < Utils.NumericalPrecisionEqualityChecker)
+            if (Math.Abs(d1) < NumericalPrecisionEqualityChecker &&
+                Math.Abs(d1) < NumericalPrecisionEqualityChecker)
                 continue;
-            if (Math.Abs((d1 - d2) / d1) > Utils.NumericalPrecisionEqualityChecker)
+            if (Math.Abs((d1 - d2) / d1) > NumericalPrecisionEqualityChecker)
                 return false;
         }
 
