@@ -1,43 +1,31 @@
 //#!import "../Import/Importers"
 //#!import "TestData"
 
-using System.Diagnostics;
 using FluentAssertions;
-using Microsoft.Graph.SecurityNamespace;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.Import;
+using OpenSmc.Ifrs17.Domain.Tests;
 using OpenSmc.Ifrs17.Domain.Utils;
 using Systemorph.Vertex.Activities;
 using Systemorph.Vertex.Collections;
 using Systemorph.Vertex.DataSource.Common;
 using Systemorph.Vertex.Import;
+using Systemorph.Vertex.Scopes.Proxy;
 using Systemorph.Vertex.Workspace;
 
-public class ImportStorageTest
+public class ImportStorageTest : TestBase
 {
-    protected IImportVariable Import;
-    protected IDataSource DataSource;
-    protected IWorkspaceVariable Workspace;
-    protected TestData TestData;
-    protected IActivityVariable Activity;
-
     public ImportStorageTest(IImportVariable import, IDataSource dataSource,
-        IWorkspaceVariable workspace, IActivityVariable activity)
-    {
-        Import = import;
-        DataSource = dataSource;
-        Workspace = workspace;
-        Activity = activity;
-        TestData = new TestData();
-    }
+        IWorkspaceVariable work, IActivityVariable activity, IScopeFactory scopes) :
+        base(import, dataSource, work, activity, scopes) {}
 
     public async Task IntializeAsync()
     {
         TestData.InitializeAsync();
         //await DataSource.SetAsync();
         DataSource.Reset(x => x.ResetCurrentPartitions());
-        Workspace.Reset(x => x.ResetCurrentPartitions());
+        Work.Reset(x => x.ResetCurrentPartitions());
 
 
         await Import.FromString(TestData.novelties)
@@ -77,7 +65,7 @@ public class ImportStorageTest
             .WithType<EstimateType>().WithTarget(DataSource).ExecuteAsync();
 
 
-        Workspace.Initialize(x => x.FromSource(DataSource).DisableInitialization<RawVariable>(
+        Work.Initialize(x => x.FromSource(DataSource).DisableInitialization<RawVariable>(
         ).DisableInitialization<IfrsVariable>());
 
 
@@ -93,12 +81,12 @@ public class ImportStorageTest
         IEnumerable<T> inputForDataSource, ImportArgs args)
     {
         //Prepare Workspace and DataSource
-        await Workspace.UpdateAsync<T>(inputForWorkspace);
+        await Work.UpdateAsync<T>(inputForWorkspace);
         await DataSource.UpdateAsync<T>(inputForDataSource);
         //Set up import storage and test universe
         await storage.InitializeAsync();
         //Clean up 
-        await Workspace.DeleteAsync<T>(inputForWorkspace);
+        await Work.DeleteAsync<T>(inputForWorkspace);
         await DataSource.DeleteAsync<T>(inputForDataSource);
     }
 
@@ -107,7 +95,7 @@ public class ImportStorageTest
         IfrsVariable[] inputForDataSource, IfrsVariable[] benchmark, ImportArgs args, IActivityVariable activity)
     {
         activity.Start();
-        var storage = new ImportStorage(args, DataSource, Workspace);
+        var storage = new ImportStorage(args, DataSource, Work);
         await StorageInitializeAsync(storage, inputForWorkspace, inputForDataSource, args);
         var variables = storage.IfrsVariablesByImportIdentity.SelectMany(x => x.Value);
         var errors = new List<string>();
@@ -143,7 +131,7 @@ public class ImportStorageTest
         IActivityVariable activity)
     {
         activity.Start();
-        var storage = new ImportStorage(args, DataSource, Workspace);
+        var storage = new ImportStorage(args, DataSource, Work);
         await StorageInitializeAsync(storage, inputForWorkspace, inputForDataSource, args);
         var variables = storage.RawVariablesByImportIdentity.SelectMany(x => x.Value);
         var errors = new List<string>();
@@ -555,9 +543,9 @@ public class ImportStorageTest
 
     public async Task Test6()
     {
-        await Workspace.DeleteAsync(await Workspace.Query<DataNodeState>().ToArrayAsync());
+        await Work.DeleteAsync(await Work.Query<DataNodeState>().ToArrayAsync());
         await DataSource.DeleteAsync(await DataSource.Query<DataNodeState>().ToArrayAsync());
-        await Workspace.UpdateAsync(new[]
+        await Work.UpdateAsync(new[]
         {
             TestData.dt11State with {Year = TestData.args.Year, Month = TestData.args.Month},
             TestData.dtr11State with {Year = TestData.args.Year, Month = TestData.args.Month}
@@ -613,22 +601,22 @@ public class ImportStorageTest
     // Restore workspace
     public async Task Test7()
     {
-        await Workspace.DeleteAsync(await Workspace.Query<DataNodeState>().ToArrayAsync());
+        await Work.DeleteAsync(await Work.Query<DataNodeState>().ToArrayAsync());
         await DataSource.DeleteAsync(await DataSource.Query<DataNodeState>().ToArrayAsync());
         await DataSource.UpdateAsync(new[]
         {
             TestData.dt11State, TestData.dtr11State
         });
 
-        await Workspace.UpdateAsync(new[]
+        await Work.UpdateAsync(new[]
         {
             TestData.dt11State, TestData.dtr11State
         });
 
 
-        await Workspace.DeleteAsync(await Workspace.Query<DataNodeState>().ToArrayAsync());
+        await Work.DeleteAsync(await Work.Query<DataNodeState>().ToArrayAsync());
         await DataSource.DeleteAsync(await DataSource.Query<DataNodeState>().ToArrayAsync());
-        await Workspace.UpdateAsync(new[]
+        await Work.UpdateAsync(new[]
         {
             TestData.dt11State with {Year = TestData.args.Year, Month = TestData.args.Month},
             TestData.dtr11State with {Year = TestData.args.Year, Month = TestData.args.Month}
@@ -691,14 +679,14 @@ public class ImportStorageTest
     // Restore workspace
     public async Task Test8()
     {
-        await Workspace.DeleteAsync(await Workspace.Query<DataNodeState>().ToArrayAsync());
+        await Work.DeleteAsync(await Work.Query<DataNodeState>().ToArrayAsync());
         await DataSource.DeleteAsync(await DataSource.Query<DataNodeState>().ToArrayAsync());
         await DataSource.UpdateAsync(new[]
         {
             TestData.dt11State, TestData.dtr11State
         });
 
-        await Workspace.UpdateAsync(new[]
+        await Work.UpdateAsync(new[]
         {
             TestData.dt11State, TestData.dtr11State
         });
@@ -910,9 +898,9 @@ public class ImportStorageTest
 
     public async Task Test11()
     {
-        await Workspace.DeleteAsync(await Workspace.Query<DataNodeState>().ToArrayAsync());
+        await Work.DeleteAsync(await Work.Query<DataNodeState>().ToArrayAsync());
         await DataSource.DeleteAsync(await DataSource.Query<DataNodeState>().ToArrayAsync());
-        await Workspace.UpdateAsync(new[]
+        await Work.UpdateAsync(new[]
         {
             TestData.dt11State with {Year = TestData.args.Year, Month = TestData.args.Month},
             TestData.dtr11State with {Year = TestData.args.Year, Month = TestData.args.Month}
@@ -988,9 +976,9 @@ public class ImportStorageTest
 
     public async Task Test12()
     {
-        await Workspace.DeleteAsync(await Workspace.Query<DataNodeState>().ToArrayAsync());
+        await Work.DeleteAsync(await Work.Query<DataNodeState>().ToArrayAsync());
         await DataSource.DeleteAsync(await DataSource.Query<DataNodeState>().ToArrayAsync());
-        await Workspace.UpdateAsync(new[]
+        await Work.UpdateAsync(new[]
         {
             TestData.dt11State with {Year = TestData.args.Year, Month = TestData.args.Month},
             TestData.dtr11State with {Year = TestData.args.Year, Month = TestData.args.Month}
@@ -1063,9 +1051,9 @@ public class ImportStorageTest
 
     public async Task Test13()
     {
-        await Workspace.DeleteAsync(await Workspace.Query<DataNodeState>().ToArrayAsync());
+        await Work.DeleteAsync(await Work.Query<DataNodeState>().ToArrayAsync());
         await DataSource.DeleteAsync(await DataSource.Query<DataNodeState>().ToArrayAsync());
-        await Workspace.UpdateAsync(new[]
+        await Work.UpdateAsync(new[]
         {
             TestData.dt11State, TestData.dtr11State with {Year = TestData.args.Year, Month = TestData.args.Month}
         });
@@ -1153,14 +1141,14 @@ public class ImportStorageTest
     // Restore workspace
     public async Task Test14()
     {
-        await Workspace.DeleteAsync(await Workspace.Query<DataNodeState>().ToArrayAsync());
+        await Work.DeleteAsync(await Work.Query<DataNodeState>().ToArrayAsync());
         await DataSource.DeleteAsync(await DataSource.Query<DataNodeState>().ToArrayAsync());
         await DataSource.UpdateAsync(new[]
         {
             TestData.dt11State, TestData.dtr11State
         });
 
-        await Workspace.UpdateAsync(new[]
+        await Work.UpdateAsync(new[]
         {
             TestData.dt11State, TestData.dtr11State
         });
@@ -1271,17 +1259,16 @@ public class ImportStorageTest
 public class ImportStorageTestPart2 : ImportStorageTest
 {
 
-    private ImportArgs args;
-    private GroupOfInsuranceContract[] inputDataGic;
-    private GroupOfReinsuranceContract[] inputDataGric;
-    private DataNodeState[] inputDataState;
-    private InterDataNodeParameter[] inputDataParameter;
+    private readonly ImportArgs args;
+    private readonly GroupOfInsuranceContract[] inputDataGic;
+    private readonly GroupOfReinsuranceContract[] inputDataGric;
+    private readonly DataNodeState[] inputDataState;
+    private readonly InterDataNodeParameter[] inputDataParameter;
     private readonly RawVariable sampleRawVar;
 
-    public ImportStorageTestPart2(IImportVariable import, 
-        IDataSource dataSource, 
-        IWorkspaceVariable workspace, 
-        IActivityVariable activity) : base(import, dataSource, workspace, activity)
+    public ImportStorageTestPart2(IImportVariable import, IDataSource dataSource,
+        IWorkspaceVariable work, IActivityVariable activity, IScopeFactory scopes) : 
+        base(import, dataSource, work, activity, scopes)
     {
         args = new ImportArgs("CH", 2021, 3, Periodicity.Quarterly, null, ImportFormats.Cashflow);
 
@@ -1290,13 +1277,14 @@ public class ImportStorageTestPart2 : ImportStorageTest
         if (reportingNodePartition == null) ApplicationMessage.Log(Error.PartitionNotFound);
 
 
-        var currentPartition = DataSource.Query<PartitionByReportingNodeAndPeriod>().FirstOrDefault(x =>
-            x.ReportingNode == args.ReportingNode && x.Year == args.Year &&
-            x.Month == args.Month && x.Scenario == args.Scenario);
+        var currentPartition = DataSource.Query<PartitionByReportingNodeAndPeriod>()
+            .FirstOrDefault(x =>
+                x.ReportingNode == args.ReportingNode && x.Year == args.Year &&
+                x.Month == args.Month && x.Scenario == args.Scenario);
         if (currentPartition == null) ApplicationMessage.Log(Error.PartitionNotFound);
 
 
-        var previousPeriodPartition = Workspace.Query<PartitionByReportingNodeAndPeriod>().FirstOrDefault(x =>
+        var previousPeriodPartition = Work.Query<PartitionByReportingNodeAndPeriod>().FirstOrDefault(x =>
             x.ReportingNode == args.ReportingNode && x.Year == args.Year - 1 &&
             x.Month == Consts.MonthInAYear && x.Scenario == args.Scenario);
         if (previousPeriodPartition == null) ApplicationMessage.Log(Error.PartitionNotFound);
@@ -1384,19 +1372,19 @@ public class ImportStorageTestPart2 : ImportStorageTest
 
     public async Task PrepareWorkspaceDataNodes()
     {
-        await Workspace.UpdateAsync<GroupOfInsuranceContract>(inputDataGic);
-        await Workspace.UpdateAsync<GroupOfReinsuranceContract>(inputDataGric);
-        await Workspace.UpdateAsync<DataNodeState>(inputDataState);
-        await Workspace.UpdateAsync<InterDataNodeParameter>(inputDataParameter);
+        await Work.UpdateAsync<GroupOfInsuranceContract>(inputDataGic);
+        await Work.UpdateAsync<GroupOfReinsuranceContract>(inputDataGric);
+        await Work.UpdateAsync<DataNodeState>(inputDataState);
+        await Work.UpdateAsync<InterDataNodeParameter>(inputDataParameter);
     }
 
 
     public async Task CleanWorkspaceDataNodes()
     {
-        await Workspace.DeleteAsync<GroupOfInsuranceContract>(inputDataGic);
-        await Workspace.DeleteAsync<GroupOfReinsuranceContract>(inputDataGric);
-        await Workspace.DeleteAsync<DataNodeState>(inputDataState);
-        await Workspace.DeleteAsync<InterDataNodeParameter>(inputDataParameter);
+        await Work.DeleteAsync<GroupOfInsuranceContract>(inputDataGic);
+        await Work.DeleteAsync<GroupOfReinsuranceContract>(inputDataGric);
+        await Work.DeleteAsync<DataNodeState>(inputDataState);
+        await Work.DeleteAsync<InterDataNodeParameter>(inputDataParameter);
     }
 
 
@@ -1407,8 +1395,8 @@ public class ImportStorageTestPart2 : ImportStorageTest
         var errors = new List<string>();
 
         await PrepareWorkspaceDataNodes();
-        await Workspace.UpdateAsync<RawVariable>(inputDataVariable);
-        var testStorage = new ImportStorage(args, DataSource, Workspace);
+        await Work.UpdateAsync<RawVariable>(inputDataVariable);
+        var testStorage = new ImportStorage(args, DataSource, Work);
         await testStorage.InitializeAsync();
 
         var primaryScopeDn = testStorage.DataNodesByImportScope[ImportScope.Primary];
@@ -1421,7 +1409,7 @@ public class ImportStorageTestPart2 : ImportStorageTest
                     $"Underlying Gics for DataNode {dn} not matching with BM. Computed: \n{string.Join("\n", testStorage.GetUnderlyingGic(id))} \n Expected : \n{string.Join("\n", underlyingGicBm[dn])}");
         }
 
-        await Workspace.DeleteAsync<RawVariable>(await Workspace.Query<RawVariable>().ToArrayAsync());
+        await Work.DeleteAsync<RawVariable>(await Work.Query<RawVariable>().ToArrayAsync());
         await CleanWorkspaceDataNodes();
         if (errors.Any()) ApplicationMessage.Log(Error.Generic, string.Join("\n", errors));
         return Activity.Finish();
@@ -1476,8 +1464,8 @@ public class ImportStorageTestPart2 : ImportStorageTest
         var errors = new List<string>();
 
         await PrepareWorkspaceDataNodes();
-        await Workspace.UpdateAsync<RawVariable>(inputDataVariable);
-        var testStorage = new ImportStorage(args, DataSource, Workspace);
+        await Work.UpdateAsync<RawVariable>(inputDataVariable);
+        var testStorage = new ImportStorage(args, DataSource, Work);
         await testStorage.InitializeAsync();
 
         var primaryScopeDn = testStorage.DataNodesByImportScope[ImportScope.Primary];
@@ -1509,7 +1497,7 @@ public class ImportStorageTestPart2 : ImportStorageTest
             }
         }
 
-        await Workspace.DeleteAsync<RawVariable>(await Workspace.Query<RawVariable>().ToArrayAsync());
+        await Work.DeleteAsync<RawVariable>(await Work.Query<RawVariable>().ToArrayAsync());
         await CleanWorkspaceDataNodes();
         if (errors.Any()) ApplicationMessage.Log(Error.Generic, string.Join("\n", errors));
         return Activity.Finish();
@@ -1552,11 +1540,11 @@ public class ImportStorageTestPart2 : ImportStorageTest
             var errors = new List<string>();
 
             await PrepareWorkspaceDataNodes();
-            await Workspace.UpdateAsync<RawVariable>(inputDataVariable);
-            var testStorage = new ImportStorage(args, DataSource, Workspace);
+            await Work.UpdateAsync<RawVariable>(inputDataVariable);
+            var testStorage = new ImportStorage(args, DataSource, Work);
             await testStorage.InitializeAsync();
 
-            var activeDn = (await Workspace.Query<DataNodeState>().ToArrayAsync()).Select(x => x.DataNode);
+            var activeDn = (await Work.Query<DataNodeState>().ToArrayAsync()).Select(x => x.DataNode);
 
             var primaryScopeDn = testStorage.DataNodesByImportScope[ImportScope.Primary];
 
@@ -1575,7 +1563,7 @@ public class ImportStorageTestPart2 : ImportStorageTest
                     errors.Add($"DataNode {dn} is added to the secondary scope but should have not.");
             }
 
-            await Workspace.DeleteAsync<RawVariable>(await Workspace.Query<RawVariable>().ToArrayAsync());
+            await Work.DeleteAsync<RawVariable>(await Work.Query<RawVariable>().ToArrayAsync());
             await CleanWorkspaceDataNodes();
             if (errors.Any()) ApplicationMessage.Log(Error.Generic, string.Join("\n", errors));
             return Activity.Finish();
