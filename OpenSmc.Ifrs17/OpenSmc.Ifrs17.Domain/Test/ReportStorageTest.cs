@@ -2,50 +2,46 @@ using FluentAssertions;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.Report;
+using OpenSmc.Ifrs17.Domain.Tests;
 using Systemorph.Vertex.Activities;
 using Systemorph.Vertex.DataSource.Common;
 using Systemorph.Vertex.Export.Factory;
 using Systemorph.Vertex.Import;
 using Systemorph.Vertex.Pivot.Builder.Interfaces;
+using Systemorph.Vertex.Scopes.Proxy;
 using Systemorph.Vertex.Workspace;
 
 //#!import "../Report/ReportStorage"
 //#!import "TestData"
 
-public class ReportStorageTest
+public class ReportStorageTest : TestBase
 {
-    protected IWorkspaceVariable Workspace;
-    protected TestData td;
-    protected IActivityVariable Activity;
-    protected IDataSource DataSource;
-    protected IImportVariable Import;
-    protected IPivotFactory Report;
-    protected IExportVariable Export;
+    private readonly IPivotFactory report;
+    private readonly IExportVariable export;
 
-    public ReportStorageTest(IWorkspaceVariable workspace, IActivityVariable activity, 
-        IDataSource dataSource, IImportVariable import)
+    public ReportStorageTest(IImportVariable import, IDataSource dataSource,
+        IWorkspaceVariable work, IActivityVariable activity, IScopeFactory scopes,
+        IPivotFactory report, IExportVariable export) :
+        base(import, dataSource, work, activity, scopes)
     {
-        Workspace = workspace;
-        Activity = activity;
-        DataSource = dataSource;
-        Import = import;
-        td = new TestData();
+        this.report = report;
+        this.export = export;
     }
 
     public async Task InitializeAsync()
     {
-        await td.InitializeAsync();
-        await DataSource.UpdateAsync(td.reportingNodes);
+        await TestData.InitializeAsync();
+        await DataSource.UpdateAsync(TestData.reportingNodes);
         await DataSource.UpdateAsync(new[]
         {
-            td.partition, td.previousPeriodPartition
+            TestData.partition, TestData.previousPeriodPartition
         });
 
-        await Import.FromString(td.projectionConfiguration).WithType<ProjectionConfiguration>(
+        await Import.FromString(TestData.projectionConfiguration).WithType<ProjectionConfiguration>(
         ).WithTarget(DataSource).ExecuteAsync();
 
 
-        Workspace.Initialize(x => x.FromSource(DataSource).DisableInitialization<ExchangeRate>());
+        Work.Initialize(x => x.FromSource(DataSource).DisableInitialization<ExchangeRate>());
     }
 
 
@@ -53,11 +49,11 @@ public class ReportStorageTest
         IEnumerable<ExchangeRate> testData, double fxBOPBenchmark, double fxAVGBenchmark, double fxEOPBenchmark)
     {
         Activity.Start();
-        await Workspace.UpdateAsync(testData);
+        await Work.UpdateAsync(testData);
 
         //Create report storage
         var period = (year, month);
-        var reportStorage = new ReportStorage(Workspace, Report, Export);
+        var reportStorage = new ReportStorage(Work, report, export);
         await reportStorage.InitializeReportIndependentCacheAsync();
         await reportStorage.InitializeAsync(period, "G", null, CurrencyType.Contractual);
 
@@ -70,7 +66,7 @@ public class ReportStorageTest
         fxAVG.Should().Be(fxAVGBenchmark);
         fxEOP.Should().Be(fxEOPBenchmark);
 
-        await Workspace.DeleteAsync(Workspace.Query<ExchangeRate>().ToArray());
+        await Work.DeleteAsync(Work.Query<ExchangeRate>().ToArray());
         return Activity.Finish();
     }
 
@@ -97,7 +93,7 @@ public class ReportStorageTest
         activity.Status.Should().Be(ActivityLogStatus.Succeeded);
 
 
-        Workspace.Reset(x => x.ResetInitializationRules().ResetCurrentPartitions());
+        Work.Reset(x => x.ResetInitializationRules().ResetCurrentPartitions());
     }
 }
 
