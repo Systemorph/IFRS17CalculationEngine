@@ -23,17 +23,17 @@ namespace OpenSmc.Ifrs17.Domain.Test
     public class AocStructureTest : TestBase
     {
         private RawVariable[] inputRawVariables;
-        private Workspace Workspace;
-        private Dictionary<AocStep, IEnumerable<AocStep>> parentBm { get; set; }
-        private Dictionary<AocStep, IEnumerable<AocStep>> fullAocBm { get; set; }
-        private Dictionary<AocStep, IEnumerable<AocStep>> referenceBm { get; set; }
-        private Dictionary<AocStep, IEnumerable<AocStep>> parentBm_CDr { get; set; }
+        private Workspace workspace;
+        private Dictionary<AocStep, IEnumerable<AocStep>> ParentBm { get; set; }
+        private Dictionary<AocStep, IEnumerable<AocStep>> FullAocBm { get; set; }
+        private Dictionary<AocStep, IEnumerable<AocStep>> ReferenceBm { get; set; }
+        private Dictionary<AocStep, IEnumerable<AocStep>> ParentBmCDr { get; set; }
 
         public AocStructureTest(IImportVariable import, IDataSource dataSource,
             IWorkspaceVariable work, IActivityVariable activity, IScopeFactory scopes) :
             base(import, dataSource, work, activity, scopes)
         {
-            Workspace = work.CreateNew() as Workspace;
+            workspace = work.CreateNew() as Workspace;
         }
 
         private async Task InitializeDataSourceAsync()
@@ -59,7 +59,7 @@ namespace OpenSmc.Ifrs17.Domain.Test
                 .ExecuteAsync();
 
             await DataSource.UpdateAsync(TestData.yieldCurvePrevious.RepeatOnce());
-            Workspace.Initialize(x => x.FromSource(DataSource).DisableInitialization<RawVariable>()
+            workspace.Initialize(x => x.FromSource(DataSource).DisableInitialization<RawVariable>()
                 .DisableInitialization<IfrsVariable>());
 
 
@@ -125,12 +125,12 @@ namespace OpenSmc.Ifrs17.Domain.Test
             var inputSource = InputSource.Cashflow;
             if (inputVariables.First() is RawVariable)
             {
-                await Workspace.UpdateAsync<RawVariable>(inputVariables.Cast<RawVariable>());
+                await workspace.UpdateAsync<RawVariable>(inputVariables.Cast<RawVariable>());
             }
 
             if (inputVariables.First() is IfrsVariable)
             {
-                await Workspace.UpdateAsync<IfrsVariable>(inputVariables.Cast<IfrsVariable>());
+                await workspace.UpdateAsync<IfrsVariable>(inputVariables.Cast<IfrsVariable>());
                 importFormat = ImportFormats.Actual;
                 inputSource = InputSource.Actual;
             }
@@ -139,7 +139,7 @@ namespace OpenSmc.Ifrs17.Domain.Test
             var goc = inputVariables.First().DataNode;
 
             //Set up import storage and test universe
-            var testStorage = new ImportStorage(newArgs, DataSource, Workspace);
+            var testStorage = new ImportStorage(newArgs, DataSource, workspace);
             await testStorage.InitializeAsync();
             var isReinsurance = testStorage.DataNodeDataBySystemName[goc].IsReinsurance;
             var testUniverse = Scopes.ForStorage(testStorage).ToScope<IModel>();
@@ -148,8 +148,8 @@ namespace OpenSmc.Ifrs17.Domain.Test
                 .SelectMany(s => s.Identities);
 
             //Clean up Workspace
-            await Workspace.DeleteAsync<RawVariable>(await Workspace.Query<RawVariable>().ToArrayAsync());
-            await Workspace.DeleteAsync<IfrsVariable>(await Workspace.Query<IfrsVariable>().ToArrayAsync());
+            await workspace.DeleteAsync<RawVariable>(await workspace.Query<RawVariable>().ToArrayAsync());
+            await workspace.DeleteAsync<IfrsVariable>(await workspace.Query<IfrsVariable>().ToArrayAsync());
 
             var errors = new List<string>();
 
@@ -343,7 +343,7 @@ namespace OpenSmc.Ifrs17.Domain.Test
                 },
             };
 
-            parentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
+            ParentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
             {
                 {new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}},
                 {new AocStep("YCU", "I"), new AocStep[] {new AocStep("MC", "I")}},
@@ -370,7 +370,7 @@ namespace OpenSmc.Ifrs17.Domain.Test
                 {new AocStep("EOP", "C"), new AocStep[] {new AocStep("CL", "C")}},
                 {new AocStep("CF", "C"), new AocStep[] {new AocStep("CF", "C")}},
             };
-            var activity = await CheckAocStepStructureAsync(inputRawVariables, Activity, parentBm, referenceBm,
+            var activity = await CheckAocStepStructureAsync(inputRawVariables, Activity, ParentBm, referenceBm,
                 fullAocBm,
                 StructureType.AocPresentValue);
 
@@ -414,7 +414,7 @@ namespace OpenSmc.Ifrs17.Domain.Test
             };
 
 
-            parentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
+            ParentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
             {
                 {
                     new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}
@@ -434,7 +434,7 @@ namespace OpenSmc.Ifrs17.Domain.Test
             };
 
 
-            var parentBm_CDR = new Dictionary<AocStep, IEnumerable<AocStep>>()
+            var parentBmCdr = new Dictionary<AocStep, IEnumerable<AocStep>>()
             {
                 {new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}},
                 {new AocStep("YCU", "I"), new AocStep[] {new AocStep("MC", "I")}},
@@ -499,7 +499,7 @@ namespace OpenSmc.Ifrs17.Domain.Test
                 },
             };
 
-            fullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
+            FullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
             {
                 {
                     new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}
@@ -551,8 +551,8 @@ namespace OpenSmc.Ifrs17.Domain.Test
                 },
             };
             var activity = await CheckAocStepStructureAsync(inputRawVariables, Activity,
-                parentBm, referenceBm, fullAocBm,
-                StructureType.AocPresentValue, parentBm_CDR);
+                ParentBm, referenceBm, FullAocBm,
+                StructureType.AocPresentValue, parentBmCdr);
 
             activity.Status.Should().Be(ActivityLogStatus.Succeeded);
 
@@ -561,7 +561,7 @@ namespace OpenSmc.Ifrs17.Domain.Test
 
         public async Task ThirdCheckAsync()
         {
-            fullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
+            FullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
             {
                 {
                     new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}
@@ -630,9 +630,9 @@ namespace OpenSmc.Ifrs17.Domain.Test
             };
 
 
-            var activity = await CheckAocStepStructureAsync(inputRawVariables, Activity, parentBm,
-                referenceBm, fullAocBm,
-                StructureType.AocTechnicalMargin, parentBm_CDr);
+            var activity = await CheckAocStepStructureAsync(inputRawVariables, Activity, ParentBm,
+                ReferenceBm, FullAocBm,
+                StructureType.AocTechnicalMargin, ParentBmCDr);
 
 
 
@@ -670,7 +670,7 @@ namespace OpenSmc.Ifrs17.Domain.Test
             };
 
 
-            parentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
+            ParentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
             {
                 {
                     new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}
@@ -771,7 +771,7 @@ namespace OpenSmc.Ifrs17.Domain.Test
 
 
             var activity = await CheckAocStepStructureAsync(inputRawVariables, Activity,
-                parentBm, referenceBm, fullAocBm);
+                ParentBm, referenceBm, fullAocBm);
 
 
             activity.Status.Should().Be(ActivityLogStatus.Succeeded);
@@ -991,7 +991,7 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
             };
 
 
-            parentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
+            ParentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
             {
                 {
                     new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}
@@ -1122,7 +1122,7 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
 
 
             var activity = await CheckAocStepStructureAsync(inputRawVariables, Activity,
-                parentBm, referenceBm, fullAocBm);
+                ParentBm, referenceBm, fullAocBm);
 
 
             activity.Status.Should().Be(ActivityLogStatus.Succeeded);
@@ -1167,13 +1167,13 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
             };
 
 
-            parentBm = null;
+            ParentBm = null;
 
 
-            referenceBm = null;
+            ReferenceBm = null;
 
 
-            fullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
+            FullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
             {
                 {
                     new AocStep("CF", "C"), new AocStep[] {new AocStep("BOP", "I"),}
@@ -1189,7 +1189,7 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
 
 
             var activity = await CheckAocStepStructureAsync(inputIfrsVariables, Activity,
-                parentBm, referenceBm, fullAocBm,
+                ParentBm, ReferenceBm, FullAocBm,
                 StructureType.AocAccrual);
 
 
@@ -1295,7 +1295,7 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
             };
 
 
-            parentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
+            ParentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
             {
                 {new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}},
                 {new AocStep("YCU", "I"), new AocStep[] {new AocStep("MC", "I")}},
@@ -1308,7 +1308,7 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
             };
 
 
-            referenceBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
+            ReferenceBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
             {
                 {new AocStep("BOP", "I"), new AocStep[] {new AocStep("BOP", "I")}},
                 {new AocStep("MC", "I"), new AocStep[] {new AocStep("MC", "I")}},
@@ -1332,7 +1332,7 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
             };
 
 
-            fullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
+            FullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
             {
                 {new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}},
                 {new AocStep("CF", "I"), new AocStep[] {new AocStep("BOP", "I"), new AocStep("MC", "I")}},
@@ -1381,7 +1381,7 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
 
 
             var activity = await CheckAocStepStructureAsync(inputRawVariables, Activity,
-                parentBm, referenceBm, fullAocBm);
+                ParentBm, ReferenceBm, FullAocBm);
 
 
 
@@ -1454,14 +1454,14 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
             };
 
 
-            parentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
+            ParentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
             {
                 {new AocStep("YCU", "C"), new AocStep[] {new AocStep("BOP", "I"), new AocStep("BOP", "N")}},
                 {new AocStep("EV", "C"), new AocStep[] {new AocStep("YCU", "C")}},
                 {new AocStep("CL", "C"), new AocStep[] {new AocStep("EV", "C"),}},
             };
 
-            referenceBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
+            ReferenceBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
             {
                 {new AocStep("BOP", "N"), new AocStep[] {new AocStep("BOP", "N")}},
                 {new AocStep("CF", "N"), new AocStep[] {new AocStep("BOP", "N")}},
@@ -1477,7 +1477,7 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
                 {new AocStep("BOP", "I"), new AocStep[] {new AocStep("BOP", "I")}},
             };
 
-            fullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
+            FullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
             {
                 {new AocStep("CF", "I"), new AocStep[] {new AocStep("BOP", "I"),}},
                 {new AocStep("IA", "I"), new AocStep[] {new AocStep("BOP", "I"), new AocStep("CF", "I")}},
@@ -1519,7 +1519,7 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
 
 
             var activity = await CheckAocStepStructureAsync(inputVariables, Activity,
-                parentBm, referenceBm, fullAocBm);
+                ParentBm, ReferenceBm, FullAocBm);
 
 
 
@@ -1558,7 +1558,7 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
             };
 
 
-            parentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
+            ParentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
             {
                 {new AocStep("AU", "C"), new AocStep[] {new AocStep("BOP", "I"), new AocStep("BOP", "N")}},
                 {new AocStep("YCU", "C"), new AocStep[] {new AocStep("AU", "C"),}},
@@ -1566,7 +1566,7 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
                 {new AocStep("CL", "C"), new AocStep[] {new AocStep("EV", "C"),}},
             };
 
-            referenceBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
+            ReferenceBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
             {
                 {new AocStep("BOP", "N"), new AocStep[] {new AocStep("BOP", "N")}},
                 {new AocStep("CF", "N"), new AocStep[] {new AocStep("BOP", "N")}},
@@ -1584,7 +1584,7 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
                 {new AocStep("BOP", "I"), new AocStep[] {new AocStep("BOP", "I")}},
             };
 
-            fullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
+            FullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
             {
                 {new AocStep("CF", "I"), new AocStep[] {new AocStep("BOP", "I"),}},
                 {new AocStep("IA", "I"), new AocStep[] {new AocStep("BOP", "I"), new AocStep("CF", "I")}},
@@ -1634,7 +1634,7 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
 
 
             var activity = await CheckAocStepStructureAsync(inputVariables, Activity,
-                parentBm, referenceBm, fullAocBm);
+                ParentBm, ReferenceBm, FullAocBm);
 
 
 
@@ -1717,7 +1717,7 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
             };
 
 
-            parentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
+            ParentBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
             {
                 {
                     new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}
@@ -1733,7 +1733,7 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
                 },
             };
 
-            var parentBm_CDR = new Dictionary<AocStep, IEnumerable<AocStep>>()
+            var parentBmCdr = new Dictionary<AocStep, IEnumerable<AocStep>>()
             {
                 {new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}},
                 {new AocStep("CRU", "I"), new AocStep[] {new AocStep("MC", "I")}},
@@ -1741,7 +1741,7 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
                 {new AocStep("CL", "C"), new AocStep[] {new AocStep("YCU", "C"),}},
             };
 
-            referenceBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
+            ReferenceBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
             {
                 {
                     new AocStep("BOP", "I"), new AocStep[] {new AocStep("BOP", "I")}
@@ -1786,7 +1786,7 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
                     new AocStep("CF", "C"), new AocStep[] {new AocStep("CF", "C")}
                 },
             };
-            fullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
+            FullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
             {
                 {
                     new AocStep("MC", "I"), new AocStep[] {new AocStep("BOP", "I")}
@@ -1839,8 +1839,8 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
 
 
             var activity = await CheckAocStepStructureAsync(inputRawVariables, Activity,
-                parentBm, referenceBm, fullAocBm,
-                StructureType.AocPresentValue, parentBm_CDR);
+                ParentBm, ReferenceBm, FullAocBm,
+                StructureType.AocPresentValue, parentBmCdr);
 
 
             activity.Status.Should().Be(ActivityLogStatus.Succeeded);

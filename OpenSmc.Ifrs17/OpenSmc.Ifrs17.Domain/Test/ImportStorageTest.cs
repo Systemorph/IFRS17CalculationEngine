@@ -19,7 +19,7 @@ public class ImportStorageTest
     protected IImportVariable Import;
     protected IDataSource DataSource;
     protected IWorkspaceVariable Workspace;
-    protected TestData testData;
+    protected TestData TestData;
     protected IActivityVariable Activity;
 
     public ImportStorageTest(IImportVariable import, IDataSource dataSource,
@@ -29,51 +29,51 @@ public class ImportStorageTest
         DataSource = dataSource;
         Workspace = workspace;
         Activity = activity;
-        testData = new TestData();
+        TestData = new TestData();
     }
 
     public async Task IntializeAsync()
     {
-        testData.InitializeAsync();
+        TestData.InitializeAsync();
         //await DataSource.SetAsync();
         DataSource.Reset(x => x.ResetCurrentPartitions());
         Workspace.Reset(x => x.ResetCurrentPartitions());
 
 
-        await Import.FromString(testData.novelties)
+        await Import.FromString(TestData.novelties)
             .WithType<Novelty>().WithTarget(DataSource).ExecuteAsync();
-        await Import.FromString(testData.canonicalAocTypes)
+        await Import.FromString(TestData.canonicalAocTypes)
             .WithType<AocType>().WithTarget(DataSource).ExecuteAsync();
 
-        await Import.FromString(testData.canonicalAocConfig)
+        await Import.FromString(TestData.canonicalAocConfig)
             .WithFormat(ImportFormats.AocConfiguration).WithTarget(DataSource)
             .ExecuteAsync();
 
 
-        await DataSource.UpdateAsync<Portfolio>(testData.dt1.RepeatOnce());
+        await DataSource.UpdateAsync<Portfolio>(TestData.dt1.RepeatOnce());
 
-        await DataSource.UpdateAsync<Portfolio>(testData.dtr1.RepeatOnce());
+        await DataSource.UpdateAsync<Portfolio>(TestData.dtr1.RepeatOnce());
 
-        await DataSource.UpdateAsync<GroupOfInsuranceContract>(testData.dt11.RepeatOnce());
+        await DataSource.UpdateAsync<GroupOfInsuranceContract>(TestData.dt11.RepeatOnce());
 
-        await DataSource.UpdateAsync<GroupOfReinsuranceContract>(testData.dtr11.RepeatOnce());
+        await DataSource.UpdateAsync<GroupOfReinsuranceContract>(TestData.dtr11.RepeatOnce());
 
 
         await DataSource.UpdateAsync<DataNodeState>(new[]
         {
-            testData.dt11State, testData.dtr11State
+            TestData.dt11State, TestData.dtr11State
         });
 
-        await DataSource.UpdateAsync(testData.dt11Inter.RepeatOnce());
+        await DataSource.UpdateAsync(TestData.dt11Inter.RepeatOnce());
 
 
         await DataSource.UpdateAsync(new[]
         {
-            testData.yieldCurve, testData.yieldCurvePrevious
+            TestData.yieldCurve, TestData.yieldCurvePrevious
         });
 
 
-        await Import.FromString(testData.estimateType)
+        await Import.FromString(TestData.estimateType)
             .WithType<EstimateType>().WithTarget(DataSource).ExecuteAsync();
 
 
@@ -83,10 +83,10 @@ public class ImportStorageTest
 
         await DataSource.UpdateAsync<PartitionByReportingNodeAndPeriod>(new[]
         {
-            testData.partition, testData.previousPeriodPartition, testData.partitionScenarioMTUP
+            TestData.partition, TestData.previousPeriodPartition, TestData.partitionScenarioMTUP
         });
 
-        await DataSource.UpdateAsync<PartitionByReportingNode>(testData.partitionReportingNode.RepeatOnce());
+        await DataSource.UpdateAsync<PartitionByReportingNode>(TestData.partitionReportingNode.RepeatOnce());
     }
 
     public async Task StorageInitializeAsync<T>(ImportStorage storage, IEnumerable<T> inputForWorkspace,
@@ -174,7 +174,7 @@ public class ImportStorageTest
     {
         var basicIfrsVariable = new IfrsVariable
         {
-            Partition = testData.partition.Id, DataNode = testData.groupOfInsuranceContracts,
+            Partition = TestData.partition.Id, DataNode = TestData.groupOfInsuranceContracts,
             AccidentYear = null,
             AmountType = AmountTypes.PR, Novelty = Novelties.C, EstimateType = EstimateTypes.AA
         };
@@ -183,11 +183,11 @@ public class ImportStorageTest
         {
             basicIfrsVariable with
             {
-                Partition = testData.previousPeriodPartition.Id, AocType = AocTypes.EOP, Values = new double[] {100.0}
+                Partition = TestData.previousPeriodPartition.Id, AocType = AocTypes.EOP, Values = new double[] {100.0}
             },
             basicIfrsVariable with
             {
-                Partition = testData.previousPeriodPartition.Id, AocType = AocTypes.EOP,
+                Partition = TestData.previousPeriodPartition.Id, AocType = AocTypes.EOP,
                 EstimateType = EstimateTypes.DA,
                 Values = new double[] {1000.0}
             },
@@ -212,7 +212,7 @@ public class ImportStorageTest
         };
 
         var activity = await CheckIfrsVariableImportStorageAsync(inputForWorkspace, inputForDataSource, ivsBenchmark,
-            testData.args with {ImportFormat = ImportFormats.Actual}, Activity);
+            TestData.args with {ImportFormat = ImportFormats.Actual}, Activity);
 
 
 
@@ -223,7 +223,7 @@ public class ImportStorageTest
     {
         var basicIfrsVariable = new IfrsVariable
         {
-            Partition = testData.partition.Id, DataNode = testData.groupOfInsuranceContracts,
+            Partition = TestData.partition.Id, DataNode = TestData.groupOfInsuranceContracts,
             AccidentYear = null,
             AmountType = AmountTypes.PR, Novelty = Novelties.I, EstimateType = EstimateTypes.BE
         };
@@ -232,13 +232,13 @@ public class ImportStorageTest
         {
             basicIfrsVariable with
             {
-                Partition = testData.previousPeriodPartition.Id,
+                Partition = TestData.previousPeriodPartition.Id,
                 AocType = AocTypes.EOP, EstimateType = EstimateTypes.AA,
                 Novelty = Novelties.C, Values = new double[] {100.0}
             },
             basicIfrsVariable with
             {
-                Partition = testData.previousPeriodPartition.Id,
+                Partition = TestData.previousPeriodPartition.Id,
                 AocType = AocTypes.EOP, Values = new double[] {1000.0}
             },
             basicIfrsVariable with {AocType = AocTypes.BOP, Novelty = Novelties.I, Values = new double[] {1000.0}},
@@ -285,7 +285,7 @@ public class ImportStorageTest
         };
 
         var activity = await CheckIfrsVariableImportStorageAsync(inputForWorkspace, inputForDataSource, ivsBenchmark,
-            testData.args with {ImportFormat = ImportFormats.Actual}, Activity);
+            TestData.args with {ImportFormat = ImportFormats.Actual}, Activity);
 
 
         activity.Status.Should().Be(ActivityLogStatus.Succeeded);
@@ -295,7 +295,7 @@ public class ImportStorageTest
     {
         var basicIfrsVariable = new IfrsVariable
         {
-            Partition = testData.partition.Id, DataNode = testData.groupOfInsuranceContracts, AccidentYear = null,
+            Partition = TestData.partition.Id, DataNode = TestData.groupOfInsuranceContracts, AccidentYear = null,
             AmountType = AmountTypes.PR, Novelty = Novelties.C, EstimateType = EstimateTypes.AA
         };
 
@@ -303,11 +303,11 @@ public class ImportStorageTest
         {
             basicIfrsVariable with
             {
-                Partition = testData.previousPeriodPartition.Id, AocType = AocTypes.EOP, Values = new double[] {100.0}
+                Partition = TestData.previousPeriodPartition.Id, AocType = AocTypes.EOP, Values = new double[] {100.0}
             },
             basicIfrsVariable with
             {
-                Partition = testData.previousPeriodPartition.Id, AocType = AocTypes.EOP,
+                Partition = TestData.previousPeriodPartition.Id, AocType = AocTypes.EOP,
                 EstimateType = EstimateTypes.DA,
                 Values = new double[] {1000.0}
             },
@@ -342,7 +342,7 @@ public class ImportStorageTest
         };
 
         var activity = await CheckIfrsVariableImportStorageAsync(inputForWorkspace, inputForDataSource, ivsBenchmark,
-            testData.args with {ImportFormat = ImportFormats.Actual}, Activity);
+            TestData.args with {ImportFormat = ImportFormats.Actual}, Activity);
 
 
 
@@ -353,13 +353,13 @@ public class ImportStorageTest
     {
         var basicAdvanceActualIfrsVariable = new IfrsVariable
         {
-            Partition = testData.partition.Id, DataNode = testData.groupOfInsuranceContracts, AccidentYear = null,
+            Partition = TestData.partition.Id, DataNode = TestData.groupOfInsuranceContracts, AccidentYear = null,
             AmountType = AmountTypes.PR, Novelty = Novelties.C, EstimateType = EstimateTypes.AA
         };
 
         var basicBeIfrsVariable = new IfrsVariable
         {
-            Partition = testData.partition.Id, DataNode = testData.groupOfInsuranceContracts, AccidentYear = null,
+            Partition = TestData.partition.Id, DataNode = TestData.groupOfInsuranceContracts, AccidentYear = null,
             AmountType = AmountTypes.PR, Novelty = Novelties.I, EstimateType = EstimateTypes.BE
         };
 
@@ -367,7 +367,7 @@ public class ImportStorageTest
         {
             basicBeIfrsVariable with
             {
-                Partition = testData.previousPeriodPartition.Id, AocType = AocTypes.EOP, Values = new double[] {1000.0}
+                Partition = TestData.previousPeriodPartition.Id, AocType = AocTypes.EOP, Values = new double[] {1000.0}
             },
             basicBeIfrsVariable with {AocType = AocTypes.BOP, Novelty = Novelties.I, Values = new double[] {1000.0}},
             basicBeIfrsVariable with {AocType = AocTypes.IA, Values = new double[] {1500.0}},
@@ -375,11 +375,11 @@ public class ImportStorageTest
             basicBeIfrsVariable with {AocType = AocTypes.EOP, Values = new double[] {5000.0}},
             basicAdvanceActualIfrsVariable with
             {
-                Partition = testData.previousPeriodPartition.Id, AocType = AocTypes.EOP, Values = new double[] {100.0}
+                Partition = TestData.previousPeriodPartition.Id, AocType = AocTypes.EOP, Values = new double[] {100.0}
             },
             basicAdvanceActualIfrsVariable with
             {
-                Partition = testData.previousPeriodPartition.Id, AocType = AocTypes.EOP,
+                Partition = TestData.previousPeriodPartition.Id, AocType = AocTypes.EOP,
                 EstimateType = EstimateTypes.DA,
                 Values = new double[] {1000.0}
             },
@@ -424,7 +424,7 @@ public class ImportStorageTest
         };
 
         var activity = await CheckIfrsVariableImportStorageAsync(inputForWorkspace, inputForDataSource, ivsBenchmark,
-            testData.args with {ImportFormat = ImportFormats.Actual}, Activity);
+            TestData.args with {ImportFormat = ImportFormats.Actual}, Activity);
 
 
 
@@ -435,7 +435,7 @@ public class ImportStorageTest
     {
         var basicIfrsVariable = new IfrsVariable
         {
-            Partition = testData.partition.Id, DataNode = testData.groupOfReinsuranceContracts, AccidentYear = null,
+            Partition = TestData.partition.Id, DataNode = TestData.groupOfReinsuranceContracts, AccidentYear = null,
             AmountType = AmountTypes.PR, Novelty = Novelties.C, EstimateType = EstimateTypes.AA
         };
 
@@ -444,53 +444,53 @@ public class ImportStorageTest
             //Year
             basicIfrsVariable with
             {
-                Partition = testData.previousPeriodPartition.Id, AocType = AocTypes.EOP, Values = new double[] {100.0}
+                Partition = TestData.previousPeriodPartition.Id, AocType = AocTypes.EOP, Values = new double[] {100.0}
             },
             basicIfrsVariable with
             {
-                Partition = testData.previousPeriodPartition.Id, AocType = AocTypes.EOP,
+                Partition = TestData.previousPeriodPartition.Id, AocType = AocTypes.EOP,
                 EstimateType = EstimateTypes.DA,
                 Values = new double[] {1000.0}
             },
             basicIfrsVariable with
             {
-                Partition = testData.previousPeriodPartition.Id, AocType = AocTypes.EOP,
-                DataNode = testData.groupOfInsuranceContracts,
+                Partition = TestData.previousPeriodPartition.Id, AocType = AocTypes.EOP,
+                DataNode = TestData.groupOfInsuranceContracts,
                 EstimateType = EstimateTypes.DA, Values = new double[] {1000.0}
             },
             basicIfrsVariable with
             {
-                Partition = testData.previousPeriodPartition.Id, AocType = AocTypes.EOP,
-                DataNode = testData.groupOfInsuranceContracts,
+                Partition = TestData.previousPeriodPartition.Id, AocType = AocTypes.EOP,
+                DataNode = TestData.groupOfInsuranceContracts,
                 EstimateType = EstimateTypes.BE, EconomicBasis = EconomicBases.C, Values = new double[] {1000.0}
             },
             basicIfrsVariable with
             {
-                Partition = testData.previousPeriodPartition.Id, AocType = AocTypes.CL,
-                DataNode = testData.groupOfInsuranceContracts,
+                Partition = TestData.previousPeriodPartition.Id, AocType = AocTypes.CL,
+                DataNode = TestData.groupOfInsuranceContracts,
                 EstimateType = EstimateTypes.BE, EconomicBasis = EconomicBases.C, Values = new double[] {666.0}
             },
             basicIfrsVariable with
             {
-                Partition = testData.previousPeriodPartition.Id, AocType = AocTypes.EOP,
-                DataNode = testData.groupOfInsuranceContracts,
+                Partition = TestData.previousPeriodPartition.Id, AocType = AocTypes.EOP,
+                DataNode = TestData.groupOfInsuranceContracts,
                 EstimateType = EstimateTypes.BE, EconomicBasis = EconomicBases.L, Values = new double[] {1000.0}
             },
             basicIfrsVariable with
             {
-                Partition = testData.previousPeriodPartition.Id, AocType = AocTypes.CL,
-                DataNode = testData.groupOfInsuranceContracts,
+                Partition = TestData.previousPeriodPartition.Id, AocType = AocTypes.CL,
+                DataNode = TestData.groupOfInsuranceContracts,
                 EstimateType = EstimateTypes.BE, EconomicBasis = EconomicBases.L, Values = new double[] {666.0}
             },
             //Year -1
             basicIfrsVariable with
             {
-                AocType = AocTypes.IA, Novelty = Novelties.I, DataNode = testData.groupOfInsuranceContracts,
+                AocType = AocTypes.IA, Novelty = Novelties.I, DataNode = TestData.groupOfInsuranceContracts,
                 EstimateType = EstimateTypes.BE, EconomicBasis = EconomicBases.L, Values = new double[] {10.0}
             },
             basicIfrsVariable with
             {
-                AocType = AocTypes.CF, Novelty = Novelties.I, DataNode = testData.groupOfInsuranceContracts,
+                AocType = AocTypes.CF, Novelty = Novelties.I, DataNode = TestData.groupOfInsuranceContracts,
                 EstimateType = EstimateTypes.BE, EconomicBasis = EconomicBases.L, Values = new double[] {10.0}
             },
         };
@@ -513,18 +513,18 @@ public class ImportStorageTest
             basicIfrsVariable with {AocType = AocTypes.BOP, Novelty = Novelties.I, Values = new double[] {100.0}},
             basicIfrsVariable with
             {
-                AocType = AocTypes.BOP, Novelty = Novelties.I, DataNode = testData.groupOfInsuranceContracts,
+                AocType = AocTypes.BOP, Novelty = Novelties.I, DataNode = TestData.groupOfInsuranceContracts,
                 EstimateType = EstimateTypes.DA, Values = new double[] {1000.0}
             },
             //Cash flow
             basicIfrsVariable with
             {
-                AocType = AocTypes.BOP, Novelty = Novelties.I, DataNode = testData.groupOfInsuranceContracts,
+                AocType = AocTypes.BOP, Novelty = Novelties.I, DataNode = TestData.groupOfInsuranceContracts,
                 EstimateType = EstimateTypes.BE, EconomicBasis = EconomicBases.L, Values = new double[] {1000.0}
             },
             basicIfrsVariable with
             {
-                AocType = AocTypes.BOP, Novelty = Novelties.I, DataNode = testData.groupOfInsuranceContracts,
+                AocType = AocTypes.BOP, Novelty = Novelties.I, DataNode = TestData.groupOfInsuranceContracts,
                 EstimateType = EstimateTypes.BE, EconomicBasis = EconomicBases.C, Values = new double[] {1000.0}
             },
 
@@ -532,12 +532,12 @@ public class ImportStorageTest
             //from DB
             basicIfrsVariable with
             {
-                AocType = AocTypes.IA, Novelty = Novelties.I, DataNode = testData.groupOfInsuranceContracts,
+                AocType = AocTypes.IA, Novelty = Novelties.I, DataNode = TestData.groupOfInsuranceContracts,
                 EstimateType = EstimateTypes.BE, EconomicBasis = EconomicBases.L, Values = new double[] {10.0}
             },
             basicIfrsVariable with
             {
-                AocType = AocTypes.CF, Novelty = Novelties.I, DataNode = testData.groupOfInsuranceContracts,
+                AocType = AocTypes.CF, Novelty = Novelties.I, DataNode = TestData.groupOfInsuranceContracts,
                 EstimateType = EstimateTypes.BE, EconomicBasis = EconomicBases.L, Values = new double[] {10.0}
             },
 
@@ -547,7 +547,7 @@ public class ImportStorageTest
         };
 
         var activity = await CheckIfrsVariableImportStorageAsync(inputForWorkspace, inputForDataSource, ivsBenchmark,
-            testData.args with {ImportFormat = ImportFormats.Actual}, Activity);
+            TestData.args with {ImportFormat = ImportFormats.Actual}, Activity);
 
 
         activity.Status.Should().Be(ActivityLogStatus.Succeeded);
@@ -559,20 +559,20 @@ public class ImportStorageTest
         await DataSource.DeleteAsync(await DataSource.Query<DataNodeState>().ToArrayAsync());
         await Workspace.UpdateAsync(new[]
         {
-            testData.dt11State with {Year = testData.args.Year, Month = testData.args.Month},
-            testData.dtr11State with {Year = testData.args.Year, Month = testData.args.Month}
+            TestData.dt11State with {Year = TestData.args.Year, Month = TestData.args.Month},
+            TestData.dtr11State with {Year = TestData.args.Year, Month = TestData.args.Month}
         });
 
         await DataSource.UpdateAsync(new[]
         {
-            testData.dt11State with {Year = testData.args.Year, Month = testData.args.Month},
-            testData.dtr11State with {Year = testData.args.Year, Month = testData.args.Month}
+            TestData.dt11State with {Year = TestData.args.Year, Month = TestData.args.Month},
+            TestData.dtr11State with {Year = TestData.args.Year, Month = TestData.args.Month}
         });
 
 
         var basicIfrsVariable = new IfrsVariable
         {
-            Partition = testData.partition.Id, DataNode = testData.groupOfInsuranceContracts, AccidentYear = null,
+            Partition = TestData.partition.Id, DataNode = TestData.groupOfInsuranceContracts, AccidentYear = null,
             AmountType = AmountTypes.PR, Novelty = Novelties.C, EstimateType = EstimateTypes.A
         };
 
@@ -581,7 +581,7 @@ public class ImportStorageTest
             basicIfrsVariable with {AocType = AocTypes.BOP, Novelty = Novelties.I, Values = new double[] {90.0}},
             basicIfrsVariable with
             {
-                DataNode = testData.groupOfReinsuranceContracts,
+                DataNode = TestData.groupOfReinsuranceContracts,
                 AocType = AocTypes.BOP, Novelty = Novelties.I,
                 Values = new double[] {89.0}
             },
@@ -597,14 +597,14 @@ public class ImportStorageTest
             basicIfrsVariable with {AocType = AocTypes.BOP, Novelty = Novelties.I, Values = new double[] {91.0}},
             basicIfrsVariable with
             {
-                DataNode = testData.groupOfReinsuranceContracts,
+                DataNode = TestData.groupOfReinsuranceContracts,
                 AocType = AocTypes.BOP, Novelty = Novelties.I,
                 Values = new double[] {89.0}
             },
         };
 
         var activity = await CheckIfrsVariableImportStorageAsync(inputForWorkspace, inputForDataSource, ivsBenchmark,
-            testData.args with {ImportFormat = ImportFormats.Opening}, Activity);
+            TestData.args with {ImportFormat = ImportFormats.Opening}, Activity);
 
         activity.Status.Should().Be(ActivityLogStatus.Succeeded);
     }
@@ -617,12 +617,12 @@ public class ImportStorageTest
         await DataSource.DeleteAsync(await DataSource.Query<DataNodeState>().ToArrayAsync());
         await DataSource.UpdateAsync(new[]
         {
-            testData.dt11State, testData.dtr11State
+            TestData.dt11State, TestData.dtr11State
         });
 
         await Workspace.UpdateAsync(new[]
         {
-            testData.dt11State, testData.dtr11State
+            TestData.dt11State, TestData.dtr11State
         });
 
 
@@ -630,20 +630,20 @@ public class ImportStorageTest
         await DataSource.DeleteAsync(await DataSource.Query<DataNodeState>().ToArrayAsync());
         await Workspace.UpdateAsync(new[]
         {
-            testData.dt11State with {Year = testData.args.Year, Month = testData.args.Month},
-            testData.dtr11State with {Year = testData.args.Year, Month = testData.args.Month}
+            TestData.dt11State with {Year = TestData.args.Year, Month = TestData.args.Month},
+            TestData.dtr11State with {Year = TestData.args.Year, Month = TestData.args.Month}
         });
 
         await DataSource.UpdateAsync(new[]
         {
-            testData.dt11State with {Year = testData.args.Year, Month = testData.args.Month},
-            testData.dtr11State with {Year = testData.args.Year, Month = testData.args.Month}
+            TestData.dt11State with {Year = TestData.args.Year, Month = TestData.args.Month},
+            TestData.dtr11State with {Year = TestData.args.Year, Month = TestData.args.Month}
         });
 
 
         var basicIfrsVariable = new IfrsVariable
         {
-            Partition = testData.partition.Id, DataNode = testData.groupOfInsuranceContracts, AccidentYear = null,
+            Partition = TestData.partition.Id, DataNode = TestData.groupOfInsuranceContracts, AccidentYear = null,
             AmountType = AmountTypes.PR, Novelty = Novelties.C, EstimateType = EstimateTypes.A
         };
 
@@ -652,7 +652,7 @@ public class ImportStorageTest
             basicIfrsVariable with {AocType = AocTypes.BOP, Novelty = Novelties.I, Values = new double[] {90.0}},
             basicIfrsVariable with
             {
-                DataNode = testData.groupOfReinsuranceContracts,
+                DataNode = TestData.groupOfReinsuranceContracts,
                 AocType = AocTypes.BOP, Novelty = Novelties.I,
                 Values = new double[] {89.0}
             },
@@ -662,7 +662,7 @@ public class ImportStorageTest
         {
             basicIfrsVariable with
             {
-                DataNode = testData.groupOfReinsuranceContracts,
+                DataNode = TestData.groupOfReinsuranceContracts,
                 AocType = AocTypes.BOP, Novelty = Novelties.I,
                 Values = new double[] {91.0}
             },
@@ -673,14 +673,14 @@ public class ImportStorageTest
             basicIfrsVariable with {AocType = AocTypes.BOP, Novelty = Novelties.I, Values = new double[] {90.0}},
             basicIfrsVariable with
             {
-                DataNode = testData.groupOfReinsuranceContracts,
+                DataNode = TestData.groupOfReinsuranceContracts,
                 AocType = AocTypes.BOP, Novelty = Novelties.I,
                 Values = new double[] {91.0},
             }
         };
 
         var activity = await CheckIfrsVariableImportStorageAsync(inputForWorkspace, inputForDataSource, ivsBenchmark,
-            testData.args with {ImportFormat = ImportFormats.Opening}, Activity);
+            TestData.args with {ImportFormat = ImportFormats.Opening}, Activity);
 
 
 
@@ -695,18 +695,18 @@ public class ImportStorageTest
         await DataSource.DeleteAsync(await DataSource.Query<DataNodeState>().ToArrayAsync());
         await DataSource.UpdateAsync(new[]
         {
-            testData.dt11State, testData.dtr11State
+            TestData.dt11State, TestData.dtr11State
         });
 
         await Workspace.UpdateAsync(new[]
         {
-            testData.dt11State, testData.dtr11State
+            TestData.dt11State, TestData.dtr11State
         });
 
 
         var basicIfrsVariable = new IfrsVariable
         {
-            Partition = testData.partition.Id, DataNode = testData.groupOfInsuranceContracts, AccidentYear = null,
+            Partition = TestData.partition.Id, DataNode = TestData.groupOfInsuranceContracts, AccidentYear = null,
             AmountType = AmountTypes.PR, Novelty = Novelties.C, EstimateType = EstimateTypes.A
         };
 
@@ -724,11 +724,11 @@ public class ImportStorageTest
         {
             basicIfrsVariable with
             {
-                Partition = testData.partitionScenarioMTUP.Id, AocType = AocTypes.CF, Values = new double[] {-15.0}
+                Partition = TestData.partitionScenarioMTUP.Id, AocType = AocTypes.CF, Values = new double[] {-15.0}
             },
             basicIfrsVariable with
             {
-                Partition = testData.partitionScenarioMTUP.Id, AmountType = AmountTypes.CL, AocType = AocTypes.CF,
+                Partition = TestData.partitionScenarioMTUP.Id, AmountType = AmountTypes.CL, AocType = AocTypes.CF,
                 Values = new double[] {-99.0}
             },
         };
@@ -737,27 +737,27 @@ public class ImportStorageTest
         {
             basicIfrsVariable with
             {
-                Partition = testData.partition.Id, AocType = AocTypes.BOP, EstimateType = EstimateTypes.DA,
+                Partition = TestData.partition.Id, AocType = AocTypes.BOP, EstimateType = EstimateTypes.DA,
                 Values = new double[] {1000.0}
             },
             basicIfrsVariable with
             {
-                Partition = testData.partition.Id,
+                Partition = TestData.partition.Id,
                 AocType = AocTypes.BOP, Values = new double[] {100.0}
             },
             basicIfrsVariable with
             {
-                Partition = testData.partitionScenarioMTUP.Id, AocType = AocTypes.CF, Values = new double[] {-15.0}
+                Partition = TestData.partitionScenarioMTUP.Id, AocType = AocTypes.CF, Values = new double[] {-15.0}
             },
             basicIfrsVariable with
             {
-                Partition = testData.partitionScenarioMTUP.Id, AmountType = AmountTypes.CL, AocType = AocTypes.CF,
+                Partition = TestData.partitionScenarioMTUP.Id, AmountType = AmountTypes.CL, AocType = AocTypes.CF,
                 Values = new double[] {-99.0}
             },
         };
 
         var activity = await CheckIfrsVariableImportStorageAsync(inputForWorkspace, inputForDataSource, ivsBenchmark,
-            testData.argsScenarioMTUP with {ImportFormat = ImportFormats.Actual}, Activity);
+            TestData.argsScenarioMTUP with {ImportFormat = ImportFormats.Actual}, Activity);
 
 
 
@@ -768,7 +768,7 @@ public class ImportStorageTest
     {
         var basicIfrsVariable = new IfrsVariable
         {
-            Partition = testData.partition.Id, DataNode = testData.groupOfInsuranceContracts,
+            Partition = TestData.partition.Id, DataNode = TestData.groupOfInsuranceContracts,
             AccidentYear = null,
             AmountType = AmountTypes.PR, Novelty = Novelties.C, EstimateType = EstimateTypes.A
         };
@@ -787,14 +787,14 @@ public class ImportStorageTest
         {
             basicIfrsVariable with
             {
-                Partition = testData.partitionScenarioMTUP.Id,
-                DataNode = testData.groupOfReinsuranceContracts, AocType = AocTypes.CF,
+                Partition = TestData.partitionScenarioMTUP.Id,
+                DataNode = TestData.groupOfReinsuranceContracts, AocType = AocTypes.CF,
                 Values = new double[] {-15.0}
             },
             basicIfrsVariable with
             {
-                Partition = testData.partitionScenarioMTUP.Id,
-                DataNode = testData.groupOfReinsuranceContracts,
+                Partition = TestData.partitionScenarioMTUP.Id,
+                DataNode = TestData.groupOfReinsuranceContracts,
                 AmountType = AmountTypes.CL, AocType = AocTypes.CF, Values = new double[] {-99.0}
             },
         };
@@ -803,35 +803,35 @@ public class ImportStorageTest
         {
             basicIfrsVariable with
             {
-                Partition = testData.partition.Id, AocType = AocTypes.BOP, EstimateType = EstimateTypes.DA,
+                Partition = TestData.partition.Id, AocType = AocTypes.BOP, EstimateType = EstimateTypes.DA,
                 Values = new double[] {1000.0}
             },
             basicIfrsVariable with
             {
-                Partition = testData.partition.Id,
+                Partition = TestData.partition.Id,
                 AocType = AocTypes.BOP, Values = new double[] {100.0}
             },
             basicIfrsVariable with
             {
-                Partition = testData.partition.Id,
+                Partition = TestData.partition.Id,
                 AocType = AocTypes.CF, Values = new double[] {150.0}
             },
             basicIfrsVariable with
             {
-                Partition = testData.partitionScenarioMTUP.Id,
-                DataNode = testData.groupOfReinsuranceContracts, AocType = AocTypes.CF,
+                Partition = TestData.partitionScenarioMTUP.Id,
+                DataNode = TestData.groupOfReinsuranceContracts, AocType = AocTypes.CF,
                 Values = new double[] {-15.0}
             },
             basicIfrsVariable with
             {
-                Partition = testData.partitionScenarioMTUP.Id,
-                DataNode = testData.groupOfReinsuranceContracts,
+                Partition = TestData.partitionScenarioMTUP.Id,
+                DataNode = TestData.groupOfReinsuranceContracts,
                 AmountType = AmountTypes.CL, AocType = AocTypes.CF, Values = new double[] {-99.0}
             },
         };
 
         var activity = await CheckIfrsVariableImportStorageAsync(inputForWorkspace, inputForDataSource, ivsBenchmark,
-            testData.argsScenarioMTUP with {ImportFormat = ImportFormats.Actual}, Activity);
+            TestData.argsScenarioMTUP with {ImportFormat = ImportFormats.Actual}, Activity);
 
 
 
@@ -842,8 +842,8 @@ public class ImportStorageTest
     {
         var basicIfrsVariable = new IfrsVariable
         {
-            Partition = testData.partition.Id,
-            DataNode = testData.groupOfInsuranceContracts, AccidentYear = null,
+            Partition = TestData.partition.Id,
+            DataNode = TestData.groupOfInsuranceContracts, AccidentYear = null,
             AmountType = AmountTypes.PR, Novelty = Novelties.C, EstimateType = EstimateTypes.A
         };
 
@@ -857,17 +857,17 @@ public class ImportStorageTest
             basicIfrsVariable with {AocType = AocTypes.BOP, Novelty = Novelties.I, Values = new double[] {90.0}},
             basicIfrsVariable with
             {
-                Partition = testData.partitionScenarioMTUP.Id, AocType = AocTypes.BOP, Novelty = Novelties.I,
+                Partition = TestData.partitionScenarioMTUP.Id, AocType = AocTypes.BOP, Novelty = Novelties.I,
                 Values = new double[] {90.7}
             },
             basicIfrsVariable with
             {
-                Partition = testData.previousPeriodPartition.Id, AocType = AocTypes.EOP, Novelty = Novelties.C,
+                Partition = TestData.previousPeriodPartition.Id, AocType = AocTypes.EOP, Novelty = Novelties.C,
                 Values = new double[] {89.5}
             },
             basicIfrsVariable with
             {
-                Partition = testData.previousPeriodPartitionScenarioMTUP.Id, AocType = AocTypes.EOP,
+                Partition = TestData.previousPeriodPartitionScenarioMTUP.Id, AocType = AocTypes.EOP,
                 Novelty = Novelties.C,
                 Values = new double[] {89.1}
             }
@@ -877,7 +877,7 @@ public class ImportStorageTest
         {
             basicIfrsVariable with
             {
-                Partition = testData.partitionScenarioMTUP.Id,
+                Partition = TestData.partitionScenarioMTUP.Id,
                 AocType = AocTypes.CF, Values = new double[] {-15.0}
             },
         };
@@ -886,22 +886,22 @@ public class ImportStorageTest
         {
             basicIfrsVariable with
             {
-                Partition = testData.partition.Id, AocType = AocTypes.BOP, EstimateType = EstimateTypes.DA,
+                Partition = TestData.partition.Id, AocType = AocTypes.BOP, EstimateType = EstimateTypes.DA,
                 Values = new double[] {1000.0}
             },
             basicIfrsVariable with
             {
-                Partition = testData.partitionScenarioMTUP.Id, AocType = AocTypes.BOP, Novelty = Novelties.I,
+                Partition = TestData.partitionScenarioMTUP.Id, AocType = AocTypes.BOP, Novelty = Novelties.I,
                 Values = new double[] {89.5}
             },
             basicIfrsVariable with
             {
-                Partition = testData.partitionScenarioMTUP.Id, AocType = AocTypes.CF, Values = new double[] {-15.0}
+                Partition = TestData.partitionScenarioMTUP.Id, AocType = AocTypes.CF, Values = new double[] {-15.0}
             },
         };
 
         var activity = await CheckIfrsVariableImportStorageAsync(inputForWorkspace, inputForDataSource, ivsBenchmark,
-            testData.argsScenarioMTUP with {ImportFormat = ImportFormats.Actual}, Activity);
+            TestData.argsScenarioMTUP with {ImportFormat = ImportFormats.Actual}, Activity);
 
 
 
@@ -914,20 +914,20 @@ public class ImportStorageTest
         await DataSource.DeleteAsync(await DataSource.Query<DataNodeState>().ToArrayAsync());
         await Workspace.UpdateAsync(new[]
         {
-            testData.dt11State with {Year = testData.args.Year, Month = testData.args.Month},
-            testData.dtr11State with {Year = testData.args.Year, Month = testData.args.Month}
+            TestData.dt11State with {Year = TestData.args.Year, Month = TestData.args.Month},
+            TestData.dtr11State with {Year = TestData.args.Year, Month = TestData.args.Month}
         });
 
         await DataSource.UpdateAsync(new[]
         {
-            testData.dt11State with {Year = testData.args.Year, Month = testData.args.Month},
-            testData.dtr11State with {Year = testData.args.Year, Month = testData.args.Month}
+            TestData.dt11State with {Year = TestData.args.Year, Month = TestData.args.Month},
+            TestData.dtr11State with {Year = TestData.args.Year, Month = TestData.args.Month}
         });
 
 
         var basicIfrsVariable = new IfrsVariable
         {
-            Partition = testData.partition.Id, DataNode = testData.groupOfInsuranceContracts,
+            Partition = TestData.partition.Id, DataNode = TestData.groupOfInsuranceContracts,
             AccidentYear = null,
             AmountType = AmountTypes.PR, Novelty = Novelties.C, EstimateType = EstimateTypes.A
         };
@@ -942,17 +942,17 @@ public class ImportStorageTest
             },
             basicIfrsVariable with
             {
-                Partition = testData.partitionScenarioMTUP.Id, AocType = AocTypes.BOP, Novelty = Novelties.I,
+                Partition = TestData.partitionScenarioMTUP.Id, AocType = AocTypes.BOP, Novelty = Novelties.I,
                 EstimateType = EstimateTypes.AA, Values = new double[] {90.7}
             },
             basicIfrsVariable with
             {
-                Partition = testData.previousPeriodPartition.Id, AocType = AocTypes.EOP, Novelty = Novelties.C,
+                Partition = TestData.previousPeriodPartition.Id, AocType = AocTypes.EOP, Novelty = Novelties.C,
                 EstimateType = EstimateTypes.AA, Values = new double[] {89.5}
             },
             basicIfrsVariable with
             {
-                Partition = testData.previousPeriodPartitionScenarioMTUP.Id, AocType = AocTypes.EOP,
+                Partition = TestData.previousPeriodPartitionScenarioMTUP.Id, AocType = AocTypes.EOP,
                 Novelty = Novelties.C,
                 EstimateType = EstimateTypes.AA, Values = new double[] {89.1}
             }
@@ -962,7 +962,7 @@ public class ImportStorageTest
         {
             basicIfrsVariable with
             {
-                Partition = testData.partitionScenarioMTUP.Id, AocType = AocTypes.CF, Values = new double[] {-15.0}
+                Partition = TestData.partitionScenarioMTUP.Id, AocType = AocTypes.CF, Values = new double[] {-15.0}
             },
         };
 
@@ -970,17 +970,17 @@ public class ImportStorageTest
         {
             basicIfrsVariable with
             {
-                Partition = testData.partitionScenarioMTUP.Id, AocType = AocTypes.BOP, Novelty = Novelties.I,
+                Partition = TestData.partitionScenarioMTUP.Id, AocType = AocTypes.BOP, Novelty = Novelties.I,
                 EstimateType = EstimateTypes.AA, Values = new double[] {90.7}
             },
             basicIfrsVariable with
             {
-                Partition = testData.partitionScenarioMTUP.Id, AocType = AocTypes.CF, Values = new double[] {-15.0}
+                Partition = TestData.partitionScenarioMTUP.Id, AocType = AocTypes.CF, Values = new double[] {-15.0}
             },
         };
 
         var activity = await CheckIfrsVariableImportStorageAsync(inputForWorkspace, inputForDataSource, ivsBenchmark,
-            testData.argsScenarioMTUP with {ImportFormat = ImportFormats.Actual}, Activity);
+            TestData.argsScenarioMTUP with {ImportFormat = ImportFormats.Actual}, Activity);
 
 
         activity.Status.Should().Be(ActivityLogStatus.Succeeded);
@@ -992,21 +992,21 @@ public class ImportStorageTest
         await DataSource.DeleteAsync(await DataSource.Query<DataNodeState>().ToArrayAsync());
         await Workspace.UpdateAsync(new[]
         {
-            testData.dt11State with {Year = testData.args.Year, Month = testData.args.Month},
-            testData.dtr11State with {Year = testData.args.Year, Month = testData.args.Month}
+            TestData.dt11State with {Year = TestData.args.Year, Month = TestData.args.Month},
+            TestData.dtr11State with {Year = TestData.args.Year, Month = TestData.args.Month}
         });
 
         await DataSource.UpdateAsync(new[]
         {
-            testData.dt11State with {Year = testData.args.Year, Month = testData.args.Month},
-            testData.dtr11State with {Year = testData.args.Year, Month = testData.args.Month}
+            TestData.dt11State with {Year = TestData.args.Year, Month = TestData.args.Month},
+            TestData.dtr11State with {Year = TestData.args.Year, Month = TestData.args.Month}
         });
 
 
         var basicIfrsVariable = new IfrsVariable
         {
-            Partition = testData.partition.Id,
-            DataNode = testData.groupOfInsuranceContracts, AccidentYear = null,
+            Partition = TestData.partition.Id,
+            DataNode = TestData.groupOfInsuranceContracts, AccidentYear = null,
             AmountType = AmountTypes.PR, Novelty = Novelties.C, EstimateType = EstimateTypes.A
         };
 
@@ -1020,13 +1020,13 @@ public class ImportStorageTest
             },
             basicIfrsVariable with
             {
-                Partition = testData.previousPeriodPartition.Id,
+                Partition = TestData.previousPeriodPartition.Id,
                 AocType = AocTypes.EOP, Novelty = Novelties.C,
                 EstimateType = EstimateTypes.AA, Values = new double[] {89.5}
             },
             basicIfrsVariable with
             {
-                Partition = testData.previousPeriodPartitionScenarioMTUP.Id,
+                Partition = TestData.previousPeriodPartitionScenarioMTUP.Id,
                 AocType = AocTypes.EOP, Novelty = Novelties.C,
                 EstimateType = EstimateTypes.AA, Values = new double[] {89.1}
             }
@@ -1036,7 +1036,7 @@ public class ImportStorageTest
         {
             basicIfrsVariable with
             {
-                Partition = testData.partitionScenarioMTUP.Id, AocType = AocTypes.CF, Values = new double[] {-15.0}
+                Partition = TestData.partitionScenarioMTUP.Id, AocType = AocTypes.CF, Values = new double[] {-15.0}
             },
         };
 
@@ -1049,12 +1049,12 @@ public class ImportStorageTest
             },
             basicIfrsVariable with
             {
-                Partition = testData.partitionScenarioMTUP.Id, AocType = AocTypes.CF, Values = new double[] {-15.0}
+                Partition = TestData.partitionScenarioMTUP.Id, AocType = AocTypes.CF, Values = new double[] {-15.0}
             },
         };
 
         var activity = await CheckIfrsVariableImportStorageAsync(inputForWorkspace, inputForDataSource, ivsBenchmark,
-            testData.argsScenarioMTUP with {ImportFormat = ImportFormats.Actual}, Activity);
+            TestData.argsScenarioMTUP with {ImportFormat = ImportFormats.Actual}, Activity);
 
 
 
@@ -1067,23 +1067,23 @@ public class ImportStorageTest
         await DataSource.DeleteAsync(await DataSource.Query<DataNodeState>().ToArrayAsync());
         await Workspace.UpdateAsync(new[]
         {
-            testData.dt11State, testData.dtr11State with {Year = testData.args.Year, Month = testData.args.Month}
+            TestData.dt11State, TestData.dtr11State with {Year = TestData.args.Year, Month = TestData.args.Month}
         });
 
         await DataSource.UpdateAsync(new[]
         {
-            testData.dt11State, testData.dtr11State with
+            TestData.dt11State, TestData.dtr11State with
             {
-                Year = testData.args.Year,
-                Month = testData.args.Month
+                Year = TestData.args.Year,
+                Month = TestData.args.Month
             }
         });
 
 
         var basicIfrsVariable = new IfrsVariable
         {
-            Partition = testData.partition.Id,
-            DataNode = testData.groupOfInsuranceContracts, AccidentYear = null,
+            Partition = TestData.partition.Id,
+            DataNode = TestData.groupOfInsuranceContracts, AccidentYear = null,
             AmountType = AmountTypes.PR, Novelty = Novelties.C, EstimateType = EstimateTypes.A
         };
 
@@ -1092,25 +1092,25 @@ public class ImportStorageTest
             basicIfrsVariable with {AocType = AocTypes.CF, Values = new double[] {150.0}},
             basicIfrsVariable with
             {
-                DataNode = testData.groupOfReinsuranceContracts, AocType = AocTypes.BOP, Novelty = Novelties.I,
+                DataNode = TestData.groupOfReinsuranceContracts, AocType = AocTypes.BOP, Novelty = Novelties.I,
                 Values = new double[] {90.0}
             },
             basicIfrsVariable with
             {
-                Partition = testData.partitionScenarioMTUP.Id,
-                DataNode = testData.groupOfReinsuranceContracts, AocType = AocTypes.BOP,
+                Partition = TestData.partitionScenarioMTUP.Id,
+                DataNode = TestData.groupOfReinsuranceContracts, AocType = AocTypes.BOP,
                 Novelty = Novelties.I, Values = new double[] {90.7}
             },
             basicIfrsVariable with
             {
-                Partition = testData.previousPeriodPartition.Id,
-                DataNode = testData.groupOfInsuranceContracts, AocType = AocTypes.EOP,
+                Partition = TestData.previousPeriodPartition.Id,
+                DataNode = TestData.groupOfInsuranceContracts, AocType = AocTypes.EOP,
                 Novelty = Novelties.C, Values = new double[] {89.5}
             },
             basicIfrsVariable with
             {
-                Partition = testData.previousPeriodPartitionScenarioMTUP.Id,
-                DataNode = testData.groupOfInsuranceContracts,
+                Partition = TestData.previousPeriodPartitionScenarioMTUP.Id,
+                DataNode = TestData.groupOfInsuranceContracts,
                 AocType = AocTypes.EOP, Novelty = Novelties.C, Values = new double[] {89.1}
             }
         };
@@ -1119,7 +1119,7 @@ public class ImportStorageTest
         {
             basicIfrsVariable with
             {
-                Partition = testData.partitionScenarioMTUP.Id, AocType = AocTypes.CF, Values = new double[] {-15.0}
+                Partition = TestData.partitionScenarioMTUP.Id, AocType = AocTypes.CF, Values = new double[] {-15.0}
             },
         };
 
@@ -1127,23 +1127,23 @@ public class ImportStorageTest
         {
             basicIfrsVariable with
             {
-                Partition = testData.partitionScenarioMTUP.Id, AocType = AocTypes.BOP, Novelty = Novelties.I,
+                Partition = TestData.partitionScenarioMTUP.Id, AocType = AocTypes.BOP, Novelty = Novelties.I,
                 Values = new double[] {89.5}
             },
             basicIfrsVariable with
             {
-                Partition = testData.partitionScenarioMTUP.Id,
-                DataNode = testData.groupOfReinsuranceContracts, AocType = AocTypes.BOP,
+                Partition = TestData.partitionScenarioMTUP.Id,
+                DataNode = TestData.groupOfReinsuranceContracts, AocType = AocTypes.BOP,
                 Novelty = Novelties.I, Values = new double[] {90.7}
             },
             basicIfrsVariable with
             {
-                Partition = testData.partitionScenarioMTUP.Id, AocType = AocTypes.CF, Values = new double[] {-15.0}
+                Partition = TestData.partitionScenarioMTUP.Id, AocType = AocTypes.CF, Values = new double[] {-15.0}
             },
         };
 
         var activity = await CheckIfrsVariableImportStorageAsync(inputForWorkspace, inputForDataSource, ivsBenchmark,
-            testData.argsScenarioMTUP with {ImportFormat = ImportFormats.Actual}, Activity);
+            TestData.argsScenarioMTUP with {ImportFormat = ImportFormats.Actual}, Activity);
 
 
         activity.Status.Should().Be(ActivityLogStatus.Succeeded);
@@ -1157,19 +1157,19 @@ public class ImportStorageTest
         await DataSource.DeleteAsync(await DataSource.Query<DataNodeState>().ToArrayAsync());
         await DataSource.UpdateAsync(new[]
         {
-            testData.dt11State, testData.dtr11State
+            TestData.dt11State, TestData.dtr11State
         });
 
         await Workspace.UpdateAsync(new[]
         {
-            testData.dt11State, testData.dtr11State
+            TestData.dt11State, TestData.dtr11State
         });
 
 
         var basicRawVariable = new RawVariable
         {
-            Partition = testData.partition.Id,
-            DataNode = testData.groupOfInsuranceContracts, AccidentYear = null,
+            Partition = TestData.partition.Id,
+            DataNode = TestData.groupOfInsuranceContracts, AccidentYear = null,
             AmountType = AmountTypes.PR, Novelty = Novelties.C, AocType = AocTypes.CL, EstimateType = EstimateTypes.BE
         };
 
@@ -1179,7 +1179,7 @@ public class ImportStorageTest
             basicRawVariable with {AmountType = AmountTypes.CL, Values = new[] {99.0}},
             basicRawVariable with
             {
-                Partition = testData.partitionScenarioMTDOWN.Id,
+                Partition = TestData.partitionScenarioMTDOWN.Id,
                 AocType = AocTypes.CL, Novelty = Novelties.C,
                 Values = new[] {130.0}
             }
@@ -1187,7 +1187,7 @@ public class ImportStorageTest
 
         var inputForWorkspace = new RawVariable[]
         {
-            basicRawVariable with {Partition = testData.partitionScenarioMTUP.Id, Values = new[] {110.0}},
+            basicRawVariable with {Partition = TestData.partitionScenarioMTUP.Id, Values = new[] {110.0}},
         };
 
         var ivsBenchmark = new RawVariable[]
@@ -1195,13 +1195,13 @@ public class ImportStorageTest
             basicRawVariable with {AmountType = AmountTypes.CL, Values = new[] {99.0}},
             basicRawVariable with
             {
-                Partition = testData.partitionScenarioMTUP.Id,
+                Partition = TestData.partitionScenarioMTUP.Id,
                 Values = new[] {110.0}
             },
         };
 
         var activity = await CheckRawVariableImportStorageAsync(inputForWorkspace, inputForDataSource, ivsBenchmark,
-            testData.argsScenarioMTUP with {ImportFormat = ImportFormats.Cashflow}, Activity);
+            TestData.argsScenarioMTUP with {ImportFormat = ImportFormats.Cashflow}, Activity);
 
 
         activity.Status.Should().Be(ActivityLogStatus.Succeeded);
@@ -1211,8 +1211,8 @@ public class ImportStorageTest
     {
         var basicRawVariable = new RawVariable
         {
-            Partition = testData.partition.Id,
-            DataNode = testData.groupOfInsuranceContracts, AccidentYear = null,
+            Partition = TestData.partition.Id,
+            DataNode = TestData.groupOfInsuranceContracts, AccidentYear = null,
             AmountType = AmountTypes.PR, Novelty = Novelties.C, AocType = AocTypes.CL, EstimateType = EstimateTypes.BE
         };
 
@@ -1222,13 +1222,13 @@ public class ImportStorageTest
             basicRawVariable with {AmountType = AmountTypes.CL, Values = new[] {99.0}},
             basicRawVariable with
             {
-                Partition = testData.partitionScenarioMTUP.Id,
+                Partition = TestData.partitionScenarioMTUP.Id,
                 AmountType = AmountTypes.CL, Values = new[] {130.0}
             },
             basicRawVariable with
             {
-                Partition = testData.partitionScenarioMTUP.Id,
-                DataNode = testData.groupOfReinsuranceContracts,
+                Partition = TestData.partitionScenarioMTUP.Id,
+                DataNode = TestData.groupOfReinsuranceContracts,
                 AmountType = AmountTypes.CL, Values = new[] {125.0}
             }
         };
@@ -1237,7 +1237,7 @@ public class ImportStorageTest
         {
             basicRawVariable with
             {
-                Partition = testData.partitionScenarioMTUP.Id,
+                Partition = TestData.partitionScenarioMTUP.Id,
                 Values = new[] {110.0}
             },
         };
@@ -1247,19 +1247,19 @@ public class ImportStorageTest
             basicRawVariable with {AmountType = AmountTypes.CL, Values = new[] {99.0}},
             basicRawVariable with
             {
-                Partition = testData.partitionScenarioMTUP.Id,
-                DataNode = testData.groupOfReinsuranceContracts,
+                Partition = TestData.partitionScenarioMTUP.Id,
+                DataNode = TestData.groupOfReinsuranceContracts,
                 AmountType = AmountTypes.CL, Values = new[] {125.0}
             },
             basicRawVariable with
             {
-                Partition = testData.partitionScenarioMTUP.Id,
+                Partition = TestData.partitionScenarioMTUP.Id,
                 Values = new[] {110.0}
             },
         };
 
         var activity = await CheckRawVariableImportStorageAsync(inputForWorkspace, inputForDataSource, ivsBenchmark,
-            testData.argsScenarioMTUP with {ImportFormat = ImportFormats.Cashflow}, Activity);
+            TestData.argsScenarioMTUP with {ImportFormat = ImportFormats.Cashflow}, Activity);
 
 
 
