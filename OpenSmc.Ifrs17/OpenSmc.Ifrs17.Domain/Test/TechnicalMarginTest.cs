@@ -23,7 +23,7 @@ public class TechnicalMarginTest : TestBase
 
     public async Task InitializeAsync()
     {
-        TestData.InitializeAsync();
+        await TestData.InitializeAsync();
         await Import.FromString(TestData.novelties).WithType<Novelty>().WithTarget(DataSource).ExecuteAsync();
         await Import.FromString(TestData.canonicalAocTypes).WithType<AocType>().WithTarget(DataSource).ExecuteAsync();
 
@@ -36,15 +36,9 @@ public class TechnicalMarginTest : TestBase
             TestData.dt1, TestData.dtr1
         });
 
-        await DataSource.UpdateAsync<GroupOfContract>(new[]
-        {
-            TestData.dt11
-        });
+        await DataSource.UpdateAsync<GroupOfContract>(TestData.dt11.RepeatOnce());
 
-        await DataSource.UpdateAsync<GroupOfReinsuranceContract>(new[]
-        {
-            TestData.dtr11
-        });
+        await DataSource.UpdateAsync<GroupOfReinsuranceContract>(TestData.dtr11.RepeatOnce());
 
         await DataSource.UpdateAsync(new[]
         {
