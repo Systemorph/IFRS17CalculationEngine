@@ -1,5 +1,3 @@
-//#!import "../CalculationEngine"
-
 using FluentAssertions;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
@@ -9,6 +7,7 @@ using Systemorph.Vertex.DataSource.Common;
 using Systemorph.Vertex.Import;
 using Systemorph.Vertex.Scopes.Proxy;
 using Systemorph.Vertex.Workspace;
+using FactAttribute = System.Runtime.CompilerServices.CompilerGeneratedAttribute;
 
 namespace OpenSmc.Ifrs17.Domain.Tests;
 
@@ -104,6 +103,7 @@ public class AocConfigurationTest : TestBase
             .ExecuteAsync();
     }
 
+    [Fact]
     public async Task CheckAocConfig(IImportVariable import)
     {
         var aocConfigLog =

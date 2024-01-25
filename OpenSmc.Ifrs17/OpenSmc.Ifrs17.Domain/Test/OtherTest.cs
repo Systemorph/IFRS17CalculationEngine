@@ -1,11 +1,13 @@
 using FluentAssertions;
 using OpenSmc.Ifrs17.Domain.Utils;
 
-//#!eval-notebook "../Utils/ImportCalculationMethods"
+namespace OpenSmc.Ifrs17.Domain.Tests;
 
+using FactAttribute = System.Runtime.CompilerServices.CompilerGeneratedAttribute;
 
 public class OtherTests
 {
+    [Fact]
     public void TestsCollection()
     {
         Enumerable.Repeat(1e6 / 12, 12)
