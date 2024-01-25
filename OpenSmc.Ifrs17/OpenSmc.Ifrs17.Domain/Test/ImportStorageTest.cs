@@ -22,8 +22,7 @@ public class ImportStorageTest : TestBase
 
     public async Task IntializeAsync()
     {
-        TestData.InitializeAsync();
-        //await DataSource.SetAsync();
+        await TestData.InitializeAsync();
         DataSource.Reset(x => x.ResetCurrentPartitions());
         Work.Reset(x => x.ResetCurrentPartitions());
 
