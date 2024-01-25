@@ -4,90 +4,81 @@
 //#!import "TestData"
 
 
-using System.Diagnostics;
 using FluentAssertions;
-using Microsoft.Graph.SecurityNamespace;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.Tests;
 using Systemorph.Vertex.Activities;
 using Systemorph.Vertex.Collections;
 using Systemorph.Vertex.DataSource.Common;
 using Systemorph.Vertex.Import;
+using Systemorph.Vertex.Scopes.Proxy;
 using Systemorph.Vertex.Workspace;
 
-public class DataNodeParameterTest
-{
-    protected IImportVariable Import;
-    protected IWorkspaceVariable Workspace;
-    protected IDataSource DataSource;
-    protected IActivityVariable Activity;
-    private TestData testData { get; set; }
+namespace OpenSmc.Ifrs17.Domain.Test;
 
-    public DataNodeParameterTest(IImportVariable import, IWorkspaceVariable workspace,
-        IDataSource dataSource, IActivityVariable activity)
-    {
-        Import = import;
-        Workspace = workspace;
-        DataSource = dataSource;
-        Activity = activity;
-        testData = new TestData();
-    }
+public class DataNodeParameterTest : TestBase
+{
+
+    public DataNodeParameterTest(IImportVariable import, IDataSource dataSource,
+        IWorkspaceVariable work, IActivityVariable activity, IScopeFactory scopes) : 
+        base(import, dataSource, work, activity, scopes){}
 
     private async Task InitAsync()
     {
-        testData.InitializeAsync();
-        await Import.FromString(testData.novelties).WithType<Novelty>()
+        TestData.InitializeAsync();
+        await Import.FromString(TestData.novelties).WithType<Novelty>()
             .WithTarget(DataSource)
             .ExecuteAsync();
-        await Import.FromString(testData.canonicalAocTypes)
+        await Import.FromString(TestData.canonicalAocTypes)
             .WithType<AocType>()
             .WithTarget(DataSource)
             .ExecuteAsync();
 
-        await Import.FromString(testData.canonicalAocConfig)
+        await Import.FromString(TestData.canonicalAocConfig)
             .WithFormat(ImportFormats.AocConfiguration).WithTarget(DataSource)
             .ExecuteAsync();
 
 
-        await DataSource.UpdateAsync(testData.reportingNodes);
-        await DataSource.UpdateAsync<Portfolio>(testData.dt1.RepeatOnce());
-        await DataSource.UpdateAsync<Portfolio>(testData.dtr1.RepeatOnce());
-        await DataSource.UpdateAsync<GroupOfInsuranceContract>(testData.dt11.RepeatOnce());
+        await DataSource.UpdateAsync(TestData.reportingNodes);
+        await DataSource.UpdateAsync<Portfolio>(TestData.dt1.RepeatOnce());
+        await DataSource.UpdateAsync<Portfolio>(TestData.dtr1.RepeatOnce());
+        await DataSource.UpdateAsync<GroupOfInsuranceContract>(TestData.dt11.RepeatOnce());
 
-        await DataSource.UpdateAsync<GroupOfReinsuranceContract>(testData.dtr11.RepeatOnce());
+        await DataSource.UpdateAsync<GroupOfReinsuranceContract>(TestData.dtr11.RepeatOnce());
 
 
         await DataSource.UpdateAsync(new[]
         {
-            testData.dt11State, testData.dtr11State
+            TestData.dt11State, TestData.dtr11State
         });
 
 
-        await Import.FromString(testData.estimateType)
+        await Import.FromString(TestData.estimateType)
             .WithType<EstimateType>().WithTarget(DataSource).ExecuteAsync();
-        await Import.FromString(testData.economicBasis)
+        await Import.FromString(TestData.economicBasis)
             .WithType<EconomicBasis>().WithTarget(DataSource).ExecuteAsync();
 
 
-        await DataSource.UpdateAsync(testData.yieldCurvePrevious.RepeatOnce());
+        await DataSource.UpdateAsync(TestData.yieldCurvePrevious.RepeatOnce());
 
 
         await DataSource.UpdateAsync(new[]
         {
-            testData.partition, testData.previousPeriodPartition
+            TestData.partition, TestData.previousPeriodPartition
         });
 
-        await DataSource.UpdateAsync(testData.partitionReportingNode.RepeatOnce());
+        await DataSource.UpdateAsync(TestData.partitionReportingNode.RepeatOnce());
 
 
-        Workspace.Initialize(x => x.FromSource(DataSource).DisableInitialization<RawVariable>(
+        Work.Initialize(x => x.FromSource(DataSource).DisableInitialization<RawVariable>(
         ).DisableInitialization<IfrsVariable>());
     }
 
 
     public async Task<ActivityLog> TestValidation(string inputFile, List<string> errorBms)
     {
-        var ws = Workspace.CreateNew();
+        var ws = Work.CreateNew();
         ws.InitializeFrom(DataSource);
         Activity.Start();
         var log = await Import.FromString(inputFile).WithFormat(ImportFormats.DataNodeParameter).WithTarget(ws)
@@ -100,12 +91,12 @@ public class DataNodeParameterTest
 
     public async Task<bool> CheckDefaultEbDriver((string va, string lt) key, string eb, string inputFile)
     {
-        var ws = Workspace.CreateNew();
+        var ws = Work.CreateNew();
         ws.InitializeFrom(DataSource);
         ws.InitializeFrom(DataSource);
         await ws.DeleteAsync(ws.Query<GroupOfInsuranceContract>());
         await ws.UpdateAsync<GroupOfInsuranceContract>(new[]
-            {testData.dt11 with {ValuationApproach = key.va, LiabilityType = key.lt}});
+            {TestData.dt11 with {ValuationApproach = key.va, LiabilityType = key.lt}});
 
         var log = await Import.FromString(inputFile).WithFormat(ImportFormats.DataNodeParameter).WithTarget(ws)
             .ExecuteAsync();
