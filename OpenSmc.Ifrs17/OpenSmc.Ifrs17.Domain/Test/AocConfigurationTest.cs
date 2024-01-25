@@ -11,12 +11,9 @@ using Systemorph.Vertex.Workspace;
 
 namespace OpenSmc.Ifrs17.Domain.Tests;
 
-public class AocConfigurationTest
+public class AocConfigurationTest : TestBase
 {
-    protected IImportVariable Import;
     protected Workspace Workspace;
-    protected IDataSource DataSource;
-    protected IActivityVariable Activity;
 
     protected string novelties =
         @"@@Novelty
@@ -73,9 +70,9 @@ public class AocConfigurationTest
         AM,C,4,6,8,EndOfPeriod,NotApplicable,NotApplicable,NotApplicable,EndOfPeriod,200,1900,1
         EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,1900,1";
 
-    public AocConfigurationTest(IImportVariable import, IWorkspaceVariable work)
+    public AocConfigurationTest(IImportVariable? import, IDataSource? dataSource,
+        IWorkspaceVariable? work, IActivityVariable activity) : base(import, dataSource, work, activity)
     {
-        Import = import;
         Workspace = work.CreateNew() as Workspace;
     }
 
