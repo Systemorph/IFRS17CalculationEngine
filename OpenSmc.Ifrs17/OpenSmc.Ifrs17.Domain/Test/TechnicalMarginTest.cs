@@ -1,8 +1,8 @@
 using FluentAssertions;
-using Microsoft.Graph.SecurityNamespace;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.Import;
+using OpenSmc.Ifrs17.Domain.Tests;
 using OpenSmc.Ifrs17.Domain.Utils;
 using Systemorph.Vertex.Activities;
 using Systemorph.Vertex.Collections;
@@ -13,93 +13,77 @@ using Systemorph.Vertex.Pivot.Builder.Interfaces;
 using Systemorph.Vertex.Scopes.Proxy;
 using Systemorph.Vertex.Workspace;
 
-//#!import "../Import/Importers"
-//#!import "TestData"
 
-public class TechnicalMarginTest
+public class TechnicalMarginTest : TestBase
 {
-    protected IWorkspaceVariable Workspace;
-    protected TestData td;
-    protected IActivityVariable Activity;
-    protected IDataSource DataSource;
-    protected IImportVariable Import;
-    protected IPivotFactory Report;
-    protected IExportVariable Export;
-    protected IScopeFactory Scopes;
 
-    public TechnicalMarginTest(IWorkspaceVariable workspace, IActivityVariable activity,
-        IDataSource dataSource, IImportVariable import)
-    {
-        Workspace = workspace;
-        Activity = activity;
-        DataSource = dataSource;
-        Import = import;
-        td = new TestData();
-    }
+    public TechnicalMarginTest(IImportVariable import, IDataSource dataSource,
+        IWorkspaceVariable work, IActivityVariable activity, IScopeFactory scopes) :
+        base(import, dataSource, work, activity, scopes){}
 
     public async Task InitializeAsync()
     {
-        td.InitializeAsync();
-        await Import.FromString(td.novelties).WithType<Novelty>().WithTarget(DataSource).ExecuteAsync();
-        await Import.FromString(td.canonicalAocTypes).WithType<AocType>().WithTarget(DataSource).ExecuteAsync();
+        TestData.InitializeAsync();
+        await Import.FromString(TestData.novelties).WithType<Novelty>().WithTarget(DataSource).ExecuteAsync();
+        await Import.FromString(TestData.canonicalAocTypes).WithType<AocType>().WithTarget(DataSource).ExecuteAsync();
 
-        await Import.FromString(td.canonicalAocConfig).WithFormat(ImportFormats.AocConfiguration).WithTarget(DataSource)
+        await Import.FromString(TestData.canonicalAocConfig).WithFormat(ImportFormats.AocConfiguration).WithTarget(DataSource)
             .ExecuteAsync();
 
 
         await DataSource.UpdateAsync<Portfolio>(new[]
         {
-            td.dt1, td.dtr1
+            TestData.dt1, TestData.dtr1
         });
 
         await DataSource.UpdateAsync<GroupOfContract>(new[]
         {
-            td.dt11
+            TestData.dt11
         });
 
         await DataSource.UpdateAsync<GroupOfReinsuranceContract>(new[]
         {
-            td.dtr11
+            TestData.dtr11
         });
 
         await DataSource.UpdateAsync(new[]
         {
-            td.dt11State, td.dtr11State
+            TestData.dt11State, TestData.dtr11State
         });
 
         await DataSource.UpdateAsync(new[]
         {
-            td.dt11SingleParameter
+            TestData.dt11SingleParameter
         });
 
         await DataSource.UpdateAsync(new[]
         {
-            td.dt11Inter
+            TestData.dt11Inter
         });
 
 
-        await Import.FromString(td.amountType).WithType<AmountType>().WithTarget(DataSource).ExecuteAsync();
-        await Import.FromString(td.estimateType).WithType<EstimateType>().WithTarget(DataSource).ExecuteAsync();
-        await Import.FromString(td.economicBasis).WithType<EconomicBasis>().WithTarget(DataSource).ExecuteAsync();
+        await Import.FromString(TestData.amountType).WithType<AmountType>().WithTarget(DataSource).ExecuteAsync();
+        await Import.FromString(TestData.estimateType).WithType<EstimateType>().WithTarget(DataSource).ExecuteAsync();
+        await Import.FromString(TestData.economicBasis).WithType<EconomicBasis>().WithTarget(DataSource).ExecuteAsync();
 
 
-        await Import.FromString(td.projectionConfiguration).WithType<ProjectionConfiguration>(
+        await Import.FromString(TestData.projectionConfiguration).WithType<ProjectionConfiguration>(
         ).WithTarget(DataSource).ExecuteAsync();
 
 
         await DataSource.UpdateAsync(new[]
         {
-            td.yieldCurve, td.yieldCurvePrevious
+            TestData.yieldCurve, TestData.yieldCurvePrevious
         });
 
 
-        Workspace.Initialize(x => x.FromSource(DataSource).DisableInitialization<RawVariable>(
+        Work.Initialize(x => x.FromSource(DataSource).DisableInitialization<RawVariable>(
         ).DisableInitialization<IfrsVariable>());
 
 
-        await DataSource.UpdateAsync<PartitionByReportingNode>(td.partitionReportingNode.RepeatOnce());
-        await DataSource.UpdateAsync<PartitionByReportingNodeAndPeriod>(td.previousPeriodPartition.RepeatOnce());
-        await DataSource.UpdateAsync<PartitionByReportingNodeAndPeriod>(td.partition.RepeatOnce());
+        await DataSource.UpdateAsync<PartitionByReportingNode>(TestData.partitionReportingNode.RepeatOnce());
+        await DataSource.UpdateAsync<PartitionByReportingNodeAndPeriod>(TestData.previousPeriodPartition.RepeatOnce());
+        await DataSource.UpdateAsync<PartitionByReportingNodeAndPeriod>(TestData.partition.RepeatOnce());
     }
 
 
@@ -171,15 +155,15 @@ public class TechnicalMarginTest
         Guid partitionId,
         string primaryDataNode)
     {
-        await Workspace.DeleteAsync<IfrsVariable>(await Workspace.Query<IfrsVariable>().ToArrayAsync());
-        await Workspace.UpdateAsync<IfrsVariable>(inputDataSet);
+        await Work.DeleteAsync<IfrsVariable>(await Work.Query<IfrsVariable>().ToArrayAsync());
+        await Work.UpdateAsync<IfrsVariable>(inputDataSet);
 
         var partition =
-            (await Workspace.Query<PartitionByReportingNodeAndPeriod>().ToArrayAsync())
+            (await Work.Query<PartitionByReportingNodeAndPeriod>().ToArrayAsync())
             .Single(x => x.Id == partitionId);
         var args = new ImportArgs(partition.ReportingNode, partition.Year, partition.Month, Periodicity.Quarterly,
             partition.Scenario, ImportFormats.Actual);
-        var testStorage = new ImportStorage(args, DataSource, Workspace);
+        var testStorage = new ImportStorage(args, DataSource, Work);
         await testStorage.InitializeAsync();
         var testUniverse = Scopes.ForStorage(testStorage).ToScope<IModel>();
         var identities = testUniverse
@@ -190,7 +174,7 @@ public class TechnicalMarginTest
         var csm = tmToIfrsVariable.SelectMany(x => x.Csms).Where(x => Math.Abs(x.Values[0]) > Consts.Precision);
         var loss = tmToIfrsVariable.SelectMany(x => x.Loss).Where(x => Math.Abs(x.Values[0]) > Consts.Precision);
 
-        await Workspace.DeleteAsync<IfrsVariable>(await Workspace.Query<IfrsVariable>().ToArrayAsync());
+        await Work.DeleteAsync<IfrsVariable>(await Work.Query<IfrsVariable>().ToArrayAsync());
         return (csm, loss);
     }
 
@@ -237,7 +221,7 @@ public class TechnicalMarginTest
         }
 
         //Clean up Workspace
-        await Workspace.DeleteAsync<IfrsVariable>(await Workspace.Query<IfrsVariable>().ToArrayAsync());
+        await Work.DeleteAsync<IfrsVariable>(await Work.Query<IfrsVariable>().ToArrayAsync());
         //await Workspace.DeleteAsync<IfrsVariable>(inputDataSet);
 
         if (errorsGross.Any()) ApplicationMessage.Log(Error.Generic, string.Join("Gross Errors: \n", errorsGross));
@@ -251,8 +235,8 @@ public class TechnicalMarginTest
     {
         var basicIfrsVariable = new IfrsVariable
         {
-            Partition = td.previousPeriodPartition.Id, 
-            DataNode = td.groupOfInsuranceContracts, AccidentYear = null,
+            Partition = TestData.previousPeriodPartition.Id, 
+            DataNode = TestData.groupOfInsuranceContracts, AccidentYear = null,
             AmountType = "PR", EstimateType = "BE", EconomicBasis = "L"
         };
 
@@ -292,7 +276,7 @@ public class TechnicalMarginTest
     {
         var basicIfrsVariable = new IfrsVariable
         {
-            Partition = td.previousPeriodPartition.Id, DataNode = td.groupOfInsuranceContracts, AccidentYear = null,
+            Partition = TestData.previousPeriodPartition.Id, DataNode = TestData.groupOfInsuranceContracts, AccidentYear = null,
             AmountType = "PR", EstimateType = "BE", EconomicBasis = "L"
         };
 
@@ -331,8 +315,8 @@ public class TechnicalMarginTest
     {
         var basicIfrsVariable = new IfrsVariable
         {
-            Partition = td.previousPeriodPartition.Id, 
-            DataNode = td.groupOfInsuranceContracts, AccidentYear = null,
+            Partition = TestData.previousPeriodPartition.Id, 
+            DataNode = TestData.groupOfInsuranceContracts, AccidentYear = null,
             AmountType = "PR", EstimateType = "BE", EconomicBasis = "L"
         };
 
@@ -368,8 +352,8 @@ public class TechnicalMarginTest
     {
         var basicIfrsVariable = new IfrsVariable
         {
-            Partition = td.previousPeriodPartition.Id, 
-            DataNode = td.groupOfInsuranceContracts, AccidentYear = null,
+            Partition = TestData.previousPeriodPartition.Id, 
+            DataNode = TestData.groupOfInsuranceContracts, AccidentYear = null,
             AmountType = "PR", EstimateType = "BE", EconomicBasis = "L"
         };
 
@@ -421,15 +405,15 @@ public class TechnicalMarginTest
     {
         var reinsBasicIfrsVariable = new IfrsVariable
         {
-            Partition = td.partition.Id, 
-            DataNode = td.groupOfReinsuranceContracts, AccidentYear = null, AmountType = "PR",
+            Partition = TestData.partition.Id, 
+            DataNode = TestData.groupOfReinsuranceContracts, AccidentYear = null, AmountType = "PR",
             EstimateType = "BE", EconomicBasis = "L"
         };
 
         var grossBasicIfrsVariable = new IfrsVariable
         {
-            Partition = td.partition.Id, 
-            DataNode = td.groupOfInsuranceContracts, AccidentYear = null, AmountType = "Cl",
+            Partition = TestData.partition.Id, 
+            DataNode = TestData.groupOfInsuranceContracts, AccidentYear = null, AmountType = "Cl",
             EstimateType = "BE", EconomicBasis = "L"
         };
 
@@ -485,14 +469,14 @@ public class TechnicalMarginTest
     {
         var reinsBasicIfrsVariable = new IfrsVariable
         {
-            Partition = td.partition.Id, 
-            DataNode = td.groupOfReinsuranceContracts, AccidentYear = null, AmountType = "PR",
+            Partition = TestData.partition.Id, 
+            DataNode = TestData.groupOfReinsuranceContracts, AccidentYear = null, AmountType = "PR",
             EstimateType = "BE", EconomicBasis = "L"
         };
 
         var grossBasicIfrsVariable = new IfrsVariable
         {
-            Partition = td.partition.Id, DataNode = td.groupOfInsuranceContracts, AccidentYear = null, AmountType = "PR",
+            Partition = TestData.partition.Id, DataNode = TestData.groupOfInsuranceContracts, AccidentYear = null, AmountType = "PR",
             EstimateType = "BE", EconomicBasis = "L"
         };
 
@@ -548,13 +532,13 @@ public class TechnicalMarginTest
     {
         var reinsBasicIfrsVariable = new IfrsVariable
         {
-            Partition = td.partition.Id, DataNode = td.groupOfReinsuranceContracts, AccidentYear = null, AmountType = "PR",
+            Partition = TestData.partition.Id, DataNode = TestData.groupOfReinsuranceContracts, AccidentYear = null, AmountType = "PR",
             EstimateType = "BE", EconomicBasis = "L"
         };
 
         var grossBasicIfrsVariable = new IfrsVariable
         {
-            Partition = td.partition.Id, DataNode = td.groupOfInsuranceContracts, AccidentYear = null, AmountType = "Cl",
+            Partition = TestData.partition.Id, DataNode = TestData.groupOfInsuranceContracts, AccidentYear = null, AmountType = "Cl",
             EstimateType = "BE", EconomicBasis = "L"
         };
 
@@ -610,13 +594,13 @@ public class TechnicalMarginTest
     {
         var reinsBasicIfrsVariable = new IfrsVariable
         {
-            Partition = td.partition.Id, DataNode = td.groupOfReinsuranceContracts, AccidentYear = null, AmountType = "PR",
+            Partition = TestData.partition.Id, DataNode = TestData.groupOfReinsuranceContracts, AccidentYear = null, AmountType = "PR",
             EstimateType = "BE", EconomicBasis = "L"
         };
 
         var grossBasicIfrsVariable = new IfrsVariable
         {
-            Partition = td.partition.Id, DataNode = td.groupOfInsuranceContracts, AccidentYear = null, AmountType = "Cl",
+            Partition = TestData.partition.Id, DataNode = TestData.groupOfInsuranceContracts, AccidentYear = null, AmountType = "Cl",
             EstimateType = "BE", EconomicBasis = "L"
         };
 
@@ -676,13 +660,13 @@ public class TechnicalMarginTest
     {
         var reinsBasicIfrsVariable = new IfrsVariable
         {
-            Partition = td.partition.Id, DataNode = td.groupOfReinsuranceContracts, AccidentYear = null, AmountType = "PR",
+            Partition = TestData.partition.Id, DataNode = TestData.groupOfReinsuranceContracts, AccidentYear = null, AmountType = "PR",
             EstimateType = "BE", EconomicBasis = "L"
         };
 
         var grossBasicIfrsVariable = new IfrsVariable
         {
-            Partition = td.partition.Id, DataNode = td.groupOfInsuranceContracts, AccidentYear = null, AmountType = "Cl",
+            Partition = TestData.partition.Id, DataNode = TestData.groupOfInsuranceContracts, AccidentYear = null, AmountType = "Cl",
             EstimateType = "BE", EconomicBasis = "L"
         };
 

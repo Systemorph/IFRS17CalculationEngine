@@ -28,7 +28,7 @@ public class ReportStorageTest : TestBase
         this.export = export;
     }
 
-    public async Task InitializeAsync()
+    private async Task InitializeAsync()
     {
         await TestData.InitializeAsync();
         await DataSource.UpdateAsync(TestData.reportingNodes);
@@ -48,6 +48,7 @@ public class ReportStorageTest : TestBase
     public async Task<ActivityLog> CheckGetFx(string currentCurrency, string targetCurrency, int year, int month,
         IEnumerable<ExchangeRate> testData, double fxBOPBenchmark, double fxAVGBenchmark, double fxEOPBenchmark)
     {
+        await InitializeAsync();
         Activity.Start();
         await Work.UpdateAsync(testData);
 
