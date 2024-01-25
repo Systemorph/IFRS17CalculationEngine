@@ -1,29 +1,32 @@
 using FluentAssertions;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.Tests;
 using OpenSmc.Ifrs17.Domain.Utils;
 using Systemorph.Vertex.Activities;
 using Systemorph.Vertex.Collections;
+using Systemorph.Vertex.DataSource.Common;
+using Systemorph.Vertex.Import;
+using Systemorph.Vertex.Scopes.Proxy;
 using Systemorph.Vertex.Workspace;
 
 //#!import "../CalculationEngine"
 
-public class QueriesTest
+public class QueriesTest : TestBase
 {
-    protected IWorkspaceVariable Workspace;
-    protected IActivityVariable Activity;
-    private string gic;
-    private string scenario;
-    private string gic2;
-    private string xgic;
-    private string gric1;
+    private readonly string gic;
+    private readonly string scenario;
+    private readonly string gic2;
+    private readonly string xgic;
+    private readonly string gric1;
 
-    public QueriesTest(IWorkspaceVariable workspace, IActivityVariable activity)
+    public QueriesTest(IImportVariable import, IDataSource dataSource,
+        IWorkspaceVariable work, IActivityVariable activity, IScopeFactory scopes) : 
+        base(import, dataSource, work, activity, scopes)
     {
         gic = "DT1.1";
         scenario = "MTUP";
-        Workspace = workspace;
-        Workspace.Reset(x => x.ResetInitializationRules().ResetCurrentPartitions());
+        Work.Reset(x => x.ResetInitializationRules().ResetCurrentPartitions());
         gic2 = "gic2";
         xgic = "xgic";
         gric1 = "gric1";
@@ -37,9 +40,9 @@ public class QueriesTest
         (int Year, int Month, string Scenario) expectedPreviousPeriod)
     {
         Activity.Start();
-        await Workspace.UpdateAsync(testData);
+        await Work.UpdateAsync(testData);
         var eurCurrentAndPreviousYieldCurve =
-            (await Workspace.LoadCurrentAndPreviousParameterAsync<YieldCurve>(args, x => x.Currency))["EUR"];
+            (await Work.LoadCurrentAndPreviousParameterAsync<YieldCurve>(args, x => x.Currency))["EUR"];
 
         //Check Current Period
         eurCurrentAndPreviousYieldCurve[Consts.CurrentPeriod].Year.Should().Be(expectedCurrentPeriod.Year);
@@ -51,7 +54,7 @@ public class QueriesTest
         eurCurrentAndPreviousYieldCurve[Consts.PreviousPeriod].Month.Should().Be(expectedPreviousPeriod.Month);
         eurCurrentAndPreviousYieldCurve[Consts.PreviousPeriod].Scenario.Should().Be(expectedPreviousPeriod.Scenario);
 
-        await Workspace.DeleteAsync(Workspace.Query<YieldCurve>().ToArray());
+        await Work.DeleteAsync(Work.Query<YieldCurve>().ToArray());
         return Activity.Finish();
     }
 
@@ -357,13 +360,13 @@ public class QueriesTest
         bool isExpectedToBeActive)
     {
         Activity.Start();
-        await Workspace.Partition.SetAsync<PartitionByReportingNode>(args);
-        await Workspace.UpdateAsync(testData);
-        var isActive = (await Workspace.LoadDataNodeStateAsync(args)).Keys.Contains(gic);
+        await Work.Partition.SetAsync<PartitionByReportingNode>(args);
+        await Work.UpdateAsync(testData);
+        var isActive = (await Work.LoadDataNodeStateAsync(args)).Keys.Contains(gic);
 
         isActive.Should().Be(isExpectedToBeActive);
 
-        Workspace.Reset(x => x.ResetCurrentPartitions());
+        Work.Reset(x => x.ResetCurrentPartitions());
         return Activity.Finish();
     }
 
@@ -413,9 +416,9 @@ public class QueriesTest
         double? expectedLockedFirstYcValue = null)
     {
         Activity.Start();
-        await Workspace.Partition.SetAsync<PartitionByReportingNode>(args);
-        await Workspace.UpdateAsync(testData);
-        await Workspace.UpdateAsync<ReportingNode>(new ReportingNode[]
+        await Work.Partition.SetAsync<PartitionByReportingNode>(args);
+        await Work.UpdateAsync(testData);
+        await Work.UpdateAsync<ReportingNode>(new ReportingNode[]
             {new ReportingNode {Currency = "EUR", SystemName = "CH"}});
 
         var dataNodes = new DataNodeData[]
@@ -427,10 +430,10 @@ public class QueriesTest
                 YieldCurveName = dataNodeTestData.yieldCurveName
             }
         };
-        var eurLockedYieldCurve = await Workspace.LoadLockedInYieldCurveAsync(args, dataNodes);
-        var eurCurrentYieldCurve = await Workspace.LoadCurrentYieldCurveAsync(args, dataNodes);
+        var eurLockedYieldCurve = await Work.LoadLockedInYieldCurveAsync(args, dataNodes);
+        var eurCurrentYieldCurve = await Work.LoadCurrentYieldCurveAsync(args, dataNodes);
 
-        Workspace.Reset(x => x.ResetCurrentPartitions());
+        Work.Reset(x => x.ResetCurrentPartitions());
 
         var errors = new List<string>();
         if (eurCurrentYieldCurve[gic] == null)
@@ -934,10 +937,10 @@ public class QueriesTest
     {
         Activity.Start();
         currentYear = currentYear ?? previousYear;
-        await Workspace.Partition.SetAsync<PartitionByReportingNode>(args);
-        await Workspace.UpdateAsync(testData);
+        await Work.Partition.SetAsync<PartitionByReportingNode>(args);
+        await Work.UpdateAsync(testData);
 
-        var interDataNodeParameters = await Queries.LoadInterDataNodeParametersAsync(Workspace, args);
+        var interDataNodeParameters = await Queries.LoadInterDataNodeParametersAsync(Work, args);
 
         //Check Keys
         var uniqueLinks = testData.Select(x => x.DataNode).Concat(testData.Select(x => x.LinkedDataNode)).ToHashSet();
@@ -1027,7 +1030,7 @@ public class QueriesTest
             }
         }
 
-        Workspace.Reset(x => x.ResetCurrentPartitions());
+        Work.Reset(x => x.ResetCurrentPartitions());
 
         if (errors.Any()) ApplicationMessage.Log(Error.Generic, string.Join("\n", errors));
         return Activity.Finish();
@@ -1168,15 +1171,15 @@ public class QueriesTest
         where T : IWithYearMonthAndScenario
     {
         Activity.Start();
-        await Workspace.UpdateAsync(testData);
-        var firstParameter = (await Workspace.LoadCurrentParameterAsync<T>(args, identityExpression)).First();
+        await Work.UpdateAsync(testData);
+        var firstParameter = (await Work.LoadCurrentParameterAsync<T>(args, identityExpression)).First();
 
         //Check Current Period
         firstParameter.Value.Year.Should().Be(expectedCurrentPeriod.Year);
         firstParameter.Value.Month.Should().Be(expectedCurrentPeriod.Month);
         firstParameter.Value.Scenario.Should().Be(expectedCurrentPeriod.Scenario);
 
-        await Workspace.DeleteAsync(Workspace.Query<T>().ToArray());
+        await Work.DeleteAsync(Work.Query<T>().ToArray());
         return Activity.Finish();
     }
 
