@@ -2,7 +2,6 @@ using FluentAssertions;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.Report;
-using OpenSmc.Ifrs17.Domain.Tests;
 using Systemorph.Vertex.Activities;
 using Systemorph.Vertex.DataSource.Common;
 using Systemorph.Vertex.Export.Factory;
@@ -11,8 +10,8 @@ using Systemorph.Vertex.Pivot.Builder.Interfaces;
 using Systemorph.Vertex.Scopes.Proxy;
 using Systemorph.Vertex.Workspace;
 
-//#!import "../Report/ReportStorage"
-//#!import "TestData"
+
+namespace OpenSmc.Ifrs17.Domain.Tests;
 
 public class ReportStorageTest : TestBase
 {

@@ -1,7 +1,8 @@
-using Microsoft.Graph.SecurityNamespace;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using Systemorph.Vertex.DataSource.Common;
+
+namespace OpenSmc.Ifrs17.Domain.Tests;
 
 public class TestData
 {

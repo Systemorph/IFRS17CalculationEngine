@@ -1,6 +1,3 @@
-//#!import "../Import/Importers"
-//#!import "TestData"
-
 using FluentAssertions;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
@@ -13,6 +10,8 @@ using Systemorph.Vertex.DataSource.Common;
 using Systemorph.Vertex.Import;
 using Systemorph.Vertex.Scopes.Proxy;
 using Systemorph.Vertex.Workspace;
+
+namespace OpenSmc.Ifrs17.Domain.Tests;
 
 public class ImportStorageTest : TestBase
 {

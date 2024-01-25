@@ -7,9 +7,7 @@ using OpenSmc.Ifrs17.Domain.Utils;
 using Systemorph.Vertex.Activities;
 using Systemorph.Vertex.Collections;
 using Systemorph.Vertex.DataSource.Common;
-using Systemorph.Vertex.Export.Factory;
 using Systemorph.Vertex.Import;
-using Systemorph.Vertex.Pivot.Builder.Interfaces;
 using Systemorph.Vertex.Scopes.Proxy;
 using Systemorph.Vertex.Workspace;
 

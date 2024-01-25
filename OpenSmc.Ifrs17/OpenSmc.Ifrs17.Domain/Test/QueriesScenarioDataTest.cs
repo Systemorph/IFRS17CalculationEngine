@@ -1,10 +1,4 @@
-//#!import "../Utils/Queries"
-//#!import "../Utils/ImportCalculationMethods"
-//#!import "../Report/ReportConfigurationAndUtils"
-//#!import "TestData"
-
 using FluentAssertions;
-using Microsoft.Graph.SecurityNamespace;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.Report;
@@ -16,6 +10,8 @@ using Systemorph.Vertex.DataSource.Common;
 using Systemorph.Vertex.Import;
 using Systemorph.Vertex.Scopes.Proxy;
 using Systemorph.Vertex.Workspace;
+
+namespace OpenSmc.Ifrs17.Domain.Tests;
 
 public class QueriesScenarioDataTest : TestBase
 {

@@ -10,7 +10,8 @@ using Systemorph.Vertex.Import;
 using Systemorph.Vertex.Scopes.Proxy;
 using Systemorph.Vertex.Workspace;
 
-//#!import "../CalculationEngine"
+
+namespace OpenSmc.Ifrs17.Domain.Tests;
 
 public class QueriesTest : TestBase
 {
