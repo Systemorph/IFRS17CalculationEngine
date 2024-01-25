@@ -13,8 +13,8 @@ public abstract class TestBase
     protected IWorkspaceVariable? Work;
     protected IActivityVariable? Activity;
 
-    public TestBase(IImportVariable? import, IDataSource? dataSource, 
-        IWorkspaceVariable? work, IActivityVariable activity)
+    public TestBase(IImportVariable import, IDataSource dataSource,
+        IWorkspaceVariable work, IActivityVariable activity)
     {
         Import = import;
         DataSource = dataSource;

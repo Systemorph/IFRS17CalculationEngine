@@ -70,10 +70,10 @@ public class AocConfigurationTest : TestBase
         AM,C,4,6,8,EndOfPeriod,NotApplicable,NotApplicable,NotApplicable,EndOfPeriod,200,1900,1
         EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,1900,1";
 
-    public AocConfigurationTest(IImportVariable? import, IDataSource? dataSource,
-        IWorkspaceVariable? work, IActivityVariable activity) : base(import, dataSource, work, activity)
+    public AocConfigurationTest(IImportVariable import, IDataSource dataSource,
+        IWorkspaceVariable work, IActivityVariable activity) : base(import, dataSource, work, activity)
     {
-        Workspace = work.CreateNew() as Workspace;
+        Workspace = Work.CreateNew() as Workspace;
     }
 
     public async Task IntializeAsync()
