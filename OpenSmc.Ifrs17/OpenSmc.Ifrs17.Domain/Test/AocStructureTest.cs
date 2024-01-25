@@ -1,9 +1,3 @@
-//#!import "../Import/Importers"
-
-
-//#!import "TestData"
-
-
 using FluentAssertions;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
@@ -17,23 +11,24 @@ using Systemorph.Vertex.Import;
 using Systemorph.Vertex.Scopes.Proxy;
 using Systemorph.Vertex.Workspace;
 using Error = OpenSmc.Ifrs17.Domain.Constants.Error;
+using FactAttribute = System.Runtime.CompilerServices.CompilerGeneratedAttribute;
 
 namespace OpenSmc.Ifrs17.Domain.Test
 {
     public class AocStructureTest : TestBase
     {
-        private RawVariable[] inputRawVariables;
-        private Workspace workspace;
-        private Dictionary<AocStep, IEnumerable<AocStep>> ParentBm { get; set; }
-        private Dictionary<AocStep, IEnumerable<AocStep>> FullAocBm { get; set; }
-        private Dictionary<AocStep, IEnumerable<AocStep>> ReferenceBm { get; set; }
-        private Dictionary<AocStep, IEnumerable<AocStep>> ParentBmCDr { get; set; }
+        private RawVariable[]? inputRawVariables;
+        private Workspace? workspace;
+        private Dictionary<AocStep, IEnumerable<AocStep>>? ParentBm { get; set; }
+        private Dictionary<AocStep, IEnumerable<AocStep>>? FullAocBm { get; set; }
+        private Dictionary<AocStep, IEnumerable<AocStep>>? ReferenceBm { get; set; }
+        private Dictionary<AocStep, IEnumerable<AocStep>>? ParentBmCDr { get; set; }
 
         public AocStructureTest(IImportVariable import, IDataSource dataSource,
             IWorkspaceVariable work, IActivityVariable activity, IScopeFactory scopes) :
             base(import, dataSource, work, activity, scopes)
         {
-            workspace = work.CreateNew() as Workspace;
+            workspace = Work.CreateNew() as Workspace;
         }
 
         private async Task InitializeDataSourceAsync()
@@ -106,9 +101,6 @@ namespace OpenSmc.Ifrs17.Domain.Test
 
 
         }
-
-
-
 
 
         private async Task<ActivityLog> CheckAocStepStructureAsync(IEnumerable<BaseDataRecord> inputVariables,
@@ -301,6 +293,7 @@ namespace OpenSmc.Ifrs17.Domain.Test
         }
 
 
+        [Fact]
         public async Task FirstCheckAsync()
         {
             var fullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
@@ -558,7 +551,7 @@ namespace OpenSmc.Ifrs17.Domain.Test
 
         }
 
-
+        [Fact]
         public async Task ThirdCheckAsync()
         {
             FullAocBm = new Dictionary<AocStep, IEnumerable<AocStep>>()
