@@ -39,7 +39,7 @@ class RawVariableComparer: IEqualityComparer<RawVariable>
 }
 
 
-class IfrsVariableComparer: IEqualityComparer<IfrsVariable>
+public class IfrsVariableComparer: IEqualityComparer<IfrsVariable>
 {
     private bool IgnoreValues;
     private double precision;
@@ -73,7 +73,7 @@ class IfrsVariableComparer: IEqualityComparer<IfrsVariable>
 }
 
 
-class YieldCurveComparer: IEqualityComparer<YieldCurve>
+public class YieldCurveComparer: IEqualityComparer<YieldCurve>
 {
     private YieldCurveComparer(){}
 
