@@ -22,15 +22,14 @@ public class AocStructureTest : TestBase
 {
     private RawVariable[] inputRawVariables;
     private Workspace Workspace;
-    public IScopeFactory Scopes;
     private Dictionary<AocStep, IEnumerable<AocStep>> parentBm { get; set; }
     private Dictionary<AocStep, IEnumerable<AocStep>> fullAocBm { get; set; }
     private Dictionary<AocStep, IEnumerable<AocStep>> referenceBm { get; set; }
     private Dictionary<AocStep, IEnumerable<AocStep>> parentBm_CDr { get; set; }
 
     public AocStructureTest(IImportVariable? import, IDataSource? dataSource,
-        IWorkspaceVariable? work, IActivityVariable activity) :
-        base(import, dataSource, work, activity)
+        IWorkspaceVariable? work, IActivityVariable activity, IScopeFactory scopes) :
+        base(import, dataSource, work, activity, scopes)
     {
         Workspace = work.CreateNew() as Workspace;
     }

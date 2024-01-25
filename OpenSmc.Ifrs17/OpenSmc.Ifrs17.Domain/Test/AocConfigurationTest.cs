@@ -7,6 +7,7 @@ using Systemorph.Vertex.Activities;
 using Systemorph.Vertex.Collections;
 using Systemorph.Vertex.DataSource.Common;
 using Systemorph.Vertex.Import;
+using Systemorph.Vertex.Scopes.Proxy;
 using Systemorph.Vertex.Workspace;
 
 namespace OpenSmc.Ifrs17.Domain.Tests;
@@ -71,7 +72,8 @@ public class AocConfigurationTest : TestBase
         EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,1900,1";
 
     public AocConfigurationTest(IImportVariable import, IDataSource dataSource,
-        IWorkspaceVariable work, IActivityVariable activity) : base(import, dataSource, work, activity)
+        IWorkspaceVariable work, IActivityVariable activity, IScopeFactory scopes) : 
+        base(import, dataSource, work, activity, scopes)
     {
         Workspace = Work.CreateNew() as Workspace;
     }
