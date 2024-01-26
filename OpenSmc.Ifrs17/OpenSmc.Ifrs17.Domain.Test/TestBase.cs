@@ -30,6 +30,4 @@ public abstract class TestBase
         Work = work;
         Scopes = scopes;
     }
-
-
 }

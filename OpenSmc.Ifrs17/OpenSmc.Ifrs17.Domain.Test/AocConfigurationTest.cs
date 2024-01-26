@@ -22,7 +22,6 @@ public class AocConfigurationTest : TestBase
         C,Combined,,20";
 
 
-
     protected string canonicalAocTypes =
         @"@@AocType,,,,,,,,,,,
         SystemName,DisplayName,Parent,Order,,,,,,,,
@@ -70,7 +69,7 @@ public class AocConfigurationTest : TestBase
         EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,1900,1";
 
     public AocConfigurationTest(IImportVariable import, IDataSource dataSource,
-        IWorkspaceVariable work, IActivityVariable activity, IScopeFactory scopes) : 
+        IWorkspaceVariable work, IActivityVariable activity, IScopeFactory scopes) :
         base(import, dataSource, work, activity, scopes)
     {
         Workspace = Work.CreateNew() as Workspace;
@@ -82,7 +81,6 @@ public class AocConfigurationTest : TestBase
 
         Workspace.InitializeFrom(DataSource);
     }
-
 
 
     public async Task<ActivityLog> CheckAocConfigurationDefault(AocType[] newAocTypes, IImportVariable import)
@@ -107,7 +105,8 @@ public class AocConfigurationTest : TestBase
     public async Task CheckAocConfig()
     {
         var aocConfigLog =
-            await CheckAocConfigurationDefault(new[] {new AocType {SystemName = "A1", DisplayName = "a1", Order = 25}}, Import);
+            await CheckAocConfigurationDefault(new[] {new AocType {SystemName = "A1", DisplayName = "a1", Order = 25}},
+                Import);
 
         aocConfigLog.Errors.Any().Should().Be(false);
 
@@ -125,7 +124,8 @@ public class AocConfigurationTest : TestBase
         newConfigCalculated.Count().Should().Be(1);
 
         var aocConfigLog45 =
-            await CheckAocConfigurationDefault(new[] { new AocType { SystemName = "A1", DisplayName = "a1", Order = 45 } }, base.Import);
+            await CheckAocConfigurationDefault(new[] {new AocType {SystemName = "A1", DisplayName = "a1", Order = 45}},
+                base.Import);
 
         aocConfigLog45.Errors.Any().Should().Be(false);
 
@@ -143,7 +143,8 @@ public class AocConfigurationTest : TestBase
         newConfigCalculated2.Count().Should().Be(1);
 
         var aocConfigLog82 =
-            await CheckAocConfigurationDefault(new[] { new AocType { SystemName = "A1", DisplayName = "a1", Order = 82 } }, base.Import);
+            await CheckAocConfigurationDefault(new[] {new AocType {SystemName = "A1", DisplayName = "a1", Order = 82}},
+                base.Import);
 
         aocConfigLog82.Errors.Any().Should().Be(false);
 
@@ -174,7 +175,8 @@ public class AocConfigurationTest : TestBase
         newConfigCalculated131.Count().Should().Be(1);
 
         var aocConfigLog106 =
-            await CheckAocConfigurationDefault(new[] { new AocType { SystemName = "A1", DisplayName = "a1", Order = 106 } }, base.Import);
+            await CheckAocConfigurationDefault(new[] {new AocType {SystemName = "A1", DisplayName = "a1", Order = 106}},
+                base.Import);
 
         aocConfigLog106.Errors.Any().Should().Be(false);
 
@@ -203,7 +205,8 @@ public class AocConfigurationTest : TestBase
         newConfigCalculated4.Count().Should().Be(1);
 
         var aocConfigLog2 =
-            await CheckAocConfigurationDefault(new[] { new AocType { SystemName = "A1", DisplayName = "a1", Order = 116 } }, base.Import);
+            await CheckAocConfigurationDefault(new[] {new AocType {SystemName = "A1", DisplayName = "a1", Order = 116}},
+                base.Import);
 
         aocConfigLog2.Errors.Any().Should().Be(false);
 
@@ -232,7 +235,8 @@ public class AocConfigurationTest : TestBase
         newConfigCalculated6.Count().Should().Be(1);
 
         var aocConfigLog3 =
-            await CheckAocConfigurationDefault(new[] { new AocType { SystemName = "A1", DisplayName = "a1", Order = 152 } }, base.Import);
+            await CheckAocConfigurationDefault(new[] {new AocType {SystemName = "A1", DisplayName = "a1", Order = 152}},
+                base.Import);
 
         aocConfigLog3.Errors.Any().Should().Be(false);
 
@@ -259,7 +263,6 @@ public class AocConfigurationTest : TestBase
         }, base.Import);
 
 
-
         (aocConfigLog4.Errors.First().ToString() ==
          "ActivityMessageNotification { Message = Two or more AoC Configurations have the same Order. }")
             .Should().Be(true);
@@ -267,9 +270,4 @@ public class AocConfigurationTest : TestBase
 
         Workspace.Dispose();
     }
-
-
 }
-
-
-

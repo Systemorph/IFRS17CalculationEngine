@@ -103,5 +103,3 @@ public class EqualityComparerTest
         }).Should().BeFalse();
     }
 }
-
-

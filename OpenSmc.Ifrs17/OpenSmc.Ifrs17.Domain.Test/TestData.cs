@@ -184,13 +184,13 @@ public class TestData
 
     public Portfolio dtr1 { get; set; }
 
-    public GroupOfInsuranceContract dt11 { get; set; }   
+    public GroupOfInsuranceContract dt11 { get; set; }
 
     public GroupOfReinsuranceContract dtr11 { get; set; }
 
-    public DataNodeState dt11State { get; set; } 
+    public DataNodeState dt11State { get; set; }
 
-    public DataNodeState dtr11State { get; set; } 
+    public DataNodeState dtr11State { get; set; }
 
     public SingleDataNodeParameter dt11SingleParameter { get; set; }
 
@@ -216,7 +216,6 @@ public class TestData
             scenarioMortalityDown, ImportFormats.Actual);
         previousScenarioArgsMTDOWN = new ImportArgs(reportingNode, 2020, 12, Periodicity.Quarterly,
             scenarioMortalityDown, ImportFormats.Actual);
-
     }
 
     public async Task InitializeAsync()
@@ -276,7 +275,7 @@ public class TestData
         };
         previousPeriodPartitionScenarioMTDOWN = new PartitionByReportingNodeAndPeriod
         {
-            Id = (Guid)(await dataSource.Partition.GetKeyForInstanceAsync<PartitionByReportingNodeAndPeriod>(
+            Id = (Guid) (await dataSource.Partition.GetKeyForInstanceAsync<PartitionByReportingNodeAndPeriod>(
                 previousScenarioArgsMTUP)),
             ReportingNode = reportingNode,
             Scenario = scenarioMortalityDown,
@@ -379,7 +378,7 @@ public class TestData
             Currency = "USD",
             Year = 2021,
             Month = 3,
-            Values = new[] { 0.005, 0.005, 0.005, 0.005 }
+            Values = new[] {0.005, 0.005, 0.005, 0.005}
         };
 
         yieldCurvePrevious = new YieldCurve()
@@ -387,7 +386,7 @@ public class TestData
             Currency = "USD",
             Year = 2020,
             Month = 12,
-            Values = new[] { 0.002, 0.002, 0.002, 0.002 }
+            Values = new[] {0.002, 0.002, 0.002, 0.002}
         };
     }
 }

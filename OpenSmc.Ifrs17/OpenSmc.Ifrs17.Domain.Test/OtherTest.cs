@@ -3,7 +3,6 @@ using OpenSmc.Ifrs17.Domain.Utils;
 
 namespace OpenSmc.Ifrs17.Domain.Test;
 
-
 public class OtherTests
 {
     [Fact]
@@ -23,7 +22,6 @@ public class OtherTests
                 1.0
             }, 12, 0)
             .Should().BeApproximately(0, 0.001);
-
 
 
         new[]
@@ -80,6 +78,3 @@ public class OtherTests
         }).Should().BeTrue();
     }
 }
-
-
-
