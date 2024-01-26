@@ -1,6 +1,5 @@
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
-using Systemorph.Vertex.DataSource;
 using Systemorph.Vertex.DataSource.Common;
 
 namespace OpenSmc.Ifrs17.Domain.Test;
@@ -144,149 +143,135 @@ public class TestData
     };
 
 
-    public string groupOfInsuranceContracts = "DT1.1";
-    public string groupOfReinsuranceContracts = "DTR1.1";
-    public string reportingNode = "CH";
-    public string scenarioBestEstimate = (string) null;
-    public string scenarioMortalityUp = "MTUP";
-    public string scenarioMortalityDown = "MTDOWN";
+    public readonly string GroupOfInsuranceContracts = "DT1.1";
+    public readonly string GroupOfReinsuranceContracts = "DTR1.1";
+    private readonly string reportingNode = "CH";
+    private readonly string? scenarioBestEstimate = null;
+    private readonly string scenarioMortalityUp = "MTUP";
+    private readonly string scenarioMortalityDown = "MTDOWN";
 
 
-    public ImportArgs args { get; init; }
+    public ImportArgs Args { get; init; }
 
-    public ImportArgs previousArgs { get; init; }
+    private ImportArgs PreviousArgs { get; init; }
 
-    public ImportArgs argsScenarioMTUP { get; init; }
+    private ImportArgs ArgsScenarioMtup { get; init; }
 
-    public ImportArgs previousScenarioArgsMTUP { get; init; }
+    private ImportArgs PreviousScenarioArgsMtup { get; init; }
 
-    public ImportArgs argsScenarioMTDOWN { get; init; }
-
-    public ImportArgs previousScenarioArgsMTDOWN { get; init; }
+    private ImportArgs PreviousScenarioArgsMtdown { get; init; }
 
 
-    public PartitionByReportingNode partitionReportingNode { get; set; }
+    public PartitionByReportingNode PartitionReportingNode { get; private set; }
 
 
-    public PartitionByReportingNodeAndPeriod partition { get; set; }
+    public PartitionByReportingNodeAndPeriod Partition { get; private set; }
 
-    public PartitionByReportingNodeAndPeriod previousPeriodPartition { get; set; }
-
-    public PartitionByReportingNodeAndPeriod partitionScenarioMTUP { get; set; }
-
-    public PartitionByReportingNodeAndPeriod previousPeriodPartitionScenarioMTUP { get; set; }
-
-    public PartitionByReportingNodeAndPeriod partitionScenarioMTDOWN { get; set; }
-
-    public PartitionByReportingNodeAndPeriod previousPeriodPartitionScenarioMTDOWN { get; set; }
+    public PartitionByReportingNodeAndPeriod PreviousPeriodPartition { get; private set; }
 
 
-    public Portfolio dt1 { get; set; }
+    public Portfolio Dt1 { get; private set; }
 
-    public Portfolio dtr1 { get; set; }
+    public Portfolio Dtr1 { get; private set; }
 
-    public GroupOfInsuranceContract dt11 { get; set; }
+    public GroupOfInsuranceContract Dt11 { get; private set; }
 
-    public GroupOfReinsuranceContract dtr11 { get; set; }
+    public GroupOfReinsuranceContract Dtr11 { get; private set; }
 
-    public DataNodeState dt11State { get; set; }
+    public DataNodeState Dt11State { get; private set; }
 
-    public DataNodeState dtr11State { get; set; }
+    public DataNodeState Dtr11State { get; private set; }
 
-    public SingleDataNodeParameter dt11SingleParameter { get; set; }
+    public InterDataNodeParameter Dt11Inter { get; private set; }
 
-    public InterDataNodeParameter dt11Inter { get; set; }
-
-
-    public YieldCurve YieldCurve { get; set; }
 
     public YieldCurve YieldCurvePrevious { get; private set; }
 
     public TestData(IDataSource dataSource)
     {
         this.dataSource = dataSource;
-        args = new ImportArgs(reportingNode, 2021, 3, Periodicity.Quarterly,
+        Args = new ImportArgs(reportingNode, 2021, 3, Periodicity.Quarterly,
             scenarioBestEstimate, ImportFormats.Actual);
-        previousArgs = new ImportArgs(reportingNode, 2020, 12, Periodicity.Quarterly,
+        PreviousArgs = new ImportArgs(reportingNode, 2020, 12, Periodicity.Quarterly,
             scenarioBestEstimate, ImportFormats.Actual);
-        argsScenarioMTUP = new ImportArgs(reportingNode, 2021, 3, Periodicity.Quarterly,
+        ArgsScenarioMtup = new ImportArgs(reportingNode, 2021, 3, Periodicity.Quarterly,
             scenarioMortalityUp, ImportFormats.Actual);
-        previousScenarioArgsMTUP = new ImportArgs(reportingNode, 2020, 12, Periodicity.Quarterly,
+        PreviousScenarioArgsMtup = new ImportArgs(reportingNode, 2020, 12, Periodicity.Quarterly,
             scenarioMortalityUp, ImportFormats.Actual);
-        argsScenarioMTDOWN = new ImportArgs(reportingNode, 2021, 3, Periodicity.Quarterly,
-            scenarioMortalityDown, ImportFormats.Actual);
-        previousScenarioArgsMTDOWN = new ImportArgs(reportingNode, 2020, 12, Periodicity.Quarterly,
+        //new ImportArgs(reportingNode, 2021, 3, Periodicity.Quarterly,
+        //    scenarioMortalityDown, ImportFormats.Actual);
+        PreviousScenarioArgsMtdown = new ImportArgs(reportingNode, 2020, 12, Periodicity.Quarterly,
             scenarioMortalityDown, ImportFormats.Actual);
     }
 
     public async Task InitializeAsync()
     {
-        partitionReportingNode = new PartitionByReportingNode
+        PartitionReportingNode = new PartitionByReportingNode
         {
-            Id = (Guid) (await dataSource.Partition.GetKeyForInstanceAsync<PartitionByReportingNode>(args)),
-            ReportingNode = args.ReportingNode
+            Id = (Guid) (await dataSource.Partition.GetKeyForInstanceAsync<PartitionByReportingNode>(Args)),
+            ReportingNode = Args.ReportingNode
         };
 
-        partition = new PartitionByReportingNodeAndPeriod
+        Partition = new PartitionByReportingNodeAndPeriod
         {
-            Id = (Guid) (await dataSource.Partition.GetKeyForInstanceAsync<PartitionByReportingNodeAndPeriod>(args)),
+            Id = (Guid) (await dataSource.Partition.GetKeyForInstanceAsync<PartitionByReportingNodeAndPeriod>(Args)),
             ReportingNode = reportingNode,
             Scenario = scenarioBestEstimate,
-            Year = args.Year,
-            Month = args.Month
+            Year = Args.Year,
+            Month = Args.Month
         };
 
-        previousPeriodPartition = new PartitionByReportingNodeAndPeriod
+        PreviousPeriodPartition = new PartitionByReportingNodeAndPeriod
         {
             Id = (Guid) (await dataSource.Partition
-                .GetKeyForInstanceAsync<PartitionByReportingNodeAndPeriod>(previousArgs)),
+                .GetKeyForInstanceAsync<PartitionByReportingNodeAndPeriod>(PreviousArgs)),
             ReportingNode = reportingNode,
             Scenario = scenarioBestEstimate,
-            Year = previousArgs.Year,
-            Month = previousArgs.Month
+            Year = PreviousArgs.Year,
+            Month = PreviousArgs.Month
         };
 
-        partitionScenarioMTUP = new PartitionByReportingNodeAndPeriod
+        /*new PartitionByReportingNodeAndPeriod
         {
             Id = (Guid) (await dataSource.Partition.GetKeyForInstanceAsync<PartitionByReportingNodeAndPeriod>(
-                argsScenarioMTUP)),
+                ArgsScenarioMtup)),
             ReportingNode = reportingNode,
             Scenario = scenarioMortalityUp,
-            Year = args.Year,
-            Month = args.Month
-        };
+            Year = Args.Year,
+            Month = Args.Month
+        };*/
 
-        previousPeriodPartitionScenarioMTUP = new PartitionByReportingNodeAndPeriod
+        /* new PartitionByReportingNodeAndPeriod
         {
             Id = (Guid) (await dataSource.Partition.GetKeyForInstanceAsync<PartitionByReportingNodeAndPeriod>(
-                previousScenarioArgsMTUP)),
+                PreviousScenarioArgsMtup)),
             ReportingNode = reportingNode,
             Scenario = scenarioMortalityUp,
-            Year = previousScenarioArgsMTUP.Year,
-            Month = previousScenarioArgsMTUP.Month
-        };
-        partitionScenarioMTDOWN = new PartitionByReportingNodeAndPeriod
+            Year = PreviousScenarioArgsMtup.Year,
+            Month = PreviousScenarioArgsMtup.Month
+        };*/
+        /* new PartitionByReportingNodeAndPeriod
         {
             Id = (Guid) (await dataSource.Partition.GetKeyForInstanceAsync<PartitionByReportingNodeAndPeriod>(
-                argsScenarioMTUP)),
+                ArgsScenarioMtup)),
             ReportingNode = reportingNode,
             Scenario = scenarioMortalityDown,
-            Year = args.Year,
-            Month = args.Month
+            Year = Args.Year,
+            Month = Args.Month
         };
-        previousPeriodPartitionScenarioMTDOWN = new PartitionByReportingNodeAndPeriod
+        new PartitionByReportingNodeAndPeriod
         {
             Id = (Guid) (await dataSource.Partition.GetKeyForInstanceAsync<PartitionByReportingNodeAndPeriod>(
-                previousScenarioArgsMTUP)),
+                PreviousScenarioArgsMtup)),
             ReportingNode = reportingNode,
             Scenario = scenarioMortalityDown,
-            Year = previousScenarioArgsMTDOWN.Year,
-            Month = previousScenarioArgsMTDOWN.Month
-        };
+            Year = PreviousScenarioArgsMtdown.Year,
+            Month = PreviousScenarioArgsMtdown.Month
+        }; */
 
-        dt1 = new Portfolio()
+        Dt1 = new Portfolio()
         {
-            Partition = partitionReportingNode.Id,
+            Partition = PartitionReportingNode.Id,
             ContractualCurrency = "USD",
             LineOfBusiness = "ANN",
             ValuationApproach = "BBA",
@@ -295,9 +280,9 @@ public class TestData
             DisplayName = "DT1 OCI"
         };
 
-        dtr1 = new Portfolio()
+        Dtr1 = new Portfolio()
         {
-            Partition = partitionReportingNode.Id,
+            Partition = PartitionReportingNode.Id,
             ContractualCurrency = "USD",
             LineOfBusiness = "ANN",
             ValuationApproach = "BBA",
@@ -306,13 +291,13 @@ public class TestData
             DisplayName = "DTR1 OCI"
         };
 
-        dt11 = new GroupOfInsuranceContract()
+        Dt11 = new GroupOfInsuranceContract()
         {
             Portfolio = "DT1",
             Profitability = "P",
             LiabilityType = "LRC",
             AnnualCohort = 2020,
-            Partition = partitionReportingNode.Id,
+            Partition = PartitionReportingNode.Id,
             ContractualCurrency = "USD",
             LineOfBusiness = "ANN",
             ValuationApproach = "BBA",
@@ -321,13 +306,13 @@ public class TestData
             DisplayName = "DT1.1 OCI LRC PA 0.8"
         };
 
-        dtr11 = new GroupOfReinsuranceContract()
+        Dtr11 = new GroupOfReinsuranceContract()
         {
             Portfolio = "DTR1",
             Profitability = "P",
             LiabilityType = "LRC",
             AnnualCohort = 2020,
-            Partition = partitionReportingNode.Id,
+            Partition = PartitionReportingNode.Id,
             ContractualCurrency = "USD",
             LineOfBusiness = "ANN",
             ValuationApproach = "BBA",
@@ -336,51 +321,51 @@ public class TestData
             DisplayName = "DTR1.1 OCI LRC PA 0.8"
         };
 
-        dt11State = new DataNodeState
+        Dt11State = new DataNodeState
         {
             DataNode = "DT1.1",
             State = State.Active,
-            Year = previousArgs.Year,
-            Month = previousArgs.Month,
-            Partition = partitionReportingNode.Id
+            Year = PreviousArgs.Year,
+            Month = PreviousArgs.Month,
+            Partition = PartitionReportingNode.Id
         };
 
-        dtr11State = new DataNodeState
+        Dtr11State = new DataNodeState
         {
             DataNode = "DTR1.1",
             State = State.Active,
-            Year = previousArgs.Year,
-            Month = previousArgs.Month,
-            Partition = partitionReportingNode.Id
+            Year = PreviousArgs.Year,
+            Month = PreviousArgs.Month,
+            Partition = PartitionReportingNode.Id
         };
 
-        dt11SingleParameter = new SingleDataNodeParameter
+        /*new SingleDataNodeParameter
         {
-            Year = previousArgs.Year,
-            Month = previousArgs.Month,
+            Year = PreviousArgs.Year,
+            Month = PreviousArgs.Month,
             DataNode = "DT1.1",
             PremiumAllocation = .8,
-            Partition = partitionReportingNode.Id
-        };
+            Partition = PartitionReportingNode.Id
+        }; */
 
-        dt11Inter = new InterDataNodeParameter
+        Dt11Inter = new InterDataNodeParameter
         {
             LinkedDataNode = "DTR1.1",
             ReinsuranceCoverage = 1,
-            Year = args.Year,
-            Month = args.Month,
+            Year = Args.Year,
+            Month = Args.Month,
             DataNode = "DT1.1",
-            Scenario = args.Scenario,
-            Partition = partitionReportingNode.Id
+            Scenario = Args.Scenario,
+            Partition = PartitionReportingNode.Id
         };
 
-        YieldCurve = new YieldCurve()
+        /*new YieldCurve()
         {
             Currency = "USD",
             Year = 2021,
             Month = 3,
             Values = new[] {0.005, 0.005, 0.005, 0.005}
-        };
+        };*/
 
         YieldCurvePrevious = new YieldCurve()
         {
