@@ -17,7 +17,7 @@ public abstract class TestBase
     protected readonly IActivityVariable Activity;
     protected readonly IScopeFactory Scopes;
 
-    public TestBase(ILifetimeScope lifetimeScope, IImportVariable import, IDataSource dataSource,
+    public TestBase(IImportVariable import, IDataSource dataSource,
         IWorkspaceVariable work, IActivityVariable activity, IScopeFactory scopes)
     {
         //Activity = new ActivityVariable();
