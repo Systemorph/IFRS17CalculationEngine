@@ -21,7 +21,7 @@ public static class SequenceEqualExtension
 }
 
 
-class RawVariableComparer: IEqualityComparer<RawVariable>
+public class RawVariableComparer: IEqualityComparer<RawVariable>
 {
     private bool IgnoreValues;
     private RawVariableComparer(bool ignoreValues)
