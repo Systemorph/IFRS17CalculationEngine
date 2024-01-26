@@ -9,14 +9,14 @@ public class TestData
 {
     private IDataSource dataSource;
 
-    public string novelties =
+    public readonly string Novelties =
         @"@@Novelty
         SystemName,DisplayName,Parent,Order
         I,In Force,,1
         N,New Business,,10
         C,Combined,,20";
 
-    public string canonicalAocTypes =
+    public readonly string CanonicalAocTypes =
         @"@@AocType,,,,,,,,,,,
         SystemName,DisplayName,Parent,Order,,,,,,,,
         BOP,Opening Balance,,10,,,,,,,,
@@ -37,7 +37,7 @@ public class TestData
         FX,FX Impact,,160,,,,,,,,
         EOP,Closing Balance,,170,,,,,,,,";
 
-    public string canonicalAocConfig =
+    public readonly string CanonicalAocConfig =
         @"@@AocConfiguration,,,,,,,,,,,
         AocType,Novelty,DataType,InputSource,StructureType,FxPeriod,YcPeriod,CdrPeriod,ValuationPeriod,RcPeriod,Order,Year,Month
         BOP,I,17,7,14,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,10,1900,1
@@ -62,7 +62,7 @@ public class TestData
         AM,C,4,6,8,EndOfPeriod,NotApplicable,NotApplicable,NotApplicable,EndOfPeriod,200,1900,1
         EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,1900,1";
 
-    public string estimateType = @"@@EstimateType,,,,,,,,,,,
+    public readonly string EstimateType = @"@@EstimateType,,,,,,,,,,,
         SystemName,DisplayName,Order,StructureType,InputSource,PeriodType,ExternalId0,ExternalId1,ExternalId2,ExternalId3,ExternalId4,,,,,,
         BE,Best Estimate of Present Value,1,2,4,EndOfPeriod,,,,,,,
         RA,Risk Adjustment,10,2,4,EndOfPeriod,,,,,,,
@@ -81,7 +81,7 @@ public class TestData
         APA,Actuals To Csm,120,1,6,NotApplicable,,,,,,,";
 
 
-    public string economicBasis =
+    public readonly string EconomicBasis =
         @"@@EconomicBasis,,,,,,,,,,,
         SystemName,DisplayName,Order
         L,Locked-in,1
@@ -89,7 +89,7 @@ public class TestData
         N,Nominal,20";
 
 
-    public string projectionConfiguration =
+    public readonly string ProjectionConfiguration =
         @"@@ProjectionConfiguration,,,,,,,,,,,
         SystemName,DisplayName,Shift,TimeStep,Order,,,,,,,
         P0,End of January,0,1,10,,,,,,,
@@ -114,7 +114,7 @@ public class TestData
         P19,Years Over +20,240,9999,200,,,,,,,";
 
 
-    public string amountType =
+    public string AmountType =
         @"@@AmountType
         SystemName,DisplayName,Parent,Order,PeriodType
         PR,Premiums,,10,BeginningOfPeriod
@@ -137,7 +137,7 @@ public class TestData
         CU,Coverage Units,,150,EndOfPeriod";
 
 
-    public ReportingNode[] reportingNodes = new ReportingNode[]
+    public readonly ReportingNode[] ReportingNodes = new ReportingNode[]
     {
         new ReportingNode() {SystemName = "CH", DisplayName = "Switzerland", Currency = "CHF"},
         new ReportingNode() {SystemName = "G", DisplayName = "Group", Currency = "CHF"},
@@ -198,7 +198,7 @@ public class TestData
     public InterDataNodeParameter dt11Inter { get; set; }
 
 
-    public YieldCurve yieldCurve { get; set; }
+    public YieldCurve YieldCurve { get; set; }
 
     public YieldCurve YieldCurvePrevious { get; private set; }
 
@@ -374,7 +374,7 @@ public class TestData
             Partition = partitionReportingNode.Id
         };
 
-        yieldCurve = new YieldCurve()
+        YieldCurve = new YieldCurve()
         {
             Currency = "USD",
             Year = 2021,

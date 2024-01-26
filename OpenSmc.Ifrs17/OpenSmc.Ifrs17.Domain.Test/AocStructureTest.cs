@@ -1124,7 +1124,7 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
     public async Task SeventhCheckAsync()
     {
         await DataSource.DeleteAsync(DataSource.Query<AocConfiguration>());
-        await Import.FromString(TestData.canonicalAocConfig).WithType<AocConfiguration>().WithTarget(DataSource)
+        await Import.FromString(TestData.CanonicalAocConfig).WithType<AocConfiguration>().WithTarget(DataSource)
             .ExecuteAsync();
 
 

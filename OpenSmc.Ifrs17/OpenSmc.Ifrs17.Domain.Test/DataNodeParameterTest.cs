@@ -21,15 +21,15 @@ public class DataNodeParameterTest : TestBase
     private async Task InitAsync()
     {
         await TestData.InitializeAsync();
-        await Import.FromString(TestData.novelties).WithType<Novelty>()
+        await Import.FromString(TestData.Novelties).WithType<Novelty>()
             .WithTarget(DataSource)
             .ExecuteAsync();
-        await Import.FromString(TestData.canonicalAocTypes)
+        await Import.FromString(TestData.CanonicalAocTypes)
             .WithType<AocType>()
             .WithTarget(DataSource)
             .ExecuteAsync();
 
-        await Import.FromString(TestData.canonicalAocConfig)
+        await Import.FromString(TestData.CanonicalAocConfig)
             .WithFormat(ImportFormats.AocConfiguration).WithTarget(DataSource)
             .ExecuteAsync();
 
