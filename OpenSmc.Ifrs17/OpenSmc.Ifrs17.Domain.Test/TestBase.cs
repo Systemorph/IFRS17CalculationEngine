@@ -1,4 +1,6 @@
-﻿using Systemorph.Vertex.Activities;
+﻿using Autofac;
+using Systemorph.Vertex.Activities;
+using Systemorph.Vertex.DataSetReader;
 using Systemorph.Vertex.DataSource.Common;
 using Systemorph.Vertex.Import;
 using Systemorph.Vertex.Scopes.Proxy;
@@ -15,14 +17,19 @@ public abstract class TestBase
     protected readonly IActivityVariable Activity;
     protected readonly IScopeFactory Scopes;
 
-    public TestBase(IImportVariable import, IDataSource dataSource,
+    public TestBase(ILifetimeScope lifetimeScope, IImportVariable import, IDataSource dataSource,
         IWorkspaceVariable work, IActivityVariable activity, IScopeFactory scopes)
     {
+        //Activity = new ActivityVariable();
+        Activity = activity;
+        //IDataSetImportVariable dataSetImportVariable = new DataSetImportVariable();
+        //Import = new ImportVariable(lifetimeScope, Activity,dataSetImportVariable, );
         Import = import;
         DataSource = dataSource;
         TestData = new TestData(DataSource);
         Work = work;
-        Activity = activity;
         Scopes = scopes;
     }
+
+
 }
