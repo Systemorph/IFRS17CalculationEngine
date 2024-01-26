@@ -52,7 +52,7 @@ public class AocStructureTest : TestBase
             .WithTarget(DataSource)
             .ExecuteAsync();
 
-        await DataSource.UpdateAsync(TestData.yieldCurvePrevious.RepeatOnce());
+        await DataSource.UpdateAsync(TestData.YieldCurvePrevious.RepeatOnce());
         workspace.Initialize(x => x.FromSource(DataSource).DisableInitialization<RawVariable>()
             .DisableInitialization<IfrsVariable>());
 

@@ -1,5 +1,6 @@
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
+using Systemorph.Vertex.DataSource;
 using Systemorph.Vertex.DataSource.Common;
 
 namespace OpenSmc.Ifrs17.Domain.Test;
@@ -199,7 +200,7 @@ public class TestData
 
     public YieldCurve yieldCurve { get; set; }
 
-    public YieldCurve yieldCurvePrevious { get; set; }
+    public YieldCurve YieldCurvePrevious { get; private set; }
 
     public TestData(IDataSource dataSource)
     {
@@ -381,7 +382,7 @@ public class TestData
             Values = new[] {0.005, 0.005, 0.005, 0.005}
         };
 
-        yieldCurvePrevious = new YieldCurve()
+        YieldCurvePrevious = new YieldCurve()
         {
             Currency = "USD",
             Year = 2020,
