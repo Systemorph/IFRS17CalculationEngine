@@ -16,7 +16,7 @@ public static class EstimateTypes
     public const string F = nameof(F); //Factors
     public const string FCF = nameof(FCF); //Fulfilment Cash flows
     public const string BEPA = nameof(BEPA); //Experience Adjusted BE Premium to Csm
-    public const string APA = nameof(APA); //Experience Adjusted Written Actual Premium to Csm
+    public const string APA = nameof(APA); //Experience Adjusted Written IActual Premium to Csm
 
     public const string PCE = nameof(PCE); //Paid Cash Estimate : actuals calculated according to an expected paid pattern provided as a cashflow
 }

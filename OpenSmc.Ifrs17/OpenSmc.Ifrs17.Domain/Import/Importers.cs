@@ -1180,7 +1180,7 @@ public static class ImportTasks
     await parsingStorage.InitializeAsync();
     if(activity.HasErrors()) return activity.Finish();
 
-    //var hasAccidentYearColumn = dataSet.Tables[ImportFormats.Actual].Columns.Any(x => x.ColumnName == nameof(IfrsVariable.AccidentYear));
+    //var hasAccidentYearColumn = dataSet.Tables[ImportFormats.IActual].Columns.Any(x => x.ColumnName == nameof(IfrsVariable.AccidentYear));
 
     var importLog = await import.FromDataSet(dataSet)
         .WithType<IfrsVariable> ( (dataset, datarow) => {

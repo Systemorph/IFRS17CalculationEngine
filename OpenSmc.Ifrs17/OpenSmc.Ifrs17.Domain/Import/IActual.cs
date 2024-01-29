@@ -1,0 +1,19 @@
+using OpenSmc.Ifrs17.Domain.Constants;
+using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
+using OpenSmc.Ifrs17.Domain.Import.WrittenActualCalculation;
+using Systemorph.Vertex.Api.Attributes;
+using Systemorph.Vertex.Scopes;
+
+namespace OpenSmc.Ifrs17.Domain.Import;
+
+public interface IActual : IScope<ImportIdentity, ImportStorage>{
+    [IdentityProperty][NotVisible][Dimension(typeof(EstimateType))]
+    string EstimateType => EstimateTypes.A;
+       
+    [NotVisible]
+    (string AmountType, string EstimateType, int? AccidentYear, double Value)[] Actuals => 
+        GetScope<IValidAmountType>(Identity.DataNode).AllImportedAmountTypes
+            .SelectMany(amountType => GetStorage().GetAccidentYears(Identity.DataNode, Identity.ProjectionPeriod)
+                .Select(accidentYear => (amountType, EstimateType, accidentYear, GetScope<IWrittenActual>((Identity, amountType, EstimateType, accidentYear)).Value ))).ToArray();
+}

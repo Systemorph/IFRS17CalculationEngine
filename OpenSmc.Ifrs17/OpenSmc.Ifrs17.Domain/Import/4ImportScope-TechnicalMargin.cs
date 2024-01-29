@@ -2,6 +2,8 @@ using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
+using OpenSmc.Ifrs17.Domain.Import.DiscountedDeferrableCalculation;
+using OpenSmc.Ifrs17.Domain.Import.WrittenActualCalculation;
 using OpenSmc.Ifrs17.Domain.Utils;
 using Systemorph.Vertex.Api.Attributes;
 using Systemorph.Vertex.Collections;
@@ -46,7 +48,7 @@ public interface ActualExperienceAdjustmentOnPremium : IScope<ImportIdentity, Im
     [IdentityProperty][NotVisible][Dimension(typeof(EstimateType))] string EstimateType => ImportCalculationExtensions.ComputationHelper.ExperienceAdjustEstimateTypeMapping[EstimateTypes.A];
     
     double Value => GetStorage().GetPremiumAllocationFactor(Identity) * 
-        GetStorage().GetPremiums().Sum(pr => GetScope<WrittenActual>((Identity, pr, EstimateTypes.A, (int?)null)).Value);
+        GetStorage().GetPremiums().Sum(pr => GetScope<IWrittenActual>((Identity, pr, EstimateTypes.A, (int?)null)).Value);
 }
 
 public interface DefaultValueActualExperienceAdjustmentOnPremium : ActualExperienceAdjustmentOnPremium{
@@ -105,7 +107,7 @@ public interface TechnicalMarginForPaa : TechnicalMargin{
     double TechnicalMargin.Value => GetScope<TechnicalMarginAmountType>((Identity, estimateType)).Values
                        .Sum(at => GetScope<IPvAggregatedOverAccidentYear>((Identity, at, EstimateTypes.BE), o => o.WithContext(EconomicBasis)).Value) +
                        GetScope<IPvAggregatedOverAccidentYear>((Identity, (string)null, EstimateTypes.RA), o => o.WithContext(EconomicBasis)).Value +
-                       GetScope<DiscountedDeferrable>(Identity).Value + GetScope<PremiumRevenue>(Identity).Value;
+                       GetScope<IDiscountedDeferrable>(Identity).Value + GetScope<PremiumRevenue>(Identity).Value;
 }
 
 public interface TechnicalMarginForBopProjection: TechnicalMargin{
@@ -163,17 +165,17 @@ public interface TechnicalMarginForEA : TechnicalMargin{
         GetScope<ActualExperienceAdjustmentOnPremium>(Identity with {AocType = referenceAocType, Novelty = Novelties.C}).Value;
     protected double deferrable => GetStorage().GetDeferrableExpenses().Sum(d =>
         GetStorage().GetNovelties(referenceAocType, StructureType.AocPresentValue).Sum(n => GetScope<IPvAggregatedOverAccidentYear>((Identity with {AocType = referenceAocType, Novelty = n}, d, EstimateTypes.BE), o => o.WithContext(EconomicBasis)).Value) -
-        GetScope<WrittenActual>((Identity with {AocType = referenceAocType, Novelty = Novelties.C}, d, EstimateTypes.A, (int?)null)).Value);
+        GetScope<IWrittenActual>((Identity with {AocType = referenceAocType, Novelty = Novelties.C}, d, EstimateTypes.A, (int?)null)).Value);
     protected double investmentClaims => GetStorage().GetInvestmentClaims().Sum(ic =>
         GetStorage().GetNovelties(referenceAocType, StructureType.AocPresentValue).Sum(n => GetScope<IPvAggregatedOverAccidentYear>((Identity with {AocType = referenceAocType, Novelty = n}, ic, EstimateTypes.BE), o => o.WithContext(EconomicBasis)).Value) -
-        GetScope<WrittenActual>((Identity with {AocType = referenceAocType, Novelty = Novelties.C}, ic, EstimateTypes.A, (int?)null)).Value);
+        GetScope<IWrittenActual>((Identity with {AocType = referenceAocType, Novelty = Novelties.C}, ic, EstimateTypes.A, (int?)null)).Value);
     
     double TechnicalMargin.Value => premiums + deferrable + investmentClaims;
 }
 
 public interface TechnicalMarginForEAForPaa: TechnicalMarginForEA {
-    double TechnicalMarginForEA.deferrable => GetScope<DiscountedDeferrable>(Identity with {AocType = AocTypes.AM, Novelty = Novelties.C}).Value -
-        GetStorage().GetDeferrableExpenses().Sum(d => GetScope<WrittenActual>((Identity with {AocType = referenceAocType, Novelty = Novelties.C}, d, EstimateTypes.A, (int?)null)).Value);
+    double TechnicalMarginForEA.deferrable => GetScope<IDiscountedDeferrable>(Identity with {AocType = AocTypes.AM, Novelty = Novelties.C}).Value -
+        GetStorage().GetDeferrableExpenses().Sum(d => GetScope<IWrittenActual>((Identity with {AocType = referenceAocType, Novelty = Novelties.C}, d, EstimateTypes.A, (int?)null)).Value);
 }
 
 public interface TechnicalMarginForAM : TechnicalMargin{

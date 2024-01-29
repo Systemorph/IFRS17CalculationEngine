@@ -1,6 +1,7 @@
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.Import.DiscountedDeferrableCalculation;
 using OpenSmc.Ifrs17.Domain.Utils;
 using Systemorph.Vertex.Collections;
 using Systemorph.Vertex.Scopes;
@@ -119,7 +120,7 @@ public interface EmptyRaIfrsVariable: RaToIfrsVariable{
 public interface ActualToIfrsVariable: IScope<ImportIdentity, ImportStorage>
 {
     IEnumerable<IfrsVariable> Actual => Identity.AocType == AocTypes.CF && Identity.Novelty == Novelties.C 
-      ? GetScope<Actual>(Identity).Actuals.Select(written => 
+      ? GetScope<IActual>(Identity).Actuals.Select(written => 
       new IfrsVariable{ EstimateType = written.EstimateType,
                         DataNode = Identity.DataNode,
                         AocType = Identity.AocType,
@@ -131,7 +132,7 @@ public interface ActualToIfrsVariable: IScope<ImportIdentity, ImportStorage>
       : Enumerable.Empty<IfrsVariable>();
                         
     IEnumerable<IfrsVariable> AdvanceActual => GetStorage().GetAllAocSteps(StructureType.AocAccrual).Contains(Identity.AocStep)
-      ? GetScope<AdvanceActual>(Identity).Actuals.Select(advance => 
+      ? GetScope<IAdvanceActual>(Identity).Actuals.Select(advance => 
       new IfrsVariable{ EstimateType = advance.EstimateType,
                         DataNode = Identity.DataNode,
                         AocType = Identity.AocType,
@@ -143,7 +144,7 @@ public interface ActualToIfrsVariable: IScope<ImportIdentity, ImportStorage>
       : Enumerable.Empty<IfrsVariable>();
 
    IEnumerable<IfrsVariable> OverdueActual => GetStorage().GetAllAocSteps(StructureType.AocAccrual).Contains(Identity.AocStep)
-      ? GetScope<OverdueActual>(Identity).Actuals.Select(overdue => 
+      ? GetScope<IOverdueActual>(Identity).Actuals.Select(overdue => 
       new IfrsVariable{ EstimateType = overdue.EstimateType,
                         DataNode = Identity.DataNode,
                         AocType = Identity.AocType,
@@ -163,7 +164,7 @@ public interface DeferrableToIfrsVariable: IScope<ImportIdentity, ImportStorage>
 
     IEnumerable<IfrsVariable> Deferrable => EconomicBasis switch {
         EconomicBases.N => Enumerable.Range(0, timeStep).SelectMany(shift => 
-            GetScope<NominalDeferrable>((Identity, shift)).RepeatOnce()
+            GetScope<INominalDeferrable>((Identity, shift)).RepeatOnce()
                 .Select(x => new IfrsVariable{ EstimateType = x.EstimateType,
                           EconomicBasis = EconomicBases.N,
                           DataNode = x.Identity.Id.DataNode,
@@ -172,7 +173,7 @@ public interface DeferrableToIfrsVariable: IScope<ImportIdentity, ImportStorage>
                           AccidentYear = shift,
                           Values = ImportCalculationExtensions.SetProjectionValue(x.Value, x.Identity.Id.ProjectionPeriod),
                           Partition = GetStorage().TargetPartition })),
-        _ => GetScope<DiscountedDeferrable>(Identity).RepeatOnce()
+        _ => GetScope<IDiscountedDeferrable>(Identity).RepeatOnce()
                 .Select(x => new IfrsVariable{ EstimateType = x.EstimateType,
                           EconomicBasis = x.EconomicBasis,
                           DataNode = x.Identity.DataNode,
@@ -196,7 +197,7 @@ public interface DeferrableToIfrsVariable: IScope<ImportIdentity, ImportStorage>
                           AccidentYear = shift,
                           Values = ImportCalculationExtensions.SetProjectionValue(x.Value, x.Identity.Id.ProjectionPeriod),
                           Partition = GetStorage().TargetPartition })),
-        (AocTypes.AM, true, _) => GetScope<DiscountedAmortizationFactorForDeferrals>(Identity, o => o.WithContext(EconomicBasis)).RepeatOnce()
+        (AocTypes.AM, true, _) => GetScope<IDiscountedAmortizationFactorForDeferrals>(Identity, o => o.WithContext(EconomicBasis)).RepeatOnce()
             .Select(x => new IfrsVariable{ EstimateType = EstimateTypes.F,
                           EconomicBasis = EconomicBasis,
                           DataNode = x.Identity.DataNode,
@@ -288,7 +289,7 @@ public interface TmToIfrsVariable: IScope<ImportIdentity, ImportStorage>
     // private bool hasTechnicalMargin => GetStorage().ImportFormat switch {
     //     ImportFormats.Cashflow => GetStorage().GetRawVariables(Identity.DataNode).Any(x => x.EstimateType == EstimateTypes.RA || 
     //         (x.EstimateType == EstimateTypes.BE && amountTypesForTm.Contains(x.AmountType))),
-    //     _ => GetStorage().GetIfrsVariables(Identity.DataNode).Any(x => !GetStorage().EstimateTypesByImportFormat[ImportFormats.Actual].Contains(x.EstimateType) && 
+    //     _ => GetStorage().GetIfrsVariables(Identity.DataNode).Any(x => !GetStorage().EstimateTypesByImportFormat[ImportFormats.IActual].Contains(x.EstimateType) && 
     //         amountTypesForTm.Contains(x.AmountType))
     // };
 
