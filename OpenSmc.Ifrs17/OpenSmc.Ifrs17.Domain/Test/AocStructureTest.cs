@@ -12,7 +12,7 @@ using Systemorph.Vertex.DataSource.Common;
 using Systemorph.Vertex.Import;
 using Systemorph.Vertex.Scopes.Proxy;
 using Systemorph.Vertex.Workspace;
-using Error = OpenSmc.Ifrs17.Domain.Constants.Error;
+using Error = OpenSmc.Ifrs17.Domain.Constants.Validations.Error;
 using FactAttribute = System.Runtime.CompilerServices.CompilerGeneratedAttribute;
 
 namespace OpenSmc.Ifrs17.Domain.Test

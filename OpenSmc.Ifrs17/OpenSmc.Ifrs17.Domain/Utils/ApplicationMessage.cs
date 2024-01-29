@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Logging;
-using OpenSmc.Ifrs17.Domain.Constants;
+using OpenSmc.Ifrs17.Domain.Constants.Validations;
 using Systemorph.Vertex.Activities;
 
 namespace OpenSmc.Ifrs17.Domain.Utils;
