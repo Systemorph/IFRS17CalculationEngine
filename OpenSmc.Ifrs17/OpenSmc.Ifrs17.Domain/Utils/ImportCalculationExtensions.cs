@@ -108,7 +108,8 @@ public static class ImportCalculationExtensions
         if (importFormat != ImportFormats.Cashflow)
             return valueFromIfrsVariable;
 
-        int rawVariableMaxLength = rawVariables.Any() ? rawVariables.Max(rawVariable => rawVariable.Values.Length) : 1;
+        var enumerable = rawVariables as RawVariable[] ?? rawVariables.ToArray();
+        int rawVariableMaxLength = enumerable.Any() ? enumerable.Max(rawVariable => rawVariable.Values.Length) : 1;
         int valueFromRawVariable =
             projectionConfiguration.Where(projConfig => projConfig.Shift < rawVariableMaxLength).Count();
         return Math.Max(valueFromRawVariable, valueFromIfrsVariable);
@@ -161,7 +162,7 @@ public static class ImportCalculationExtensions
             InterpolationMethod.Start => cashflowValues
                 .SelectMany(v => Enumerable.Range(0, frequency).Select(x => x == 0 ? v : default)).ToArray(),
             InterpolationMethod.Uniform or _ => cashflowValues
-                .SelectMany(v => Enumerable.Range(0, frequency).Select(_ => v / (double) frequency)).ToArray()
+                .SelectMany(v => Enumerable.Range(0, frequency).Select(_ => v / frequency)).ToArray()
         };
 
     }
