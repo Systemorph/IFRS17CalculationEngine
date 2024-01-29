@@ -97,7 +97,7 @@ public class Error : ValidationBase
     // Generic Errors
     public static readonly Error Generic = new(nameof(Generic));
 
-    public override string GetMessage(params string[] s)
+    public override string GetMessage(params string?[] s)
     {
         return (MessageCode, s.Length) switch
         {
