@@ -14,12 +14,13 @@ namespace OpenSmc.Ifrs17.Domain.Test
         public TestDataTest()
         {
             testData = new TestData();
-            testData.InitializeAsync();
+            _ = testData.InitializeAsync();
         }
 
         [Fact]
         public void TestPreviousPartition()
         {
+            testData.PreviousPeriodPartition.Should().NotBe(null);
             testData.PreviousPeriodPartition.Id.Should().NotBe(null);
         }
     }

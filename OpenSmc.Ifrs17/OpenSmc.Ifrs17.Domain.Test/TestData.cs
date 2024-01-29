@@ -1,7 +1,6 @@
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using Systemorph.Vertex.DataSource.Common;
-using Systemorph.Vertex.Workspace;
 
 namespace OpenSmc.Ifrs17.Domain.Test;
 
@@ -9,14 +8,14 @@ public class TestData
 {
     public IDataSource DataSource;
 
-    public readonly string Novelties =
+    public string Novelties =
         @"@@Novelty
         SystemName,DisplayName,Parent,Order
         I,In Force,,1
         N,New Business,,10
         C,Combined,,20";
 
-    public readonly string CanonicalAocTypes =
+    public string CanonicalAocTypes =
         @"@@AocType,,,,,,,,,,,
         SystemName,DisplayName,Parent,Order,,,,,,,,
         BOP,Opening Balance,,10,,,,,,,,
@@ -37,7 +36,7 @@ public class TestData
         FX,FX Impact,,160,,,,,,,,
         EOP,Closing Balance,,170,,,,,,,,";
 
-    public readonly string CanonicalAocConfig =
+    public string CanonicalAocConfig =
         @"@@AocConfiguration,,,,,,,,,,,
         AocType,Novelty,DataType,InputSource,StructureType,FxPeriod,YcPeriod,CdrPeriod,ValuationPeriod,RcPeriod,Order,Year,Month
         BOP,I,17,7,14,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,10,1900,1
@@ -62,7 +61,7 @@ public class TestData
         AM,C,4,6,8,EndOfPeriod,NotApplicable,NotApplicable,NotApplicable,EndOfPeriod,200,1900,1
         EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,1900,1";
 
-    public readonly string EstimateType = @"@@EstimateType,,,,,,,,,,,
+    public string EstimateType = @"@@EstimateType,,,,,,,,,,,
         SystemName,DisplayName,Order,StructureType,InputSource,PeriodType,ExternalId0,ExternalId1,ExternalId2,ExternalId3,ExternalId4,,,,,,
         BE,Best Estimate of Present Value,1,2,4,EndOfPeriod,,,,,,,
         RA,Risk Adjustment,10,2,4,EndOfPeriod,,,,,,,
@@ -81,7 +80,7 @@ public class TestData
         APA,Actuals To Csm,120,1,6,NotApplicable,,,,,,,";
 
 
-    public readonly string EconomicBasis =
+    public string EconomicBasis =
         @"@@EconomicBasis,,,,,,,,,,,
         SystemName,DisplayName,Order
         L,Locked-in,1
@@ -89,7 +88,7 @@ public class TestData
         N,Nominal,20";
 
 
-    public readonly string ProjectionConfiguration =
+    public string ProjectionConfiguration =
         @"@@ProjectionConfiguration,,,,,,,,,,,
         SystemName,DisplayName,Shift,TimeStep,Order,,,,,,,
         P0,End of January,0,1,10,,,,,,,
@@ -137,67 +136,86 @@ public class TestData
         CU,Coverage Units,,150,EndOfPeriod";
 
 
-    public readonly ReportingNode[] ReportingNodes = new ReportingNode[]
+    public ReportingNode[] ReportingNodes = new ReportingNode[]
     {
         new ReportingNode() {SystemName = "CH", DisplayName = "Switzerland", Currency = "CHF"},
         new ReportingNode() {SystemName = "G", DisplayName = "Group", Currency = "CHF"},
     };
 
 
-    public readonly string GroupOfInsuranceContracts = "DT1.1";
-    public readonly string GroupOfReinsuranceContracts = "DTR1.1";
-    private readonly string reportingNode = "CH";
-    private readonly string? scenarioBestEstimate = null;
-    private readonly string scenarioMortalityUp = "MTUP";
-    private readonly string scenarioMortalityDown = "MTDOWN";
+    public string GroupOfInsuranceContracts = "DT1.1";
+    public string GroupOfReinsuranceContracts = "DTR1.1";
+    public string ReportingNode = "CH";
+    public string ScenarioBestEstimate = null;
+    public string ScenarioMortalityUp = "MTUP";
+    public string ScenarioMortalityDown = "MTDOWN";
 
 
     public ImportArgs Args { get; init; }
 
-    private ImportArgs PreviousArgs { get; init; }
+    public ImportArgs PreviousArgs { get; init; }
+
+    public ImportArgs ArgsScenarioMtup { get; init; }
+
+    public ImportArgs PreviousScenarioArgsMtup { get; init; }
+
+    public ImportArgs ArgsScenarioMtdown { get; init; }
+
+    public ImportArgs PreviousScenarioArgsMtdown { get; init; }
 
 
-    public PartitionByReportingNode PartitionReportingNode { get; private set; }
+    public PartitionByReportingNode PartitionReportingNode { get; set; }
 
 
-    public PartitionByReportingNodeAndPeriod Partition { get; private set; }
+    public PartitionByReportingNodeAndPeriod Partition { get; set; }
 
-    public PartitionByReportingNodeAndPeriod PreviousPeriodPartition { get; private set; }
+    public PartitionByReportingNodeAndPeriod PreviousPeriodPartition { get; set; }
 
+    public PartitionByReportingNodeAndPeriod PartitionScenarioMtup { get; set; }
 
-    public Portfolio Dt1 { get; private set; }
+    public PartitionByReportingNodeAndPeriod PreviousPeriodPartitionScenarioMtup { get; set; }
 
-    public Portfolio Dtr1 { get; private set; }
+    public PartitionByReportingNodeAndPeriod PartitionScenarioMtdown { get; set; }
 
-    public GroupOfInsuranceContract Dt11 { get; private set; }
-
-    public GroupOfReinsuranceContract Dtr11 { get; private set; }
-
-    public DataNodeState Dt11State { get; private set; }
-
-    public DataNodeState Dtr11State { get; private set; }
-
-    public InterDataNodeParameter Dt11Inter { get; private set; }
+    public PartitionByReportingNodeAndPeriod PreviousPeriodPartitionScenarioMtdown { get; set; }
 
 
-    public YieldCurve YieldCurvePrevious { get; private set; }
+    public Portfolio Dt1 { get; set; }
+
+    public Portfolio Dtr1 { get; set; }
+
+    public GroupOfInsuranceContract Dt11 { get; set; }   
+
+    public GroupOfReinsuranceContract Dtr11 { get; set; }
+
+    public DataNodeState Dt11State { get; set; } 
+
+    public DataNodeState Dtr11State { get; set; } 
+
+    public SingleDataNodeParameter Dt11SingleParameter { get; set; }
+
+    public InterDataNodeParameter Dt11Inter { get; set; }
+
+
+    public YieldCurve YieldCurve { get; set; }
+
+    public YieldCurve YieldCurvePrevious { get; set; }
 
     public TestData()
     {
-        DataSource = new Workspace();
-        //this.dataSource = dataSource;
-        Args = new ImportArgs(reportingNode, 2021, 3, Periodicity.Quarterly,
-            scenarioBestEstimate, ImportFormats.Actual);
-        PreviousArgs = new ImportArgs(reportingNode, 2020, 12, Periodicity.Quarterly,
-            scenarioBestEstimate, ImportFormats.Actual);
-        new ImportArgs(reportingNode, 2021, 3, Periodicity.Quarterly,
-            scenarioMortalityUp, ImportFormats.Actual);
-        new ImportArgs(reportingNode, 2020, 12, Periodicity.Quarterly,
-            scenarioMortalityUp, ImportFormats.Actual);
-        //new ImportArgs(reportingNode, 2021, 3, Periodicity.Quarterly,
-        //    scenarioMortalityDown, ImportFormats.Actual);
-        new ImportArgs(reportingNode, 2020, 12, Periodicity.Quarterly,
-            scenarioMortalityDown, ImportFormats.Actual);
+        Args = new ImportArgs(ReportingNode, 2021, 3, Periodicity.Quarterly,
+            ScenarioBestEstimate, ImportFormats.Actual);
+        PreviousArgs = new ImportArgs(ReportingNode, 2020, 12, Periodicity.Quarterly,
+            ScenarioBestEstimate, ImportFormats.Actual);
+        ArgsScenarioMtup = new ImportArgs(ReportingNode, 2021, 3, Periodicity.Quarterly,
+            ScenarioMortalityUp, ImportFormats.Actual);
+        PreviousScenarioArgsMtup = new ImportArgs(ReportingNode, 2020, 12, Periodicity.Quarterly,
+            ScenarioMortalityUp, ImportFormats.Actual);
+        ArgsScenarioMtdown = new ImportArgs(ReportingNode, 2021, 3, Periodicity.Quarterly,
+            ScenarioMortalityDown, ImportFormats.Actual);
+        PreviousScenarioArgsMtdown = new ImportArgs(ReportingNode, 2020, 12, Periodicity.Quarterly,
+            ScenarioMortalityDown, ImportFormats.Actual);
+
     }
 
     public async Task InitializeAsync()
@@ -211,8 +229,8 @@ public class TestData
         Partition = new PartitionByReportingNodeAndPeriod
         {
             Id = (Guid) (await DataSource.Partition.GetKeyForInstanceAsync<PartitionByReportingNodeAndPeriod>(Args)),
-            ReportingNode = reportingNode,
-            Scenario = scenarioBestEstimate,
+            ReportingNode = ReportingNode,
+            Scenario = ScenarioBestEstimate,
             Year = Args.Year,
             Month = Args.Month
         };
@@ -221,49 +239,49 @@ public class TestData
         {
             Id = (Guid) (await DataSource.Partition
                 .GetKeyForInstanceAsync<PartitionByReportingNodeAndPeriod>(PreviousArgs)),
-            ReportingNode = reportingNode,
-            Scenario = scenarioBestEstimate,
+            ReportingNode = ReportingNode,
+            Scenario = ScenarioBestEstimate,
             Year = PreviousArgs.Year,
             Month = PreviousArgs.Month
         };
 
-        /*new PartitionByReportingNodeAndPeriod
+        PartitionScenarioMtup = new PartitionByReportingNodeAndPeriod
         {
-            Id = (Guid) (await dataSource.Partition.GetKeyForInstanceAsync<PartitionByReportingNodeAndPeriod>(
+            Id = (Guid) (await DataSource.Partition.GetKeyForInstanceAsync<PartitionByReportingNodeAndPeriod>(
                 ArgsScenarioMtup)),
-            ReportingNode = reportingNode,
-            Scenario = scenarioMortalityUp,
-            Year = Args.Year,
-            Month = Args.Month
-        };*/
-
-        /* new PartitionByReportingNodeAndPeriod
-        {
-            Id = (Guid) (await dataSource.Partition.GetKeyForInstanceAsync<PartitionByReportingNodeAndPeriod>(
-                PreviousScenarioArgsMtup)),
-            ReportingNode = reportingNode,
-            Scenario = scenarioMortalityUp,
-            Year = PreviousScenarioArgsMtup.Year,
-            Month = PreviousScenarioArgsMtup.Month
-        };*/
-        /* new PartitionByReportingNodeAndPeriod
-        {
-            Id = (Guid) (await dataSource.Partition.GetKeyForInstanceAsync<PartitionByReportingNodeAndPeriod>(
-                ArgsScenarioMtup)),
-            ReportingNode = reportingNode,
-            Scenario = scenarioMortalityDown,
+            ReportingNode = ReportingNode,
+            Scenario = ScenarioMortalityUp,
             Year = Args.Year,
             Month = Args.Month
         };
-        new PartitionByReportingNodeAndPeriod
+
+        PreviousPeriodPartitionScenarioMtup = new PartitionByReportingNodeAndPeriod
         {
-            Id = (Guid) (await dataSource.Partition.GetKeyForInstanceAsync<PartitionByReportingNodeAndPeriod>(
+            Id = (Guid) (await DataSource.Partition.GetKeyForInstanceAsync<PartitionByReportingNodeAndPeriod>(
                 PreviousScenarioArgsMtup)),
-            ReportingNode = reportingNode,
-            Scenario = scenarioMortalityDown,
+            ReportingNode = ReportingNode,
+            Scenario = ScenarioMortalityUp,
+            Year = PreviousScenarioArgsMtup.Year,
+            Month = PreviousScenarioArgsMtup.Month
+        };
+        PartitionScenarioMtdown = new PartitionByReportingNodeAndPeriod
+        {
+            Id = (Guid) (await DataSource.Partition.GetKeyForInstanceAsync<PartitionByReportingNodeAndPeriod>(
+                ArgsScenarioMtup)),
+            ReportingNode = ReportingNode,
+            Scenario = ScenarioMortalityDown,
+            Year = Args.Year,
+            Month = Args.Month
+        };
+        PreviousPeriodPartitionScenarioMtdown = new PartitionByReportingNodeAndPeriod
+        {
+            Id = (Guid)(await DataSource.Partition.GetKeyForInstanceAsync<PartitionByReportingNodeAndPeriod>(
+                PreviousScenarioArgsMtup)),
+            ReportingNode = ReportingNode,
+            Scenario = ScenarioMortalityDown,
             Year = PreviousScenarioArgsMtdown.Year,
             Month = PreviousScenarioArgsMtdown.Month
-        }; */
+        };
 
         Dt1 = new Portfolio()
         {
@@ -335,14 +353,14 @@ public class TestData
             Partition = PartitionReportingNode.Id
         };
 
-        /*new SingleDataNodeParameter
+        Dt11SingleParameter = new SingleDataNodeParameter
         {
             Year = PreviousArgs.Year,
             Month = PreviousArgs.Month,
             DataNode = "DT1.1",
             PremiumAllocation = .8,
             Partition = PartitionReportingNode.Id
-        }; */
+        };
 
         Dt11Inter = new InterDataNodeParameter
         {
@@ -355,20 +373,20 @@ public class TestData
             Partition = PartitionReportingNode.Id
         };
 
-        /*new YieldCurve()
+        YieldCurve = new YieldCurve()
         {
             Currency = "USD",
             Year = 2021,
             Month = 3,
-            Values = new[] {0.005, 0.005, 0.005, 0.005}
-        };*/
+            Values = new[] { 0.005, 0.005, 0.005, 0.005 }
+        };
 
         YieldCurvePrevious = new YieldCurve()
         {
             Currency = "USD",
             Year = 2020,
             Month = 12,
-            Values = new[] {0.002, 0.002, 0.002, 0.002}
+            Values = new[] { 0.002, 0.002, 0.002, 0.002 }
         };
     }
 }
