@@ -1,12 +1,13 @@
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using Systemorph.Vertex.DataSource.Common;
+using Systemorph.Vertex.Workspace;
 
 namespace OpenSmc.Ifrs17.Domain.Test;
 
 public class TestData
 {
-    private IDataSource dataSource;
+    public IDataSource DataSource;
 
     public readonly string Novelties =
         @"@@Novelty
@@ -155,12 +156,6 @@ public class TestData
 
     private ImportArgs PreviousArgs { get; init; }
 
-    private ImportArgs ArgsScenarioMtup { get; init; }
-
-    private ImportArgs PreviousScenarioArgsMtup { get; init; }
-
-    private ImportArgs PreviousScenarioArgsMtdown { get; init; }
-
 
     public PartitionByReportingNode PartitionReportingNode { get; private set; }
 
@@ -187,20 +182,21 @@ public class TestData
 
     public YieldCurve YieldCurvePrevious { get; private set; }
 
-    public TestData(IDataSource dataSource)
+    public TestData()
     {
-        this.dataSource = dataSource;
+        DataSource = new Workspace();
+        //this.dataSource = dataSource;
         Args = new ImportArgs(reportingNode, 2021, 3, Periodicity.Quarterly,
             scenarioBestEstimate, ImportFormats.Actual);
         PreviousArgs = new ImportArgs(reportingNode, 2020, 12, Periodicity.Quarterly,
             scenarioBestEstimate, ImportFormats.Actual);
-        ArgsScenarioMtup = new ImportArgs(reportingNode, 2021, 3, Periodicity.Quarterly,
+        new ImportArgs(reportingNode, 2021, 3, Periodicity.Quarterly,
             scenarioMortalityUp, ImportFormats.Actual);
-        PreviousScenarioArgsMtup = new ImportArgs(reportingNode, 2020, 12, Periodicity.Quarterly,
+        new ImportArgs(reportingNode, 2020, 12, Periodicity.Quarterly,
             scenarioMortalityUp, ImportFormats.Actual);
         //new ImportArgs(reportingNode, 2021, 3, Periodicity.Quarterly,
         //    scenarioMortalityDown, ImportFormats.Actual);
-        PreviousScenarioArgsMtdown = new ImportArgs(reportingNode, 2020, 12, Periodicity.Quarterly,
+        new ImportArgs(reportingNode, 2020, 12, Periodicity.Quarterly,
             scenarioMortalityDown, ImportFormats.Actual);
     }
 
@@ -208,13 +204,13 @@ public class TestData
     {
         PartitionReportingNode = new PartitionByReportingNode
         {
-            Id = (Guid) (await dataSource.Partition.GetKeyForInstanceAsync<PartitionByReportingNode>(Args)),
+            Id = (Guid) (await DataSource.Partition.GetKeyForInstanceAsync<PartitionByReportingNode>(Args)),
             ReportingNode = Args.ReportingNode
         };
 
         Partition = new PartitionByReportingNodeAndPeriod
         {
-            Id = (Guid) (await dataSource.Partition.GetKeyForInstanceAsync<PartitionByReportingNodeAndPeriod>(Args)),
+            Id = (Guid) (await DataSource.Partition.GetKeyForInstanceAsync<PartitionByReportingNodeAndPeriod>(Args)),
             ReportingNode = reportingNode,
             Scenario = scenarioBestEstimate,
             Year = Args.Year,
@@ -223,7 +219,7 @@ public class TestData
 
         PreviousPeriodPartition = new PartitionByReportingNodeAndPeriod
         {
-            Id = (Guid) (await dataSource.Partition
+            Id = (Guid) (await DataSource.Partition
                 .GetKeyForInstanceAsync<PartitionByReportingNodeAndPeriod>(PreviousArgs)),
             ReportingNode = reportingNode,
             Scenario = scenarioBestEstimate,

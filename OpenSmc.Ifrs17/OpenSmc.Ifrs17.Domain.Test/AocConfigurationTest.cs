@@ -68,9 +68,9 @@ public class AocConfigurationTest : TestBase
         AM,C,4,6,8,EndOfPeriod,NotApplicable,NotApplicable,NotApplicable,EndOfPeriod,200,1900,1
         EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,1900,1";
 
-    public AocConfigurationTest(IImportVariable import, IDataSource dataSource,
-        IWorkspaceVariable work, IActivityVariable activity, IScopeFactory scopes) :
-        base(import, dataSource, work, activity, scopes)
+    public AocConfigurationTest(IImportVariable import,
+        IWorkspaceVariable work, IScopeFactory scopes) :
+        base(import, work, scopes)
     {
         Workspace = Work.CreateNew() as Workspace;
     }

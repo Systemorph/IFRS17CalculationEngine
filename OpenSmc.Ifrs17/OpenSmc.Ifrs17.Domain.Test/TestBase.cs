@@ -18,15 +18,13 @@ public abstract class TestBase
     protected readonly IScopeFactory Scopes;
 
     public TestBase(IImportVariable import, IDataSource dataSource,
-        IWorkspaceVariable work, IActivityVariable activity, IScopeFactory scopes)
+        IWorkspaceVariable work, IScopeFactory scopes)
     {
-        //Activity = new ActivityVariable();
-        Activity = activity;
-        //IDataSetImportVariable dataSetImportVariable = new DataSetImportVariable();
-        //Import = new ImportVariable(lifetimeScope, Activity,dataSetImportVariable, );
+        Activity = new ActivityVariable();
         Import = import;
-        DataSource = dataSource;
-        TestData = new TestData(DataSource);
+        //DataSource = dataSource;
+        TestData = new TestData();
+        DataSource = TestData.dataSource;
         Work = work;
         Scopes = scopes;
     }
