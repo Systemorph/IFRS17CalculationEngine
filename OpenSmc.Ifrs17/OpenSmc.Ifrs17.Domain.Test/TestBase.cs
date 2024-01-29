@@ -17,14 +17,14 @@ public abstract class TestBase
     protected readonly IActivityVariable Activity;
     protected readonly IScopeFactory Scopes;
 
-    public TestBase(IImportVariable import, IDataSource dataSource,
+    public TestBase(IImportVariable import,
         IWorkspaceVariable work, IScopeFactory scopes)
     {
         Activity = new ActivityVariable();
         Import = import;
         //DataSource = dataSource;
         TestData = new TestData();
-        DataSource = TestData.dataSource;
+        DataSource = TestData.DataSource;
         Work = work;
         Scopes = scopes;
     }
