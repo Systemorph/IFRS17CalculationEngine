@@ -12,7 +12,7 @@ namespace OpenSmc.Ifrs17.Domain.Utils;
 
 public static class ImportCalculationExtensions
 {
-    public static double[] ComputeDiscountAndCumulate(this double[] nominalValues, double[] monthlyDiscounting,
+    public static double[] ComputeDiscountAndCumulate(this double[]? nominalValues, double[] monthlyDiscounting,
         PeriodType periodType)
     {
         if (nominalValues == null) return Enumerable.Empty<double>().ToArray();
@@ -38,7 +38,7 @@ public static class ImportCalculationExtensions
         double nonPerformanceRiskRate) //NonPerformanceRiskRate consider to be constant in time. Refinement would it be an array that takes as input tau/t.
     {
         if (!monthlyDiscounting.Any())
-            monthlyDiscounting = new double[] {1d}; //Empty discounting array triggers Cumulation.
+            monthlyDiscounting = new[] {1d}; //Empty discounting array triggers Cumulation.
         return Enumerable.Range(0, nominalValues.Length)
             .Select(t => Enumerable.Range(t, nominalValues.Length - t)
                 .Select(tau =>
@@ -49,7 +49,7 @@ public static class ImportCalculationExtensions
     }
 
 
-    public static IDataCube<RawVariable> ComputeDiscountAndCumulate(this IDataCube<RawVariable> nominalRawVariables,
+    public static IDataCube<RawVariable> ComputeDiscountAndCumulate(this IDataCube<RawVariable>? nominalRawVariables,
         double[] yearlyDiscountRates, AmountType[] amountTypes)
     {
         if (nominalRawVariables == null) return Enumerable.Empty<RawVariable>().ToDataCube();
@@ -102,8 +102,9 @@ public static class ImportCalculationExtensions
         if (!Projection.Enable)
             return 1;
 
+        var iEnumerable = ifrsVariables as IfrsVariable[] ?? ifrsVariables.ToArray();
         var valueFromIfrsVariable =
-            ifrsVariables.Any() ? ifrsVariables.Max(ifrsVariable => ifrsVariable.Values.Length) : 1;
+            iEnumerable.Any() ? iEnumerable.Max(ifrsVariable => ifrsVariable.Values.Length) : 1;
         if (importFormat != ImportFormats.Cashflow)
             return valueFromIfrsVariable;
 
