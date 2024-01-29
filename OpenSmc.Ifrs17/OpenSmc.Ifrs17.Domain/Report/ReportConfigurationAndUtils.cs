@@ -13,6 +13,7 @@ using Systemorph.Vertex.Pivot.Reporting.Builder;
 using Systemorph.Vertex.Workspace;
 using OpenSmc.Ifrs17.Domain.DataModel.Interfaces;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
+using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 
 namespace OpenSmc.Ifrs17.Domain.Report;
 

@@ -11,9 +11,9 @@ using Systemorph.Vertex.Import;
 using Systemorph.Vertex.Scopes.Proxy;
 using Systemorph.Vertex.Workspace;
 
-namespace OpenSmc.Ifrs17.Domain.Tests;
+namespace OpenSmc.Ifrs17.Domain.Test;
 
-public class QueriesScenarioDataTest : TestBase
+public class QueriesScenarioDataTest : Tests.TestBase
 {
     private RawVariable[] bestEstimateRawVars;
     private RawVariable[] previousScenarioRawVars;

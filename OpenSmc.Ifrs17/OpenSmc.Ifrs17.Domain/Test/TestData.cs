@@ -1,4 +1,5 @@
 using OpenSmc.Ifrs17.Domain.Constants;
+using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.DataModel.Args;
 using Systemorph.Vertex.DataSource.Common;

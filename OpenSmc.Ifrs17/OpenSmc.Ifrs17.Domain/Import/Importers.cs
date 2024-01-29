@@ -19,6 +19,7 @@ using Scenarios = OpenSmc.Ifrs17.Domain.Constants.Scenarios;
 using OpenSmc.Ifrs17.Domain.DataModel.Interfaces;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.Domain.DataModel.Args;
+using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 

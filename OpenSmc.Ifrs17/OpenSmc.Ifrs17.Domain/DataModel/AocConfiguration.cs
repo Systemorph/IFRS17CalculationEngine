@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using OpenSmc.Ifrs17.Domain.Constants;
+using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.DataModel.Interfaces;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using Systemorph.Vertex.Api.Attributes;
@@ -32,7 +32,7 @@ public record AocConfiguration : KeyedRecord, IWithYearAndMonth, IOrdered
     [Dimension(typeof(Novelty))]
     public string Novelty { get; init; }
 
-    [Dimension(typeof(Constants.DataType))] public Constants.DataType DataType { get; init; }
+    [Dimension(typeof(Constants.Enumerates.DataType))] public Constants.Enumerates.DataType DataType { get; init; }
 
     [Dimension(typeof(StructureType))] public StructureType StructureType { get; init; }
 

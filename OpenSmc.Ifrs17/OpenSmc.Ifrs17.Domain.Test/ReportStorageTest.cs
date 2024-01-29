@@ -1,5 +1,5 @@
 using FluentAssertions;
-using OpenSmc.Ifrs17.Domain.Constants;
+using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.Domain.Report;
@@ -11,10 +11,9 @@ using Systemorph.Vertex.Pivot.Builder.Interfaces;
 using Systemorph.Vertex.Scopes.Proxy;
 using Systemorph.Vertex.Workspace;
 
+namespace OpenSmc.Ifrs17.Domain.Test;
 
-namespace OpenSmc.Ifrs17.Domain.Tests;
-
-public class ReportStorageTest : TestBase
+public class ReportStorageTest : Tests.TestBase
 {
     private readonly IPivotFactory report;
     private readonly IExportVariable export;

@@ -11,11 +11,12 @@ using AmountTypes = OpenSmc.Ifrs17.Domain.Constants.AmountTypes;
 using AocTypes = OpenSmc.Ifrs17.Domain.Constants.AocTypes;
 using EconomicBases = OpenSmc.Ifrs17.Domain.Constants.EconomicBases;
 using EstimateTypes = OpenSmc.Ifrs17.Domain.Constants.EstimateTypes;
-using FxPeriod = OpenSmc.Ifrs17.Domain.Constants.FxPeriod;
+using FxPeriod = OpenSmc.Ifrs17.Domain.Constants.Enumerates.FxPeriod;
 using LiabilityTypes = OpenSmc.Ifrs17.Domain.Constants.LiabilityTypes;
 using Novelties = OpenSmc.Ifrs17.Domain.Constants.Novelties;
 using ValuationApproaches = OpenSmc.Ifrs17.Domain.Constants.ValuationApproaches;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
+using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 
 namespace OpenSmc.Ifrs17.Domain.Report;
 

@@ -1,4 +1,4 @@
-using OpenSmc.Ifrs17.Domain.Constants;
+using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 
 namespace OpenSmc.Ifrs17.Domain.DataModel;
 
