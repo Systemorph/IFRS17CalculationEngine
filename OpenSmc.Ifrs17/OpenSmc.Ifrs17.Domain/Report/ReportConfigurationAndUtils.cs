@@ -11,6 +11,8 @@ using Systemorph.Vertex.DataCubes.Api;
 using Systemorph.Vertex.Pivot.Reporting;
 using Systemorph.Vertex.Pivot.Reporting.Builder;
 using Systemorph.Vertex.Workspace;
+using OpenSmc.Ifrs17.Domain.DataModel.Interfaces;
+using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 
 namespace OpenSmc.Ifrs17.Domain.Report;
 

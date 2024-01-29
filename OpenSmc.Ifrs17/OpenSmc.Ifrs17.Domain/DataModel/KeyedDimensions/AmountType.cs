@@ -2,7 +2,7 @@ using OpenSmc.Ifrs17.Domain.Constants;
 using Systemorph.Vertex.Api;
 using Systemorph.Vertex.Api.Attributes;
 
-namespace OpenSmc.Ifrs17.Domain.DataModel;
+namespace OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 
 public record AmountType : KeyedOrderedDimensionWithExternalId, IHierarchicalDimension
 {

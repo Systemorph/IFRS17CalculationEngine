@@ -4,6 +4,7 @@ using OpenSmc.Ifrs17.Domain.Utils;
 using Systemorph.Vertex.Api.Attributes;
 using Systemorph.Vertex.Scopes;
 using Systemorph.Vertex.Arithmetics;
+using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 

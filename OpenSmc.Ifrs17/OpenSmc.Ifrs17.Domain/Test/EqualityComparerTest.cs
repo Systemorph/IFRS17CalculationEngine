@@ -4,6 +4,7 @@
 
 using FluentAssertions;
 using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.Domain.Utils;
 
 namespace OpenSmc.Ifrs17.Domain.Tests;

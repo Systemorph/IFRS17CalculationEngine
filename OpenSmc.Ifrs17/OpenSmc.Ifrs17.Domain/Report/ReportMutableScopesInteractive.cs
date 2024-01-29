@@ -19,6 +19,7 @@ using Systemorph.Vertex.InteractiveObjects;
 using Systemorph.Vertex.InteractiveObjects.Dropdown;
 using Systemorph.Vertex.Scopes;
 using Systemorph.Vertex.Workspace;
+using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 
 
 namespace OpenSmc.Ifrs17.Domain.Report;

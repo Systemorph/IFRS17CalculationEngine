@@ -1,4 +1,4 @@
-﻿namespace OpenSmc.Ifrs17.Domain.DataModel
+﻿namespace OpenSmc.Ifrs17.Domain.DataModel.Interfaces
 {
     public interface IWithYearAndMonth
     {

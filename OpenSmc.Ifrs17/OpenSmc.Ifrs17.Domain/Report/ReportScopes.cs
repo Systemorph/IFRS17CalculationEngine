@@ -15,6 +15,7 @@ using FxPeriod = OpenSmc.Ifrs17.Domain.Constants.FxPeriod;
 using LiabilityTypes = OpenSmc.Ifrs17.Domain.Constants.LiabilityTypes;
 using Novelties = OpenSmc.Ifrs17.Domain.Constants.Novelties;
 using ValuationApproaches = OpenSmc.Ifrs17.Domain.Constants.ValuationApproaches;
+using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 
 namespace OpenSmc.Ifrs17.Domain.Report;
 

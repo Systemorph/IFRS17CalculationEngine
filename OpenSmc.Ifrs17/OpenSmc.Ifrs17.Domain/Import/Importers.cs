@@ -14,8 +14,10 @@ using Systemorph.Scopes;
 using Systemorph.Vertex.Arithmetics;
 using Systemorph.Vertex.Scopes.Proxy;
 using Debug = OpenSmc.Ifrs17.Domain.Constants.Debug;
-using Scenario = OpenSmc.Ifrs17.Domain.DataModel.Scenario;
+using Scenario = OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions.Scenario;
 using Scenarios = OpenSmc.Ifrs17.Domain.Constants.Scenarios;
+using OpenSmc.Ifrs17.Domain.DataModel.Interfaces;
+using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 

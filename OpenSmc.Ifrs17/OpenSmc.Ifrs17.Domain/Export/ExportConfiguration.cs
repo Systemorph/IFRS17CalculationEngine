@@ -1,9 +1,10 @@
 using DocumentFormat.OpenXml.Spreadsheet;
 using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using Systemorph.Vertex.Collections;
 using Systemorph.Vertex.Export.Builders.Interfaces;
 using Systemorph.Vertex.Export.Excel.Builders.Interfaces;
-using Scenario = OpenSmc.Ifrs17.Domain.DataModel.Scenario;
+using Scenario = OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions.Scenario;
 
 namespace OpenSmc.Ifrs17.Domain.Export;
 

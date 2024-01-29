@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using OpenSmc.Ifrs17.Domain.DataModel.Interfaces;
 using Systemorph.Vertex.Api.Attributes;
 
 namespace OpenSmc.Ifrs17.Domain.DataModel;

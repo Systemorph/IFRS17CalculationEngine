@@ -7,6 +7,7 @@
 using FluentAssertions;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.Domain.Tests;
 using Systemorph.Vertex.Activities;
 using Systemorph.Vertex.Collections;
