@@ -14,27 +14,22 @@ public record DataNode : KeyedDimension, IPartitioned
 
     [NotVisible]
     [Dimension(typeof(Currency))]
-    //[Immutable]
     public string ContractualCurrency { get; init; }
 
     [NotVisible]
     [Dimension(typeof(Currency))]
-    //[Immutable]
     public string FunctionalCurrency { get; init; }
 
     [NotVisible]
     [Dimension(typeof(LineOfBusiness))]
-    //[Immutable]
     public string LineOfBusiness { get; init; }
 
     [NotVisible]
     [Dimension(typeof(ValuationApproach))]
     [Required]
-    //[Immutable]
     public string ValuationApproach { get; init; }
 
     [NotVisible]
     [Dimension(typeof(OciType))]
-    //[Immutable]
     public string OciType { get; init; }
 }
