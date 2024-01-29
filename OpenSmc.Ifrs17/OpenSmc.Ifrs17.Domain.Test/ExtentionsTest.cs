@@ -2,7 +2,7 @@ using FluentAssertions;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.Utils;
 
-namespace OpenSmc.Ifrs17.Domain.Tests;
+namespace OpenSmc.Ifrs17.Domain.Test;
 
 public class ExtensionsTest
 {

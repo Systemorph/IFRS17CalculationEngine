@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.DataModel.Args;
 using OpenSmc.Ifrs17.Domain.DataModel.Interfaces;
 using Systemorph.Vertex.Collections;
 using Systemorph.Vertex.DataSource.Api;

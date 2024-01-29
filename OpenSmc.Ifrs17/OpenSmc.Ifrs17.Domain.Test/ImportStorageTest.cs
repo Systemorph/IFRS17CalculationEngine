@@ -1,6 +1,8 @@
 using FluentAssertions;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.DataModel.Args;
+using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.Domain.Import;
 using OpenSmc.Ifrs17.Domain.Utils;
 using Systemorph.Vertex.Activities;
@@ -10,9 +12,9 @@ using Systemorph.Vertex.Import;
 using Systemorph.Vertex.Scopes.Proxy;
 using Systemorph.Vertex.Workspace;
 
-namespace OpenSmc.Ifrs17.Domain.Tests;
+namespace OpenSmc.Ifrs17.Domain.Test;
 
-public class ImportStorageTest : TestBase
+public class ImportStorageTest : Tests.TestBase
 {
     public ImportStorageTest(IImportVariable import, IDataSource dataSource,
         IWorkspaceVariable work, IActivityVariable activity, IScopeFactory scopes) :

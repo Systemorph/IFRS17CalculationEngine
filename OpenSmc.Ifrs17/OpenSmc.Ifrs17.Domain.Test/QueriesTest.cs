@@ -1,6 +1,8 @@
 using FluentAssertions;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.DataModel.Args;
+using OpenSmc.Ifrs17.Domain.DataModel.Interfaces;
 using OpenSmc.Ifrs17.Domain.Utils;
 using Systemorph.Vertex.Activities;
 using Systemorph.Vertex.Collections;
@@ -9,10 +11,9 @@ using Systemorph.Vertex.Import;
 using Systemorph.Vertex.Scopes.Proxy;
 using Systemorph.Vertex.Workspace;
 
+namespace OpenSmc.Ifrs17.Domain.Test;
 
-namespace OpenSmc.Ifrs17.Domain.Tests;
-
-public class QueriesTest : TestBase
+public class QueriesTest : Tests.TestBase
 {
     private readonly string gic;
     private readonly string scenario;
