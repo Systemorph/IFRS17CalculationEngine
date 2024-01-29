@@ -27,7 +27,7 @@ public abstract record BaseDataRecord : BaseVariableIdentity, IKeyed, IPartition
     [NotVisible]
     [Dimension(typeof(AmountType))]
     [IdentityProperty]
-    public string AmountType { get; init; }
+    public string? AmountType { get; init; }
 
     [NotVisible]
     [Dimension(typeof(int), nameof(AccidentYear))]

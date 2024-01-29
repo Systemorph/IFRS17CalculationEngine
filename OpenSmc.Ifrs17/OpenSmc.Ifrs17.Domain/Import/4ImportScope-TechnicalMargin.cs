@@ -19,10 +19,10 @@ public interface BeExperienceAdjustmentForPremium : IScope<ImportIdentity, Impor
 
     [IdentityProperty][NotVisible][Dimension(typeof(EstimateType))] string EstimateType => ImportCalculationExtensions.ComputationHelper.ExperienceAdjustEstimateTypeMapping[EstimateTypes.BE];
     [IdentityProperty][NotVisible][Dimension(typeof(EconomicBasis))] string EconomicBasis => GetContext();
-    [IdentityProperty][NotVisible][Dimension(typeof(AmountType))] string AmountType => AmountTypes.PR;
+    [IdentityProperty][NotVisible][Dimension(typeof(AmountType))] string? AmountType => AmountTypes.PR;
 
     double Value => GetStorage().GetPremiumAllocationFactor(Identity) * 
-        GetStorage().GetPremiums().Sum(pr => GetScope<PvAggregatedOverAccidentYear>((Identity, pr, EstimateTypes.BE), o => o.WithContext(EconomicBasis)).Value);
+        GetStorage().GetPremiums().Sum(pr => GetScope<IPvAggregatedOverAccidentYear>((Identity, pr, EstimateTypes.BE), o => o.WithContext(EconomicBasis)).Value);
 }
 
 public interface DefaultValueBeExperienceAdjustmentForPremium : BeExperienceAdjustmentForPremium{
@@ -42,7 +42,7 @@ public interface ActualExperienceAdjustmentOnPremium : IScope<ImportIdentity, Im
             .WithApplicability<DefaultValueActualExperienceAdjustmentOnPremium>(x => x.Identity.ValuationApproach == ValuationApproaches.PAA && x.Identity.Novelty != Novelties.C)
             .WithApplicability<ActualExperienceAdjustmentOnPremiumForPaa>(x => x.Identity.ValuationApproach == ValuationApproaches.PAA));
     
-    [IdentityProperty][NotVisible][Dimension(typeof(AmountType))] string AmountType => AmountTypes.PR;
+    [IdentityProperty][NotVisible][Dimension(typeof(AmountType))] string? AmountType => AmountTypes.PR;
     [IdentityProperty][NotVisible][Dimension(typeof(EstimateType))] string EstimateType => ImportCalculationExtensions.ComputationHelper.ExperienceAdjustEstimateTypeMapping[EstimateTypes.A];
     
     double Value => GetStorage().GetPremiumAllocationFactor(Identity) * 
@@ -89,8 +89,8 @@ public interface TechnicalMargin : IScope<ImportIdentity, ImportStorage>
     protected string estimateType => GetContext();
     [NotVisible] string EconomicBasis => EconomicBases.L;
     double Value => GetScope<TechnicalMarginAmountType>((Identity, estimateType)).Values
-                       .Sum(at => GetScope<PvAggregatedOverAccidentYear>((Identity, at, EstimateTypes.BE), o => o.WithContext(EconomicBasis)).Value) +
-                       GetScope<PvAggregatedOverAccidentYear>((Identity, (string)null, EstimateTypes.RA), o => o.WithContext(EconomicBasis)).Value;
+                       .Sum(at => GetScope<IPvAggregatedOverAccidentYear>((Identity, at, EstimateTypes.BE), o => o.WithContext(EconomicBasis)).Value) +
+                       GetScope<IPvAggregatedOverAccidentYear>((Identity, (string)null, EstimateTypes.RA), o => o.WithContext(EconomicBasis)).Value;
                     
     double AggregatedValue => GetScope<IPreviousAocSteps>((Identity, StructureType.AocTechnicalMargin)).Values
                                 .Sum(aoc => GetScope<TechnicalMargin>(Identity with {AocType = aoc.AocType, Novelty = aoc.Novelty}).Value);
@@ -103,8 +103,8 @@ public interface TechnicalMarginForCurrentBasis : TechnicalMargin{
 public interface TechnicalMarginForPaa : TechnicalMargin{
     [NotVisible] string TechnicalMargin.EconomicBasis => EconomicBases.L;
     double TechnicalMargin.Value => GetScope<TechnicalMarginAmountType>((Identity, estimateType)).Values
-                       .Sum(at => GetScope<PvAggregatedOverAccidentYear>((Identity, at, EstimateTypes.BE), o => o.WithContext(EconomicBasis)).Value) +
-                       GetScope<PvAggregatedOverAccidentYear>((Identity, (string)null, EstimateTypes.RA), o => o.WithContext(EconomicBasis)).Value +
+                       .Sum(at => GetScope<IPvAggregatedOverAccidentYear>((Identity, at, EstimateTypes.BE), o => o.WithContext(EconomicBasis)).Value) +
+                       GetScope<IPvAggregatedOverAccidentYear>((Identity, (string)null, EstimateTypes.RA), o => o.WithContext(EconomicBasis)).Value +
                        GetScope<DiscountedDeferrable>(Identity).Value + GetScope<PremiumRevenue>(Identity).Value;
 }
 
@@ -130,7 +130,7 @@ public interface TechnicalMarginDefaultValue : TechnicalMargin{
     double TechnicalMargin.Value => default;
 }
 
-public interface TechnicalMarginForIaStandard : TechnicalMargin, InterestAccretionFactor{
+public interface TechnicalMarginForIaStandard : TechnicalMargin, IInterestAccretionFactor{
     double TechnicalMargin.Value => AggregatedValue * GetInterestAccretionFactor(EconomicBasis);
 }
 
@@ -162,10 +162,10 @@ public interface TechnicalMarginForEA : TechnicalMargin{
         .Sum(n => GetScope<BeExperienceAdjustmentForPremium>(Identity with {AocType = referenceAocType, Novelty = n}, o => o.WithContext(EconomicBasis)).Value) -
         GetScope<ActualExperienceAdjustmentOnPremium>(Identity with {AocType = referenceAocType, Novelty = Novelties.C}).Value;
     protected double deferrable => GetStorage().GetDeferrableExpenses().Sum(d =>
-        GetStorage().GetNovelties(referenceAocType, StructureType.AocPresentValue).Sum(n => GetScope<PvAggregatedOverAccidentYear>((Identity with {AocType = referenceAocType, Novelty = n}, d, EstimateTypes.BE), o => o.WithContext(EconomicBasis)).Value) -
+        GetStorage().GetNovelties(referenceAocType, StructureType.AocPresentValue).Sum(n => GetScope<IPvAggregatedOverAccidentYear>((Identity with {AocType = referenceAocType, Novelty = n}, d, EstimateTypes.BE), o => o.WithContext(EconomicBasis)).Value) -
         GetScope<WrittenActual>((Identity with {AocType = referenceAocType, Novelty = Novelties.C}, d, EstimateTypes.A, (int?)null)).Value);
     protected double investmentClaims => GetStorage().GetInvestmentClaims().Sum(ic =>
-        GetStorage().GetNovelties(referenceAocType, StructureType.AocPresentValue).Sum(n => GetScope<PvAggregatedOverAccidentYear>((Identity with {AocType = referenceAocType, Novelty = n}, ic, EstimateTypes.BE), o => o.WithContext(EconomicBasis)).Value) -
+        GetStorage().GetNovelties(referenceAocType, StructureType.AocPresentValue).Sum(n => GetScope<IPvAggregatedOverAccidentYear>((Identity with {AocType = referenceAocType, Novelty = n}, ic, EstimateTypes.BE), o => o.WithContext(EconomicBasis)).Value) -
         GetScope<WrittenActual>((Identity with {AocType = referenceAocType, Novelty = Novelties.C}, ic, EstimateTypes.A, (int?)null)).Value);
     
     double TechnicalMargin.Value => premiums + deferrable + investmentClaims;
@@ -180,14 +180,14 @@ public interface TechnicalMarginForAM : TechnicalMargin{
     static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>
         builder.ForScope<TechnicalMarginForAM>(s => s.WithApplicability<TechnicalMarginForAmForPaa>(x => x.Identity.ValuationApproach == ValuationApproaches.PAA));   
  
-    double TechnicalMargin.Value => Math.Abs(AggregatedValue) > Consts.Precision ? -1d * AggregatedValue * GetScope<CurrentPeriodAmortizationFactor>((Identity, AmountTypes.CU, 0), o => o.WithContext(EconomicBasis)).Value : default;
+    double TechnicalMargin.Value => Math.Abs(AggregatedValue) > Consts.Precision ? -1d * AggregatedValue * GetScope<ICurrentPeriodAmortizationFactor>((Identity, AmountTypes.CU, 0), o => o.WithContext(EconomicBasis)).Value : default;
 }
 
 public interface TechnicalMarginForAmForPaa : TechnicalMargin{
     private IEnumerable<string> novelties => GetStorage().GetNovelties(AocTypes.CF, StructureType.AocPresentValue);
     double TechnicalMargin.Value =>  GetScope<TechnicalMarginAmountType>((Identity, estimateType)).Values
-                                   .Sum(at => novelties.Sum(n => GetScope<PvAggregatedOverAccidentYear>((Identity with {AocType = AocTypes.CF, Novelty = n}, at, EstimateTypes.BE), o => o.WithContext(EconomicBasis)).Value + 
-                                                                 GetScope<PvAggregatedOverAccidentYear>((Identity with {AocType = AocTypes.CF, Novelty = n}, (string)null, EstimateTypes.RA), o => o.WithContext(EconomicBasis)).Value));
+                                   .Sum(at => novelties.Sum(n => GetScope<IPvAggregatedOverAccidentYear>((Identity with {AocType = AocTypes.CF, Novelty = n}, at, EstimateTypes.BE), o => o.WithContext(EconomicBasis)).Value + 
+                                                                 GetScope<IPvAggregatedOverAccidentYear>((Identity with {AocType = AocTypes.CF, Novelty = n}, (string)null, EstimateTypes.RA), o => o.WithContext(EconomicBasis)).Value));
 //+  Revenue AM + Deferral AM
 
 }
@@ -350,7 +350,7 @@ public interface LossRecoveryComponentPaa : LossRecoveryComponent{
 
 public interface LossRecoveryComponentForAm : LossRecoveryComponent{
     private string economicBasis => GetScope<TechnicalMargin>(Identity).EconomicBasis;
-    double LossRecoveryComponent.Value  => Math.Abs(AggregatedValue) > Consts.Precision ? -1d * AggregatedValue * GetScope<CurrentPeriodAmortizationFactor>((Identity, AmountTypes.CU, 0), o => o.WithContext(economicBasis)).Value : default;
+    double LossRecoveryComponent.Value  => Math.Abs(AggregatedValue) > Consts.Precision ? -1d * AggregatedValue * GetScope<ICurrentPeriodAmortizationFactor>((Identity, AmountTypes.CU, 0), o => o.WithContext(economicBasis)).Value : default;
 }
 
 public interface LossRecoveryComponentForEop : LossRecoveryComponent{

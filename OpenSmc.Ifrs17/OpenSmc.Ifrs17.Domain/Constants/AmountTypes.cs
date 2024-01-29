@@ -9,7 +9,7 @@ public static class AmountTypes
     public const string CDRI = nameof(CDRI); // Initial Credit Default Risk, i.e. the CDR value when the GIC state is set to active
 
     public const string CL = nameof(CL); // Claims
-    public const string PR = nameof(PR); // Premiums
+    public const string? PR = nameof(PR); // Premiums
     public const string NIC = nameof(NIC); // Claims Non-Investment component
     public const string ICO = nameof(ICO); // Claims Investment component
     public const string NE = nameof(NE); // Non Attributable Expenses
@@ -22,5 +22,5 @@ public static class AmountTypes
     public const string ULE = nameof(ULE); // Unallocated Loss Adjustment Expenses
     public const string CU = nameof(CU); // Coverage Units
     public const string DE = nameof(DE); // Deferrable Expenses
-    public const string DAE = nameof(DAE); // Deferrable Acquisition Expenses
+    public const string? DAE = nameof(DAE); // Deferrable Acquisition Expenses
 }

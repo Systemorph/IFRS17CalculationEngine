@@ -112,7 +112,7 @@ public record ReportVariable
     [NotVisible]
     [Dimension(typeof(AmountType))]
     [IdentityProperty]
-    public string AmountType { get; init; }
+    public string? AmountType { get; init; }
 
     [NotVisible]
     [Dimension(typeof(EstimateType))]

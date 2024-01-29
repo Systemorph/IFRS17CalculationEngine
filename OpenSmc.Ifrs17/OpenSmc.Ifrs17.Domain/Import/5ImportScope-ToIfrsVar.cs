@@ -13,7 +13,7 @@ public interface PvToIfrsVariable: IScope<ImportIdentity, ImportStorage>
         builder.ForScope<PvToIfrsVariable>(s => s.WithApplicability<EmptyPvIfrsVariable>(x => 
           !x.GetStorage().GetAllAocSteps(StructureType.AocPresentValue).Contains(x.Identity.AocStep)));
 
-  IEnumerable<IfrsVariable> PvLocked => GetScope<PvLocked>(Identity).RepeatOnce().SelectMany(x =>
+  IEnumerable<IfrsVariable> PvLocked => GetScope<IPvLocked>(Identity).RepeatOnce().SelectMany(x =>
     x.PresentValues.Select(pv =>
     new IfrsVariable{ EconomicBasis = x.EconomicBasis, 
                       EstimateType = x.EstimateType, 
@@ -24,7 +24,7 @@ public interface PvToIfrsVariable: IScope<ImportIdentity, ImportStorage>
                       AmountType = pv.AmountType,
                       Values = ImportCalculationExtensions.SetProjectionValue(pv.Value, x.Identity.ProjectionPeriod),
                       Partition = GetStorage().TargetPartition }));
-  IEnumerable<IfrsVariable> PvCurrent => GetScope<PvCurrent>(Identity).RepeatOnce().SelectMany(x => 
+  IEnumerable<IfrsVariable> PvCurrent => GetScope<IPvCurrent>(Identity).RepeatOnce().SelectMany(x => 
     x.PresentValues.Select(pv =>
     new IfrsVariable{ EconomicBasis = x.EconomicBasis, 
                       EstimateType = x.EstimateType, 
@@ -50,7 +50,7 @@ public interface NominalToIfrsVariable: IScope<ImportIdentity, ImportStorage>
       builder.ForScope<NominalToIfrsVariable>(s => s.WithApplicability<EmptyNominalToIfrsVariable>(x => 
           !x.GetStorage().GetAllAocSteps(StructureType.AocPresentValue).Contains(x.Identity.AocStep)));
 
-    IEnumerable<IfrsVariable> CumulatedNominal => GetScope<CumulatedNominalBE>(Identity).RepeatOnce().SelectMany(x => 
+    IEnumerable<IfrsVariable> CumulatedNominal => GetScope<ICumulatedNominalBe>(Identity).RepeatOnce().SelectMany(x => 
         x.PresentValues.Select(pv => 
             new IfrsVariable{ EconomicBasis = x.EconomicBasis, 
                               EstimateType = x.EstimateType, 
@@ -61,7 +61,7 @@ public interface NominalToIfrsVariable: IScope<ImportIdentity, ImportStorage>
                               AmountType = pv.AmountType,
                               Values = ImportCalculationExtensions.SetProjectionValue(pv.Value, x.Identity.ProjectionPeriod),
                               Partition = GetStorage().TargetPartition}))
-    .Concat(GetScope<CumulatedNominalRA>(Identity).RepeatOnce().SelectMany(x => 
+    .Concat(GetScope<ICumulatedNominalRa>(Identity).RepeatOnce().SelectMany(x => 
         x.PresentValues.Select(pv => 
             new IfrsVariable{ EconomicBasis = x.EconomicBasis, 
                               EstimateType = x.EstimateType, 
@@ -85,7 +85,7 @@ public interface RaToIfrsVariable: IScope<ImportIdentity, ImportStorage>
         builder.ForScope<RaToIfrsVariable>(s => s.WithApplicability<EmptyRaIfrsVariable>(x => 
             !x.GetStorage().GetAllAocSteps(StructureType.AocPresentValue).Contains(x.Identity.AocStep)));
     
-    IEnumerable<IfrsVariable> RaCurrent => GetScope<RaCurrent>(Identity).RepeatOnce().SelectMany(x => 
+    IEnumerable<IfrsVariable> RaCurrent => GetScope<IRaCurrent>(Identity).RepeatOnce().SelectMany(x => 
         x.PresentValues.Select(pv => 
             new IfrsVariable{ EconomicBasis = x.EconomicBasis, 
                               EstimateType = x.EstimateType, 
@@ -97,7 +97,7 @@ public interface RaToIfrsVariable: IScope<ImportIdentity, ImportStorage>
                               Values = ImportCalculationExtensions.SetProjectionValue(pv.Value, x.Identity.ProjectionPeriod),
                               Partition = GetStorage().TargetPartition}));
                         
-    IEnumerable<IfrsVariable> RaLocked => GetScope<RaLocked>(Identity).RepeatOnce().SelectMany(x => 
+    IEnumerable<IfrsVariable> RaLocked => GetScope<IRaLocked>(Identity).RepeatOnce().SelectMany(x => 
         x.PresentValues.Select(pv => 
             new IfrsVariable{ EconomicBasis = x.EconomicBasis, 
                               EstimateType = x.EstimateType, 
@@ -186,7 +186,7 @@ public interface DeferrableToIfrsVariable: IScope<ImportIdentity, ImportStorage>
 
     IEnumerable<IfrsVariable> DeferrableAmFactor => (Identity.AocType, amortizationStep.Any(), EconomicBasis) switch {
         (AocTypes.AM, true, EconomicBases.N) => amortizationStep.Select(x => x.AccidentYear.Value).SelectMany(shift => 
-            GetScope<CurrentPeriodAmortizationFactor>((Identity, AmountTypes.DAE, shift), o => o.WithContext(EconomicBases.N)).RepeatOnce() //hardcoded AmountType: DAE for pattern
+            GetScope<ICurrentPeriodAmortizationFactor>((Identity, AmountTypes.DAE, shift), o => o.WithContext(EconomicBases.N)).RepeatOnce() //hardcoded AmountType: DAE for pattern
                 .Select(x => new IfrsVariable{ EstimateType = x.EstimateType,
                           EconomicBasis = EconomicBases.N,
                           DataNode = x.Identity.Id.DataNode,
@@ -328,7 +328,7 @@ public interface TmToIfrsVariable: IScope<ImportIdentity, ImportStorage>
     
     IEnumerable<IfrsVariable> AmortizationFactor =>  Identity.AocType == AocTypes.AM && Loss.Concat(Csms).Where(x => x.Values != null).Any(x => Math.Abs(x.Values.GetValidElement(Identity.ProjectionPeriod)) > Consts.Precision)
         && GetStorage().DataNodeDataBySystemName[Identity.DataNode].LiabilityType == LiabilityTypes.LRC
-        ? GetScope<CurrentPeriodAmortizationFactor>((Identity, AmountTypes.CU, 0), o => o.WithContext(economicBasis)).RepeatOnce()
+        ? GetScope<ICurrentPeriodAmortizationFactor>((Identity, AmountTypes.CU, 0), o => o.WithContext(economicBasis)).RepeatOnce()
             .Select(x => new IfrsVariable{ EstimateType = x.EstimateType,
                                            DataNode = x.Identity.Id.DataNode,
                                            AocType = x.Identity.Id.AocType,

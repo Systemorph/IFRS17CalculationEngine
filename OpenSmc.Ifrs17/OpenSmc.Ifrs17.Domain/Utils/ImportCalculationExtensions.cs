@@ -54,7 +54,7 @@ public static class ImportCalculationExtensions
         double[] yearlyDiscountRates, AmountType[] amountTypes)
     {
         if (nominalRawVariables == null) return Enumerable.Empty<RawVariable>().ToDataCube();
-        var periodTypeByAmountType = amountTypes.ToDictionary(x => x.SystemName, x => x.PeriodType);
+        Dictionary<string?, PeriodType> periodTypeByAmountType = amountTypes.ToDictionary(x => x.SystemName, x => x.PeriodType);
 
         return nominalRawVariables.Select(rv =>
             {

@@ -2,6 +2,8 @@ using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
+using OpenSmc.Ifrs17.Domain.Import.NominalCashflow;
+using OpenSmc.Ifrs17.Domain.Import.PresentValueCalculation;
 using Systemorph.Vertex.Api.Attributes;
 using Systemorph.Vertex.Scopes;
 
@@ -25,7 +27,7 @@ public interface ActualProjection : WrittenActual{
     double WrittenActual.Value => GetStorage().GetValues(Identity.Id with {AocType = AocTypes.CL, Novelty = Novelties.C}, Identity.AmountType, EstimateTypes.PCE, Identity.AccidentYear).Any()
         ? GetScope<ActualFromPaymentPattern>(Identity).Value
         : GetStorage().GetNovelties(Identity.Id.AocType, StructureType.AocPresentValue)
-            .Sum(novelty => GetScope<PresentValue>((Identity.Id with {AocType = AocTypes.CF, Novelty = novelty}, Identity.AmountType, EstimateTypes.BE, Identity.AccidentYear), o => o.WithContext(EconomicBases.C)).Value);
+            .Sum(novelty => GetScope<IPresentValue>((Identity.Id with {AocType = AocTypes.CF, Novelty = novelty}, Identity.AmountType, EstimateTypes.BE, Identity.AccidentYear), o => o.WithContext(EconomicBases.C)).Value);
 }
 
 public interface ActualFromPaymentPattern : WrittenActual, IWithGetValueFromValues{
@@ -112,12 +114,12 @@ public interface OverdueActual : IScope<ImportIdentity, ImportStorage>
 public interface DiscountedAmortizationFactorForDeferrals : IScope<ImportIdentity, ImportStorage>
 {
     private string EconomicBasis => GetContext();
-    double Value => GetScope<CurrentPeriodAmortizationFactor>((Identity, AmountTypes.DAE, 0), o => o.WithContext(EconomicBasis)).EffectiveAmountType == AmountTypes.DAE
-        ? GetScope<CurrentPeriodAmortizationFactor>((Identity, AmountTypes.DAE, 0), o => o.WithContext(EconomicBasis)).Value
-        : GetScope<CurrentPeriodAmortizationFactor>((Identity, AmountTypes.CU, 0), o => o.WithContext(EconomicBasis)).Value;
-    string EffectiveAmountType => GetScope<CurrentPeriodAmortizationFactor>((Identity, AmountTypes.DAE, 0), o => o.WithContext(EconomicBasis)).EffectiveAmountType == AmountTypes.DAE
+    double Value => GetScope<ICurrentPeriodAmortizationFactor>((Identity, AmountTypes.DAE, 0), o => o.WithContext(EconomicBasis)).EffectiveAmountType == AmountTypes.DAE
+        ? GetScope<ICurrentPeriodAmortizationFactor>((Identity, AmountTypes.DAE, 0), o => o.WithContext(EconomicBasis)).Value
+        : GetScope<ICurrentPeriodAmortizationFactor>((Identity, AmountTypes.CU, 0), o => o.WithContext(EconomicBasis)).Value;
+    string? EffectiveAmountType => GetScope<ICurrentPeriodAmortizationFactor>((Identity, AmountTypes.DAE, 0), o => o.WithContext(EconomicBasis)).EffectiveAmountType == AmountTypes.DAE
         ? AmountTypes.DAE
-        : GetScope<CurrentPeriodAmortizationFactor>((Identity, AmountTypes.CU, 0), o => o.WithContext(EconomicBasis)).EffectiveAmountType;
+        : GetScope<ICurrentPeriodAmortizationFactor>((Identity, AmountTypes.CU, 0), o => o.WithContext(EconomicBasis)).EffectiveAmountType;
 }
 
 
@@ -140,7 +142,7 @@ public interface DiscountedDeferrable : IScope<ImportIdentity, ImportStorage>
     [IdentityProperty][NotVisible][Dimension(typeof(EconomicBasis))] string EconomicBasis => GetStorage().GetEconomicBasisDriver(Identity.DataNode);
     
     double Value => GetStorage().GetDeferrableExpenses().Sum(at => 
-        GetScope<PresentValue>((Identity, at, EstimateTypes.BE, (int?)null), o => o.WithContext(EconomicBasis)).Value);
+        GetScope<IPresentValue>((Identity, at, EstimateTypes.BE, (int?)null), o => o.WithContext(EconomicBasis)).Value);
 }
 
 public interface DeferrableWithIfrsVariable : DiscountedDeferrable {
@@ -163,7 +165,7 @@ public interface DeferrableForBop : DiscountedDeferrable {
     double DiscountedDeferrable.Value => GetStorage().GetValue(Identity, null, EstimateTypes.DA, (int?)null, Identity.ProjectionPeriod);
 }
 
-public interface DeferrableForIaStandard : DiscountedDeferrable, InterestAccretionFactor {
+public interface DeferrableForIaStandard : DiscountedDeferrable, IInterestAccretionFactor {
     private double aggregatedValue => GetScope<IPreviousAocSteps>((Identity, StructureType.AocTechnicalMargin)).Values
         .Sum(aoc => GetScope<DiscountedDeferrable>(Identity with {AocType = aoc.AocType, Novelty = aoc.Novelty}).Value);   
     double DiscountedDeferrable.Value => aggregatedValue * GetInterestAccretionFactor(EconomicBasis);
@@ -186,7 +188,7 @@ public interface DeferrableEa : DiscountedDeferrable {
     private string referenceAocType => GetScope<IReferenceAocStep>(Identity).Values.First().AocType;
     double DiscountedDeferrable.Value => GetStorage().GetDeferrableExpenses().Sum(at =>
         GetStorage().GetNovelties(referenceAocType, StructureType.AocPresentValue)
-        .Sum(n => GetScope<PresentValue>((Identity with {AocType = referenceAocType, Novelty = n}, at, EstimateTypes.BE, (int?)null), o => o.WithContext(EconomicBasis)).Value) -
+        .Sum(n => GetScope<IPresentValue>((Identity with {AocType = referenceAocType, Novelty = n}, at, EstimateTypes.BE, (int?)null), o => o.WithContext(EconomicBasis)).Value) -
              GetScope<WrittenActual>((Identity with {AocType = referenceAocType, Novelty = Novelties.C}, at, EstimateTypes.A, (int?)null)).Value);
 }
 
@@ -258,7 +260,7 @@ public interface AmDeferrable : NominalDeferrable{
     private IEnumerable<AocStep> referenceAocSteps => GetScope<IReferenceAocStep>(Identity.Id).Values; //Reference step of AM,C is CL,C
     private double referenceCashflow => referenceAocSteps.Sum(refAocStep => GetScope<AmReferenceDeferrable>((Identity.Id with {AocType = refAocStep.AocType, Novelty = refAocStep.Novelty}, Identity.MonthlyShift)).Value);
 
-    double NominalDeferrable.Value => Math.Abs(referenceCashflow) > Consts.Precision ? -1d * referenceCashflow * GetScope<CurrentPeriodAmortizationFactor>((Identity.Id, AmountTypes.DAE, Identity.MonthlyShift), o => o.WithContext(EconomicBasis)).Value : default;
+    double NominalDeferrable.Value => Math.Abs(referenceCashflow) > Consts.Precision ? -1d * referenceCashflow * GetScope<ICurrentPeriodAmortizationFactor>((Identity.Id, AmountTypes.DAE, Identity.MonthlyShift), o => o.WithContext(EconomicBasis)).Value : default;
 }
 
 public interface EopDeferrable : NominalDeferrable{
@@ -271,13 +273,13 @@ public interface DiscountedAmortizationFactorForRevenues : IScope<ImportIdentity
 {
     [IdentityProperty][NotVisible][Dimension(typeof(EconomicBasis))] private string EconomicBasis => GetContext();
     
-    double Value => GetScope<CurrentPeriodAmortizationFactor>((Identity, AmountTypes.PR, 0), o => o.WithContext(EconomicBasis)).EffectiveAmountType == AmountTypes.PR
-        ? GetScope<CurrentPeriodAmortizationFactor>((Identity, AmountTypes.PR, 0), o => o.WithContext(EconomicBasis)).Value
-        : GetScope<CurrentPeriodAmortizationFactor>((Identity, AmountTypes.CU, 0), o => o.WithContext(EconomicBasis)).Value;
+    double Value => GetScope<ICurrentPeriodAmortizationFactor>((Identity, AmountTypes.PR, 0), o => o.WithContext(EconomicBasis)).EffectiveAmountType == AmountTypes.PR
+        ? GetScope<ICurrentPeriodAmortizationFactor>((Identity, AmountTypes.PR, 0), o => o.WithContext(EconomicBasis)).Value
+        : GetScope<ICurrentPeriodAmortizationFactor>((Identity, AmountTypes.CU, 0), o => o.WithContext(EconomicBasis)).Value;
 
-    string EffectiveAmountType => GetScope<CurrentPeriodAmortizationFactor>((Identity, AmountTypes.PR, 0), o => o.WithContext(EconomicBasis)).EffectiveAmountType == AmountTypes.PR
+    string? EffectiveAmountType => GetScope<ICurrentPeriodAmortizationFactor>((Identity, AmountTypes.PR, 0), o => o.WithContext(EconomicBasis)).EffectiveAmountType == AmountTypes.PR
         ? AmountTypes.PR
-        : GetScope<CurrentPeriodAmortizationFactor>((Identity, AmountTypes.CU, 0), o => o.WithContext(EconomicBasis)).EffectiveAmountType;
+        : GetScope<ICurrentPeriodAmortizationFactor>((Identity, AmountTypes.CU, 0), o => o.WithContext(EconomicBasis)).EffectiveAmountType;
 }
 
 
@@ -300,7 +302,7 @@ public interface PremiumRevenue : IScope<ImportIdentity, ImportStorage>{
     [IdentityProperty][NotVisible][Dimension(typeof(EconomicBasis))] string EconomicBasis => GetStorage().GetEconomicBasisDriver(Identity.DataNode);
     
     double Value => GetStorage().GetPremiums().Sum(at => 
-        GetScope<PresentValue>((Identity, at, EstimateTypes.BE, (int?)null), o => o.WithContext(EconomicBasis)).Value);
+        GetScope<IPresentValue>((Identity, at, EstimateTypes.BE, (int?)null), o => o.WithContext(EconomicBasis)).Value);
 }
 
 public interface PremiumRevenueWithIfrsVariable : PremiumRevenue {
@@ -327,7 +329,7 @@ public interface AggregatedPremiumRevenue : PremiumRevenue {
         .Sum(aoc => GetScope<PremiumRevenue>(Identity with {AocType = aoc.AocType, Novelty = aoc.Novelty}).Value);
 }
 
-public interface PremiumRevenueForIaStandard : PremiumRevenue, InterestAccretionFactor {
+public interface PremiumRevenueForIaStandard : PremiumRevenue, IInterestAccretionFactor {
     private double aggregatedValue => GetScope<AggregatedPremiumRevenue>(Identity).AggregatedValue;   
     double PremiumRevenue.Value => aggregatedValue * GetInterestAccretionFactor(EconomicBasis);
 }

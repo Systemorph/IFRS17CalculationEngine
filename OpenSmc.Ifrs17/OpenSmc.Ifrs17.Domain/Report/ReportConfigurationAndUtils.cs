@@ -211,7 +211,7 @@ public static class ReportConfigExtensions
         [NotVisible]
         [AggregateBy]
         [Dimension(typeof(AmountType))]
-        public string AmountType { get; init; }
+        public string? AmountType { get; init; }
 
         [NotVisible]
         [Dimension(typeof(EstimateType))]

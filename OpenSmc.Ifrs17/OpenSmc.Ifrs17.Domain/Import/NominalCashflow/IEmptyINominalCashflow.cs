@@ -1,4 +1,4 @@
-namespace OpenSmc.Ifrs17.Domain.Import;
+namespace OpenSmc.Ifrs17.Domain.Import.NominalCashflow;
 
 public interface IEmptyINominalCashflow : INominalCashflow
 {
