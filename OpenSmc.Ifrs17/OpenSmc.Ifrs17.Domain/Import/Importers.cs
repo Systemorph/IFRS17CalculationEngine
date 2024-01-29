@@ -348,7 +348,7 @@ public static class ImportTasks
         if (activity.HasErrors()) return activity.Finish();
 
         var universe = scopes.ForStorage(storage).ToScope<IModel>();
-        var ivs = universe.GetScopes<ComputeAllScopes>(storage.DataNodesByImportScope[ImportScope.Primary])
+        var ivs = universe.GetScopes<IComputeAllScopes>(storage.DataNodesByImportScope[ImportScope.Primary])
             .SelectMany(x => x.CalculatedIfrsVariables);
         if (activity.HasErrors()) return activity.Finish();
 

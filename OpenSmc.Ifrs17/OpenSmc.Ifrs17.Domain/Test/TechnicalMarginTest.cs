@@ -166,7 +166,7 @@ public class TechnicalMarginTest : TestBase
             .GetScopes<IGetIdentities>(testStorage.DataNodesByImportScope[ImportScope.Primary]
                 .Where(dn => dn == primaryDataNode)).SelectMany(s => s.Identities);
 
-        var tmToIfrsVariable = testUniverse.GetScopes<TmToIfrsVariable>(identities);
+        var tmToIfrsVariable = testUniverse.GetScopes<ITmToIfrsVariable>(identities);
         var csm = tmToIfrsVariable.SelectMany(x => x.Csms).Where(x => Math.Abs(x.Values[0]) > Consts.Precision);
         var loss = tmToIfrsVariable.SelectMany(x => x.Loss).Where(x => Math.Abs(x.Values[0]) > Consts.Precision);
 

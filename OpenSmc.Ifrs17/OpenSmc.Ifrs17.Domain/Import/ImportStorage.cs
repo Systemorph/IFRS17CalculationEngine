@@ -302,8 +302,10 @@ public class ImportStorage
     public double GetValue(ImportIdentity id, Func<IfrsVariable, bool> whereClause, int projection = 0) => GetIfrsVariables(id.DataNode).Where(v => v.AocType == id.AocType && v.Novelty == id.Novelty && whereClause(v)).Select(v => v?.Values ?? (double[])null).AggregateDoubleArray().ElementAtOrDefault(projection);
     
     public double[] GetValues(ImportIdentity id, string amountType, string estimateType, int? accidentYear) => GetValues(id, v => v.AccidentYear == accidentYear && v.AmountType == amountType && v.EstimateType == estimateType);
-    public double GetValue(ImportIdentity id, string amountType, string estimateType, int? accidentYear, int projection = 0) => GetValue(id, v => v.AccidentYear == accidentYear && v.AmountType == amountType && v.EstimateType == estimateType, projection);
-    public double GetValue(ImportIdentity id, string amountType, string estimateType, string economicBasis, int? accidentYear, int projection = 0) => GetValue(id, v => v.AccidentYear == accidentYear && v.AmountType == amountType && v.EstimateType == estimateType && v.EconomicBasis == economicBasis, projection);
+    public double GetValue(ImportIdentity id, string? amountType, string? estimateType, int? accidentYear,
+        int projection = 0) => GetValue(id, v => v.AccidentYear == accidentYear && v.AmountType == amountType && v.EstimateType == estimateType, projection);
+    public double GetValue(ImportIdentity id, string? amountType, string? estimateType, string? economicBasis,
+        int? accidentYear, int projection = 0) => GetValue(id, v => v.AccidentYear == accidentYear && v.AmountType == amountType && v.EstimateType == estimateType && v.EconomicBasis == economicBasis, projection);
    
     //Novelty
     private IEnumerable<string> GetNoveltiesForAocType(string aocType, IEnumerable<AocStep> aocConfiguration) => aocConfiguration.Where(aocStep => aocStep.AocType == aocType).Select(aocStep => aocStep.Novelty);
