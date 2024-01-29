@@ -9,74 +9,14 @@ using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
-public interface MonthlyRate : IScope<ImportIdentity, ImportStorage>
+public interface EmptyINominalCashflow : INominalCashflow
 {
-    private string EconomicBasis => GetContext();
-    
-    private double[] YearlyYieldCurve => EconomicBasis switch {
-        EconomicBases.N => new [] { 0d },
-        _ => GetStorage().GetYearlyYieldCurve(Identity, EconomicBasis),
-    };
-    
-    double[] Interest => YearlyYieldCurve.Select(rate => Math.Pow(1d + rate, 1d / 12d)).ToArray();   
-                        
-    double[] Discount => Interest.Select(x => Math.Pow(x, -1)).ToArray();
+    double[] INominalCashflow.Values => Enumerable.Empty<double>().ToArray();
 }
 
-
-public interface NominalCashflow : IScope<(ImportIdentity Id, string AmountType, string EstimateType, int? AccidentYear), ImportStorage>
+public interface CreditDefaultRiskINominalCashflow : INominalCashflow
 {
-    static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>
-        builder.ForScope<NominalCashflow>(s => s
-            .WithApplicability<EmptyNominalCashflow>(x =>
-                (x.Identity.Id.AocType != AocTypes.CL && x.Identity.Id.AocType != AocTypes.EOP) && // if AocType is NOT CL AND NOT EOP AND
-                x.Identity.Id.Novelty != Novelties.I && // if Novelty is NOT inforce AND
-                x.Identity.Id.ProjectionPeriod >= x.GetStorage().FirstNextYearProjection && // if it is projection >= 1 Year AND
-                !(x.Identity.AccidentYear.HasValue && Consts.MonthInAYear * x.Identity.AccidentYear >= (Consts.MonthInAYear * x.GetStorage().CurrentReportingPeriod.Year + x.GetStorage().GetShift(x.Identity.Id.ProjectionPeriod))) // if it DOES NOT (have AY and with AY >= than projected FY)
-            )
-            .WithApplicability<EmptyNominalCashflow>(x =>
-                (x.Identity.Id.AocType == AocTypes.BOP || x.Identity.Id.AocType == AocTypes.CF || x.Identity.Id.AocType == AocTypes.IA) && // if AocType is BOP, CF or IA (or not in telescopic) AND
-                x.Identity.Id.Novelty == Novelties.I && // if Novelty is inforce AND
-                x.Identity.Id.LiabilityType == LiabilityTypes.LIC && // if LiabilityType is LIC AND
-                x.Identity.Id.ProjectionPeriod >= x.GetStorage().FirstNextYearProjection && // if it is projection >= 1 Year AND
-                (x.Identity.AccidentYear.HasValue && Consts.MonthInAYear * x.Identity.AccidentYear >= (Consts.MonthInAYear * x.GetStorage().CurrentReportingPeriod.Year + x.GetStorage().GetShift(x.Identity.Id.ProjectionPeriod))) // if it DOES (have AY and with AY >= than projected FY)
-            )
-            .WithApplicability<EmptyNominalCashflow>(x =>
-                x.Identity.Id.LiabilityType == LiabilityTypes.LRC && // if LiabilityType is LRC
-                x.Identity.Id.ProjectionPeriod >= x.GetStorage().FirstNextYearProjection && // if it is projection >= 1 Year AND
-                (x.Identity.AccidentYear.HasValue && Consts.MonthInAYear * x.Identity.AccidentYear < (Consts.MonthInAYear * x.GetStorage().CurrentReportingPeriod.Year + x.GetStorage().GetShift(x.Identity.Id.ProjectionPeriod))) // if it DOES (have AY and with AY < than projected FY)
-            )
-            .WithApplicability<EmptyNominalCashflow>(x =>
-                (x.Identity.Id.AocType == AocTypes.BOP || x.Identity.Id.AocType == AocTypes.CF || x.Identity.Id.AocType == AocTypes.IA) && // if AocType is BOP, CF or IA (or not in telescopic) AND
-                (x.Identity.Id.Novelty != Novelties.I && x.Identity.Id.Novelty != Novelties.C) && // if Novelty is NOT inforce AND
-                x.Identity.Id.LiabilityType == LiabilityTypes.LRC && // if LiabilityType is LRC AND
-                x.Identity.Id.ProjectionPeriod >= x.GetStorage().FirstNextYearProjection && // if it is projection >= 1 Year AND
-                (x.Identity.AccidentYear.HasValue && Consts.MonthInAYear * x.Identity.AccidentYear >= (Consts.MonthInAYear * x.GetStorage().CurrentReportingPeriod.Year + x.GetStorage().GetShift(x.Identity.Id.ProjectionPeriod))) // if it DOES (have AY and with AY >= than projected FY)
-            )
-            .WithApplicability<EmptyNominalCashflow>(x =>
-                (x.Identity.Id.AocType == AocTypes.CF) && // if AocType is CF AND
-                x.Identity.Id.LiabilityType == LiabilityTypes.LRC && x.Identity.AccidentYear.HasValue && // if LiabilityType is LRC with AY defined
-                x.Identity.Id.ProjectionPeriod < x.GetStorage().FirstNextYearProjection && //  if it is projection == 0 AND
-                //x.GetStorage().GetShift(x.Identity.Id.ProjectionPeriod) == 0 && // if it is projection == 0 AND
-                !(Consts.MonthInAYear * x.Identity.AccidentYear == (Consts.MonthInAYear * x.GetStorage().CurrentReportingPeriod.Year + x.GetStorage().GetShift(x.Identity.Id.ProjectionPeriod))) // if AY == projected FY
-            )
-            .WithApplicability<CreditDefaultRiskNominalCashflow>(x => x.GetStorage().GetCdr().Contains(x.Identity.AmountType) && x.Identity.Id.AocType == AocTypes.CF)
-            .WithApplicability<AllClaimsCashflow>(x => x.GetStorage().GetCdr().Contains(x.Identity.AmountType))
-        );
-
-    IEnumerable<AocStep> referenceAocSteps => GetScope<ReferenceAocStep>(Identity.Id).Values;
-    double[] Values => referenceAocSteps.Select(refAocStep => GetStorage().GetValues(Identity.Id with {AocType = refAocStep.AocType, Novelty = refAocStep.Novelty}, Identity.AmountType, Identity.EstimateType, Identity.AccidentYear))
-                        .AggregateDoubleArray();
-}
-
-public interface EmptyNominalCashflow : NominalCashflow
-{
-    double[] NominalCashflow.Values => Enumerable.Empty<double>().ToArray();
-}
-
-public interface CreditDefaultRiskNominalCashflow : NominalCashflow
-{
-    private double[] NominalClaimsCashflow => referenceAocSteps.SelectMany(refAocStep =>
+    private double[] NominalClaimsCashflow => ReferenceAocSteps.SelectMany(refAocStep =>
                             GetStorage().GetClaims()
                             .Select(claim => GetStorage().GetValues(Identity.Id with {AocType = refAocStep.AocType, Novelty = refAocStep.Novelty}, claim, Identity.EstimateType, Identity.AccidentYear)))
                             .AggregateDoubleArray();
@@ -90,12 +30,12 @@ public interface CreditDefaultRiskNominalCashflow : NominalCashflow
             ret[i] = Math.Exp(-nonPerformanceRiskRate) * ret.ElementAtOrDefault(i + 1) + NominalClaimsCashflow[i] - NominalClaimsCashflow.ElementAtOrDefault(i + 1);
         return ret; } } 
         
-    double[] NominalCashflow.Values => ArithmeticOperations.Subtract(PvCdrDecumulated, NominalClaimsCashflow);
+    double[] INominalCashflow.Values => ArithmeticOperations.Subtract(PvCdrDecumulated, NominalClaimsCashflow);
 }
 
-public interface AllClaimsCashflow : NominalCashflow
+public interface AllClaimsCashflow : INominalCashflow
 {
-    double[] NominalCashflow.Values => referenceAocSteps.SelectMany(refAocStep =>
+    double[] INominalCashflow.Values => ReferenceAocSteps.SelectMany(refAocStep =>
                                         GetStorage().GetClaims()
                                         .Select(claim => GetStorage().GetValues(Identity.Id with {AocType = refAocStep.AocType, Novelty = refAocStep.Novelty}, claim, Identity.EstimateType, Identity.AccidentYear)))
                                         .AggregateDoubleArray();
@@ -112,8 +52,8 @@ public interface DiscountedCashflow : IScope<(ImportIdentity Id, string AmountTy
     private PeriodType periodType => GetStorage().GetPeriodType(Identity.AmountType, Identity.EstimateType); 
 
     private string EconomicBasis => GetContext();
-    protected double[] MonthlyDiscounting => GetScope<MonthlyRate>(Identity.Id, o => o.WithContext(EconomicBasis)).Discount;
-    protected double[] NominalValues => GetScope<NominalCashflow>(Identity).Values;
+    protected double[] MonthlyDiscounting => GetScope<IMonthlyRate>(Identity.Id, o => o.WithContext(EconomicBasis)).Discount;
+    protected double[] NominalValues => GetScope<INominalCashflow>(Identity).Values;
 
     double[] Values => ArithmeticOperations.Multiply(-1d, NominalValues.ComputeDiscountAndCumulate(MonthlyDiscounting, periodType)); // we need to flip the sign to create a reserve view
 }
@@ -136,7 +76,7 @@ public interface TelescopicDifference : IScope<(ImportIdentity Id, string Amount
     string EconomicBasis => GetContext();
     private double[] CurrentValues => GetScope<DiscountedCashflow>(Identity).Values;
     
-    private double[] PreviousValues => (GetScope<ParentAocStep>((Identity.Id, Identity.AmountType, StructureType.AocPresentValue)))
+    private double[] PreviousValues => (GetScope<IParentAocStep>((Identity.Id, Identity.AmountType, StructureType.AocPresentValue)))
                                             .Values
                                             .Select(aoc => GetScope<DiscountedCashflow>((Identity.Id with {AocType = aoc.AocType, Novelty = aoc.Novelty}, Identity.AmountType, Identity.EstimateType, Identity.Accidentyear)).Values)
                                             .Where(cf => cf.Count() > 0)
@@ -173,8 +113,8 @@ public interface IWithGetValueFromValues : IScope<(ImportIdentity Id, string Amo
 public interface IWithInterestAccretion : IScope<(ImportIdentity Id, string AmountType, string EstimateType, int? AccidentYear), ImportStorage>
 {
     private double[] parentDiscountedValues => ArithmeticOperations.Multiply(-1d, GetScope<DiscountedCashflow>(Identity).Values);    
-    private double[] parentNominalValues => GetScope<NominalCashflow>(Identity).Values;
-    private double[] monthlyInterestFactor => GetScope<MonthlyRate>(Identity.Id).Interest;
+    private double[] parentNominalValues => GetScope<INominalCashflow>(Identity).Values;
+    private double[] monthlyInterestFactor => GetScope<IMonthlyRate>(Identity.Id).Interest;
     
     double[] GetInterestAccretion() 
     {
@@ -201,8 +141,8 @@ public interface IWithInterestAccretion : IScope<(ImportIdentity Id, string Amou
 public interface IWithInterestAccretionForCreditRisk : IScope<(ImportIdentity Id, string AmountType, string EstimateType, int? AccidentYear), ImportStorage>
 {
     private double[] nominalClaimsCashflow => GetScope<AllClaimsCashflow>(Identity).Values;
-    private double[] nominalValuesCreditRisk => ArithmeticOperations.Multiply(-1, GetScope<CreditDefaultRiskNominalCashflow>(Identity with {Id = Identity.Id with {AocType = AocTypes.CF}}).Values);
-    private double[] monthlyInterestFactor => GetScope<MonthlyRate>(Identity.Id).Interest;
+    private double[] nominalValuesCreditRisk => ArithmeticOperations.Multiply(-1, GetScope<CreditDefaultRiskINominalCashflow>(Identity with {Id = Identity.Id with {AocType = AocTypes.CF}}).Values);
+    private double[] monthlyInterestFactor => GetScope<IMonthlyRate>(Identity.Id).Interest;
     private string cdrBasis => Identity.AmountType == AmountTypes.CDR ? EconomicBases.C : EconomicBases.L;
     private double nonPerformanceRiskRate => GetStorage().GetNonPerformanceRiskRate(Identity.Id, cdrBasis);
     
@@ -231,7 +171,7 @@ public interface InterestAccretionFactor : IScope<ImportIdentity, ImportStorage>
     
     double GetInterestAccretionFactor(string economicBasis) 
     {
-        double[] monthlyInterestFactor = GetScope<MonthlyRate>(Identity, o => o.WithContext(economicBasis)).Interest;
+        double[] monthlyInterestFactor = GetScope<IMonthlyRate>(Identity, o => o.WithContext(economicBasis)).Interest;
         return Enumerable.Range(shift,timeStep).Select(i => monthlyInterestFactor.GetValidElement(i/12)).Aggregate(1d, (x, y) => x * y ) - 1d;
     }
 }
@@ -244,7 +184,7 @@ public interface NewBusinessInterestAccretion : IScope<ImportIdentity, ImportSto
 
     double GetInterestAccretion(double[] values, string economicBasis) 
     {
-        var monthlyInterestFactor = GetScope<MonthlyRate>(Identity, o => o.WithContext(economicBasis)).Interest;
+        var monthlyInterestFactor = GetScope<IMonthlyRate>(Identity, o => o.WithContext(economicBasis)).Interest;
         return values.NewBusinessInterestAccretion(monthlyInterestFactor, timeStep, shift);
     }
 }
@@ -280,7 +220,7 @@ public interface PresentValueFromDiscountedCashflow : PresentValue {
 }
 
 public interface CashflowAocStep : PresentValue {
-    [NotVisible] double[] PresentValue.Values => GetScope<NominalCashflow>(Identity).Values;
+    [NotVisible] double[] PresentValue.Values => GetScope<INominalCashflow>(Identity).Values;
 }
 
 public interface PresentValueWithInterestAccretion : PresentValue, IWithInterestAccretion {
@@ -323,7 +263,7 @@ public interface PvLocked : IScope<ImportIdentity, ImportStorage>
     string EstimateType => EstimateTypes.BE;
        
     [NotVisible]
-    (string AmountType, string EstimateType, int? AccidentYear, double Value)[] PresentValues => GetScope<ValidAmountType>(Identity.DataNode).BeAmountTypes
+    (string AmountType, string EstimateType, int? AccidentYear, double Value)[] PresentValues => GetScope<IValidAmountType>(Identity.DataNode).BeAmountTypes
         .SelectMany(at => GetScope<PvAggregatedOverAccidentYear>((Identity, at, EstimateType), o => o.WithContext(EconomicBasis)).PresentValues
         ).ToArray();
 }
@@ -338,7 +278,7 @@ public interface PvCurrent : IScope<ImportIdentity, ImportStorage>
     string EstimateType => EstimateTypes.BE;
 
     [NotVisible]
-    (string AmountType, string EstimateType, int? AccidentYear, double Value)[] PresentValues => GetScope<ValidAmountType>(Identity.DataNode).BeAmountTypes
+    (string AmountType, string EstimateType, int? AccidentYear, double Value)[] PresentValues => GetScope<IValidAmountType>(Identity.DataNode).BeAmountTypes
         .SelectMany(at => GetScope<PvAggregatedOverAccidentYear>((Identity, at, EstimateType), o => o.WithContext(EconomicBasis)).PresentValues
         ).ToArray();
 }
@@ -352,7 +292,7 @@ public interface CumulatedNominalBE : IScope<ImportIdentity, ImportStorage> {
     string EstimateType => EstimateTypes.BE;
     
     [NotVisible]
-    (string AmountType, string EstimateType, int? AccidentYear, double Value)[] PresentValues => GetScope<ValidAmountType>(Identity.DataNode).BeAmountTypes
+    (string AmountType, string EstimateType, int? AccidentYear, double Value)[] PresentValues => GetScope<IValidAmountType>(Identity.DataNode).BeAmountTypes
         .SelectMany(at => GetScope<PvAggregatedOverAccidentYear>((Identity, at, EstimateType), o => o.WithContext(EconomicBasis)).PresentValues
         ).ToArray();
 }
@@ -401,7 +341,7 @@ public interface MonthlyAmortizationFactorCashflow : IScope<(ImportIdentity Id, 
     (string EffectiveAmountType, double[] Values) releasePattern => GetStorage().GetReleasePattern(Identity.Id, Identity.AmountType, Identity.patternShift);
 
     private PeriodType periodType => GetStorage().GetPeriodType(Identity.AmountType, EstimateTypes.P);
-    private double[] monthlyDiscounting => GetScope<MonthlyRate>(Identity.Id).Discount;
+    private double[] monthlyDiscounting => GetScope<IMonthlyRate>(Identity.Id).Discount;
     private double[] cdcPattern => releasePattern.Values.ComputeDiscountAndCumulate(monthlyDiscounting, periodType); 
     
     [NotVisible] string EconomicBasis => GetContext();

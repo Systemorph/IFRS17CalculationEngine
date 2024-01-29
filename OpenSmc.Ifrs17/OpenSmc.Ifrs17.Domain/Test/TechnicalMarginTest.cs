@@ -163,7 +163,7 @@ public class TechnicalMarginTest : TestBase
         await testStorage.InitializeAsync();
         var testUniverse = Scopes.ForStorage(testStorage).ToScope<IModel>();
         var identities = testUniverse
-            .GetScopes<GetIdentities>(testStorage.DataNodesByImportScope[ImportScope.Primary]
+            .GetScopes<IGetIdentities>(testStorage.DataNodesByImportScope[ImportScope.Primary]
                 .Where(dn => dn == primaryDataNode)).SelectMany(s => s.Identities);
 
         var tmToIfrsVariable = testUniverse.GetScopes<TmToIfrsVariable>(identities);

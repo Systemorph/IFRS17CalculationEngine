@@ -44,7 +44,7 @@ public interface ComputeIfrsVarsOpenings : ActualToIfrsVariable, DeferrableToIfr
 public interface ComputeAllScopes: IScope<string, ImportStorage>
 {
     private IEnumerable<ImportIdentity> identities => Enumerable.Range(0, GetStorage().GetProjectionCount(Identity))
-        .SelectMany(projectionPeriod => GetScope<GetIdentities>(Identity).Identities.Select(id => id with { ProjectionPeriod = projectionPeriod}));
+        .SelectMany(projectionPeriod => GetScope<IGetIdentities>(Identity).Identities.Select(id => id with { ProjectionPeriod = projectionPeriod}));
 
    IEnumerable<IfrsVariable> CalculatedIfrsVariables => identities.SelectMany(identity => 
     GetStorage().ImportFormat switch {

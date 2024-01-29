@@ -67,7 +67,7 @@ public interface TechnicalMarginAmountType : IScope<(ImportIdentity Id, string E
         (_) => GetStorage().GetCoverageUnits().Concat(GetStorage().GetNonAttributableAmountType()).Concat(AmountTypes.CDR.RepeatOnce())
     };
 
-    IEnumerable<string> Values => GetScope<ValidAmountType>(Identity.Id.DataNode).BeAmountTypes.Except(amountTypesToExclude);
+    IEnumerable<string> Values => GetScope<IValidAmountType>(Identity.Id.DataNode).BeAmountTypes.Except(amountTypesToExclude);
 }
 
 
@@ -92,7 +92,7 @@ public interface TechnicalMargin : IScope<ImportIdentity, ImportStorage>
                        .Sum(at => GetScope<PvAggregatedOverAccidentYear>((Identity, at, EstimateTypes.BE), o => o.WithContext(EconomicBasis)).Value) +
                        GetScope<PvAggregatedOverAccidentYear>((Identity, (string)null, EstimateTypes.RA), o => o.WithContext(EconomicBasis)).Value;
                     
-    double AggregatedValue => GetScope<PreviousAocSteps>((Identity, StructureType.AocTechnicalMargin)).Values
+    double AggregatedValue => GetScope<IPreviousAocSteps>((Identity, StructureType.AocTechnicalMargin)).Values
                                 .Sum(aoc => GetScope<TechnicalMargin>(Identity with {AocType = aoc.AocType, Novelty = aoc.Novelty}).Value);
 }
 
@@ -157,7 +157,7 @@ public interface TechnicalMarginForEA : TechnicalMargin{
             .WithApplicability<TechnicalMarginDefaultValue>(x => x.Identity.IsReinsurance)
             .WithApplicability<TechnicalMarginForEAForPaa>(x => x.Identity.ValuationApproach == ValuationApproaches.PAA)
         );
-    protected string referenceAocType => GetScope<ReferenceAocStep>(Identity).Values.First().AocType;// ReferenceAocStep of EA is CF
+    protected string referenceAocType => GetScope<IReferenceAocStep>(Identity).Values.First().AocType;// ReferenceAocStep of EA is CF
     protected double premiums => GetStorage().GetNovelties(referenceAocType, StructureType.AocPresentValue)
         .Sum(n => GetScope<BeExperienceAdjustmentForPremium>(Identity with {AocType = referenceAocType, Novelty = n}, o => o.WithContext(EconomicBasis)).Value) -
         GetScope<ActualExperienceAdjustmentOnPremium>(Identity with {AocType = referenceAocType, Novelty = Novelties.C}).Value;
@@ -193,7 +193,7 @@ public interface TechnicalMarginForAmForPaa : TechnicalMargin{
 }
 
 public interface TechnicalMarginForEop : TechnicalMargin{
-    double TechnicalMargin.Value  => GetScope<PreviousAocSteps>((Identity, StructureType.AocTechnicalMargin)).Values
+    double TechnicalMargin.Value  => GetScope<IPreviousAocSteps>((Identity, StructureType.AocTechnicalMargin)).Values
                                                 .Sum(aoc => GetScope<TechnicalMargin>(Identity with {AocType = aoc.AocType, Novelty = aoc.Novelty}).Value);
 }
 
@@ -201,7 +201,7 @@ public interface TechnicalMarginForEop : TechnicalMargin{
 public interface AllocateTechnicalMarginWithIfrsVariable: IScope<ImportIdentity, ImportStorage>
 {                                  
     double Value => ComputeTechnicalMarginFromIfrsVariables(Identity);
-    double AggregatedValue => GetScope<PreviousAocSteps>((Identity, StructureType.AocTechnicalMargin)).Values
+    double AggregatedValue => GetScope<IPreviousAocSteps>((Identity, StructureType.AocTechnicalMargin)).Values
                                .Sum(aoc => ComputeTechnicalMarginFromIfrsVariables(Identity with {AocType = aoc.AocType, Novelty = aoc.Novelty}));
                                                                     
     private double ComputeTechnicalMarginFromIfrsVariables(ImportIdentity id) =>
@@ -245,7 +245,7 @@ public interface ComputeAllocateTechnicalMarginWithIfrsVariable : AllocateTechni
 
 public interface AllocateTechnicalMarginForCl : AllocateTechnicalMargin
 {
-    private double balancingValue => GetScope<PreviousAocSteps>((Identity, StructureType.AocTechnicalMargin)).Values
+    private double balancingValue => GetScope<IPreviousAocSteps>((Identity, StructureType.AocTechnicalMargin)).Values
                                         .GroupBy(x => x.Novelty, (k, v) => v.Last())
                                         .Sum(aoc => { 
                                             var id = Identity with {AocType = aoc.AocType, Novelty = aoc.Novelty};
@@ -263,7 +263,7 @@ public interface AllocateTechnicalMarginForBop : AllocateTechnicalMargin {
 
 public interface AllocateTechnicalMarginForEop : AllocateTechnicalMargin
 {
-    double AllocateTechnicalMargin.Value  => GetScope<PreviousAocSteps>((Identity, StructureType.AocTechnicalMargin)).Values
+    double AllocateTechnicalMargin.Value  => GetScope<IPreviousAocSteps>((Identity, StructureType.AocTechnicalMargin)).Values
                                                 .Sum(aoc => GetScope<AllocateTechnicalMargin>(Identity with {AocType = aoc.AocType, Novelty = aoc.Novelty}).Value);
     [NotVisible] string AllocateTechnicalMargin.ComputedEstimateType => ComputeEstimateType(AggregatedTechnicalMargin);
 }
@@ -299,7 +299,7 @@ public interface LoReCoBoundary : IScope<ImportIdentity, ImportStorage>
     double Value => underlyingGic.Sum(gic => GetStorage().GetReinsuranceCoverage(Identity, gic) * GetScope<LossComponent>(GetStorage().GetUnderlyingIdentity(Identity, gic)).Value);
                                                                       
     double AggregatedValue => underlyingGic.Sum(gic => GetStorage().GetReinsuranceCoverage(Identity, gic) * 
-                                                       GetScope<PreviousAocSteps>((Identity, StructureType.AocTechnicalMargin)).Values
+                                                       GetScope<IPreviousAocSteps>((Identity, StructureType.AocTechnicalMargin)).Values
                                                             .Sum(aoc => GetScope<LossComponent>(Identity with {DataNode = gic, AocType = aoc.AocType, Novelty = aoc.Novelty}).Value));
 }
 
@@ -323,7 +323,7 @@ public interface LossRecoveryComponent : IScope<ImportIdentity, ImportStorage>
     private bool isBelowLowerBoundary => aggregatedLoReCoProjectionWithFm < -1d * (aggregatedLoReCoBoundary + loReCoBoundaryValue);
     private double marginToLowerBoundary => -1d * (AggregatedValue + aggregatedLoReCoBoundary + loReCoBoundaryValue);
     
-    protected double AggregatedValue => GetScope<PreviousAocSteps>((Identity, StructureType.AocTechnicalMargin)).Values
+    protected double AggregatedValue => GetScope<IPreviousAocSteps>((Identity, StructureType.AocTechnicalMargin)).Values
             .Sum(aoc => GetScope<LossRecoveryComponent>(Identity with {AocType = aoc.AocType, Novelty = aoc.Novelty}).Value);
 
     double Value => (isAboveUpperBoundary, isBelowLowerBoundary) switch {
@@ -354,6 +354,6 @@ public interface LossRecoveryComponentForAm : LossRecoveryComponent{
 }
 
 public interface LossRecoveryComponentForEop : LossRecoveryComponent{
-    double LossRecoveryComponent.Value  => GetScope<PreviousAocSteps>((Identity, StructureType.AocTechnicalMargin)).Values
+    double LossRecoveryComponent.Value  => GetScope<IPreviousAocSteps>((Identity, StructureType.AocTechnicalMargin)).Values
                                                 .Sum(aoc => GetScope<LossRecoveryComponent>(Identity with {AocType = aoc.AocType, Novelty = aoc.Novelty}).Value);
 }

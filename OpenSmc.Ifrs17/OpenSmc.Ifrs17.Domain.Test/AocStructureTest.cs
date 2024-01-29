@@ -134,7 +134,7 @@ public class AocStructureTest : TestBase
         var isReinsurance = testStorage.DataNodeDataBySystemName[goc].IsReinsurance;
         var testUniverse = Scopes.ForStorage(testStorage).ToScope<IModel>();
         var identities = testUniverse
-            .GetScopes<GetIdentities>(testStorage.DataNodesByImportScope[ImportScope.Primary].Where(dn => dn == goc))
+            .GetScopes<IGetIdentities>(testStorage.DataNodesByImportScope[ImportScope.Primary].Where(dn => dn == goc))
             .SelectMany(s => s.Identities);
 
         //Clean up Workspace
@@ -147,7 +147,7 @@ public class AocStructureTest : TestBase
         if (importFormat != ImportFormats.Actual)
         {
             var parents = testUniverse
-                .GetScopes<ParentAocStep>(identities.Select(id => (object) (id, "PR", structureType)),
+                .GetScopes<IParentAocStep>(identities.Select(id => (object) (id, "PR", structureType)),
                     o => o.WithStorage(testStorage)).Where(x => x.Values.Any()).ToArray();
             if (parentBmInner.Count() != parents.Count())
             {
@@ -183,7 +183,7 @@ public class AocStructureTest : TestBase
             if (isReinsurance)
             {
                 var parentsCdr = testUniverse
-                    .GetScopes<ParentAocStep>(identities.Select(id => (object) (id, AmountTypes.CDR, structureType)),
+                    .GetScopes<IParentAocStep>(identities.Select(id => (object) (id, AmountTypes.CDR, structureType)),
                         o => o.WithStorage(testStorage)).ToArray();
 
                 var countP = parentsCdr.Where(x => x.Values.Any()).Count();
@@ -218,7 +218,7 @@ public class AocStructureTest : TestBase
         //Assert Reference
         if (importFormat != ImportFormats.Actual)
         {
-            var reference = testUniverse.GetScopes<ReferenceAocStep>(identities, o => o.WithStorage(testStorage))
+            var reference = testUniverse.GetScopes<IReferenceAocStep>(identities, o => o.WithStorage(testStorage))
                 .ToArray();
             var countR = reference.Select(x => x.Values).Count();
             if (referenceBm.Count() != countR)
@@ -249,7 +249,7 @@ public class AocStructureTest : TestBase
 
         //Assert FullAoc
         var fullAoc = testUniverse
-            .GetScopes<PreviousAocSteps>(identities.Select(id => (object) (id, structureType)),
+            .GetScopes<IPreviousAocSteps>(identities.Select(id => (object) (id, structureType)),
                 o => o.WithStorage(testStorage)).Where(s => s.Values.Any());
         var count = fullAoc.Count();
         if (fullAocBmInner.Count() != count)

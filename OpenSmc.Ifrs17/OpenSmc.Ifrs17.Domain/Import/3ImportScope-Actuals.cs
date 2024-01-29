@@ -41,7 +41,7 @@ public interface Actual : IScope<ImportIdentity, ImportStorage>{
        
     [NotVisible]
     (string AmountType, string EstimateType, int? AccidentYear, double Value)[] Actuals => 
-        GetScope<ValidAmountType>(Identity.DataNode).AllImportedAmountTypes
+        GetScope<IValidAmountType>(Identity.DataNode).AllImportedAmountTypes
             .SelectMany(amountType => GetStorage().GetAccidentYears(Identity.DataNode, Identity.ProjectionPeriod)
                 .Select(accidentYear => (amountType, EstimateType, accidentYear, GetScope<WrittenActual>((Identity, amountType, EstimateType, accidentYear)).Value ))).ToArray();
 }
@@ -74,7 +74,7 @@ public interface AccrualProjectionFirstYear : AccrualActual{
 }
 
 public interface AccrualEndOfPeriod : AccrualActual{
-    double AccrualActual.Value => GetScope<PreviousAocSteps>((Identity.Id, StructureType.AocAccrual)).Values.Sum(aocStep => 
+    double AccrualActual.Value => GetScope<IPreviousAocSteps>((Identity.Id, StructureType.AocAccrual)).Values.Sum(aocStep => 
         GetScope<AccrualActual>((Identity.Id with {AocType = aocStep.AocType, Novelty = aocStep.Novelty}, Identity.AmountType, Identity.EstimateType, Identity.AccidentYear)).Value);
 }
 
@@ -90,7 +90,7 @@ public interface AdvanceActual : IScope<ImportIdentity, ImportStorage>
     
     [NotVisible]
     (string AmountType, string EstimateType, int? AccidentYear, double Value)[] Actuals => 
-        GetScope<ValidAmountType>(Identity.DataNode).ActualAmountTypes
+        GetScope<IValidAmountType>(Identity.DataNode).ActualAmountTypes
             .SelectMany(amountType => GetStorage().GetAccidentYears(Identity.DataNode, Identity.ProjectionPeriod)
                 .Select(accidentYear => (amountType, EstimateType, accidentYear, GetScope<AccrualActual>((Identity, amountType, EstimateType, accidentYear)).Value) )).ToArray();
 }
@@ -103,7 +103,7 @@ public interface OverdueActual : IScope<ImportIdentity, ImportStorage>
 
     [NotVisible]
     (string AmountType, string EstimateType, int? AccidentYear, double Value)[] Actuals => 
-        GetScope<ValidAmountType>(Identity.DataNode).ActualAmountTypes
+        GetScope<IValidAmountType>(Identity.DataNode).ActualAmountTypes
             .SelectMany(amountType => GetStorage().GetAccidentYears(Identity.DataNode, Identity.ProjectionPeriod)
                 .Select(accidentYear => (amountType, EstimateType, accidentYear, GetScope<AccrualActual>((Identity, amountType, EstimateType, accidentYear)).Value) )).ToArray();
 }
@@ -164,7 +164,7 @@ public interface DeferrableForBop : DiscountedDeferrable {
 }
 
 public interface DeferrableForIaStandard : DiscountedDeferrable, InterestAccretionFactor {
-    private double aggregatedValue => GetScope<PreviousAocSteps>((Identity, StructureType.AocTechnicalMargin)).Values
+    private double aggregatedValue => GetScope<IPreviousAocSteps>((Identity, StructureType.AocTechnicalMargin)).Values
         .Sum(aoc => GetScope<DiscountedDeferrable>(Identity with {AocType = aoc.AocType, Novelty = aoc.Novelty}).Value);   
     double DiscountedDeferrable.Value => aggregatedValue * GetInterestAccretionFactor(EconomicBasis);
 }
@@ -183,7 +183,7 @@ public interface DeferrableDefaultValue : DiscountedDeferrable {
 }
 
 public interface DeferrableEa : DiscountedDeferrable {
-    private string referenceAocType => GetScope<ReferenceAocStep>(Identity).Values.First().AocType;
+    private string referenceAocType => GetScope<IReferenceAocStep>(Identity).Values.First().AocType;
     double DiscountedDeferrable.Value => GetStorage().GetDeferrableExpenses().Sum(at =>
         GetStorage().GetNovelties(referenceAocType, StructureType.AocPresentValue)
         .Sum(n => GetScope<PresentValue>((Identity with {AocType = referenceAocType, Novelty = n}, at, EstimateTypes.BE, (int?)null), o => o.WithContext(EconomicBasis)).Value) -
@@ -192,13 +192,13 @@ public interface DeferrableEa : DiscountedDeferrable {
 
 public interface DeferrableAm : DiscountedDeferrable {
     private double amortizationFactor => GetScope<DiscountedAmortizationFactorForDeferrals>(Identity, o => o.WithContext(EconomicBasis)).Value;
-    private double aggregatedValue => GetScope<PreviousAocSteps>((Identity, StructureType.AocTechnicalMargin)).Values
+    private double aggregatedValue => GetScope<IPreviousAocSteps>((Identity, StructureType.AocTechnicalMargin)).Values
                                             .Sum(aocStep => GetScope<DiscountedDeferrable>(Identity with {AocType = aocStep.AocType, Novelty = aocStep.Novelty}).Value);
     double DiscountedDeferrable.Value => Math.Abs(aggregatedValue) > Consts.Precision ? -1d * aggregatedValue * amortizationFactor : default;
 }
 
 public interface DeferrableEop : DiscountedDeferrable {
-    double DiscountedDeferrable.Value => GetScope<PreviousAocSteps>((Identity, StructureType.AocTechnicalMargin)).Values
+    double DiscountedDeferrable.Value => GetScope<IPreviousAocSteps>((Identity, StructureType.AocTechnicalMargin)).Values
                                         .Sum(aocStep => GetScope<DiscountedDeferrable>(Identity with {AocType = aocStep.AocType, Novelty = aocStep.Novelty}).Value);
 }
 
@@ -235,7 +235,7 @@ public interface BoPDeferrable : NominalDeferrable{
     static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>
             builder.ForScope<NominalDeferrable>(s => s.WithApplicability<NominalDeferrableFromIfrsVariable>(x => x.Identity.Id.Novelty == Novelties.I));
     private int projectionShift => GetStorage().GetShift(Identity.Id.ProjectionPeriod);
-    double NominalDeferrable.Value => GetScope<NominalCashflow>((Identity.Id, AmountTypes.DAE, EstimateTypes.BE, (int?)null)).Values //loop over AM under DE
+    double NominalDeferrable.Value => GetScope<INominalCashflow>((Identity.Id, AmountTypes.DAE, EstimateTypes.BE, (int?)null)).Values //loop over AM under DE
         .Skip(projectionShift + Identity.MonthlyShift).FirstOrDefault();
 }
 
@@ -245,24 +245,24 @@ public interface NominalDeferrableFromIfrsVariable : NominalDeferrable{
 
 public interface AmReferenceDeferrable: IScope<(ImportIdentity Id, int MonthlyShift), ImportStorage>{
     private int projectionShift => GetStorage().GetShift(Identity.Id.ProjectionPeriod);
-    private IEnumerable<AocStep> previousAocSteps => GetScope<PreviousAocSteps>((Identity.Id, StructureType.AocTechnicalMargin)).Values.Where(aocStep => aocStep.Novelty != Novelties.C);
+    private IEnumerable<AocStep> previousAocSteps => GetScope<IPreviousAocSteps>((Identity.Id, StructureType.AocTechnicalMargin)).Values.Where(aocStep => aocStep.Novelty != Novelties.C);
     double referenceCashflow => previousAocSteps
         .GroupBy(x => x.Novelty, (k, aocs) => aocs.Last())
-        .Sum(aoc => GetScope<NominalCashflow>((Identity.Id with {AocType = aoc.AocType, Novelty = aoc.Novelty}, AmountTypes.DAE, EstimateTypes.BE, (int?)null)).Values
+        .Sum(aoc => GetScope<INominalCashflow>((Identity.Id with {AocType = aoc.AocType, Novelty = aoc.Novelty}, AmountTypes.DAE, EstimateTypes.BE, (int?)null)).Values
         .Skip(projectionShift + Identity.MonthlyShift).FirstOrDefault());
     //if no previous RawVariable, use IfrsVariable
     double Value => Math.Abs(referenceCashflow) >= Consts.Precision ? referenceCashflow : GetStorage().GetNovelties(AocTypes.BOP, StructureType.AocPresentValue).Sum(n => GetScope<NominalDeferrable>((Identity.Id with {AocType = AocTypes.BOP, Novelty = n}, Identity.MonthlyShift)).Value);
 }
 
 public interface AmDeferrable : NominalDeferrable{
-    private IEnumerable<AocStep> referenceAocSteps => GetScope<ReferenceAocStep>(Identity.Id).Values; //Reference step of AM,C is CL,C
+    private IEnumerable<AocStep> referenceAocSteps => GetScope<IReferenceAocStep>(Identity.Id).Values; //Reference step of AM,C is CL,C
     private double referenceCashflow => referenceAocSteps.Sum(refAocStep => GetScope<AmReferenceDeferrable>((Identity.Id with {AocType = refAocStep.AocType, Novelty = refAocStep.Novelty}, Identity.MonthlyShift)).Value);
 
     double NominalDeferrable.Value => Math.Abs(referenceCashflow) > Consts.Precision ? -1d * referenceCashflow * GetScope<CurrentPeriodAmortizationFactor>((Identity.Id, AmountTypes.DAE, Identity.MonthlyShift), o => o.WithContext(EconomicBasis)).Value : default;
 }
 
 public interface EopDeferrable : NominalDeferrable{
-    private IEnumerable<AocStep> previousAocSteps => GetScope<PreviousAocSteps>((Identity.Id, StructureType.AocTechnicalMargin)).Values;
+    private IEnumerable<AocStep> previousAocSteps => GetScope<IPreviousAocSteps>((Identity.Id, StructureType.AocTechnicalMargin)).Values;
     double NominalDeferrable.Value => previousAocSteps.Sum(aocStep => GetScope<NominalDeferrable>((Identity.Id with {AocType = aocStep.AocType, Novelty = aocStep.Novelty}, Identity.MonthlyShift)).Value);
 }
 
@@ -323,7 +323,7 @@ public interface PremiumRevenueForBop : PremiumRevenue {
 }
 
 public interface AggregatedPremiumRevenue : PremiumRevenue {
-    double AggregatedValue => GetScope<PreviousAocSteps>((Identity, StructureType.AocTechnicalMargin)).Values
+    double AggregatedValue => GetScope<IPreviousAocSteps>((Identity, StructureType.AocTechnicalMargin)).Values
         .Sum(aoc => GetScope<PremiumRevenue>(Identity with {AocType = aoc.AocType, Novelty = aoc.Novelty}).Value);
 }
 
