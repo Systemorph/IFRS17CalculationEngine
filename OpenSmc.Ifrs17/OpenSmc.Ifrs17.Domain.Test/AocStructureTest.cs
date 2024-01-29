@@ -25,7 +25,7 @@ public class AocStructureTest : TestBase
 
     public AocStructureTest(IImportVariable import, IDataSource dataSource,
         IWorkspaceVariable work, IActivityVariable activity, IScopeFactory scopes) :
-        base(import, dataSource, work, activity, scopes)
+        base(import, work, scopes)
     {
         workspace = Work.CreateNew() as Workspace;
     }
@@ -35,19 +35,19 @@ public class AocStructureTest : TestBase
         await TestData.InitializeAsync();
         await DataSource.DeleteAsync(DataSource.Query<AocType>());
         await DataSource.DeleteAsync(DataSource.Query<AocConfiguration>());
-        await Import.FromString(TestData.projectionConfiguration).WithType<ProjectionConfiguration>()
+        await Import.FromString(TestData.ProjectionConfiguration).WithType<ProjectionConfiguration>()
             .WithTarget(DataSource)
             .ExecuteAsync();
-        await DataSource.UpdateAsync<Portfolio>(TestData.dt1.RepeatOnce());
-        await DataSource.UpdateAsync<Portfolio>(TestData.dtr1.RepeatOnce());
-        await DataSource.UpdateAsync<GroupOfInsuranceContract>(TestData.dt11.RepeatOnce());
-        await DataSource.UpdateAsync<GroupOfReinsuranceContract>(TestData.dtr11.RepeatOnce());
+        await DataSource.UpdateAsync<Portfolio>(TestData.Dt1.RepeatOnce());
+        await DataSource.UpdateAsync<Portfolio>(TestData.Dtr1.RepeatOnce());
+        await DataSource.UpdateAsync<GroupOfInsuranceContract>(TestData.Dt11.RepeatOnce());
+        await DataSource.UpdateAsync<GroupOfReinsuranceContract>(TestData.Dtr11.RepeatOnce());
 
-        await DataSource.UpdateAsync(new[] {TestData.dt11State, TestData.dtr11State});
-        await DataSource.UpdateAsync(TestData.dt11Inter.RepeatOnce());
+        await DataSource.UpdateAsync(new[] {TestData.Dt11State, TestData.Dtr11State});
+        await DataSource.UpdateAsync(TestData.Dt11Inter.RepeatOnce());
 
 
-        await Import.FromString(TestData.estimateType)
+        await Import.FromString(TestData.EstimateType)
             .WithType<EstimateType>()
             .WithTarget(DataSource)
             .ExecuteAsync();
@@ -59,41 +59,41 @@ public class AocStructureTest : TestBase
 
         await DataSource.UpdateAsync(new[]
         {
-            TestData.partition, TestData.previousPeriodPartition
+            TestData.Partition, TestData.PreviousPeriodPartition
         });
 
-        await DataSource.UpdateAsync(TestData.partitionReportingNode.RepeatOnce());
+        await DataSource.UpdateAsync(TestData.PartitionReportingNode.RepeatOnce());
 
         inputRawVariables = new RawVariable[]
         {
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts, AocType = "BOP",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts, AocType = "BOP",
                 Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts, AocType = "MC",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts, AocType = "MC",
                 Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts, AocType = "BOP",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts, AocType = "BOP",
                 Novelty = "N", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts, AocType = "EV",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts, AocType = "EV",
                 Novelty = "N", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts, AocType = "CL",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts, AocType = "CL",
                 Novelty = "C", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
         };
@@ -124,7 +124,7 @@ public class AocStructureTest : TestBase
             inputSource = InputSource.Actual;
         }
 
-        var newArgs = TestData.args with {ImportFormat = importFormat};
+        var newArgs = TestData.Args with {ImportFormat = importFormat};
         var goc = inputVariables.First().DataNode;
 
         //Set up import storage and test universe
@@ -374,32 +374,32 @@ public class AocStructureTest : TestBase
         {
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfReinsuranceContracts, AocType = "BOP",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfReinsuranceContracts, AocType = "BOP",
                 Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfReinsuranceContracts, AocType = "MC",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfReinsuranceContracts, AocType = "MC",
                 Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfReinsuranceContracts, AocType = "BOP",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfReinsuranceContracts, AocType = "BOP",
                 Novelty = "N", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfReinsuranceContracts, AocType = "EV",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfReinsuranceContracts, AocType = "EV",
                 Novelty = "N", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfReinsuranceContracts, AocType = "CL",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfReinsuranceContracts, AocType = "CL",
                 Novelty = "C", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
         };
@@ -635,26 +635,26 @@ public class AocStructureTest : TestBase
         {
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts, AocType = "BOP",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts, AocType = "BOP",
                 Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts, AocType = "MC",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts, AocType = "MC",
                 Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts, AocType = "EV",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts, AocType = "EV",
                 Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts, AocType = "CL",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts, AocType = "CL",
                 Novelty = "C", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
         };
@@ -805,26 +805,26 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
         {
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts, AocType = "BOP",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts, AocType = "BOP",
                 Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts, AocType = "MC",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts, AocType = "MC",
                 Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts, AocType = "CL",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts, AocType = "CL",
                 Novelty = "C", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts, AocType = "EV",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts, AocType = "EV",
                 Novelty = "C", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
         };
@@ -946,38 +946,38 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
         {
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts, AocType = "BOP",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts, AocType = "BOP",
                 Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts, AocType = "MC",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts, AocType = "MC",
                 Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts, AocType = "BOP",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts, AocType = "BOP",
                 Novelty = "N", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts, AocType = "AU",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts, AocType = "AU",
                 Novelty = "N", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts, AocType = "CL",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts, AocType = "CL",
                 Novelty = "C", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts, AocType = "EV",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts, AocType = "EV",
                 Novelty = "C", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
         };
@@ -1132,29 +1132,29 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
         {
             new IfrsVariable
             {
-                Partition = TestData.partition.Id, Values = new double[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts,
+                Partition = TestData.Partition.Id, Values = new double[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts,
                 AocType = "BOP", Novelty = "C", AccidentYear = null, AmountType = "PR",
                 EstimateType = "AA"
             },
             new IfrsVariable
             {
-                Partition = TestData.partition.Id, Values = new double[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts,
+                Partition = TestData.Partition.Id, Values = new double[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts,
                 AocType = "CF",
                 Novelty = "C", AccidentYear = null, AmountType = "PR", EstimateType = "AA"
             },
             new IfrsVariable
             {
-                Partition = TestData.partition.Id, Values = new double[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts,
+                Partition = TestData.Partition.Id, Values = new double[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts,
                 AocType = "CF",
                 Novelty = "C", AccidentYear = null, AmountType = "ACA", EstimateType = "A"
             },
             new IfrsVariable
             {
-                Partition = TestData.partition.Id, Values = new double[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts,
+                Partition = TestData.Partition.Id, Values = new double[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts,
                 AocType = "WO",
                 Novelty = "C", AccidentYear = null, AmountType = "PR", EstimateType = "OA"
             },
@@ -1246,44 +1246,44 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
         {
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts, AocType = "BOP",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts, AocType = "BOP",
                 Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts, AocType = "MC",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts, AocType = "MC",
                 Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts, AocType = "BOP",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts, AocType = "BOP",
                 Novelty = "N", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts, AocType = "EV",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts, AocType = "EV",
                 Novelty = "N", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts, AocType = "BOP",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts, AocType = "BOP",
                 Novelty = "A", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts, AocType = "AU",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts, AocType = "AU",
                 Novelty = "A", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts, AocType = "CL",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts, AocType = "CL",
                 Novelty = "C", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
         };
@@ -1429,20 +1429,20 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
             {
                 AocType = "BOP", Novelty = "N", AccidentYear = null, AmountType = "CL",
                 EstimateType = "BE",
-                Partition = TestData.partition.Id, Values = new double[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts
+                Partition = TestData.Partition.Id, Values = new double[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts
             },
             new RawVariable
             {
                 AocType = "EV", Novelty = "C", AccidentYear = null, AmountType = "CL", EstimateType = "BE",
-                Partition = TestData.partition.Id, Values = new double[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts
+                Partition = TestData.Partition.Id, Values = new double[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts
             },
             new RawVariable
             {
                 AocType = "CL", Novelty = "C", AccidentYear = null, AmountType = "CL", EstimateType = "BE",
-                Partition = TestData.partition.Id, Values = new double[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts
+                Partition = TestData.Partition.Id, Values = new double[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts
             },
         };
 
@@ -1527,26 +1527,26 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
             new RawVariable
             {
                 AocType = "BOP", Novelty = "N", AccidentYear = null, AmountType = "CL", EstimateType = "BE",
-                Partition = TestData.partition.Id, Values = new double[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts
+                Partition = TestData.Partition.Id, Values = new double[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts
             },
             new RawVariable
             {
                 AocType = "AU", Novelty = "C", AccidentYear = null, AmountType = "CL", EstimateType = "BE",
-                Partition = TestData.partition.Id, Values = new double[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts
+                Partition = TestData.Partition.Id, Values = new double[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts
             },
             new RawVariable
             {
                 AocType = "EV", Novelty = "C", AccidentYear = null, AmountType = "CL", EstimateType = "BE",
-                Partition = TestData.partition.Id, Values = new double[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts
+                Partition = TestData.Partition.Id, Values = new double[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts
             },
             new RawVariable
             {
                 AocType = "CL", Novelty = "C", AccidentYear = null, AmountType = "CL", EstimateType = "BE",
-                Partition = TestData.partition.Id, Values = new double[] {1.0},
-                DataNode = TestData.groupOfInsuranceContracts
+                Partition = TestData.Partition.Id, Values = new double[] {1.0},
+                DataNode = TestData.GroupOfInsuranceContracts
             },
         };
 
@@ -1685,26 +1685,26 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
         {
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfReinsuranceContracts, AocType = "BOP",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfReinsuranceContracts, AocType = "BOP",
                 Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfReinsuranceContracts, AocType = "MC",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfReinsuranceContracts, AocType = "MC",
                 Novelty = "I", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfReinsuranceContracts, AocType = "BOP",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfReinsuranceContracts, AocType = "BOP",
                 Novelty = "N", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
             new RawVariable
             {
-                Partition = TestData.partition.Id, Values = new[] {1.0},
-                DataNode = TestData.groupOfReinsuranceContracts, AocType = "CL",
+                Partition = TestData.Partition.Id, Values = new[] {1.0},
+                DataNode = TestData.GroupOfReinsuranceContracts, AocType = "CL",
                 Novelty = "C", AccidentYear = null, AmountType = "PR", EstimateType = "BE"
             },
         };

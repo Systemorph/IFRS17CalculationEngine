@@ -14,7 +14,7 @@ public class DataNodeParameterTest : TestBase
 {
     public DataNodeParameterTest(IImportVariable import, IDataSource dataSource,
         IWorkspaceVariable work, IActivityVariable activity, IScopeFactory scopes) :
-        base(import, dataSource, work, activity, scopes)
+        base(import, work, scopes)
     {
     }
 
@@ -34,23 +34,23 @@ public class DataNodeParameterTest : TestBase
             .ExecuteAsync();
 
 
-        await DataSource.UpdateAsync(TestData.reportingNodes);
-        await DataSource.UpdateAsync<Portfolio>(TestData.dt1.RepeatOnce());
-        await DataSource.UpdateAsync<Portfolio>(TestData.dtr1.RepeatOnce());
-        await DataSource.UpdateAsync<GroupOfInsuranceContract>(TestData.dt11.RepeatOnce());
+        await DataSource.UpdateAsync(TestData.ReportingNodes);
+        await DataSource.UpdateAsync<Portfolio>(TestData.Dt1.RepeatOnce());
+        await DataSource.UpdateAsync<Portfolio>(TestData.Dtr1.RepeatOnce());
+        await DataSource.UpdateAsync<GroupOfInsuranceContract>(TestData.Dt11.RepeatOnce());
 
-        await DataSource.UpdateAsync<GroupOfReinsuranceContract>(TestData.dtr11.RepeatOnce());
+        await DataSource.UpdateAsync<GroupOfReinsuranceContract>(TestData.Dtr11.RepeatOnce());
 
 
         await DataSource.UpdateAsync(new[]
         {
-            TestData.dt11State, TestData.dtr11State
+            TestData.Dt11State, TestData.Dtr11State
         });
 
 
-        await Import.FromString(TestData.estimateType)
+        await Import.FromString(TestData.EstimateType)
             .WithType<EstimateType>().WithTarget(DataSource).ExecuteAsync();
-        await Import.FromString(TestData.economicBasis)
+        await Import.FromString(TestData.EconomicBasis)
             .WithType<EconomicBasis>().WithTarget(DataSource).ExecuteAsync();
 
 
@@ -59,10 +59,10 @@ public class DataNodeParameterTest : TestBase
 
         await DataSource.UpdateAsync(new[]
         {
-            TestData.partition, TestData.previousPeriodPartition
+            TestData.Partition, TestData.PreviousPeriodPartition
         });
 
-        await DataSource.UpdateAsync(TestData.partitionReportingNode.RepeatOnce());
+        await DataSource.UpdateAsync(TestData.PartitionReportingNode.RepeatOnce());
 
 
         Work.Initialize(x => x.FromSource(DataSource).DisableInitialization<RawVariable>(
@@ -90,7 +90,7 @@ public class DataNodeParameterTest : TestBase
         ws.InitializeFrom(DataSource);
         await ws.DeleteAsync(ws.Query<GroupOfInsuranceContract>());
         await ws.UpdateAsync<GroupOfInsuranceContract>(new[]
-            {TestData.dt11 with {ValuationApproach = key.va, LiabilityType = key.lt}});
+            {TestData.Dt11 with {ValuationApproach = key.va, LiabilityType = key.lt}});
 
         var log = await Import.FromString(inputFile).WithFormat(ImportFormats.DataNodeParameter).WithTarget(ws)
             .ExecuteAsync();
