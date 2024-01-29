@@ -3,6 +3,7 @@ using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.Domain.Import.NominalCashflow;
+using OpenSmc.Ifrs17.Domain.Import.NominalDeferrableCalculation;
 using OpenSmc.Ifrs17.Domain.Import.PresentValueCalculation;
 using Systemorph.Vertex.Api.Attributes;
 using Systemorph.Vertex.Scopes;
@@ -22,27 +23,7 @@ namespace OpenSmc.Ifrs17.Domain.Import;
 // EstimateType from DA to DAC
 // BOP,I only through Opening. 
 
-public interface INominalDeferrableWithIfrsVariable : INominalDeferrable {
-    double INominalDeferrable.Value => GetStorage().GetValue(Identity.Id, AmountType, EstimateType, EconomicBasis, Identity.MonthlyShift, Identity.Id.ProjectionPeriod);
-}
-
-public interface BoPDeferrableProjection : INominalDeferrable{
-    double INominalDeferrable.Value => GetScope<INominalDeferrable>((Identity.Id with {AocType = AocTypes.EOP, Novelty = Novelties.C, ProjectionPeriod = Identity.Id.ProjectionPeriod - 1}, Identity.MonthlyShift)).Value;
-}
-
-public interface BoPDeferrable : INominalDeferrable{
-    static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>
-            builder.ForScope<INominalDeferrable>(s => s.WithApplicability<INominalDeferrableFromIfrsVariable>(x => x.Identity.Id.Novelty == Novelties.I));
-    private int projectionShift => GetStorage().GetShift(Identity.Id.ProjectionPeriod);
-    double INominalDeferrable.Value => GetScope<INominalCashflow>((Identity.Id, AmountTypes.DAE, EstimateTypes.BE, (int?)null)).Values //loop over AM under DE
-        .Skip(projectionShift + Identity.MonthlyShift).FirstOrDefault();
-}
-
-public interface INominalDeferrableFromIfrsVariable : INominalDeferrable{
-    double INominalDeferrable.Value => GetStorage().GetValue(Identity.Id, AmountType, EstimateTypes.DA, EconomicBasis, Identity.MonthlyShift, Identity.Id.ProjectionPeriod);
-}
-
-public interface AmReferenceDeferrable: IScope<(ImportIdentity Id, int MonthlyShift), ImportStorage>{
+public interface IAmReferenceDeferrable: IScope<(ImportIdentity Id, int MonthlyShift), ImportStorage>{
     private int projectionShift => GetStorage().GetShift(Identity.Id.ProjectionPeriod);
     private IEnumerable<AocStep> previousAocSteps => GetScope<IPreviousAocSteps>((Identity.Id, StructureType.AocTechnicalMargin)).Values.Where(aocStep => aocStep.Novelty != Novelties.C);
     double referenceCashflow => previousAocSteps
@@ -53,14 +34,14 @@ public interface AmReferenceDeferrable: IScope<(ImportIdentity Id, int MonthlySh
     double Value => Math.Abs(referenceCashflow) >= Consts.Precision ? referenceCashflow : GetStorage().GetNovelties(AocTypes.BOP, StructureType.AocPresentValue).Sum(n => GetScope<INominalDeferrable>((Identity.Id with {AocType = AocTypes.BOP, Novelty = n}, Identity.MonthlyShift)).Value);
 }
 
-public interface AmDeferrable : INominalDeferrable{
+public interface IAmDeferrable : INominalDeferrable{
     private IEnumerable<AocStep> referenceAocSteps => GetScope<IReferenceAocStep>(Identity.Id).Values; //Reference step of AM,C is CL,C
-    private double referenceCashflow => referenceAocSteps.Sum(refAocStep => GetScope<AmReferenceDeferrable>((Identity.Id with {AocType = refAocStep.AocType, Novelty = refAocStep.Novelty}, Identity.MonthlyShift)).Value);
+    private double referenceCashflow => referenceAocSteps.Sum(refAocStep => GetScope<IAmReferenceDeferrable>((Identity.Id with {AocType = refAocStep.AocType, Novelty = refAocStep.Novelty}, Identity.MonthlyShift)).Value);
 
     double INominalDeferrable.Value => Math.Abs(referenceCashflow) > Consts.Precision ? -1d * referenceCashflow * GetScope<ICurrentPeriodAmortizationFactor>((Identity.Id, AmountTypes.DAE, Identity.MonthlyShift), o => o.WithContext(EconomicBasis)).Value : default;
 }
 
-public interface EopDeferrable : INominalDeferrable{
+public interface IEopDeferrable : INominalDeferrable{
     private IEnumerable<AocStep> previousAocSteps => GetScope<IPreviousAocSteps>((Identity.Id, StructureType.AocTechnicalMargin)).Values;
     double INominalDeferrable.Value => previousAocSteps.Sum(aocStep => GetScope<INominalDeferrable>((Identity.Id with {AocType = aocStep.AocType, Novelty = aocStep.Novelty}, Identity.MonthlyShift)).Value);
 }
