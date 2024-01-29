@@ -1,0 +1,4 @@
+[submodule "OpenSmc"]
+	path = OpenSmc
+	url = https://github.com/Systemorph/OpenSmc.git
+	branch = main
