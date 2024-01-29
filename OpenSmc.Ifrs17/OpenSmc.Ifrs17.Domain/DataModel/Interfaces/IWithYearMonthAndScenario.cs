@@ -2,5 +2,5 @@
 
 public interface IWithYearMonthAndScenario : IWithYearAndMonth
 {
-    public string Scenario { get; init; }
+    public string? Scenario { get; init; }
 }

@@ -30,11 +30,11 @@ public static class Queries
     }
 
 
-    public static async Task<T[]> LoadParameterAsync<T>(
+    private static async Task<T[]> LoadParameterAsync<T>(
         this IQuerySource querySource,
         int year,
         int month,
-        Expression<Func<T, bool>> filterExpression = null)
+        Expression<Func<T, bool>>? filterExpression = null)
         where T : IWithYearAndMonth
     {
         return await querySource.Query<T>()
@@ -48,10 +48,10 @@ public static class Queries
         this IQuerySource querySource,
         Args args,
         Func<T, string> identityExpression,
-        Expression<Func<T, bool>> filterExpression = null)
+        Expression<Func<T, bool>>? filterExpression = null)
         where T : IWithYearMonthAndScenario
     {
-        return (await querySource.LoadParameterAsync<T>(args.Year, args.Month, filterExpression))
+        return (await querySource.LoadParameterAsync(args.Year, args.Month, filterExpression))
             .Where(x => x.Scenario == args.Scenario || x.Scenario == null)
             .GroupBy(identityExpression)
             .Select(x => x.OrderByDescending(y => y.Year)
@@ -66,7 +66,7 @@ public static class Queries
         this IQuerySource querySource,
         Args args,
         Func<T, string> identityExpression,
-        Expression<Func<T, bool>> filterExpression = null)
+        Expression<Func<T, bool>>? filterExpression = null)
         where T : IWithYearMonthAndScenario
     {
         var parameters = (await querySource.LoadParameterAsync<T>(args.Year, args.Month, filterExpression))
