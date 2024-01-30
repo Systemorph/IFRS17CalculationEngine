@@ -1,120 +1,12 @@
-using System.ComponentModel.DataAnnotations;
 using OpenSmc.Ifrs17.Domain.Constants;
-using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.DataModel.Args;
-using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
+using OpenSmc.Ifrs17.Domain.Report.ReportParameters;
 using OpenSmc.Ifrs17.Domain.Utils;
-using Systemorph.Vertex.Api.Attributes;
-using Systemorph.Vertex.Attributes.Arithmetics;
 using Systemorph.Vertex.Workspace;
 
 
 namespace OpenSmc.Ifrs17.Domain.Report;
-
-public enum Period { Previous = -1, Current = 0 };
-
-public abstract record ReportParameter {
-    [Display(Order = -100)]
-    [IdentityProperty]
-    [NotAggregated]
-    [Dimension(typeof(int), nameof(Year))]
-    public int Year { get; init; }
-
-    [Display(Order = -90)]
-    [IdentityProperty]
-    [NotAggregated]
-    [Dimension(typeof(int), nameof(Month))]
-    public int Month { get; init; } 
-
-    [Display(Order = -80)]
-    [IdentityProperty]
-    [Dimension(typeof(Scenario))]
-    public string Scenario { get; init; }
-
-    [IdentityProperty]
-    [NotVisible]
-    public Period Period { get; init; }
-
-    [IdentityProperty]
-    [NotVisible]
-    [Dimension(typeof(GroupOfContract))]
-    public string GroupOfContract { get; init; }
-}
-
-
-public record DataNodeStateReportParameter : ReportParameter  {
-    public State State { get; init; }
-}
-
-
-public record YieldCurveReportParameter : ReportParameter  {
-    [IdentityProperty]
-    [NotVisible]
-    public string YieldCurveType { get; init; }
-
-    [Dimension(typeof(Currency))]
-    public string Currency { get; init; }
-
-    public string Name { get; init; }
-}
-
-
-public record SingleDataNodeReportParameter : ReportParameter  {
-
-    public double PremiumAllocation { get; init; }
-
-    [Dimension(typeof(CashFlowPeriodicity))]
-    public CashFlowPeriodicity CashFlowPeriodicity { get; init; }
-    
-    [Dimension(typeof(InterpolationMethod))]
-    public InterpolationMethod InterpolationMethod { get; init; }    
-}
-
-
-public record InterDataNodeReportParameter : ReportParameter  {
-    [Dimension(typeof(GroupOfContract), nameof(LinkedDataNode))]
-    public string LinkedDataNode { get; init; }
-
-    public double ReinsuranceCoverage { get; init; }
-}
-
-
-public record PartnerRatingsReportParameter : ReportParameter  {
-    [IdentityProperty]
-    [NotAggregated]
-    [Dimension(typeof(int), nameof(InitialYear))]
-    [NotVisible]
-    public int InitialYear { get; init; }
-
-    [IdentityProperty]
-    [NotVisible]
-    public string PartnerRatingType { get; init; }
-
-    [IdentityProperty]
-    [NotVisible]
-    [Dimension(typeof(Partner))]
-    public string Partner { get; init; }
-
-    [Dimension(typeof(CreditRiskRating))]
-    public string CreditRiskRating { get; init; }
-}
-public record CreditDefaultRatesReportParameter : ReportParameter  {
-    [IdentityProperty]
-    [NotAggregated]
-    [Dimension(typeof(int), nameof(InitialYear))]
-    [NotVisible]
-    public int InitialYear { get; init; }
-    
-    [IdentityProperty]
-    [NotVisible]
-    public string CreditDefaultRatesType { get; init; }
-
-    [IdentityProperty]
-    [Dimension(typeof(CreditRiskRating))]
-    [NotVisible]
-    public string CreditRiskRating { get; init; }
-}
 
 public static class ParameterReportQueriesExtensions
 {
