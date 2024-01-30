@@ -5,7 +5,23 @@ VisualStudioVersion = 17.8.34408.163
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Ifrs17.Domain", "OpenSmc.Ifrs17.Domain\OpenSmc.Ifrs17.Domain.csproj", "{A3001512-3B55-420B-B1C7-1350C69A142F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenSmc.Ifrs17.Domain.Test", "OpenSmc.Ifrs17.Domain.Test\OpenSmc.Ifrs17.Domain.Test.csproj", "{185CFFE3-D491-4869-AF87-D210A5AFA434}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Ifrs17.Domain.Test", "OpenSmc.Ifrs17.Domain.Test\OpenSmc.Ifrs17.Domain.Test.csproj", "{185CFFE3-D491-4869-AF87-D210A5AFA434}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenSmc", "OpenSmc", "{74F80CED-05CC-4D74-A4C1-57FC8BCC0BC9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Arithmetics", "..\OpenSmc\src\OpenSmc.Arithmetics\OpenSmc.Arithmetics.csproj", "{BEE44D41-7CC0-4E29-A2E5-EBC55C6EED7D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Arithmetics.Abstractions", "..\OpenSmc\src\OpenSmc.Arithmetics.Abstractions\OpenSmc.Arithmetics.Abstractions.csproj", "{7A6FB48E-D53C-4561-B92C-01D94F9F28A4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Collections", "..\OpenSmc\src\OpenSmc.Collections\OpenSmc.Collections.csproj", "{2BB84504-1BD7-457D-B8EA-1067AEB12340}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Conventions", "..\OpenSmc\src\OpenSmc.Conventions\OpenSmc.Conventions.csproj", "{BD911821-A665-415F-B39E-C238F20DDB63}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Domain.Abstractions", "..\OpenSmc\src\OpenSmc.Domain.Abstractions\OpenSmc.Domain.Abstractions.csproj", "{88E64296-CC9C-4D6F-B4AD-585A9F672B89}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Equality", "..\OpenSmc\src\OpenSmc.Equality\OpenSmc.Equality.csproj", "{B6A9A99D-4842-4762-BDBC-826B902C24E6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Reflection", "..\OpenSmc\src\OpenSmc.Reflection\OpenSmc.Reflection.csproj", "{7EB138A4-7CED-4DA8-AE0D-55C6D8C88992}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,9 +37,46 @@ Global
 		{185CFFE3-D491-4869-AF87-D210A5AFA434}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{185CFFE3-D491-4869-AF87-D210A5AFA434}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{185CFFE3-D491-4869-AF87-D210A5AFA434}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEE44D41-7CC0-4E29-A2E5-EBC55C6EED7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEE44D41-7CC0-4E29-A2E5-EBC55C6EED7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEE44D41-7CC0-4E29-A2E5-EBC55C6EED7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEE44D41-7CC0-4E29-A2E5-EBC55C6EED7D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A6FB48E-D53C-4561-B92C-01D94F9F28A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A6FB48E-D53C-4561-B92C-01D94F9F28A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A6FB48E-D53C-4561-B92C-01D94F9F28A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A6FB48E-D53C-4561-B92C-01D94F9F28A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BB84504-1BD7-457D-B8EA-1067AEB12340}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BB84504-1BD7-457D-B8EA-1067AEB12340}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BB84504-1BD7-457D-B8EA-1067AEB12340}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BB84504-1BD7-457D-B8EA-1067AEB12340}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD911821-A665-415F-B39E-C238F20DDB63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD911821-A665-415F-B39E-C238F20DDB63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD911821-A665-415F-B39E-C238F20DDB63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD911821-A665-415F-B39E-C238F20DDB63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88E64296-CC9C-4D6F-B4AD-585A9F672B89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88E64296-CC9C-4D6F-B4AD-585A9F672B89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88E64296-CC9C-4D6F-B4AD-585A9F672B89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88E64296-CC9C-4D6F-B4AD-585A9F672B89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6A9A99D-4842-4762-BDBC-826B902C24E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6A9A99D-4842-4762-BDBC-826B902C24E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6A9A99D-4842-4762-BDBC-826B902C24E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6A9A99D-4842-4762-BDBC-826B902C24E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EB138A4-7CED-4DA8-AE0D-55C6D8C88992}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EB138A4-7CED-4DA8-AE0D-55C6D8C88992}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EB138A4-7CED-4DA8-AE0D-55C6D8C88992}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EB138A4-7CED-4DA8-AE0D-55C6D8C88992}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BEE44D41-7CC0-4E29-A2E5-EBC55C6EED7D} = {74F80CED-05CC-4D74-A4C1-57FC8BCC0BC9}
+		{7A6FB48E-D53C-4561-B92C-01D94F9F28A4} = {74F80CED-05CC-4D74-A4C1-57FC8BCC0BC9}
+		{2BB84504-1BD7-457D-B8EA-1067AEB12340} = {74F80CED-05CC-4D74-A4C1-57FC8BCC0BC9}
+		{BD911821-A665-415F-B39E-C238F20DDB63} = {74F80CED-05CC-4D74-A4C1-57FC8BCC0BC9}
+		{88E64296-CC9C-4D6F-B4AD-585A9F672B89} = {74F80CED-05CC-4D74-A4C1-57FC8BCC0BC9}
+		{B6A9A99D-4842-4762-BDBC-826B902C24E6} = {74F80CED-05CC-4D74-A4C1-57FC8BCC0BC9}
+		{7EB138A4-7CED-4DA8-AE0D-55C6D8C88992} = {74F80CED-05CC-4D74-A4C1-57FC8BCC0BC9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2F53264C-6C10-4A4F-986B-50102C8E2371}
