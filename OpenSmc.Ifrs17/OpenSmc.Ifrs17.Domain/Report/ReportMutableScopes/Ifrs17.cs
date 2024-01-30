@@ -6,13 +6,13 @@ namespace OpenSmc.Ifrs17.Domain.Report.ReportMutableScopes;
 public class Ifrs17
 {
     private Systemorph.Vertex.Scopes.Proxy.IScopeFactory scopes;
-    private Systemorph.Vertex.Pivot.Builder.Interfaces.IPivotFactory report;
-    private IExportVariable export;
-    private ReportStorage Storage;
-    private ReportUniverse reportUniverse;
+    private readonly Systemorph.Vertex.Pivot.Builder.Interfaces.IPivotFactory report;
+    private readonly IExportVariable export;
+    private ReportStorage storage;
+    private readonly ReportUniverse reportUniverse;
 
     //reset
-    public void Reset(IWorkspace workspace) => Storage = new ReportStorage(workspace, report, export);
+    public void Reset(IWorkspace workspace) => storage = new ReportStorage(workspace, report, export);
 
     //constructor
     public Ifrs17(IWorkspace workspace,
@@ -23,8 +23,8 @@ public class Ifrs17
         this.scopes = scopes;
         this.report = report;
         this.export = export;
-        Storage = new ReportStorage(workspace, report, export);
-        reportUniverse = scopes.ForSingleton().WithStorage(Storage).ToScope<ReportUniverse>();
+        storage = new ReportStorage(workspace, report, export);
+        reportUniverse = scopes.ForSingleton().WithStorage(storage).ToScope<ReportUniverse>();
     }
 
     public IIfrs17Report PresentValues => reportUniverse.GetScope<IIfrs17Report>(nameof(IPvReport));
