@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
+using OpenSmc.Arithmetics;
+using OpenSmc.Domain.Abstractions.Attributes;
 using OpenSmc.Ifrs17.Domain.DataModel.Interfaces;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
-using Systemorph.Vertex.Api.Attributes;
-using Systemorph.Vertex.Arithmetics.Api;
 using Systemorph.Vertex.Persistence.EntityFramework.Conversions.Api;
 using Systemorph.Vertex.Persistence.EntityFramework.Conversions.Converters;
 
@@ -13,7 +13,7 @@ public record YieldCurve : KeyedRecord, IWithYearMonthAndScenario
     [Required]
     [IdentityProperty]
     [Dimension(typeof(Currency))]
-    public string Currency { get; init; }
+    public string? Currency { get; init; }
 
     [Required]
     [IdentityProperty]
@@ -31,10 +31,10 @@ public record YieldCurve : KeyedRecord, IWithYearMonthAndScenario
 
     [IdentityProperty]
     [Dimension(typeof(Scenario))]
-    public string Scenario { get; init; }
+    public string? Scenario { get; init; }
 
-    [IdentityProperty] public string Name { get; init; }
+    [IdentityProperty] public string? Name { get; init; }
 
     [Conversion(typeof(PrimitiveArrayConverter))]
-    public double[] Values { get; init; }
+    public double? Values { get; init; }
 }

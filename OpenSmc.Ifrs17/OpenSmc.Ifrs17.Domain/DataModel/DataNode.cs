@@ -1,8 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+using OpenSmc.Domain.Abstractions.Attributes;
 using OpenSmc.Ifrs17.Domain.DataModel.Interfaces;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
-using Systemorph.Vertex.Api.Attributes;
-using Systemorph.Vertex.Partition;
+using OpenSmc.Partition;
+
 
 namespace OpenSmc.Ifrs17.Domain.DataModel;
 

@@ -1,4 +1,4 @@
-using Systemorph.Vertex.Api;
+using OpenSmc.Domain.Abstractions;
 
 namespace OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 

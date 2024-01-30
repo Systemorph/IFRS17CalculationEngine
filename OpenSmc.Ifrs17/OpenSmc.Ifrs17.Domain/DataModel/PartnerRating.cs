@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
+using OpenSmc.Arithmetics;
 using OpenSmc.Ifrs17.Domain.DataModel.Interfaces;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
-using Systemorph.Vertex.Api.Attributes;
-using Systemorph.Vertex.Arithmetics.Api;
+using OpenSmc.Domain.Abstractions.Attributes;
 
 namespace OpenSmc.Ifrs17.Domain.DataModel;
 

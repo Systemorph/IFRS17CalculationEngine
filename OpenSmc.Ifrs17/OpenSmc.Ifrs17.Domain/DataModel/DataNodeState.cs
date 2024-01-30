@@ -1,12 +1,13 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using OpenSmc.Arithmetics;
+using OpenSmc.Domain.Abstractions.Attributes;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.DataModel.Interfaces;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
-using Systemorph.Vertex.Api.Attributes;
-using Systemorph.Vertex.Arithmetics.Api;
-using Systemorph.Vertex.Partition;
+using OpenSmc.Partition;
+
 
 namespace OpenSmc.Ifrs17.Domain.DataModel;
 
@@ -19,7 +20,7 @@ public record DataNodeState : KeyedRecord, IPartitioned, IWithYearMonthAndScenar
     [Required]
     [IdentityProperty]
     [Dimension(typeof(GroupOfContract))]
-    public string DataNode { get; init; }
+    public string? DataNode { get; init; }
 
     [Required]
     [IdentityProperty]
@@ -42,5 +43,5 @@ public record DataNodeState : KeyedRecord, IPartitioned, IWithYearMonthAndScenar
 
     [IdentityProperty]
     [Dimension(typeof(Scenario))]
-    public string Scenario { get; init; }
+    public string? Scenario { get; init; }
 }

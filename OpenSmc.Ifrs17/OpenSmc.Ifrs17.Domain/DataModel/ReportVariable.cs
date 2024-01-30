@@ -1,8 +1,7 @@
+using OpenSmc.Arithmetics;
+using OpenSmc.Domain.Abstractions.Attributes;
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
-using Systemorph.Vertex.Api.Attributes;
-using Systemorph.Vertex.Arithmetics.Api;
-using Systemorph.Vertex.Attributes.Arithmetics;
 
 namespace OpenSmc.Ifrs17.Domain.DataModel;
 
@@ -21,7 +20,7 @@ public record ReportVariable
     [NotVisible]
     [Dimension(typeof(Currency))]
     [IdentityProperty]
-    [AggregateBy]
+    [Systemorph.Vertex.Attributes.Arithmetics.AggregateBy]
     public string Currency { get; init; }
 
     [NotVisible]

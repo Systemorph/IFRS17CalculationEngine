@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
+using OpenSmc.Arithmetics;
+using OpenSmc.Domain.Abstractions.Attributes;
 using OpenSmc.Ifrs17.Domain.DataModel.Interfaces;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
-using Systemorph.Vertex.Api.Attributes;
-using Systemorph.Vertex.Arithmetics.Api;
 using Systemorph.Vertex.Persistence.EntityFramework.Conversions.Api;
 using Systemorph.Vertex.Persistence.EntityFramework.Conversions.Converters;
 
@@ -13,7 +13,7 @@ public record CreditDefaultRate : KeyedRecord, IWithYearMonthAndScenario
     [Required]
     [IdentityProperty]
     [Dimension(typeof(CreditRiskRating))]
-    public string CreditRiskRating { get; init; }
+    public string? CreditRiskRating { get; init; }
 
     [Required]
     [IdentityProperty]
@@ -30,9 +30,9 @@ public record CreditDefaultRate : KeyedRecord, IWithYearMonthAndScenario
     public int Month { get; init; }
 
     [Conversion(typeof(PrimitiveArrayConverter))]
-    public double[] Values { get; init; }
+    public double[]? Values { get; init; }
 
     [IdentityProperty]
     [Dimension(typeof(Scenario))]
-    public string Scenario { get; init; }
+    public string? Scenario { get; init; }
 }

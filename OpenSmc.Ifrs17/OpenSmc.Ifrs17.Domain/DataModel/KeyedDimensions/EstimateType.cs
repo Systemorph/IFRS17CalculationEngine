@@ -1,5 +1,5 @@
+using OpenSmc.Domain.Abstractions.Attributes;
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
-using Systemorph.Vertex.Api.Attributes;
 
 namespace OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 

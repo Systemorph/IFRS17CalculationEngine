@@ -1,5 +1,5 @@
-using Systemorph.Vertex.Api.Attributes;
-using Systemorph.Vertex.Scopes.Api;
+using OpenSmc.DataCubes;
+using OpenSmc.Domain.Abstractions.Attributes;
 
 namespace OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 
