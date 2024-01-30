@@ -6,9 +6,9 @@ using OpenSmc.Ifrs17.Domain.Utils;
 using Systemorph.Vertex.Collections;
 using Systemorph.Vertex.Scopes;
 
-namespace OpenSmc.Ifrs17.Domain.Import;
+namespace OpenSmc.Ifrs17.Domain.Import.ToIfrsVariableScopes;
 
-public interface ITmToIfrsVariable: IScope<ImportIdentity, ImportStorage>
+public interface ITmToIfrsVariable : IScope<ImportIdentity, ImportStorage>
 {
     static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>
         builder.ForScope<ITmToIfrsVariable>(s => s.WithApplicability<EmptyITmIfrsVariable>(x =>
@@ -27,7 +27,9 @@ public interface ITmToIfrsVariable: IScope<ImportIdentity, ImportStorage>
     IEnumerable<IfrsVariable> Csms => GetStorage().DataNodeDataBySystemName[Identity.DataNode].LiabilityType == LiabilityTypes.LIC || Identity.ValuationApproach == ValuationApproaches.PAA
         ? Enumerable.Empty<IfrsVariable>()
         : GetScope<IContractualServiceMargin>(Identity).RepeatOnce()
-            .Select(x => new IfrsVariable{ EstimateType = x.EstimateType,
+            .Select(x => new IfrsVariable
+            {
+                EstimateType = x.EstimateType,
                 DataNode = x.Identity.DataNode,
                 AocType = x.Identity.AocType,
                 Novelty = x.Identity.Novelty,
@@ -38,9 +40,11 @@ public interface ITmToIfrsVariable: IScope<ImportIdentity, ImportStorage>
 
     IEnumerable<IfrsVariable> Loss => GetStorage().DataNodeDataBySystemName[Identity.DataNode].LiabilityType == LiabilityTypes.LIC
         ? Enumerable.Empty<IfrsVariable>()
-        : Identity.IsReinsurance 
+        : Identity.IsReinsurance
             ? GetScope<ILossRecoveryComponent>(Identity).RepeatOnce()
-                .Select(x => new IfrsVariable{ EstimateType = x.EstimateType,
+                .Select(x => new IfrsVariable
+                {
+                    EstimateType = x.EstimateType,
                     DataNode = x.Identity.DataNode,
                     AocType = x.Identity.AocType,
                     Novelty = x.Identity.Novelty,
@@ -49,7 +53,9 @@ public interface ITmToIfrsVariable: IScope<ImportIdentity, ImportStorage>
                     Partition = GetStorage().TargetPartition
                 })
             : GetScope<ILossComponent>(Identity).RepeatOnce()
-                .Select(x => new IfrsVariable{ EstimateType = x.EstimateType,
+                .Select(x => new IfrsVariable
+                {
+                    EstimateType = x.EstimateType,
                     DataNode = x.Identity.DataNode,
                     AocType = x.Identity.AocType,
                     Novelty = x.Identity.Novelty,
@@ -57,11 +63,13 @@ public interface ITmToIfrsVariable: IScope<ImportIdentity, ImportStorage>
                     Values = ImportCalculationExtensions.SetProjectionValue(x.Value, x.Identity.ProjectionPeriod),
                     Partition = GetStorage().TargetPartition
                 });
-    
-    IEnumerable<IfrsVariable> AmortizationFactor =>  Identity.AocType == AocTypes.AM && Loss.Concat(Csms).Where(x => x.Values != null).Any(x => Math.Abs(x.Values.GetValidElement(Identity.ProjectionPeriod)) > Consts.Precision)
+
+    IEnumerable<IfrsVariable> AmortizationFactor => Identity.AocType == AocTypes.AM && Loss.Concat(Csms).Where(x => x.Values != null).Any(x => Math.Abs(x.Values.GetValidElement(Identity.ProjectionPeriod)) > Consts.Precision)
         && GetStorage().DataNodeDataBySystemName[Identity.DataNode].LiabilityType == LiabilityTypes.LRC
             ? GetScope<ICurrentPeriodAmortizationFactor>((Identity, AmountTypes.CU, 0), o => o.WithContext(EconomicBasis)).RepeatOnce()
-                .Select(x => new IfrsVariable{ EstimateType = x.EstimateType,
+                .Select(x => new IfrsVariable
+                {
+                    EstimateType = x.EstimateType,
                     DataNode = x.Identity.Id.DataNode,
                     AocType = x.Identity.Id.AocType,
                     Novelty = x.Identity.Id.Novelty,

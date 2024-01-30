@@ -1,5 +1,6 @@
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.Import.ToIfrsVariableScopes;
 using OpenSmc.Ifrs17.Domain.Utils;
 using Systemorph.Vertex.Collections;
 using Systemorph.Vertex.Scopes;

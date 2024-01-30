@@ -1,8 +1,9 @@
 using OpenSmc.Ifrs17.Domain.DataModel;
 
-namespace OpenSmc.Ifrs17.Domain.Import;
+namespace OpenSmc.Ifrs17.Domain.Import.ToIfrsVariableScopes;
 
-public interface EmptyITmIfrsVariable: ITmToIfrsVariable {
+public interface EmptyITmIfrsVariable : ITmToIfrsVariable
+{
     IEnumerable<IfrsVariable> ITmToIfrsVariable.Csms => Enumerable.Empty<IfrsVariable>();
     IEnumerable<IfrsVariable> ITmToIfrsVariable.Loss => Enumerable.Empty<IfrsVariable>();
     IEnumerable<IfrsVariable> ITmToIfrsVariable.AmortizationFactor => Enumerable.Empty<IfrsVariable>();
