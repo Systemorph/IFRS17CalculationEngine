@@ -6,6 +6,7 @@ using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.DataModel.Args;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.Domain.Import;
+using OpenSmc.Ifrs17.Domain.Import.ToIfrsVariableScopes;
 using OpenSmc.Ifrs17.Domain.Utils;
 using Systemorph.Vertex.Activities;
 using Systemorph.Vertex.Collections;

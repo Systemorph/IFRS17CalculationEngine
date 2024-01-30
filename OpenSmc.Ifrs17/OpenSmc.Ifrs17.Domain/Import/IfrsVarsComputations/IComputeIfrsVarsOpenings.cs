@@ -1,6 +1,7 @@
 using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.Import.ToIfrsVariableScopes;
 
-namespace OpenSmc.Ifrs17.Domain.Import;
+namespace OpenSmc.Ifrs17.Domain.Import.IfrsVarsComputations;
 
 public interface IComputeIfrsVarsOpenings : IActualToIfrsVariable, IDeferrableToIfrsVariable, ITmToIfrsVariable, IRevenueToIfrsVariable
 {

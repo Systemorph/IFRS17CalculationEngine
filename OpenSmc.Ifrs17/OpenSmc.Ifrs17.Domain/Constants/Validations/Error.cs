@@ -48,7 +48,7 @@ public class Error : ValidationBase
     public static readonly Error ExchangeRateNotFound = new(nameof(ExchangeRateNotFound));
     public static readonly Error ExchangeRateCurrency = new(nameof(ExchangeRateCurrency));
 
-    // Data Node State Errors
+    // IData Node State Errors
     public static readonly Error ChangeDataNodeState = new(nameof(ChangeDataNodeState));
     public static readonly Error InactiveDataNodeState = new(nameof(InactiveDataNodeState));
 
@@ -86,7 +86,7 @@ public class Error : ValidationBase
     public static readonly Error NotSupportedAocStepReference = new(nameof(NotSupportedAocStepReference));
     public static readonly Error MultipleEoP = new(nameof(MultipleEoP));
 
-    // Data Completeness Errors; Range 120 - 129
+    // IData Completeness Errors; Range 120 - 129
     public static readonly Error MissingDataAtPosting = new(nameof(MissingDataAtPosting));
     public static readonly Error MissingCombinedLiability = new(nameof(MissingCombinedLiability));
     public static readonly Error MissingCoverageUnit = new(nameof(MissingCoverageUnit));
@@ -142,24 +142,24 @@ public class Error : ValidationBase
             (nameof(ExchangeRateNotFound), 2) => $"Exchange Rate for {s[0]} {s[1]} is not present.",
             (nameof(ExchangeRateCurrency), 1) => $"{s[0]} does not have any Exchange Rate defined.",
 
-            // Data Node State
-            (nameof(ChangeDataNodeState), 0) => $"Data Node State can not change from Inactive state into Active state.",
-            (nameof(ChangeDataNodeState), 1) => $"Data Node State for {s[0]} can not change from Inactive state into Active state.",
-            (nameof(ChangeDataNodeState), 3) => $"Data Node State for {s[0]} can not change from {s[1]} state into {s[2]} state.",
-            (nameof(InactiveDataNodeState), 1) => $"Data imported for inactive Data Node {s[0]}.",
+            // IData Node State
+            (nameof(ChangeDataNodeState), 0) => $"IData Node State can not change from Inactive state into Active state.",
+            (nameof(ChangeDataNodeState), 1) => $"IData Node State for {s[0]} can not change from Inactive state into Active state.",
+            (nameof(ChangeDataNodeState), 3) => $"IData Node State for {s[0]} can not change from {s[1]} state into {s[2]} state.",
+            (nameof(InactiveDataNodeState), 1) => $"IData imported for inactive IData Node {s[0]}.",
 
             //Parameters
             (nameof(ReinsuranceCoverageDataNode), 2) => $"Invalid Reinsurance Coverage parameter does not link a GroupOfReinsuranceContract to a GroupOfInsuranceContract. Provided GroupOfContracts are: {s[0]}, {s[1]}.",
             (nameof(DuplicateInterDataNode), 2) => $"Duplicated Inter-DataNode parameter for {s[0]}-{s[1]} is found.",
             (nameof(DuplicateSingleDataNode), 1) => $"Duplicated Single-DataNode parameter for {s[0]} is found.",
-            (nameof(MissingSingleDataNodeParameter), 1) => $"Single DataNode Parameter for Data Node {s[0]} is not found.",
-            (nameof(InvalidDataNode), 1) => $"Data imported for invalid Data Node {s[0]}.",
-            (nameof(InvalidDataNodeForOpening), 1) => $"Data imported for invalid Data Node or for a Data Node after its inception year {s[0]}.",
-            (nameof(InvalidCashFlowPeriodicity), 1) => $"Invalid CashFlowPeriodicity parameter for Data Node {s[0]}.",
-            (nameof(MissingInterpolationMethod), 1) => $"Missing InterpolationMethod parameter for Data Node {s[0]}.",
-            (nameof(InvalidInterpolationMethod), 1) => $"Invalid InterpolationMethod parameter for Data Node {s[0]}.",
-            (nameof(InvalidEconomicBasisDriver), 1) => $"Invalid EconomicBasisDriver parameter for Data Node {s[0]}.",
-            (nameof(InvalidReleasePattern), 1) => $"Invalid ReleasePattern parameters for Data Node {s[0]}.",
+            (nameof(MissingSingleDataNodeParameter), 1) => $"Single DataNode Parameter for IData Node {s[0]} is not found.",
+            (nameof(InvalidDataNode), 1) => $"IData imported for invalid IData Node {s[0]}.",
+            (nameof(InvalidDataNodeForOpening), 1) => $"IData imported for invalid IData Node or for a IData Node after its inception year {s[0]}.",
+            (nameof(InvalidCashFlowPeriodicity), 1) => $"Invalid CashFlowPeriodicity parameter for IData Node {s[0]}.",
+            (nameof(MissingInterpolationMethod), 1) => $"Missing InterpolationMethod parameter for IData Node {s[0]}.",
+            (nameof(InvalidInterpolationMethod), 1) => $"Invalid InterpolationMethod parameter for IData Node {s[0]}.",
+            (nameof(InvalidEconomicBasisDriver), 1) => $"Invalid EconomicBasisDriver parameter for IData Node {s[0]}.",
+            (nameof(InvalidReleasePattern), 1) => $"Invalid ReleasePattern parameters for IData Node {s[0]}.",
 
             // Storage
             (nameof(DataNodeNotFound), 1) => $"DataNode {s[0]} not found.",
@@ -176,13 +176,13 @@ public class Error : ValidationBase
             (nameof(InvalidGric), 1) => $"Invalid Group of Reinsurance Contract {s[0]} has been requested during calculation.",
             (nameof(InvalidGic), 1) => $"Invalid Group of Insurance Contract {s[0]} has been requested during calculation.",
             (nameof(ReleasePatternNotFound), 2) => $"Release pattern for Group of Contract {s[0]} and AmountType {s[1]} is not found.",
-            (nameof(MissingPreviousPeriodData), 3) => $"Data for previous period (Year: {s[0]}, Month: {s[1]}) is missing for Group of contracts: {s[2]}.",
+            (nameof(MissingPreviousPeriodData), 3) => $"IData for previous period (Year: {s[0]}, Month: {s[1]}) is missing for Group of contracts: {s[2]}.",
 
             // Scopes
             (nameof(NotSupportedAocStepReference), 1) => $"Unsupported reference AoC Step for AoC Type {s[0]}.",
             (nameof(MultipleEoP), 0) => $"Closing Balance for both Csm and Lc are computed.",
 
-            // Data Completeness
+            // IData Completeness
             (nameof(MissingDataAtPosting), 1) => $"Missing imported data for {s[0]} DataNode.",
             (nameof(MissingCombinedLiability), 2) => $"Missing Combined Liability AoC Type for DataNode {s[0]} and AmountType {s[1]}.",
             (nameof(MissingCoverageUnit), 1) => $"Missing Coverage Unit cash flow for {s[0]} DataNode.",

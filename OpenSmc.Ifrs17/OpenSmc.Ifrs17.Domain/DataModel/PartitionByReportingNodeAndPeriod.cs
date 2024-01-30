@@ -19,5 +19,5 @@ public record PartitionByReportingNodeAndPeriod : IfrsPartition
     [Dimension(typeof(Scenario))]
     [IdentityProperty]
     [Display(Order = 40)]
-    public string Scenario { get; init; }
+    public string? Scenario { get; init; }
 }

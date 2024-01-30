@@ -4,55 +4,14 @@ using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.Domain.Utils;
 using Systemorph.Vertex.Api;
-using Systemorph.Vertex.Api.Attributes;
-using Systemorph.Vertex.Attributes.Arithmetics;
 using Systemorph.Vertex.Collections;
 using Systemorph.Vertex.DataCubes;
 using Systemorph.Vertex.DataCubes.Api;
 using Systemorph.Vertex.Export.Factory;
 using Systemorph.Vertex.Hierarchies;
-using Systemorph.Vertex.Scopes.Api;
 using Systemorph.Vertex.Workspace;
 
 namespace OpenSmc.Ifrs17.Domain.Report;
-
-
-[IdentityAggregationBehaviour(IdentityAggregationBehaviour.Aggregate)]
-public record ReportIdentity {
-    
-    [Dimension(typeof(int), nameof(Year))]
-    public int Year { get; init; }
-
-    [Dimension(typeof(int), nameof(Month))]
-    public int Month { get; init; }
-
-    [Dimension(typeof(ReportingNode))]
-    public string ReportingNode { get; init; }
-    
-    [Dimension(typeof(Scenario))]
-    public string Scenario { get; init; }
-
-    [Dimension(typeof(Currency), nameof(ContractualCurrency))]
-    public string ContractualCurrency { get; init; }
-    
-    [Dimension(typeof(Currency), nameof(FunctionalCurrency))]
-    public string FunctionalCurrency { get; init; }
-
-    [NotAggregated]
-    [Dimension(typeof(ProjectionConfiguration), nameof(Projection))]
-    public string Projection { get; init; }
-
-    [Dimension(typeof(LiabilityType))]
-    public string LiabilityType { get; init; }
-    
-    [Dimension(typeof(ValuationApproach))]
-    public string ValuationApproach { get; init; }
-    
-    public bool IsReinsurance { get; init; } //TODO use ReinsuranceType
-    
-    public bool IsOci { get; init; } 
-}
-
 
 public class ReportStorage {
     protected readonly IWorkspace workspace;
@@ -67,7 +26,7 @@ public class ReportStorage {
     public (string DisplayName, string SystemName) InitialReportingNode {get; private set;}
     public (int Year, int Month) InitialReportingPeriod {get; private set;}
 
-    // Aux Data
+    // Aux IData
     private Dictionary<(int year, int month), Dictionary<string, Dictionary<FxPeriod, double>>> exchangeRatesByCurrencyByFxTypeAndPeriod = new(); // Fx Rates
     private Dictionary<(int year, int month), Dictionary<AocStep, FxPeriod>> fxPeriodsByAocStepAndPeriod = new(); // FxParameter
     
@@ -105,7 +64,7 @@ public class ReportStorage {
         InitialReportingNode = (rootReportingNode.DisplayName, rootReportingNode.SystemName);
     }
     
-    public async Task InitializeAsync((int year, int month) period, string reportingNode, string scenario, CurrencyType currencyType) {
+    public async Task InitializeAsync((int year, int month) period, string? reportingNode, string? scenario, CurrencyType currencyType) {
         // Setting the Args --> Temp for the moment
         Args = (period, reportingNode, scenario, currencyType);
         ProjectionConfigurations = await workspace.Query<ProjectionConfiguration>().ToArrayAsync();
@@ -148,7 +107,7 @@ public class ReportStorage {
         }
     }
     
-    // Getters for Data
+    // Getters for IData
     public IDataCube<ReportVariable> GetVariables(ReportIdentity reportIdentity, params string[] estimateTypes)
         => (!variablesDictionary.TryGetValue(((reportIdentity.Year, reportIdentity.Month), reportIdentity.ReportingNode, reportIdentity.Scenario), out var variablesByIdentity) || 
             !variablesByIdentity.TryGetValue(reportIdentity, out var variablesByEstimateType))
@@ -172,7 +131,7 @@ public class ReportStorage {
 
     public Systemorph.Vertex.Hierarchies.IHierarchy<T> GetHierarchy<T>() where T : class, IHierarchicalDimension => hierarchicalDimensionCache.Get<T>();
     
-    public HashSet<(ReportIdentity, CurrencyType)> GetIdentities((int year, int month) period, string reportingNode, string scenario, CurrencyType currencyType, string projection = null) {
+    public HashSet<(ReportIdentity, CurrencyType)> GetIdentities((int year, int month) period, string? reportingNode, string? scenario, CurrencyType currencyType, string? projection = null) {
         var relevantProjection = projection == null ? currentPeriodProjection.RepeatOnce()
                                                     : ProjectionConfigurations.SortRelevantProjections(period.month).TakeWhile(x => x.SystemName != projection ).Select(y => y.SystemName).Concat(projection.RepeatOnce());
         return GetLeaves<ReportingNode>(reportingNode).SelectMany(rn => TargetScenarios.SelectMany(scn =>

@@ -16,7 +16,7 @@ public record ReportVariable
     [NotVisible]
     [Dimension(typeof(Scenario))]
     [IdentityProperty]
-    public string Scenario { get; init; }
+    public string? Scenario { get; init; }
 
     [NotVisible]
     [Dimension(typeof(Currency))]
