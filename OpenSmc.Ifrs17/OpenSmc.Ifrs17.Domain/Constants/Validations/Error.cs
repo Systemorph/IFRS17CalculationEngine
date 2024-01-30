@@ -180,7 +180,7 @@ public class Error : ValidationBase
 
             // Scopes
             (nameof(NotSupportedAocStepReference), 1) => $"Unsupported reference AoC Step for AoC Type {s[0]}.",
-            (nameof(MultipleEoP), 0) => $"Closing Balance for both Csm and Lc are computed.",
+            (nameof(MultipleEoP), 0) => $"Closing Balance for both ICsm and ILc are computed.",
 
             // IData Completeness
             (nameof(MissingDataAtPosting), 1) => $"Missing imported data for {s[0]} DataNode.",

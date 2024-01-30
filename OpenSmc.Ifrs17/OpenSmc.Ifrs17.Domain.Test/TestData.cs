@@ -75,11 +75,11 @@ public class TestData
         AA,Advance Actuals,60,4,7,NotApplicable,PayablePR,ReceivableNIC,ReceivableICO,RiReceivablePR,RiPayableNIC,,,,,,
         OA,Overdue Actuals,70,4,7,NotApplicable,ReceivablePR,PayableNIC,PayableICO,RiPayablePR,RiReceivableNIC,,,,,,
         DA,Deferrable,80,8,7,NotApplicable,,,,,,,
-        R,PAA Revenues,85,8,4,BeginningOfPeriod,,,,,,,
+        R,PAA IRevenues,85,8,4,BeginningOfPeriod,,,,,,,
         A,Actuals,90,1,6,NotApplicable,,,,,,,
         F,Factors,100,1,4,NotApplicable,,,,,,,
-        BEPA,Best Estimate of Present Value To Csm,110,1,4,NotApplicable,,,,,,,
-        APA,Actuals To Csm,120,1,6,NotApplicable,,,,,,,";
+        BEPA,Best Estimate of Present Value To ICsm,110,1,4,NotApplicable,,,,,,,
+        APA,Actuals To ICsm,120,1,6,NotApplicable,,,,,,,";
 
 
     public string EconomicBasis =
@@ -133,7 +133,7 @@ public class TestData
         AC,Attributable Commission,,120,BeginningOfPeriod
         ACA,Aquisition,AC,130,BeginningOfPeriod
         ACM,Maitenance,AC,140,BeginningOfPeriod
-        DE,Deferrals,,200,EndOfPeriod
+        DE,IDeferrals,,200,EndOfPeriod
         DAE,Aquisition Expenses,DE,220,EndOfPeriod
         CU,Coverage Units,,150,EndOfPeriod";
 

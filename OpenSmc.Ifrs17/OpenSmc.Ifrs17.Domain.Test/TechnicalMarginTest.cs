@@ -124,7 +124,7 @@ public class TechnicalMarginTest : Tests.TestBase
 
             if (Math.Abs(variableSwitch.Values[0] - kvp.Value.valueCsm) > Consts.Precision)
                 errors.Add(
-                    $"Values not matching for AocType {kvp.Key.AocType} and Novelty {kvp.Key.Novelty}. Variable: Csm {variableSwitch.Values[0]}; Benchmark: Csm {kvp.Value.valueCsm}.");
+                    $"Values not matching for AocType {kvp.Key.AocType} and Novelty {kvp.Key.Novelty}. Variable: ICsm {variableSwitch.Values[0]}; Benchmark: ICsm {kvp.Value.valueCsm}.");
         }
 
         //Check ValueLoss
@@ -142,7 +142,7 @@ public class TechnicalMarginTest : Tests.TestBase
 
             if (Math.Abs(variableSwitch.Values[0] - kvp.Value.valueLoss) > Consts.Precision)
                 errors.Add(
-                    $"Values not matching for AocType {kvp.Key.AocType} and Novelty {kvp.Key.Novelty}. Variable: Lc/LoReCo {variableSwitch.Values[0]}; Benchmark: Lc/LoReCo {kvp.Value.valueLoss}.");
+                    $"Values not matching for AocType {kvp.Key.AocType} and Novelty {kvp.Key.Novelty}. Variable: ILc/LoReCo {variableSwitch.Values[0]}; Benchmark: ILc/LoReCo {kvp.Value.valueLoss}.");
         }
 
         return errors;

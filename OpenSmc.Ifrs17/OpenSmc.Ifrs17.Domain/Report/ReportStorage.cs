@@ -27,7 +27,7 @@ public class ReportStorage {
     public (int Year, int Month) InitialReportingPeriod {get; private set;}
 
     // Aux IData
-    private Dictionary<(int year, int month), Dictionary<string, Dictionary<FxPeriod, double>>> exchangeRatesByCurrencyByFxTypeAndPeriod = new(); // Fx Rates
+    private Dictionary<(int year, int month), Dictionary<string, Dictionary<FxPeriod, double>>> exchangeRatesByCurrencyByFxTypeAndPeriod = new(); // IFx Rates
     private Dictionary<(int year, int month), Dictionary<AocStep, FxPeriod>> fxPeriodsByAocStepAndPeriod = new(); // FxParameter
     
     // Dimensions
@@ -73,7 +73,7 @@ public class ReportStorage {
         EstimateTypesWithoutAoc = (await workspace.Query<EstimateType>().Where(x => x.StructureType == StructureType.None).Select(x => x.SystemName).ToArrayAsync()).ToHashSet();
         TargetScenarios = await GetScenariosAsync(scenario); 
         
-        // FX && Fx Parameters
+        // FX && IFx Parameters
         if(!exchangeRatesByCurrencyByFxTypeAndPeriod.TryGetValue(period, out var exchangeRatesByCurrencyByFxType) || !fxPeriodsByAocStepAndPeriod.TryGetValue(period, out var fxPeriodsByAocStep)) {
             exchangeRatesByCurrencyByFxType = await workspace.GetExchangeRatesDictionaryAsync(period.year, period.month);
             exchangeRatesByCurrencyByFxTypeAndPeriod.Add(period, exchangeRatesByCurrencyByFxType);

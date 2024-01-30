@@ -122,7 +122,7 @@ public record ReportVariable
     [NotVisible]
     [Dimension(typeof(EconomicBasis))]
     [IdentityProperty]
-    public string EconomicBasis { get; init; }
+    public string? EconomicBasis { get; init; }
 
     public double Value { get; init; }
 

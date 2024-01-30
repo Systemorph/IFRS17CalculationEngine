@@ -1,6 +1,7 @@
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.DataModel.Args;
+using OpenSmc.Ifrs17.Domain.Report.ReportScopes;
 using Systemorph.InteractiveObjects;
 using Systemorph.Vertex.Export.Factory;
 using Systemorph.Vertex.Grid.Model;
