@@ -41,6 +41,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.DataSetReader.Excel
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.DataSetReader.Excel.Utils", "..\OpenSmc\src\OpenSmc.DataSetReader.Excel.Utils\OpenSmc.DataSetReader.Excel.Utils.csproj", "{554AAD01-533F-40AB-BDC3-81285AB19741}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Scopes", "..\OpenSmc\src\OpenSmc.Scopes\OpenSmc.Scopes.csproj", "{F340136F-9226-4872-88FC-D0C0C9098061}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Utils", "..\OpenSmc\src\OpenSmc.Utils\OpenSmc.Utils.csproj", "{B7385328-376E-4D1E-B62A-D5F7CF31003C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.DataCubes.Abstractions", "..\OpenSmc\src\OpenSmc.DataCubes.Abstractions\OpenSmc.DataCubes.Abstractions.csproj", "{F4D4494A-78F4-4641-A44C-46BA15627EC5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -119,6 +125,18 @@ Global
 		{554AAD01-533F-40AB-BDC3-81285AB19741}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{554AAD01-533F-40AB-BDC3-81285AB19741}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{554AAD01-533F-40AB-BDC3-81285AB19741}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F340136F-9226-4872-88FC-D0C0C9098061}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F340136F-9226-4872-88FC-D0C0C9098061}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F340136F-9226-4872-88FC-D0C0C9098061}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F340136F-9226-4872-88FC-D0C0C9098061}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7385328-376E-4D1E-B62A-D5F7CF31003C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7385328-376E-4D1E-B62A-D5F7CF31003C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7385328-376E-4D1E-B62A-D5F7CF31003C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7385328-376E-4D1E-B62A-D5F7CF31003C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4D4494A-78F4-4641-A44C-46BA15627EC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4D4494A-78F4-4641-A44C-46BA15627EC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4D4494A-78F4-4641-A44C-46BA15627EC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4D4494A-78F4-4641-A44C-46BA15627EC5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -140,6 +158,9 @@ Global
 		{6BF8A738-2345-4592-84CC-884F9745BEC0} = {74F80CED-05CC-4D74-A4C1-57FC8BCC0BC9}
 		{17CA336C-5E18-4980-9B6F-923260AD9C73} = {74F80CED-05CC-4D74-A4C1-57FC8BCC0BC9}
 		{554AAD01-533F-40AB-BDC3-81285AB19741} = {74F80CED-05CC-4D74-A4C1-57FC8BCC0BC9}
+		{F340136F-9226-4872-88FC-D0C0C9098061} = {74F80CED-05CC-4D74-A4C1-57FC8BCC0BC9}
+		{B7385328-376E-4D1E-B62A-D5F7CF31003C} = {74F80CED-05CC-4D74-A4C1-57FC8BCC0BC9}
+		{F4D4494A-78F4-4641-A44C-46BA15627EC5} = {74F80CED-05CC-4D74-A4C1-57FC8BCC0BC9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2F53264C-6C10-4A4F-986B-50102C8E2371}
