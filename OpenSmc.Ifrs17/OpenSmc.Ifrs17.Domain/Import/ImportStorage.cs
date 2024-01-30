@@ -129,7 +129,7 @@ public class ImportStorage
             (ImportFormat == ImportFormats.Cashflow ? parsedRawVariables.Select(x => new {x.DataNode, x.AccidentYear}) : parsedIfrsVariables.Select(x => new {x.DataNode, x.AccidentYear}))
             .ToDictionaryGrouped(x => x.DataNode, x => (ICollection<int?>)x.Select(y => y.AccidentYear).ToHashSet());
         
-        // Import Scopes and Data Node relationship parameters
+        // Import Scopes and IData Node relationship parameters
         InterDataNodeParametersByGoc = await workspace.LoadInterDataNodeParametersAsync(args);
         
         var primaryScopeFromParsedVariables = (ImportFormat == ImportFormats.Cashflow ? parsedRawVariables.Select(x => x.DataNode) : parsedIfrsVariables.Select(x => x.DataNode)).ToHashSet();
@@ -382,7 +382,7 @@ public class ImportStorage
     public bool IsInceptionYear(string dataNode) => SingleDataNodeParametersByGoc.TryGetValue(dataNode, out var singleDataNodeParameter)
             ? singleDataNodeParameter[Consts.CurrentPeriod].Year == CurrentReportingPeriod.Year : default;
     
-    // Data Node relationships
+    // IData Node relationships
     public IEnumerable<string> GetUnderlyingGic(ImportIdentity id) => !InterDataNodeParametersByGoc.TryGetValue(id.DataNode, out var interDataNodeParameters)
         ? Enumerable.Empty<string>()
         : interDataNodeParameters[Consts.CurrentPeriod].Select(x => x.DataNode != id.DataNode ? x.DataNode : x.LinkedDataNode).Where(goc => !DataNodeDataBySystemName[goc].IsReinsurance);

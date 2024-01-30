@@ -379,7 +379,7 @@ public record ImportBuilderWriter(ImportOptionsBuilder Builder)
             FileImportOptions fio => await ReportInputAndUpdateActivityAsync<FileImportOptions, ImportFile>(log, fio, "Import from File "),
             StringImportOptions sgio => await ReportInputAndUpdateActivityAsync<StringImportOptions, ImportString>(log, sgio, "Import from String"),
             StreamImportOptions smio => await ReportInputAndUpdateActivityAsync<StreamImportOptions, ImportStream>(log, smio, "Import from Stream"),
-            DataSetImportOptions dsio => await ReportInputAndUpdateActivityAsync<DataSetImportOptions, ImportDataSet>(log, dsio, "Import from Data Set"),
+            DataSetImportOptions dsio => await ReportInputAndUpdateActivityAsync<DataSetImportOptions, ImportDataSet>(log, dsio, "Import from IData Set"),
             _ => null
         };
         if (activity is null) throw new Exception("Import Options object is not an instance of an appropriate class.");

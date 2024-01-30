@@ -7,9 +7,9 @@ namespace OpenSmc.Ifrs17.Domain.DataModel;
 
 public record ReportingNode : KeyedDimension, IHierarchicalDimension
 {
-    [Dimension(typeof(ReportingNode))] public string Parent { get; init; }
+    [Dimension(typeof(ReportingNode))] public string? Parent { get; init; }
 
     [Required]
     [Dimension(typeof(Currency))]
-    public virtual string Currency { get; init; }
+    public virtual string? Currency { get; init; }
 }
