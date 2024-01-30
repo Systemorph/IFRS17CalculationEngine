@@ -3,15 +3,12 @@ using System.Collections.Immutable;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.Utils;
-using Systemorph.Vertex.Api.Attributes;
-using Systemorph.Vertex.Attributes.Arithmetics;
 using Systemorph.Vertex.Collections;
 using Systemorph.Vertex.DataCubes;
 using Systemorph.Vertex.DataCubes.Api;
 using Systemorph.Vertex.Pivot.Reporting;
 using Systemorph.Vertex.Pivot.Reporting.Builder;
 using Systemorph.Vertex.Workspace;
-using OpenSmc.Ifrs17.Domain.DataModel.Interfaces;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.Constants.Validations;
@@ -33,7 +30,7 @@ public static class ReportConfigExtensions
                         .WithFormat(
                             "typeof(value) == 'number' ? new Intl.NumberFormat('en',{ minimumFractionDigits:2, maximumFractionDigits:2 }).format(value) : value")))
                 .WithRows(rows => rows
-                    .Where(r => !(r.RowGroup.Coordinates.Last() == "NullGroup"))
+                    .Where(r => r.RowGroup.Coordinates.Last() != "NullGroup")
                     .Select(r => r with
                     {
                         RowGroup = r.RowGroup with
@@ -58,7 +55,6 @@ public static class ReportConfigExtensions
 
         if (!exchangeRates.TryGetValue(currency, out var currencyToGroup))
             ApplicationMessage.Log(Error.ExchangeRateCurrency, currency);
-
         if (!currencyToGroup.TryGetValue(fxPeriod, out var currencyToGroupFx))
             ApplicationMessage.Log(Error.ExchangeRateNotFound, currency, fxPeriod.ToString());
 
@@ -66,7 +62,7 @@ public static class ReportConfigExtensions
     }
 
 
-    public static IEnumerable<ReportVariable> GetReportVariable(GroupOfContract goc,
+    private static IEnumerable<ReportVariable> GetReportVariable(GroupOfContract goc,
         IfrsVariable iv,
         (int Year, int Month, string ReportingNode, string Scenario) args,
         ProjectionConfiguration[] orderedProjectionConfigurations) =>
@@ -102,7 +98,7 @@ public static class ReportConfigExtensions
         });
 
 
-    public static async Task<ReportVariable[]> QueryReportVariablesSingleScenarioAsync(this IWorkspace workspace,
+    private static async Task<ReportVariable[]> QueryReportVariablesSingleScenarioAsync(this IWorkspace workspace,
         (int Year, int Month, string ReportingNode, string Scenario) args,
         ProjectionConfiguration[] orderedProjectionConfigurations)
     {
@@ -167,62 +163,7 @@ public static class ReportConfigExtensions
     }
 
 
-    public record YieldCurveReport : KeyedRecord, IWithYearMonthAndScenario
-    {
-        [NotVisible]
-        [Dimension(typeof(Currency))]
-        public string Currency { get; init; }
-
-        [NotVisible]
-        [Dimension(typeof(int), nameof(Year))]
-        public int Year { get; init; }
-
-        [NotVisible]
-        [Dimension(typeof(int), nameof(Month))]
-        public int Month { get; init; }
-
-        [NotVisible]
-        [Dimension(typeof(Scenario))]
-        public string Scenario { get; init; }
-
-        [NotVisible]
-        [Dimension(typeof(int), nameof(Index))]
-        public int Index { get; init; }
-
-        public double Value { get; init; }
-    }
-
-
-    public record RawVariableReport
-    {
-        [NotVisible]
-        [Dimension(typeof(GroupOfContract))]
-        public string DataNode { get; init; }
-
-        [NotVisible]
-        [AggregateBy]
-        [Dimension(typeof(AocType))]
-        public string AocType { get; init; }
-
-        [NotVisible]
-        [Dimension(typeof(Novelty))]
-        public string Novelty { get; init; }
-
-        [NotVisible]
-        [AggregateBy]
-        [Dimension(typeof(AmountType))]
-        public string? AmountType { get; init; }
-
-        [NotVisible]
-        [Dimension(typeof(EstimateType))]
-        public string EstimateType { get; init; }
-
-        [NotVisible]
-        [Dimension(typeof(int), nameof(Index))]
-        public int Index { get; init; }
-
-        public double Value { get; init; }
-    }
+    
 
 
     public static IDataCube<YieldCurveReport> ToReportType(this YieldCurve[] yieldCurves)
