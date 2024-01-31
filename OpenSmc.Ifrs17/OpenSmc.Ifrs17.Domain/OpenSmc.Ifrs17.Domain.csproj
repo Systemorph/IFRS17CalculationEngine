@@ -24,6 +24,7 @@
     <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Arithmetics\OpenSmc.Arithmetics.csproj" />
     <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.DataCubes.Abstractions\OpenSmc.DataCubes.Abstractions.csproj" />
     <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Partition\OpenSmc.Partition.csproj" />
+    <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Scopes\OpenSmc.Scopes.csproj" />
   </ItemGroup>
 
 </Project>

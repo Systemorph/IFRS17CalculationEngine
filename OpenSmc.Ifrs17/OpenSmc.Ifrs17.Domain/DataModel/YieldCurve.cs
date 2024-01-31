@@ -36,5 +36,5 @@ public record YieldCurve : KeyedRecord, IWithYearMonthAndScenario
     [IdentityProperty] public string? Name { get; init; }
 
     [Conversion(typeof(PrimitiveArrayConverter))]
-    public double? Values { get; init; }
+    public double[] Values { get; init; }
 }

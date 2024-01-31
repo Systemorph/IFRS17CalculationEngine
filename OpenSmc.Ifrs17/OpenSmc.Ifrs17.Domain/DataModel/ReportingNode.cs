@@ -5,7 +5,7 @@ using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 
 namespace OpenSmc.Ifrs17.Domain.DataModel;
 
-public record ReportingNode : KeyedDimension, IHierarchicalDimension
+public record ReportingNode : KeyedDimension, IHierarchicalDimension, Systemorph.Vertex.Api.IHierarchicalDimension
 {
     [Dimension(typeof(ReportingNode))] public string? Parent { get; init; }
 

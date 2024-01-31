@@ -4,7 +4,7 @@ using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 
 namespace OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 
-public record AmountType : KeyedOrderedDimensionWithExternalId, IHierarchicalDimension
+public record AmountType : KeyedOrderedDimensionWithExternalId, IHierarchicalDimension, Systemorph.Vertex.Api.IHierarchicalDimension
 {
     [Dimension(typeof(AmountType))] public string Parent { get; init; }
 

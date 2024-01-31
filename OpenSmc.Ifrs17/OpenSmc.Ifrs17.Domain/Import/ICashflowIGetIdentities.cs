@@ -2,7 +2,7 @@ using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.Utils;
-using Systemorph.Vertex.Collections;
+using OpenSmc.Collections;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
