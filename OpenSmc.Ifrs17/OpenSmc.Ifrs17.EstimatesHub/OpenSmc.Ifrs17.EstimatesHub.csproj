@@ -11,7 +11,6 @@
     <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Import\OpenSmc.Import.csproj" />
     <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Messaging.Hub\OpenSmc.Messaging.Hub.csproj" />
     <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.ServiceProvider\OpenSmc.ServiceProvider.csproj" />
-    <ProjectReference Include="..\OpenSmc.Ifrs17.Domain\OpenSmc.Ifrs17.Domain.csproj" />
   </ItemGroup>
 
 </Project>
