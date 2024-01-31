@@ -2,9 +2,9 @@ using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.Domain.Utils;
+using OpenSmc.Scopes;
 using Systemorph.Vertex.DataCubes;
 using Systemorph.Vertex.DataCubes.Api;
-using Systemorph.Vertex.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Report.ReportScopes.CalculationScopes;
 

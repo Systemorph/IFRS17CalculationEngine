@@ -5,17 +5,17 @@
 
 
 using FluentAssertions;
+using OpenSmc.Collections;
+using OpenSmc.DataSource.Abstractions;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.Constants.Validations;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.Domain.Tests;
+using OpenSmc.Scopes.Proxy;
+using OpenSmc.Workspace;
 using Systemorph.Vertex.Activities;
-using Systemorph.Vertex.Collections;
-using Systemorph.Vertex.DataSource.Common;
 using Systemorph.Vertex.Import;
-using Systemorph.Vertex.Scopes.Proxy;
-using Systemorph.Vertex.Workspace;
 
 namespace OpenSmc.Ifrs17.Domain.Test;
 
@@ -30,15 +30,15 @@ public class DataNodeParameterTest : TestBase
     {
         TestData.InitializeAsync();
         await Import.FromString(TestData.novelties).WithType<Novelty>()
-            .WithTarget(DataSource)
+            //.WithTarget(DataSource)
             .ExecuteAsync();
         await Import.FromString(TestData.canonicalAocTypes)
             .WithType<AocType>()
-            .WithTarget(DataSource)
+            //.WithTarget(DataSource)
             .ExecuteAsync();
 
         await Import.FromString(TestData.canonicalAocConfig)
-            .WithFormat(ImportFormats.AocConfiguration).WithTarget(DataSource)
+            .WithFormat(ImportFormats.AocConfiguration)//.WithTarget(DataSource)
             .ExecuteAsync();
 
 
@@ -57,9 +57,11 @@ public class DataNodeParameterTest : TestBase
 
 
         await Import.FromString(TestData.estimateType)
-            .WithType<EstimateType>().WithTarget(DataSource).ExecuteAsync();
+            .WithType<EstimateType>()//.WithTarget(DataSource)
+            .ExecuteAsync();
         await Import.FromString(TestData.economicBasis)
-            .WithType<EconomicBasis>().WithTarget(DataSource).ExecuteAsync();
+            .WithType<EconomicBasis>()//.WithTarget(DataSource)
+            .ExecuteAsync();
 
 
         await DataSource.UpdateAsync(TestData.yieldCurvePrevious.RepeatOnce());
@@ -83,7 +85,7 @@ public class DataNodeParameterTest : TestBase
         var ws = Work.CreateNew();
         ws.InitializeFrom(DataSource);
         Activity.Start();
-        var log = await Import.FromString(inputFile).WithFormat(ImportFormats.DataNodeParameter).WithTarget(ws)
+        var log = await Import.FromString(inputFile).WithFormat(ImportFormats.DataNodeParameter)//.WithTarget(ws)
             .ExecuteAsync();
         log.Errors.Count().Should().Be(errorBms.Count());
         errorBms.Intersect(log.Errors.Select(x => x.ToString().Substring(0, x.ToString().Length - 2).Substring(40))
@@ -100,7 +102,7 @@ public class DataNodeParameterTest : TestBase
         await ws.UpdateAsync<GroupOfInsuranceContract>(new[]
             {TestData.dt11 with {ValuationApproach = key.va, LiabilityType = key.lt}});
 
-        var log = await Import.FromString(inputFile).WithFormat(ImportFormats.DataNodeParameter).WithTarget(ws)
+        var log = await Import.FromString(inputFile).WithFormat(ImportFormats.DataNodeParameter)//.WithTarget(ws)
             .ExecuteAsync();
         log.Status.Should().Be(ActivityLogStatus.Succeeded);
         return (await ws.Query<SingleDataNodeParameter>().ToArrayAsync()).Single().EconomicBasisDriver == eb;
@@ -182,7 +184,8 @@ DT1.1,DTR1.1,0.62";
 
 
         var log = await Import.FromString(minimalParametersScenario).WithFormat(ImportFormats.DataNodeParameter)
-            .WithTarget(DataSource).ExecuteAsync();
+            //.WithTarget(DataSource)
+            .ExecuteAsync();
 
         log.Status.Should().Be(ActivityLogStatus.Succeeded);
     }

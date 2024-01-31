@@ -1,13 +1,13 @@
+using OpenSmc.Collections;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.Domain.Utils;
-using Systemorph.Vertex.Collections;
+using OpenSmc.Scopes;
+using OpenSmc.Workspace;
 using Systemorph.Vertex.DataCubes.Api;
 using Systemorph.Vertex.Grid.Model;
-using Systemorph.Vertex.Scopes;
-using Systemorph.Vertex.Workspace;
 
 namespace OpenSmc.Ifrs17.Domain.Report.ReportMutableScopes;
 
@@ -101,7 +101,7 @@ public interface IIfrs17Report : IMutableScope<string, ReportStorage>
     {
         await GetStorage().InitializeAsync(ReportingPeriod, ReportingNode, Scenario, CurrencyType);
         return await Report.ForDataCube(GetScope<IData>((ReportingPeriod, ReportingNode, Scenario, CurrencyType, Identity, DataFilter)).Cube)
-            .WithQuerySource(Workspace)
+            //.WithQuerySource(Workspace)
             .SliceRowsBy(RowSlices)
             .SliceColumnsBy(ColumnSlices)
             .ReportGridOptions(headerColumnWidth: HeaderColumnWidthValue)

@@ -1,5 +1,5 @@
+using OpenSmc.Workspace;
 using Systemorph.Vertex.Export.Factory;
-using Systemorph.Vertex.Workspace;
 
 namespace OpenSmc.Ifrs17.Domain.Report.ReportMutableScopes;
 
