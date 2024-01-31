@@ -61,8 +61,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.DataSource.Abstract
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Pivot", "..\OpenSmc\src\OpenSmc.Pivot\OpenSmc.Pivot.csproj", "{D8A78172-A285-426E-903E-F8DE33BDAEB6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenSmc.Ifrs17.ReferenceDataHub", "OpenSmc.Ifrs17.ReferenceDataHub\OpenSmc.Ifrs17.ReferenceDataHub.csproj", "{D99EDBDC-2149-4604-9048-6AB24F276548}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Import", "..\OpenSmc\src\OpenSmc.Import\OpenSmc.Import.csproj", "{8160587E-CA97-47B8-B7CA-ACDBC797CD24}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Activities", "..\OpenSmc\src\OpenSmc.Activities\OpenSmc.Activities.csproj", "{D967061C-E169-4C0C-A889-CBEB55F0DF2A}"
@@ -96,6 +94,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Serialization.Abstractions", "..\OpenSmc\src\OpenSmc.Serialization.Abstractions\OpenSmc.Serialization.Abstractions.csproj", "{9E884945-386B-4852-8BFB-7966040F09F3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Disposables", "..\OpenSmc\src\OpenSmc.Disposables\OpenSmc.Disposables.csproj", "{9D950F03-5F0D-4701-B6CC-89AE5976C175}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenSmc.Ifrs17.ReferenceDataHub", "OpenSmc.Ifrs17.ReferenceDataHub\OpenSmc.Ifrs17.ReferenceDataHub.csproj", "{7298EA13-F86D-4E87-88B8-BC024B71D381}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -443,18 +443,6 @@ Global
 		{D8A78172-A285-426E-903E-F8DE33BDAEB6}.Release|arm64.Build.0 = Release|Any CPU
 		{D8A78172-A285-426E-903E-F8DE33BDAEB6}.Release|x86.ActiveCfg = Release|Any CPU
 		{D8A78172-A285-426E-903E-F8DE33BDAEB6}.Release|x86.Build.0 = Release|Any CPU
-		{D99EDBDC-2149-4604-9048-6AB24F276548}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D99EDBDC-2149-4604-9048-6AB24F276548}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D99EDBDC-2149-4604-9048-6AB24F276548}.Debug|arm64.ActiveCfg = Debug|arm64
-		{D99EDBDC-2149-4604-9048-6AB24F276548}.Debug|arm64.Build.0 = Debug|arm64
-		{D99EDBDC-2149-4604-9048-6AB24F276548}.Debug|x86.ActiveCfg = Debug|x86
-		{D99EDBDC-2149-4604-9048-6AB24F276548}.Debug|x86.Build.0 = Debug|x86
-		{D99EDBDC-2149-4604-9048-6AB24F276548}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D99EDBDC-2149-4604-9048-6AB24F276548}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D99EDBDC-2149-4604-9048-6AB24F276548}.Release|arm64.ActiveCfg = Release|arm64
-		{D99EDBDC-2149-4604-9048-6AB24F276548}.Release|arm64.Build.0 = Release|arm64
-		{D99EDBDC-2149-4604-9048-6AB24F276548}.Release|x86.ActiveCfg = Release|x86
-		{D99EDBDC-2149-4604-9048-6AB24F276548}.Release|x86.Build.0 = Release|x86
 		{8160587E-CA97-47B8-B7CA-ACDBC797CD24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8160587E-CA97-47B8-B7CA-ACDBC797CD24}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8160587E-CA97-47B8-B7CA-ACDBC797CD24}.Debug|arm64.ActiveCfg = Debug|Any CPU
@@ -659,6 +647,18 @@ Global
 		{9D950F03-5F0D-4701-B6CC-89AE5976C175}.Release|arm64.Build.0 = Release|Any CPU
 		{9D950F03-5F0D-4701-B6CC-89AE5976C175}.Release|x86.ActiveCfg = Release|Any CPU
 		{9D950F03-5F0D-4701-B6CC-89AE5976C175}.Release|x86.Build.0 = Release|Any CPU
+		{7298EA13-F86D-4E87-88B8-BC024B71D381}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7298EA13-F86D-4E87-88B8-BC024B71D381}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7298EA13-F86D-4E87-88B8-BC024B71D381}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{7298EA13-F86D-4E87-88B8-BC024B71D381}.Debug|arm64.Build.0 = Debug|Any CPU
+		{7298EA13-F86D-4E87-88B8-BC024B71D381}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7298EA13-F86D-4E87-88B8-BC024B71D381}.Debug|x86.Build.0 = Debug|Any CPU
+		{7298EA13-F86D-4E87-88B8-BC024B71D381}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7298EA13-F86D-4E87-88B8-BC024B71D381}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7298EA13-F86D-4E87-88B8-BC024B71D381}.Release|arm64.ActiveCfg = Release|Any CPU
+		{7298EA13-F86D-4E87-88B8-BC024B71D381}.Release|arm64.Build.0 = Release|Any CPU
+		{7298EA13-F86D-4E87-88B8-BC024B71D381}.Release|x86.ActiveCfg = Release|Any CPU
+		{7298EA13-F86D-4E87-88B8-BC024B71D381}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

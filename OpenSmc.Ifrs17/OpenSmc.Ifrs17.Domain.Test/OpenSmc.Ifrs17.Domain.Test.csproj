@@ -38,7 +38,6 @@
 		<PackageReference Include="Systemorph.Test" Version="1.6.5" />
 		<PackageReference Include="Systemorph.Workspace" Version="1.6.4" />
 		<PackageReference Include="Systemorph.Reporting" Version="1.6.5" />
-		<PackageReference Include="Systemorph.ServiceProvider" Version="2.0.0-CI-20230522-144720" />
 		<ProjectReference Include="..\OpenSmc.Ifrs17.Domain\OpenSmc.Ifrs17.Domain.csproj" />
 	</ItemGroup>
 
