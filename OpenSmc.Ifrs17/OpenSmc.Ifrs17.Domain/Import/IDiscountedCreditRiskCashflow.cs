@@ -1,6 +1,6 @@
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.Utils;
-using Systemorph.Vertex.Arithmetics;
+using OpenSmc.Arithmetics;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 

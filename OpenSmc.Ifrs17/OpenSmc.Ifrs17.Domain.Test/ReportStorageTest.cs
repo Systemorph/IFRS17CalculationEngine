@@ -1,15 +1,15 @@
 using FluentAssertions;
+using OpenSmc.DataSource.Abstractions;
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.Domain.Report;
+using OpenSmc.Scopes.Proxy;
+using OpenSmc.Workspace;
 using Systemorph.Vertex.Activities;
-using Systemorph.Vertex.DataSource.Common;
 using Systemorph.Vertex.Export.Factory;
 using Systemorph.Vertex.Import;
 using Systemorph.Vertex.Pivot.Builder.Interfaces;
-using Systemorph.Vertex.Scopes.Proxy;
-using Systemorph.Vertex.Workspace;
 
 namespace OpenSmc.Ifrs17.Domain.Test;
 
@@ -36,8 +36,10 @@ public class ReportStorageTest : Tests.TestBase
             TestData.partition, TestData.previousPeriodPartition
         });
 
-        await Import.FromString(TestData.projectionConfiguration).WithType<ProjectionConfiguration>(
-        ).WithTarget(DataSource).ExecuteAsync();
+        await Import.FromString(TestData.projectionConfiguration)
+            .WithType<ProjectionConfiguration>()
+            //.WithTarget(DataSource)
+            .ExecuteAsync();
 
 
         Work.Initialize(x => x.FromSource(DataSource).DisableInitialization<ExchangeRate>());

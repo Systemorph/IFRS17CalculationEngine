@@ -1,17 +1,12 @@
-using System.Diagnostics;
 using System.Linq.Expressions;
+using OpenSmc.Arithmetics;
+using OpenSmc.Collections;
+using OpenSmc.DataSource.Abstractions;
+using OpenSmc.DataStructures;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.Utils;
-using Systemorph.Vertex.Collections;
-using Systemorph.Vertex.DataSource.Common;
-using Systemorph.Vertex.DataStructures;
-using Systemorph.Vertex.Workspace;
-using Systemorph.Vertex.Activities;
 using Systemorph.Vertex.Import;
-using Systemorph.Scopes;
-using Systemorph.Vertex.Arithmetics;
-using Systemorph.Vertex.Scopes.Proxy;
 using Debug = OpenSmc.Ifrs17.Domain.Constants.Debug;
 using Scenario = OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions.Scenario;
 using Scenarios = OpenSmc.Ifrs17.Domain.Constants.Scenarios;
@@ -20,6 +15,9 @@ using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.Domain.DataModel.Args;
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.Constants.Validations;
+using OpenSmc.Scopes.Proxy;
+using OpenSmc.Workspace;
+using Systemorph.Vertex.Activities;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
@@ -445,7 +443,7 @@ public static class ImportTasks
         {
             activity.Start();
             var workspace = work.CreateNew();
-            workspace.InitializeFrom(options.TargetDataSource);
+            workspace.InitializeFrom(options.TargetDataSource as IQuerySource);
 
             var aocTypes = await options.TargetDataSource.Query<AocType>().OrderBy(x => x.Order).ToArrayAsync();
             var aocTypesCompulsory = typeof(AocTypes).GetFields().Select(x => (string) x.Name);
@@ -454,7 +452,7 @@ public static class ImportTasks
             //     return Activity.Finish();
             // }
 
-            var logConfig = await import.FromDataSet(dataSet).WithType<AocConfiguration>().WithTarget(workspace)
+            var logConfig = await import.FromDataSet(dataSet).WithType<AocConfiguration>().WithTarget(workspace as Systemorph.Vertex.DataSource.Common.IDataSource)
                 .ExecuteAsync();
             if (logConfig.Errors.Any()) return activity.Finish().Merge(logConfig);
 
@@ -549,7 +547,7 @@ public static class ImportTasks
                 ApplicationMessage.Log(Error.AocConfigurationOrderNotUnique);
 
             await workspace.CommitToTargetAsync(options.TargetDataSource);
-            workspace.Dispose();
+            //workspace.Dispose();
             return activity.Finish().Merge(logConfig);
         });
     }

@@ -1,4 +1,4 @@
-using Systemorph.Vertex.Api.Attributes;
+using OpenSmc.Domain.Abstractions.Attributes;
 
 namespace OpenSmc.Ifrs17.Domain.Import.PresentValueCalculation;
 

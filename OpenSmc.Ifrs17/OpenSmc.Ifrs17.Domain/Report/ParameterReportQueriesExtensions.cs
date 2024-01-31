@@ -3,7 +3,7 @@ using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.DataModel.Args;
 using OpenSmc.Ifrs17.Domain.Report.ReportParameters;
 using OpenSmc.Ifrs17.Domain.Utils;
-using Systemorph.Vertex.Workspace;
+using OpenSmc.Workspace;
 
 
 namespace OpenSmc.Ifrs17.Domain.Report;

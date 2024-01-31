@@ -1,8 +1,8 @@
+using OpenSmc.Domain.Abstractions.Attributes;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.DataModel;
-using Systemorph.Vertex.Api.Attributes;
-using Systemorph.Vertex.Scopes;
+using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import.TechnicalMarginCalculation;
 

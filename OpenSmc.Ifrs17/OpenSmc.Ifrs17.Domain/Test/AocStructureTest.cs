@@ -1,4 +1,6 @@
 using FluentAssertions;
+using OpenSmc.Collections;
+using OpenSmc.DataSource.Abstractions;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.DataModel;
@@ -6,12 +8,10 @@ using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.Domain.Import;
 using OpenSmc.Ifrs17.Domain.Tests;
 using OpenSmc.Ifrs17.Domain.Utils;
+using OpenSmc.Scopes.Proxy;
+using OpenSmc.Workspace;
 using Systemorph.Vertex.Activities;
-using Systemorph.Vertex.Collections;
-using Systemorph.Vertex.DataSource.Common;
 using Systemorph.Vertex.Import;
-using Systemorph.Vertex.Scopes.Proxy;
-using Systemorph.Vertex.Workspace;
 using Error = OpenSmc.Ifrs17.Domain.Constants.Validations.Error;
 using FactAttribute = System.Runtime.CompilerServices.CompilerGeneratedAttribute;
 
@@ -20,7 +20,7 @@ namespace OpenSmc.Ifrs17.Domain.Test
     public class AocStructureTest : TestBase
     {
         private RawVariable[]? inputRawVariables;
-        private Workspace? workspace;
+        private Workspace.Workspace? workspace;
         private Dictionary<AocStep, IEnumerable<AocStep>>? ParentBm { get; set; }
         private Dictionary<AocStep, IEnumerable<AocStep>>? FullAocBm { get; set; }
         private Dictionary<AocStep, IEnumerable<AocStep>>? ReferenceBm { get; set; }
@@ -30,7 +30,7 @@ namespace OpenSmc.Ifrs17.Domain.Test
             IWorkspaceVariable work, IActivityVariable activity, IScopeFactory scopes) :
             base(import, dataSource, work, activity, scopes)
         {
-            workspace = Work.CreateNew() as Workspace;
+            workspace = Work.CreateNew() as Workspace.Workspace;
         }
 
         private async Task InitializeDataSourceAsync()
@@ -39,7 +39,7 @@ namespace OpenSmc.Ifrs17.Domain.Test
             await DataSource.DeleteAsync(DataSource.Query<AocType>());
             await DataSource.DeleteAsync(DataSource.Query<AocConfiguration>());
             await Import.FromString(TestData.projectionConfiguration).WithType<ProjectionConfiguration>()
-                .WithTarget(DataSource)
+                //.WithTarget(DataSource)
                 .ExecuteAsync();
             await DataSource.UpdateAsync<Portfolio>(TestData.dt1.RepeatOnce());
             await DataSource.UpdateAsync<Portfolio>(TestData.dtr1.RepeatOnce());
@@ -52,7 +52,7 @@ namespace OpenSmc.Ifrs17.Domain.Test
 
             await Import.FromString(TestData.estimateType)
                 .WithType<EstimateType>()
-                .WithTarget(DataSource)
+                //.WithTarget(DataSource)
                 .ExecuteAsync();
 
             await DataSource.UpdateAsync(TestData.yieldCurvePrevious.RepeatOnce());
@@ -802,7 +802,9 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
 
 
             await DataSource.DeleteAsync(DataSource.Query<AocConfiguration>());
-            await Import.FromString(newAocConfig).WithType<AocConfiguration>().WithTarget(DataSource).ExecuteAsync();
+            await Import.FromString(newAocConfig).WithType<AocConfiguration>()
+                //.WithTarget(DataSource)
+                .ExecuteAsync();
 
 
             inputRawVariables = new RawVariable[]
@@ -1126,7 +1128,10 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
         public async Task SeventhCheckAsync()
         {
             await DataSource.DeleteAsync(DataSource.Query<AocConfiguration>());
-            await Import.FromString(TestData.canonicalAocConfig).WithType<AocConfiguration>().WithTarget(DataSource).ExecuteAsync();
+            await Import.FromString(TestData.canonicalAocConfig)
+                .WithType<AocConfiguration>()
+                //.WithTarget(DataSource)
+                .ExecuteAsync();
 
 
             var inputIfrsVariables = new IfrsVariable[]
@@ -1239,8 +1244,13 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
 
             await DataSource.DeleteAsync(DataSource.Query<Novelty>());
             await DataSource.DeleteAsync(DataSource.Query<AocConfiguration>());
-            await Import.FromString(newNovelties).WithType<Novelty>().WithTarget(DataSource).ExecuteAsync();
-            await Import.FromString(newAocConfig).WithType<AocConfiguration>().WithTarget(DataSource).ExecuteAsync();
+            await Import.FromString(newNovelties).WithType<Novelty>()
+                //.WithTarget(DataSource)
+                .ExecuteAsync();
+            await Import.FromString(newAocConfig)
+                .WithType<AocConfiguration>()
+                //.WithTarget(DataSource)
+                .ExecuteAsync();
 
 
             inputRawVariables = new RawVariable[]
@@ -1420,9 +1430,12 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
 
             await DataSource.DeleteAsync(DataSource.Query<AocType>());
             await DataSource.DeleteAsync(DataSource.Query<AocConfiguration>());
-            await Import.FromString(newAocTypes).WithType<AocType>().WithTarget(DataSource).ExecuteAsync();
+            await Import.FromString(newAocTypes).WithType<AocType>()
+                //.WithTarget(DataSource)
+                .ExecuteAsync();
             await Import.FromString(newAocConfiguration).WithType<AocConfiguration>()
-                .WithTarget(DataSource).ExecuteAsync();
+                //.WithTarget(DataSource)
+                .ExecuteAsync();
 
 
             var inputVariables = new RawVariable[]
@@ -1677,9 +1690,12 @@ EOP,C,4,6,14,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,190
 
             await DataSource.DeleteAsync(DataSource.Query<AocType>());
             await DataSource.DeleteAsync(DataSource.Query<AocConfiguration>());
-            await Import.FromString(newAocTypes).WithType<AocType>().WithTarget(DataSource).ExecuteAsync();
+            await Import.FromString(newAocTypes)
+                .WithType<AocType>()
+                //.WithTarget(DataSource)
+                .ExecuteAsync();
             await Import.FromString(newAocConfiguration).WithType<AocConfiguration>()
-                .WithTarget(DataSource)
+                //.WithTarget(DataSource)
                 .ExecuteAsync();
 
 

@@ -1,13 +1,12 @@
 using System.Linq.Expressions;
+using OpenSmc.Collections;
+using OpenSmc.DataSource.Abstractions;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.DataModel.Args;
 using OpenSmc.Ifrs17.Domain.DataModel.Interfaces;
-using Systemorph.Vertex.Collections;
-using Systemorph.Vertex.DataSource.Api;
-using Systemorph.Vertex.DataSource.Common;
-using Systemorph.Vertex.Workspace;
+using OpenSmc.Workspace;
 
 
 namespace OpenSmc.Ifrs17.Domain.Utils;
@@ -134,7 +133,7 @@ public static class Queries
     }
 
 
-    public static async Task<Dictionary<string, DataNodeState>> LoadDataNodeStateAsync(this IQuerySource querySource, Args args)
+    public static async Task<Dictionary<string, DataNodeState>> LoadDataNodeStateAsync(this IDataSource querySource, Args args)
     {
         return (await querySource.LoadCurrentAndPreviousParameterAsync<DataNodeState>(args, x => x.DataNode))
             .Where(x => x.Value[Consts.CurrentPeriod].State != State.Inactive)
@@ -142,7 +141,7 @@ public static class Queries
     }
 
 
-    public static async Task<Dictionary<string, DataNodeData>> LoadDataNodesAsync(this IQuerySource querySource, Args args)
+    public static async Task<Dictionary<string, DataNodeData>> LoadDataNodesAsync(this IDataSource querySource, Args args)
     {
         var dataNodeStates = await querySource.LoadCurrentAndPreviousParameterAsync<DataNodeState>(args, x => x.DataNode);
         var activeDataNodes = dataNodeStates.Where(kvp => kvp.Value[Consts.CurrentPeriod].State != State.Inactive).Select(kvp => kvp.Key);
@@ -196,22 +195,28 @@ public static class Queries
     }
 
 
-    public static async Task<IEnumerable<AocConfiguration>> LoadAocStepConfigurationAsync(this IQuerySource querySource, int year, int month)
+    /*public static async Task<IEnumerable<AocConfiguration>> LoadAocStepConfigurationAsync(this IQuerySource querySource, int year, int month)
+    {
+        return (await querySource.LoadParameterAsync<AocConfiguration>(year, month))
+            .GroupBy(x => (x.AocType, x.Novelty),
+                (k, v) => v.OrderByDescending(x => x.Year).ThenByDescending(x => x.Month).First());
+    }*/
+
+    public static async Task<IEnumerable<AocConfiguration>> LoadAocStepConfigurationAsync(this IDataSource querySource, int year, int month)
     {
         return (await querySource.LoadParameterAsync<AocConfiguration>(year, month))
             .GroupBy(x => (x.AocType, x.Novelty),
                 (k, v) => v.OrderByDescending(x => x.Year).ThenByDescending(x => x.Month).First());
     }
 
-
-    public static async Task<Dictionary<AocStep, AocConfiguration>> LoadAocStepConfigurationAsDictionaryAsync(this IQuerySource querySource, int year, int month)
+    public static async Task<Dictionary<AocStep, AocConfiguration>> LoadAocStepConfigurationAsDictionaryAsync(this IDataSource querySource, int year, int month)
     {
         return (await querySource.LoadAocStepConfigurationAsync(year, month))
             .ToDictionary(x => new AocStep(x.AocType, x.Novelty));
     }
 
 
-    public static async Task<T[]> LoadPartitionedDataAsync<T, P>(this Systemorph.Vertex.DataSource.Common.IDataSource querySource, Guid partition)
+    public static async Task<T[]> LoadPartitionedDataAsync<T, P>(this IDataSource querySource, Guid partition)
         where T : IPartitioned
         where P : IPartition
     {

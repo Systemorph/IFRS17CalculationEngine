@@ -1,4 +1,6 @@
 using FluentAssertions;
+using OpenSmc.DataSource.Abstractions;
+using OpenSmc.Collections;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.Constants.Validations;
@@ -6,12 +8,10 @@ using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.DataModel.Args;
 using OpenSmc.Ifrs17.Domain.DataModel.Interfaces;
 using OpenSmc.Ifrs17.Domain.Utils;
+using OpenSmc.Scopes.Proxy;
+using OpenSmc.Workspace;
 using Systemorph.Vertex.Activities;
-using Systemorph.Vertex.Collections;
-using Systemorph.Vertex.DataSource.Common;
 using Systemorph.Vertex.Import;
-using Systemorph.Vertex.Scopes.Proxy;
-using Systemorph.Vertex.Workspace;
 
 namespace OpenSmc.Ifrs17.Domain.Test;
 

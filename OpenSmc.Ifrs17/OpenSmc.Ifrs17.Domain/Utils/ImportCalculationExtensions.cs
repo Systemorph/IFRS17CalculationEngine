@@ -1,12 +1,14 @@
+using OpenSmc.DataStructures;
+using OpenSmc.Hierarchies;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.DataModel.Args;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
+using OpenSmc.Workspace;
 using Systemorph.Vertex.DataCubes;
 using Systemorph.Vertex.DataCubes.Api;
-using Systemorph.Vertex.DataStructures;
-using Systemorph.Vertex.Workspace;
+
 
 
 namespace OpenSmc.Ifrs17.Domain.Utils;
@@ -171,7 +173,7 @@ public static class ImportCalculationExtensions
 
     public static int GetSign(string importFormat,
         (string AocType, string AmountType, string EstimateType, bool IsReinsurance) variable,
-        Systemorph.Vertex.Hierarchies.IHierarchicalDimensionCache hierarchyCache) => 1;
+        IHierarchicalDimensionCache hierarchyCache) => 1;
 
 
     public static double[] AdjustValues(this double[] values, ImportArgs args, DataNodeData dataNodeData,
@@ -179,13 +181,13 @@ public static class ImportCalculationExtensions
 
 
     public static async Task ExtendParsedVariables(this IWorkspace workspace,
-        Systemorph.Vertex.Hierarchies.IHierarchicalDimensionCache hierarchyCache)
+        IHierarchicalDimensionCache hierarchyCache)
     {
     }
 
 
     public static Dictionary<string, HashSet<string>> GetAmountTypesByEstimateType(
-        Systemorph.Vertex.Hierarchies.IHierarchicalDimensionCache hierarchyCache)
+        IHierarchicalDimensionCache hierarchyCache)
     {
         return new Dictionary<string, HashSet<string>>()
         {

@@ -2,6 +2,8 @@ using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.DataModel.Args;
 using OpenSmc.Ifrs17.Domain.Report.ReportScopes;
+using OpenSmc.Scopes;
+using OpenSmc.Workspace;
 using Systemorph.InteractiveObjects;
 using Systemorph.Vertex.Export.Factory;
 using Systemorph.Vertex.Grid.Model;
@@ -9,8 +11,6 @@ using Systemorph.Vertex.InteractiveObjects;
 using Systemorph.Vertex.InteractiveObjects.Dropdown;
 using Systemorph.Vertex.Pivot.Builder.Interfaces;
 using Systemorph.Vertex.Pivot.Reporting;
-using Systemorph.Vertex.Scopes;
-using Systemorph.Vertex.Workspace;
 
 namespace OpenSmc.Ifrs17.Domain.Report;
 public interface ParameterReportFormsEntityInteractive<TStorage> : MutableScopeWithWorkspace<TStorage>
@@ -45,7 +45,7 @@ public interface ParameterReportScopeInteractive: IMutableScope<string>,
         await GetStorage().InitializeAsync((Year, Month), ReportingNode, Scenario, CurrencyType);
         var data = await workspace.GetDataNodeDataReportParametersAsync(GetArgs());
         return await report.ForObjects(data)
-                            .WithQuerySource(workspace)
+                            //.WithQuerySource(workspace)
                             .GroupRowsBy(x => x.Portfolio)
                             .GroupRowsBy(x => x.DataNode)
                             .ToTable()
@@ -57,7 +57,7 @@ public interface ParameterReportScopeInteractive: IMutableScope<string>,
         await GetStorage().InitializeAsync((Year, Month), ReportingNode, Scenario, CurrencyType);
         var data = await workspace.GetDataNodeStateReportParametersAsync(GetArgs());
         return await report.ForObjects(data)
-                            .WithQuerySource(workspace)
+                            //.WithQuerySource(workspace)
                             .GroupRowsBy(x => x.GroupOfContract)
                             .GroupColumnsBy(x => x.Period)
                             .ToTable()
@@ -69,7 +69,7 @@ public interface ParameterReportScopeInteractive: IMutableScope<string>,
         await GetStorage().InitializeAsync((Year, Month), ReportingNode, Scenario, CurrencyType);
         var data = await workspace.GetYieldCurveReportParametersAsync(GetArgs());
         return await report.ForObjects(data)
-                        .WithQuerySource(workspace)
+                        //.WithQuerySource(workspace)
                         .GroupRowsBy(x => x.GroupOfContract)
                         .GroupColumnsBy(x => x.YieldCurveType)
                         .GroupColumnsBy(x => x.Period)
@@ -82,7 +82,7 @@ public interface ParameterReportScopeInteractive: IMutableScope<string>,
         await GetStorage().InitializeAsync((Year, Month), ReportingNode, Scenario, CurrencyType);
         var data = await workspace.GetSingleDataNodeReportParametersAsync(GetArgs());
         return await report.ForObjects(data)
-                        .WithQuerySource(workspace)
+                        //.WithQuerySource(workspace)
                         .GroupRowsBy(x => x.GroupOfContract)
                         .GroupColumnsBy(x => x.Period)
                         .ToTable()
@@ -94,7 +94,7 @@ public interface ParameterReportScopeInteractive: IMutableScope<string>,
         await GetStorage().InitializeAsync((Year, Month), ReportingNode, Scenario, CurrencyType);
         var data = await workspace.GetInterDataNodeParametersAsync(GetArgs());
         return await report.ForObjects(data)
-                        .WithQuerySource(workspace)
+                        //.WithQuerySource(workspace)
                         .GroupRowsBy(x => x.GroupOfContract)
                         .GroupRowsBy(x => x.LinkedDataNode)
                         .GroupColumnsBy(x => x.Period)
@@ -107,7 +107,7 @@ public interface ParameterReportScopeInteractive: IMutableScope<string>,
         await GetStorage().InitializeAsync((Year, Month), ReportingNode, Scenario, CurrencyType);
         var data = await workspace.GetCurrentPartnerRatingsReportParametersAsync(GetArgs());
         return await report.ForObjects(data)
-                        .WithQuerySource(workspace)
+                        //.WithQuerySource(workspace)
                         .GroupRowsBy(x => x.Partner)
                         .GroupColumnsBy(x => x.Period)
                         .ToTable()
@@ -119,7 +119,7 @@ public interface ParameterReportScopeInteractive: IMutableScope<string>,
         await GetStorage().InitializeAsync((Year, Month), ReportingNode, Scenario, CurrencyType);
         var data = await workspace.GetCurrentCreditDefaultRatesReportParametersAsync(GetArgs());
         return await report.ForObjects(data)
-                        .WithQuerySource(workspace)
+                        //.WithQuerySource(workspace)
                         .GroupRowsBy(x => x.CreditRiskRating)
                         .GroupColumnsBy(x => x.Period)
                         .ToTable()
@@ -131,7 +131,7 @@ public interface ParameterReportScopeInteractive: IMutableScope<string>,
         await GetStorage().InitializeAsync((Year, Month), ReportingNode, Scenario, CurrencyType);
         var data = await workspace.GetLockedInPartnerRatingsReportParametersAsync(GetArgs());
         return await report.ForObjects(data)
-                        .WithQuerySource(workspace)
+                        //.WithQuerySource(workspace)
                         .GroupRowsBy(x => x.Partner)
                         .GroupColumnsBy(x => x.PartnerRatingType)
                         .GroupColumnsBy(x => "Initial Year: " + x.InitialYear)
@@ -144,7 +144,7 @@ public interface ParameterReportScopeInteractive: IMutableScope<string>,
         await GetStorage().InitializeAsync((Year, Month), ReportingNode, Scenario, CurrencyType);
         var data = await workspace.GetLockedInCreditDefaultRatesReportParametersAsync(GetArgs());
         return await report.ForObjects(data)
-                        .WithQuerySource(workspace)
+                        //.WithQuerySource(workspace)
                         .GroupRowsBy(x => x.CreditRiskRating)
                         .GroupColumnsBy(x => x.CreditDefaultRatesType)
                         .GroupColumnsBy(x => "Initial Year: " + x.InitialYear)

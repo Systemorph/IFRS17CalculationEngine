@@ -1,7 +1,7 @@
+using OpenSmc.Domain.Abstractions.Attributes;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.DataModel.Interfaces;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
-using Systemorph.Vertex.Api.Attributes;
 
 namespace OpenSmc.Ifrs17.Domain.Report;
 

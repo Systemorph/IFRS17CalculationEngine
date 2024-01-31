@@ -1,9 +1,9 @@
+using OpenSmc.Arithmetics;
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.Import.NominalCashflow;
 using OpenSmc.Ifrs17.Domain.Utils;
-using Systemorph.Vertex.Arithmetics;
-using Systemorph.Vertex.Scopes;
+using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 

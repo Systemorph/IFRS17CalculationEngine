@@ -1,21 +1,21 @@
 using FluentAssertions;
+using OpenSmc.Collections;
+using OpenSmc.DataSource.Abstractions;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
+using OpenSmc.Scopes.Proxy;
+using OpenSmc.Workspace;
 using Systemorph.Vertex.Activities;
-using Systemorph.Vertex.Collections;
-using Systemorph.Vertex.DataSource.Common;
 using Systemorph.Vertex.Import;
-using Systemorph.Vertex.Scopes.Proxy;
-using Systemorph.Vertex.Workspace;
 using FactAttribute = System.Runtime.CompilerServices.CompilerGeneratedAttribute;
 
 namespace OpenSmc.Ifrs17.Domain.Tests;
 
 public class AocConfigurationTest : TestBase
 {
-    protected Workspace Workspace;
+    protected Workspace.Workspace Workspace;
 
     protected string novelties =
         @"@@Novelty
@@ -76,12 +76,14 @@ public class AocConfigurationTest : TestBase
         IWorkspaceVariable work, IActivityVariable activity, IScopeFactory scopes) : 
         base(import, dataSource, work, activity, scopes)
     {
-        Workspace = Work.CreateNew() as Workspace;
+        Workspace = Work.CreateNew() as Workspace.Workspace;
     }
 
     public async Task IntializeAsync()
     {
-        await Import.FromString(novelties).WithType<Novelty>().WithTarget(DataSource).ExecuteAsync();
+        await Import.FromString(novelties).WithType<Novelty>()
+            //.WithTarget(DataSource)
+            .ExecuteAsync();
 
         Workspace.InitializeFrom(DataSource);
     }
@@ -94,14 +96,14 @@ public class AocConfigurationTest : TestBase
         await Workspace.DeleteAsync<AocConfiguration>(await Workspace.Query<AocConfiguration>().ToArrayAsync());
         await Workspace.CommitAsync();
 
-        var aocTypeLog = await import.FromString(canonicalAocTypes).WithType<AocType>().WithTarget(Workspace)
+        var aocTypeLog = await import.FromString(canonicalAocTypes).WithType<AocType>()//.WithTarget(Workspace)
             .ExecuteAsync();
         aocTypeLog.Errors.Any().Should().Be(false);
 
         await Workspace.UpdateAsync(newAocTypes);
         await Workspace.CommitAsync();
 
-        return await import.FromString(canonicalAocConfig).WithFormat("AocConfiguration").WithTarget(Workspace)
+        return await import.FromString(canonicalAocConfig).WithFormat("AocConfiguration")//.WithTarget(Workspace)
             .ExecuteAsync();
     }
 
@@ -267,7 +269,7 @@ public class AocConfigurationTest : TestBase
             .Should().Be(true);
 
 
-        Workspace.Dispose();
+        //Workspace.Dispose();
     }
 
 

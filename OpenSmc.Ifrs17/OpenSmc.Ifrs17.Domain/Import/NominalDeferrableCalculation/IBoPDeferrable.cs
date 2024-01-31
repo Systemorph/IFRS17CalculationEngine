@@ -1,6 +1,6 @@
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.Import.NominalCashflow;
-using Systemorph.Vertex.Scopes;
+using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import.NominalDeferrableCalculation;
 

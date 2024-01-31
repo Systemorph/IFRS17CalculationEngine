@@ -1,22 +1,23 @@
+using OpenSmc.Collections;
+//using OpenSmc.DataCubes;
+using OpenSmc.Hierarchies;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.Domain.Utils;
-using Systemorph.Vertex.Api;
-using Systemorph.Vertex.Collections;
+using OpenSmc.Workspace;
+using OpenSmc.Domain.Abstractions;
 using Systemorph.Vertex.DataCubes;
 using Systemorph.Vertex.DataCubes.Api;
 using Systemorph.Vertex.Export.Factory;
-using Systemorph.Vertex.Hierarchies;
-using Systemorph.Vertex.Workspace;
 
 namespace OpenSmc.Ifrs17.Domain.Report;
 
 public class ReportStorage {
     protected readonly IWorkspace workspace;
     protected readonly IExportVariable export;
-    private readonly Systemorph.Vertex.Hierarchies.IHierarchicalDimensionCache hierarchicalDimensionCache;
+    private readonly IHierarchicalDimensionCache hierarchicalDimensionCache;
     private readonly Systemorph.Vertex.Pivot.Builder.Interfaces.IPivotFactory reportFactory;
 
     // Current Storage Settings
@@ -99,7 +100,7 @@ public class ReportStorage {
                             IsReinsurance = x.IsReinsurance,
                             IsOci = !string.IsNullOrWhiteSpace(x.OciType) },
                                              x => x.ToDictionaryGrouped(y => y.EstimateType,
-                                                                        y => y.ToArray().ToDataCube()));
+                                                                        y => y.ToArray().SelectToDataCube(x=> true, x => x)));
             
                    variablesDictionary.Add((period, rn, scn), variablesByIdentity);
                 }
@@ -111,17 +112,17 @@ public class ReportStorage {
     public IDataCube<ReportVariable> GetVariables(ReportIdentity reportIdentity, params string[] estimateTypes)
         => (!variablesDictionary.TryGetValue(((reportIdentity.Year, reportIdentity.Month), reportIdentity.ReportingNode, reportIdentity.Scenario), out var variablesByIdentity) || 
             !variablesByIdentity.TryGetValue(reportIdentity, out var variablesByEstimateType))
-        ? Enumerable.Empty<ReportVariable>().ToDataCube()
+        ? Enumerable.Empty<ReportVariable>().SelectToDataCube(x => true, x => x)
         : estimateTypes.Length switch {
-                0 => variablesByEstimateType.SelectMany(x => x.Value).ToDataCube(),
+                0 => variablesByEstimateType.SelectMany(x => x.Value).SelectToDataCube(x => true, x => x),
                 1 => variablesByEstimateType.TryGetValue(estimateTypes.First(), out var variables)
-                    ? variables.ToDataCube()
-                    : Enumerable.Empty<ReportVariable>().ToDataCube(),
+                    ? variables.SelectToDataCube(x => true, x => x)
+                    : Enumerable.Empty<ReportVariable>().SelectToDataCube(x => true, x => x),
                 _ => estimateTypes.Select(et => variablesByEstimateType.TryGetValue(et, out var variables)
-                                          ? variables.ToDataCube()
+                                          ? variables.SelectToDataCube(x => true, x=> x)
                                           : Enumerable.Empty<ReportVariable>())
                     .Aggregate((x, y) => x.Concat(y))
-                    .ToDataCube()
+                    .SelectToDataCube(x => true, x=> x)
         };
     
     // Other getters
@@ -129,7 +130,7 @@ public class ReportStorage {
     public Systemorph.Vertex.Pivot.Builder.Interfaces.IPivotFactory Report => reportFactory;
     public IExportVariable Export => export;
 
-    public Systemorph.Vertex.Hierarchies.IHierarchy<T> GetHierarchy<T>() where T : class, IHierarchicalDimension => hierarchicalDimensionCache.Get<T>();
+    public IHierarchy<T> GetHierarchy<T>() where T : class, IHierarchicalDimension => hierarchicalDimensionCache.Get<T>();
     
     public HashSet<(ReportIdentity, CurrencyType)> GetIdentities((int year, int month) period, string? reportingNode, string? scenario, CurrencyType currencyType, string? projection = null) {
         var relevantProjection = projection == null ? currentPeriodProjection.RepeatOnce()

@@ -1,4 +1,6 @@
 using FluentAssertions;
+using OpenSmc.Collections;
+using OpenSmc.DataSource.Abstractions;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.Constants.Validations;
@@ -8,12 +10,10 @@ using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.Domain.Import;
 using OpenSmc.Ifrs17.Domain.Import.ToIfrsVariableScopes;
 using OpenSmc.Ifrs17.Domain.Utils;
+using OpenSmc.Scopes.Proxy;
+using OpenSmc.Workspace;
 using Systemorph.Vertex.Activities;
-using Systemorph.Vertex.Collections;
-using Systemorph.Vertex.DataSource.Common;
 using Systemorph.Vertex.Import;
-using Systemorph.Vertex.Scopes.Proxy;
-using Systemorph.Vertex.Workspace;
 
 namespace OpenSmc.Ifrs17.Domain.Test;
 
@@ -28,11 +28,17 @@ public class TechnicalMarginTest : Tests.TestBase
     public async Task InitializeAsync()
     {
         await TestData.InitializeAsync();
-        await Import.FromString(TestData.novelties).WithType<Novelty>().WithTarget(DataSource).ExecuteAsync();
-        await Import.FromString(TestData.canonicalAocTypes).WithType<AocType>().WithTarget(DataSource).ExecuteAsync();
+        await Import.FromString(TestData.novelties)
+            .WithType<Novelty>()
+            //.WithTarget(DataSource)
+            .ExecuteAsync();
+        await Import.FromString(TestData.canonicalAocTypes)
+            .WithType<AocType>()
+            //.WithTarget(DataSource)
+            .ExecuteAsync();
 
         await Import.FromString(TestData.canonicalAocConfig).WithFormat(ImportFormats.AocConfiguration)
-            .WithTarget(DataSource)
+            //.WithTarget(DataSource)
             .ExecuteAsync();
 
 
@@ -61,13 +67,23 @@ public class TechnicalMarginTest : Tests.TestBase
         });
 
 
-        await Import.FromString(TestData.amountType).WithType<AmountType>().WithTarget(DataSource).ExecuteAsync();
-        await Import.FromString(TestData.estimateType).WithType<EstimateType>().WithTarget(DataSource).ExecuteAsync();
-        await Import.FromString(TestData.economicBasis).WithType<EconomicBasis>().WithTarget(DataSource).ExecuteAsync();
+        await Import.FromString(TestData.amountType)
+            .WithType<AmountType>()
+            //.WithTarget(DataSource)
+            .ExecuteAsync();
+        await Import.FromString(TestData.estimateType)
+            .WithType<EstimateType>()
+            //.WithTarget(DataSource)
+            .ExecuteAsync();
+        await Import.FromString(TestData.economicBasis).WithType<EconomicBasis>()
+            //.WithTarget(DataSource)
+            .ExecuteAsync();
 
 
-        await Import.FromString(TestData.projectionConfiguration).WithType<ProjectionConfiguration>(
-        ).WithTarget(DataSource).ExecuteAsync();
+        await Import.FromString(TestData.projectionConfiguration)
+            .WithType<ProjectionConfiguration>()
+            //.WithTarget(DataSource)
+            .ExecuteAsync();
 
 
         await DataSource.UpdateAsync(new[]

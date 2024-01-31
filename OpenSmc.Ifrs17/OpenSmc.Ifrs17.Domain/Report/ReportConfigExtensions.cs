@@ -1,17 +1,18 @@
-using Systemorph.Vertex.Pivot.Builder;
 using System.Collections.Immutable;
+using Systemorph.Vertex.Pivot.Builder;
+using OpenSmc.Collections;
+using OpenSmc.DataSource.Abstractions;
+//using OpenSmc.DataCubes;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.Utils;
-using Systemorph.Vertex.Collections;
-using Systemorph.Vertex.DataCubes;
-using Systemorph.Vertex.DataCubes.Api;
 using Systemorph.Vertex.Pivot.Reporting;
 using Systemorph.Vertex.Pivot.Reporting.Builder;
-using Systemorph.Vertex.Workspace;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.Constants.Validations;
+using OpenSmc.Workspace;
+using Systemorph.Vertex.DataCubes.Api;
 
 namespace OpenSmc.Ifrs17.Domain.Report;
 
@@ -147,7 +148,7 @@ public static class ReportConfigExtensions
 
 
     public static async Task<(IDictionary<string, string>, IReadOnlyCollection<string>)> GetAutocompleteMappings<T>(
-        this Systemorph.Vertex.DataSource.Api.IQuerySource querySource, bool hasNullAsFirstValue = default) where T : KeyedDimension
+        this IQuerySource querySource, bool hasNullAsFirstValue = default) where T : KeyedDimension
     {
         var query = await querySource.Query<T>().Select(x => new
                 {x.SystemName, GuiName = ParseDimensionToDisplayString(x.SystemName, x.DisplayName), Order = 0})
@@ -166,12 +167,12 @@ public static class ReportConfigExtensions
     
 
 
-    public static IDataCube<YieldCurveReport> ToReportType(this YieldCurve[] yieldCurves)
+    /*public static IDataCube<YieldCurveReport> ToReportType(this YieldCurve[] yieldCurves)
         => yieldCurves.SelectMany(yc => yc.Values.Select((x, i) => new YieldCurveReport
             {
                 Currency = yc.Currency, Year = yc.Year, Month = yc.Month, Scenario = yc.Scenario, Index = i, Value = x
             }))
-            .ToDataCube();
+            .SelectToDataCube(x => true, x=> x);
 
 
     public static IDataCube<RawVariableReport> ToReportType(this IDataCube<RawVariable> rawVariable)
@@ -179,7 +180,7 @@ public static class ReportConfigExtensions
         {
             EstimateType = rv.EstimateType, AmountType = rv.AmountType, DataNode = rv.DataNode, AocType = rv.AocType,
             Novelty = rv.Novelty, Index = i, Value = x
-        })).ToDataCube();
+        })).SelectToDataCube(x => true, x=> x);*/
 }
 
 

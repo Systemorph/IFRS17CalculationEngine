@@ -1,3 +1,7 @@
+using OpenSmc.Collections;
+using OpenSmc.DataSource.Abstractions;
+using OpenSmc.Domain.Abstractions;
+using OpenSmc.Hierarchies;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.Constants.Validations;
@@ -5,11 +9,8 @@ using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.DataModel.Args;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.Domain.Utils;
-using Systemorph.Vertex.Api;
-using Systemorph.Vertex.Collections;
-using Systemorph.Vertex.DataSource.Common;
-using Systemorph.Vertex.Hierarchies;
-using Systemorph.Vertex.Workspace;
+using OpenSmc.Workspace;
+
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
@@ -17,7 +18,7 @@ public class ImportStorage
 {   
     private readonly IDataSource querySource; 
     private readonly IWorkspace workspace;
-    private readonly Systemorph.Vertex.Hierarchies.IHierarchicalDimensionCache hierarchyCache;
+    private readonly IHierarchicalDimensionCache hierarchyCache;
     private readonly ImportArgs args;
     
     //Format
@@ -409,7 +410,7 @@ public class ImportStorage
     public bool IsSecondaryScope (string dataNode) => DataNodesByImportScope[ImportScope.Secondary].Contains(dataNode);
     
     // Other
-    public Systemorph.Vertex.Hierarchies.IHierarchy<T> GetHierarchy<T>() where T : class, IHierarchicalDimension => hierarchyCache.Get<T>();
+    public IHierarchy<T> GetHierarchy<T>() where T : class, IHierarchicalDimension => hierarchyCache.Get<T>();
     public IEnumerable<string> GetNonAttributableAmountType() => ImportCalculationExtensions.GetNonAttributableAmountTypes().SelectMany(at => hierarchyCache.Get<AmountType>(at).Descendants(includeSelf : true).Select(x => x.SystemName));
     public IEnumerable<string> GetAttributableExpenseAndCommissionAmountType() => hierarchyCache.Get<AmountType>(AmountTypes.ACA).Descendants(includeSelf : true).Select(x => x.SystemName)
                                                                                    .Concat(hierarchyCache.Get<AmountType>(AmountTypes.AEA).Descendants(includeSelf : true).Select(x => x.SystemName));

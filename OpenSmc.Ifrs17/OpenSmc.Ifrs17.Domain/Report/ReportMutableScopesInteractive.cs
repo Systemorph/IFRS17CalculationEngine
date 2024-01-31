@@ -1,12 +1,11 @@
 using System.ComponentModel.DataAnnotations;
+using OpenSmc.Collections;
+using OpenSmc.Domain.Abstractions.Attributes;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.Utils;
 using Systemorph.Vertex.Pivot.Builder.Interfaces;
 using Systemorph.InteractiveObjects;
-using Systemorph.Vertex.Api.Attributes;
-using Systemorph.Vertex.Arithmetics.Aggregation;
-using Systemorph.Vertex.Collections;
 using Systemorph.Vertex.DataCubes;
 using Systemorph.Vertex.DataCubes.Api;
 using Systemorph.Vertex.Export;
@@ -16,11 +15,11 @@ using Systemorph.Vertex.Export.Factory;
 using Systemorph.Vertex.Grid.Model;
 using Systemorph.Vertex.InteractiveObjects;
 using Systemorph.Vertex.InteractiveObjects.Dropdown;
-using Systemorph.Vertex.Scopes;
-using Systemorph.Vertex.Workspace;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.Report.ReportScopes.CalculationScopes;
+using OpenSmc.Scopes;
+using OpenSmc.Workspace;
 
 // TODO : Check if this is no entirely obsolete - A.K.
 
@@ -329,7 +328,7 @@ public interface ReportScope : IMutableScope<string>,
         var dataScope = GetScope<IData>(((Year, Month), ReportingNode, Scenario, CurrencyType, dataFilter));
         dataScope.InputDataCube = GetData();
         return await export.ToCsv(fileName)
-                        .ForDataCube(dataScope.DataCube, config => config.WithQuerySource(workspace)
+                        .ForDataCube(dataScope.DataCube, config => config//.WithQuerySource(workspace)
                                                                         .SliceRowsBy(rowSlices)
                                                                         .SliceColumnsBy(columnSlices))
                         .WithActivityLog()
@@ -341,7 +340,7 @@ public interface ReportScope : IMutableScope<string>,
         var dataScope = GetScope<IData>(((Year, Month), ReportingNode, Scenario, CurrencyType, dataFilter));
         dataScope.InputDataCube = GetData();
         return await export.ToExcel(fileName)
-                        .ForDataCube(dataScope.DataCube, config => config.WithQuerySource(workspace) 
+                        .ForDataCube(dataScope.DataCube, config => config//.WithQuerySource(workspace) 
                                                                         .SliceRowsBy(rowSlices)
                                                                         .SliceColumnsBy(columnSlices))
                         .WithActivityLog()
@@ -350,7 +349,7 @@ public interface ReportScope : IMutableScope<string>,
     
     async Task<GridOptions> GetReportTaskAsync(IDataCube<ReportVariable> data) {
         return await report.ForDataCube(data)
-            .WithQuerySource(workspace)
+            //.WithQuerySource(workspace)
             .SliceRowsBy(rowSlices)
             .SliceColumnsBy(columnSlices)
             .ReportGridOptions(headerColumnWidth: headerColumnWidthValue)
@@ -370,10 +369,18 @@ public interface ReportScope : IMutableScope<string>,
 
 [InitializeScope(nameof(Init))]
 public interface IPvReport : ReportScope {
-    
-    IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<ILockedBestEstimate>(GetDataIdentities()).Aggregate().LockedBestEstimate + GetScopes<ICurrentBestEstimate>(GetDataIdentities()).Aggregate().CurrentBestEstimate;
 
-     void Init() {
+    IDataCube<ReportVariable> ReportScope.GetData()
+    {
+        return GetScopes<ILockedBestEstimate>(GetDataIdentities())
+                   .Select(x => x.LockedBestEstimate)
+                   .Aggregate() +
+               GetScopes<ICurrentBestEstimate>(GetDataIdentities())
+                   .Select(x => x.CurrentBestEstimate)
+                   .Aggregate();
+    }
+
+    void Init() {
          // BasicSliceAndDiceFormsEntity
          defaultRowSlices = new string[] { nameof(ReportVariable.Novelty), nameof(ReportVariable.VariableType) };
          defaultColumnSlices = new string[] { nameof(ReportVariable.Currency), nameof(ReportVariable.EconomicBasis) };
@@ -386,7 +393,11 @@ public interface IPvReport : ReportScope {
 [InitializeScope(nameof(Init))]
 public interface IRaReport : ReportScope {
     
-    IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<ILockedRiskAdjustment>(GetDataIdentities()).Aggregate().LockedRiskAdjustment + GetScopes<ICurrentRiskAdjustment>(GetDataIdentities()).Aggregate().CurrentRiskAdjustment;
+    IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<ILockedRiskAdjustment>(GetDataIdentities())
+        .Select(x => x.LockedRiskAdjustment)
+        .Aggregate() + GetScopes<ICurrentRiskAdjustment>(GetDataIdentities())
+        .Select(x => x.CurrentRiskAdjustment)
+        .Aggregate();
 
      void Init() {
          // BasicSliceAndDiceFormsEntity
@@ -400,7 +411,7 @@ public interface IRaReport : ReportScope {
 [InitializeScope(nameof(Init))]
 public interface IFcfReport : ReportScope {
     
-    IDataCube<ReportVariable> ReportScope.GetData() =>  GetScopes<IFcf>(GetDataIdentities()).Aggregate().Fcf;
+    IDataCube<ReportVariable> ReportScope.GetData() =>  GetScopes<IFcf>(GetDataIdentities()).Select(x => x.Fcf).Aggregate();
 
      void Init() {
          // BasicSliceAndDiceFormsEntity
@@ -414,7 +425,8 @@ public interface IFcfReport : ReportScope {
 [InitializeScope(nameof(Init))]
 public interface IWrittenReport : ReportScope {
     
-    IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<IWrittenAndAccruals>(GetDataIdentities()).Aggregate().Written;
+    IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<IWrittenAndAccruals>(GetDataIdentities())
+        .Select(x => x.Written).Aggregate();
 
      void Init() {
          // BasicSliceAndDiceFormsEntity
@@ -428,7 +440,7 @@ public interface IWrittenReport : ReportScope {
 [InitializeScope(nameof(Init))]
 public interface IAccrualReport : ReportScope {
     
-    IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<IWrittenAndAccruals>(GetDataIdentities()).Aggregate().Advance + GetScopes<IWrittenAndAccruals>(GetDataIdentities()).Aggregate().Overdue;
+    IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<IWrittenAndAccruals>(GetDataIdentities()).Select(x => x.Advance).Aggregate() + GetScopes<IWrittenAndAccruals>(GetDataIdentities()).Select(x => x.Overdue).Aggregate();
 
      void Init() {
          // BasicSliceAndDiceFormsEntity
@@ -443,7 +455,7 @@ public interface IAccrualReport : ReportScope {
 [InitializeScope(nameof(Init))]
 public interface IDeferralReport : ReportScope {
     
-    IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<IDeferrals>(GetDataIdentities()).Aggregate().Deferrals;
+    IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<IDeferrals>(GetDataIdentities()).Select(x => x.Deferrals).Aggregate();
 
      void Init() {
          // BasicSliceAndDiceFormsEntity
@@ -457,7 +469,7 @@ public interface IDeferralReport : ReportScope {
 [InitializeScope(nameof(Init))]
 public interface IExpAdjReport: ReportScope {
     
-    IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<IExperienceAdjustment>(GetDataIdentities()).Aggregate().ActuarialExperienceAdjustment;
+    IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<IExperienceAdjustment>(GetDataIdentities()).Select(x => x.ActuarialExperienceAdjustment).Aggregate();
 
      void Init() {
          // BasicSliceAndDiceFormsEntity
@@ -472,7 +484,7 @@ public interface IExpAdjReport: ReportScope {
 [InitializeScope(nameof(Init))]
 public interface ITmReport : ReportScope {
     
-    IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<ILrcTechnicalMargin>(GetDataIdentities()).Aggregate().LrcTechnicalMargin;
+    IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<ILrcTechnicalMargin>(GetDataIdentities()).Select(x => x.LrcTechnicalMargin).Aggregate();
 
      void Init() {
          // BasicSliceAndDiceFormsEntity
@@ -486,7 +498,9 @@ public interface ITmReport : ReportScope {
 [InitializeScope(nameof(Init))]
 public interface ICsmReport : ReportScope {
     
-    IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<ICsm>(GetDataIdentities()).Aggregate().Csm + GetScopes<ILc>(GetDataIdentities()).Aggregate().Lc + GetScopes<ILoreco>(GetDataIdentities()).Aggregate().Loreco;
+    IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<ICsm>(GetDataIdentities()).Select(x => x.Csm).Aggregate() + 
+                                                       GetScopes<ILc>(GetDataIdentities()).Select(x => x.Lc).Aggregate() + 
+                                                       GetScopes<ILoreco>(GetDataIdentities()).Select(x => x.Loreco).Aggregate();
 
      void Init() {
          // BasicSliceAndDiceFormsEntity
@@ -500,7 +514,7 @@ public interface ICsmReport : ReportScope {
 [InitializeScope(nameof(Init))]
 public interface IActLrcReport : ReportScope {
     
-    IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<ILrcActuarial>(GetDataIdentities()).Aggregate().LrcActuarial;
+    IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<ILrcActuarial>(GetDataIdentities()).Select(x => x.LrcActuarial).Aggregate();
 
      void Init() {
          // BasicSliceAndDiceFormsEntity
@@ -514,7 +528,7 @@ public interface IActLrcReport : ReportScope {
 [InitializeScope(nameof(Init))]
 public interface ILrcReport : ReportScope {
     
-    IDataCube<ReportVariable> ReportScope.GetData() =>GetScopes<ILrc>(GetDataIdentities()).Aggregate().Lrc;
+    IDataCube<ReportVariable> ReportScope.GetData() =>GetScopes<ILrc>(GetDataIdentities()).Select(x => x.Lrc).Aggregate();
 
      void Init() {
          // BasicSliceAndDiceFormsEntity
@@ -528,7 +542,7 @@ public interface ILrcReport : ReportScope {
 [InitializeScope(nameof(Init))]
 public interface IActLicReport : ReportScope {
     
-    IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<ILicActuarial>(GetDataIdentities()).Aggregate().LicActuarial;
+    IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<ILicActuarial>(GetDataIdentities()).Select(x => x.LicActuarial).Aggregate();
 
      void Init() {
          // BasicSliceAndDiceFormsEntity
@@ -542,7 +556,7 @@ public interface IActLicReport : ReportScope {
 [InitializeScope(nameof(Init))]
 public interface ILicReport : ReportScope {
     
-    IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<ILic>(GetDataIdentities()).Aggregate().Lic;
+    IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<ILic>(GetDataIdentities()).Select(x => x.Lic).Aggregate();
 
      void Init() {
          // BasicSliceAndDiceFormsEntity
@@ -556,7 +570,7 @@ public interface ILicReport : ReportScope {
 [InitializeScope(nameof(Init))]
 public interface IFpReport : ReportScope {
     
-    IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<IFinancialPerformance>(GetDataIdentities()).Aggregate().FinancialPerformance;
+    IDataCube<ReportVariable> ReportScope.GetData() => GetScopes<IFinancialPerformance>(GetDataIdentities()).Select(x => x.FinancialPerformance).Aggregate();
 
      void Init() {
          // BasicSliceAndDiceFormsEntity

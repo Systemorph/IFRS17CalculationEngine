@@ -3,7 +3,7 @@ using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.Import.ActualExperienceAdjustmentOnPremium;
 using OpenSmc.Ifrs17.Domain.Import.ExperienceAdjustmentForPremium;
 using OpenSmc.Ifrs17.Domain.Import.WrittenActualCalculation;
-using Systemorph.Vertex.Scopes;
+using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import.TechnicalMarginCalculation;
 

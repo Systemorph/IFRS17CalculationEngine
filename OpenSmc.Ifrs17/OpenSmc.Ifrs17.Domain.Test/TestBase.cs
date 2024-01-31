@@ -1,10 +1,8 @@
-﻿using Autofac;
+﻿using OpenSmc.DataSource.Abstractions;
+using OpenSmc.Scopes.Proxy;
+using OpenSmc.Workspace;
 using Systemorph.Vertex.Activities;
-using Systemorph.Vertex.DataSetReader;
-using Systemorph.Vertex.DataSource.Common;
 using Systemorph.Vertex.Import;
-using Systemorph.Vertex.Scopes.Proxy;
-using Systemorph.Vertex.Workspace;
 
 namespace OpenSmc.Ifrs17.Domain.Test;
 

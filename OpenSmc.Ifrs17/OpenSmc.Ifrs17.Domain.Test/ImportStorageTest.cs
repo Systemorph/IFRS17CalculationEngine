@@ -1,4 +1,6 @@
 using FluentAssertions;
+using OpenSmc.Collections;
+using OpenSmc.DataSource.Abstractions;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.Constants.Validations;
@@ -7,12 +9,10 @@ using OpenSmc.Ifrs17.Domain.DataModel.Args;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.Domain.Import;
 using OpenSmc.Ifrs17.Domain.Utils;
+using OpenSmc.Scopes.Proxy;
+using OpenSmc.Workspace;
 using Systemorph.Vertex.Activities;
-using Systemorph.Vertex.Collections;
-using Systemorph.Vertex.DataSource.Common;
 using Systemorph.Vertex.Import;
-using Systemorph.Vertex.Scopes.Proxy;
-using Systemorph.Vertex.Workspace;
 
 namespace OpenSmc.Ifrs17.Domain.Test;
 
@@ -32,12 +32,14 @@ public class ImportStorageTest : Tests.TestBase
 
 
         await Import.FromString(TestData.novelties)
-            .WithType<Novelty>().WithTarget(DataSource).ExecuteAsync();
+            .WithType<Novelty>()//.WithTarget(DataSource)
+            .ExecuteAsync();
         await Import.FromString(TestData.canonicalAocTypes)
-            .WithType<AocType>().WithTarget(DataSource).ExecuteAsync();
+            .WithType<AocType>()//.WithTarget(DataSource)
+            .ExecuteAsync();
 
         await Import.FromString(TestData.canonicalAocConfig)
-            .WithFormat(ImportFormats.AocConfiguration).WithTarget(DataSource)
+            .WithFormat(ImportFormats.AocConfiguration)//.WithTarget(DataSource)
             .ExecuteAsync();
 
 
@@ -65,7 +67,8 @@ public class ImportStorageTest : Tests.TestBase
 
 
         await Import.FromString(TestData.estimateType)
-            .WithType<EstimateType>().WithTarget(DataSource).ExecuteAsync();
+            .WithType<EstimateType>()//.WithTarget(DataSource)
+            .ExecuteAsync();
 
 
         Work.Initialize(x => x.FromSource(DataSource).DisableInitialization<RawVariable>(

@@ -1,5 +1,5 @@
 using OpenSmc.Ifrs17.Domain.Constants;
-using Systemorph.Vertex.Scopes;
+using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
