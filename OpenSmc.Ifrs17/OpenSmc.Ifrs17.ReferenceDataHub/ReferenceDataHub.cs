@@ -24,6 +24,7 @@ public class ReferenceDataHub : MessageHubPlugin<ReferenceDataHub>
     {
         options = options
             .AddImport(x => x)
+            .WithBuildupAction(x => { })
             .WithHandler<GetScenarioRequest>((hub, request) =>
             {
                 hub.Post(new ScenarioData(new Scenario[0]), options => options.ResponseFor(request));
