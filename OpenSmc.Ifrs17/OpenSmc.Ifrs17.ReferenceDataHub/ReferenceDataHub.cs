@@ -29,6 +29,11 @@ public class ReferenceDataHub : MessageHubPlugin<ReferenceDataHub>
             {
                 hub.Post(new ScenarioData(new Scenario[0]), options => options.ResponseFor(request));
                 return request.Processed();
+            })
+            .WithHandler<GetDimensionsRequest>((hub, request) =>
+            {
+                hub.Post(new Dimensions(new LineOfBusiness[0], new AmountType[0]), options => options.ResponseFor(request));
+                return request.Processed();
             });
     }
 }
