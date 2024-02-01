@@ -71,7 +71,7 @@ public static class DataPluginExtensions
 {
     public static MessageHubConfiguration AddData(this MessageHubConfiguration configuration, 
         Func<DataPluginConfiguration, DataPluginConfiguration> dataConfiguration) 
-        => configuration;
+        => configuration.AddPlugin(hub => new DataPlugin(hub, configuration, dataConfiguration));
 }
 
 public record DataPluginConfiguration
@@ -85,12 +85,14 @@ public record DataPluginConfiguration
         => this with { TypeConfigurations = TypeConfigurations.Add(new TypeConfiguration<T>(initialize, save, delete)) };
 }
 
-public record TypeConfiguration();
-
 public record TypeConfiguration<T> (
     Func<Task<IReadOnlyCollection<T>>> Initialize,
     Func<IReadOnlyCollection<T>, Task> Save,
     Func<IReadOnlyCollection<object>, Task> Delete) : TypeConfiguration;
+
+public record TypeConfiguration();
+
+public record TypeConfigurationWithType<T>(TypeConfiguration<T> TypeConfiguration, Type Type);
 
 public class DataPlugin : MessageHubPlugin<DataPlugin, IWorkspace>,
                           IMessageHandler<GetManyRequest<Scenario>>
@@ -99,24 +101,26 @@ public class DataPlugin : MessageHubPlugin<DataPlugin, IWorkspace>,
 
     private IDataSource dataSource;
 
-    public DataPlugin(IMessageHub hub, MessageHubConfiguration options) : base(hub)
+    private DataPluginConfiguration DataConfiguration { get; set; } = new();
+
+    public DataPlugin(IMessageHub hub, MessageHubConfiguration configuration, 
+                      Func<DataPluginConfiguration, DataPluginConfiguration> dataConfiguration) : base(hub)
     {
-        Register(HandleGetRequest);
+        Register(HandleGetRequest);  // This takes care of all Read (CRUD)
+
+        DataConfiguration = dataConfiguration(DataConfiguration);
     }
 
-    public override async Task StartAsync()
+    public override async Task StartAsync()  // This takes care of the Create (CRUD)
     {
         await base.StartAsync();
 
-        // TODO: consider making this a configuration rather than having it here
-        var items = await dataSource.Query<Scenario>().ToArrayAsync();
-        await State.UpdateAsync(items);
-
-        // TODO: UpdateState needs to work properly with a sync delegate and an immutable workspace
-        //UpdateState(state => {
-        //    state.UpdateAsync(items).Wait();
-        //    return state;
-        //});
+        foreach(var typeConfig in DataConfiguration.TypeConfigurations)
+        {
+            var config = (TypeConfiguration<object>)typeConfig;
+            var items = await config.Initialize();
+            await State.UpdateAsync(items);
+        }
     }
 
     public IMessageDelivery HandleMessage(IMessageDelivery<GetManyRequest<Scenario>> request)
@@ -126,14 +130,13 @@ public class DataPlugin : MessageHubPlugin<DataPlugin, IWorkspace>,
         return request.Processed();
     }
 
-    private IMessageDelivery HandleGetRequest(IMessageDelivery request) /* Read request of the CRUD */
+    private IMessageDelivery HandleGetRequest(IMessageDelivery request)  // Read request of the CRUD
     {
         var type = request.Message.GetType();
         if(type.IsGenericType && type.GetGenericTypeDefinition() == typeof(GetManyRequest<>))
         {
             var elementType = type.GetGenericArguments().First();
-            return (IMessageDelivery)GetElementsMethod.MakeGenericMethod(elementType)
-                                                      .InvokeAsFunction(this, request);
+            return (IMessageDelivery)GetElementsMethod.MakeGenericMethod(elementType).InvokeAsFunction(this, request);
         }
         return request;
     }
@@ -146,7 +149,7 @@ public class DataPlugin : MessageHubPlugin<DataPlugin, IWorkspace>,
         var query = State.Query<T>();
         var message = request.Message;
         if(message.PageSize is not null)
-            query = query.Skip(message.Page.Value * message.PageSize.Value).Take(message.PageSize.Value);
+            query = query.Skip(message.Page * message.PageSize.Value).Take(message.PageSize.Value);
         var queryResult = query.ToArray();
         Hub.Post(queryResult, o => o.ResponseFor(request));
         return request.Processed();
