@@ -31,7 +31,7 @@ public static class IfrsConfiguration
         var dataSource = configuration.ServiceProvider.GetService<IDataSource>();
 
         return configuration
-            .AddData(data => data.WithType<Scenario>(
+            .AddData(data => data.WithType<Scenario>( /* Extend With Type to avoid monkey code*/ 
                 async () => await dataSource.Query<Scenario>().ToArrayAsync(),
                 (scenarios) => dataSource.UpdateAsync(scenarios),
                 (scenarios) => dataSource.DeleteAsync(scenarios)));
@@ -46,13 +46,15 @@ public static class IfrsConfiguration
             .AddData(data => data.WithType<RawVariable>(
                 async () => await dataSource.Query<RawVariable>().ToArrayAsync(),
                 (scenarios) => dataSource.UpdateAsync(scenarios),
-                (scenarios) => dataSource.DeleteAsync(scenarios)));
+                (scenarios) => dataSource.DeleteAsync(scenarios))); /* This is delete of data, not of the hub*/
+        /* Delete of Hub must be implemented separately (pr)*/
     }
 
     public static MessageHubConfiguration ConfigurationViewModelHub(this MessageHubConfiguration configuration)
     {
         // TODO: this needs to be registered in the higher level
-        var dataSource = configuration.ServiceProvider.GetService<IDataSource>();
+        //var dataSource = configuration.ServiceProvider.GetService<IDataSource>();
+        // TODO: What content should be here? -A.K.
 
         return configuration;
     }
@@ -124,7 +126,7 @@ public class DataPlugin : MessageHubPlugin<DataPlugin, IWorkspace>,
         return request.Processed();
     }
 
-    private IMessageDelivery HandleGetRequest(IMessageDelivery request)
+    private IMessageDelivery HandleGetRequest(IMessageDelivery request) /* Read request of the CRUD */
     {
         var type = request.Message.GetType();
         if(type.IsGenericType && type.GetGenericTypeDefinition() == typeof(GetManyRequest<>))
