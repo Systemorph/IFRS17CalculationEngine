@@ -54,8 +54,7 @@ public static class IfrsConfiguration
         // TODO: this needs to be registered in the higher level
         var dataSource = configuration.ServiceProvider.GetService<IDataSource>();
 
-        return configuration
-            .;
+        return configuration;
     }
 }
 
@@ -145,7 +144,7 @@ public class DataPlugin : MessageHubPlugin<DataPlugin, IWorkspace>,
         var query = State.Query<T>();
         var message = request.Message;
         if(message.PageSize is not null)
-            query = query.Skip(message.Page * message.PageSize.Value).Take(message.PageSize.Value);
+            query = query.Skip(message.Page.Value * message.PageSize.Value).Take(message.PageSize.Value);
         var queryResult = query.ToArray();
         Hub.Post(queryResult, o => o.ResponseFor(request));
         return request.Processed();
