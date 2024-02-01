@@ -83,12 +83,12 @@ public record DataPluginConfiguration
         => this with { TypeConfigurations = TypeConfigurations.Add(new TypeConfiguration<T>(initialize, save, delete)) };
 }
 
+public record TypeConfiguration();
+
 public record TypeConfiguration<T> (
     Func<Task<IReadOnlyCollection<T>>> Initialize,
     Func<IReadOnlyCollection<T>, Task> Save,
     Func<IReadOnlyCollection<object>, Task> Delete) : TypeConfiguration;
-
-public record TypeConfiguration (); 
 
 public class DataPlugin : MessageHubPlugin<DataPlugin, IWorkspace>,
                           IMessageHandler<GetManyRequest<Scenario>>
