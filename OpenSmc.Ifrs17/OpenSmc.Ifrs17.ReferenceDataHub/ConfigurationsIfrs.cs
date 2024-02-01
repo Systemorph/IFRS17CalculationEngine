@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DocumentFormat.OpenXml.Drawing;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using OpenSmc.DataPlugin;
 using OpenSmc.DataSource.Abstractions;
@@ -31,15 +32,17 @@ public static class IfrsConfiguration
 
         return configuration
             .AddData(data => data
-                .WithType<Scenario>( // TODO: Extend With Type to avoid monkey code
-                    async () => await dataSource.Query<Scenario>().ToArrayAsync(),
-                    (scenarios) => dataSource.UpdateAsync(scenarios),
-                    (scenarios) => dataSource.DeleteAsync(scenarios))
-                .WithType<AmountType>(
-                    async () => await dataSource.Query<AmountType>().ToArrayAsync(),
-                    (amountTypes) => dataSource.UpdateAsync(amountTypes),
-                    (amountTypes) => dataSource.DeleteAsync(amountTypes)));
+                .WithReferenceDimension<Scenario>(dataSource)
+                .WithReferenceDimension<AmountType>(dataSource)
+                .WithReferenceDimension<OciType>(dataSource)
+                .WithReferenceDimension<AocType>(dataSource));
     }
+
+    private static DataPluginConfiguration WithReferenceDimension<T>(this DataPluginConfiguration configuration,
+        IDataSource dataSource)
+        where T : class => configuration.WithType<T>(async () => await dataSource.Query<T>().ToArrayAsync(),
+        dim => dataSource.UpdateAsync(dim),
+        dim => dataSource.DeleteAsync(dim));
 
     public static MessageHubConfiguration ConfigurationTransactionalDataHub(this MessageHubConfiguration configuration)
     {
