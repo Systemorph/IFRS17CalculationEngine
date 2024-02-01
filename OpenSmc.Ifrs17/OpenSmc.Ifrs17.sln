@@ -125,6 +125,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.DataCubes", "..\Ope
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Scopes.DataCubes", "..\OpenSmc\src\OpenSmc.Scopes.DataCubes\OpenSmc.Scopes.DataCubes.csproj", "{14F13937-159F-4938-BCEE-B1FD388AC7B5}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.DataPlugin", "..\OpenSmc\src\OpenSmc.DataPlugin\OpenSmc.DataPlugin.csproj", "{18B60A63-0EFE-4388-B5C4-8D1AC7CA31F8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -843,6 +845,18 @@ Global
 		{14F13937-159F-4938-BCEE-B1FD388AC7B5}.Release|arm64.Build.0 = Release|Any CPU
 		{14F13937-159F-4938-BCEE-B1FD388AC7B5}.Release|x86.ActiveCfg = Release|Any CPU
 		{14F13937-159F-4938-BCEE-B1FD388AC7B5}.Release|x86.Build.0 = Release|Any CPU
+		{18B60A63-0EFE-4388-B5C4-8D1AC7CA31F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18B60A63-0EFE-4388-B5C4-8D1AC7CA31F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18B60A63-0EFE-4388-B5C4-8D1AC7CA31F8}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{18B60A63-0EFE-4388-B5C4-8D1AC7CA31F8}.Debug|arm64.Build.0 = Debug|Any CPU
+		{18B60A63-0EFE-4388-B5C4-8D1AC7CA31F8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{18B60A63-0EFE-4388-B5C4-8D1AC7CA31F8}.Debug|x86.Build.0 = Debug|Any CPU
+		{18B60A63-0EFE-4388-B5C4-8D1AC7CA31F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18B60A63-0EFE-4388-B5C4-8D1AC7CA31F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18B60A63-0EFE-4388-B5C4-8D1AC7CA31F8}.Release|arm64.ActiveCfg = Release|Any CPU
+		{18B60A63-0EFE-4388-B5C4-8D1AC7CA31F8}.Release|arm64.Build.0 = Release|Any CPU
+		{18B60A63-0EFE-4388-B5C4-8D1AC7CA31F8}.Release|x86.ActiveCfg = Release|Any CPU
+		{18B60A63-0EFE-4388-B5C4-8D1AC7CA31F8}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -904,6 +918,7 @@ Global
 		{61139EFB-64AF-43B2-9744-6F49E77650BB} = {74F80CED-05CC-4D74-A4C1-57FC8BCC0BC9}
 		{140CCE54-E67C-4FA0-9693-D802F6AEBE57} = {74F80CED-05CC-4D74-A4C1-57FC8BCC0BC9}
 		{14F13937-159F-4938-BCEE-B1FD388AC7B5} = {74F80CED-05CC-4D74-A4C1-57FC8BCC0BC9}
+		{18B60A63-0EFE-4388-B5C4-8D1AC7CA31F8} = {74F80CED-05CC-4D74-A4C1-57FC8BCC0BC9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2F53264C-6C10-4A4F-986B-50102C8E2371}
