@@ -8,6 +8,7 @@ using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.DataModel.Args;
 using OpenSmc.Ifrs17.Domain.DataModel.Interfaces;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
+using OpenSmc.Ifrs17.Domain.DataModel.TransactionalData;
 using OpenSmc.Ifrs17.Domain.Utils;
 using OpenSmc.Scopes.Proxy;
 using OpenSmc.Workspace;

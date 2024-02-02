@@ -3,8 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using OpenSmc.DataPlugin;
 using OpenSmc.DataSource.Abstractions;
-using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
+using OpenSmc.Ifrs17.Domain.DataModel.TransactionalData;
 using OpenSmc.Messaging;
 
 namespace OpenSmc.Ifrs17.ReferenceDataHub;
@@ -12,12 +13,12 @@ namespace OpenSmc.Ifrs17.ReferenceDataHub;
 /* AM (1.2.2024) todo list:
  *  a) organize better the IFRS17 project structure
  *  b) orchestrate which data go to which hub, e.g. refDataHub owns all dimensions
- *      write the configuration for parameters, transactionalData, etc etc
+ *      write the financialDataConfiguration for parameters, transactionalData, etc etc
  *  c) finish setting up all model hubs simply by means of this generic DataPlugin
  *  d) implement tests for the DataPlugin by adding tests in the OpenSMC repo
  *  e) test the IFRS17 model hubs writing the level above this configurations
  *      to do this check the existing tests in the OpenSMC, e.g. MessageHubTest
- *      then write the configuration to define routing, addresses, forwarding, etc $
+ *      then write the financialDataConfiguration to define routing, addresses, forwarding, etc $
  *  f) think at the viewModelHub, what to do here? where to start?
  *      look at the existing tests in OpenSMC, e.g. LayoutTest
  *  g) monitor the development of the import/export plugin so that we can use them here
@@ -25,20 +26,22 @@ namespace OpenSmc.Ifrs17.ReferenceDataHub;
  */
 public static class IfrsConfiguration
 {
-    public static MessageHubConfiguration ConfigurationReferenceDataHub(this MessageHubConfiguration configuration)
+    public static MessageHubConfiguration ConfigurationReferenceDataHub(this MessageHubConfiguration financialDataConfiguration)
     {
         // TODO: this needs to be registered in the higher level
-        var dataSource = configuration.ServiceProvider.GetService<IDataSource>();
+        var dataSource = financialDataConfiguration.ServiceProvider.GetService<IDataSource>();
 
-        return configuration
+        return financialDataConfiguration
             .AddData(data => data
-                .WithDimension<Scenario>(dataSource)
-                .WithDimension<AmountType>(dataSource)
-                .WithDimension<OciType>(dataSource)
-                .WithDimension<AocType>(dataSource)
-                .WithDimension<CreditRiskRating>(dataSource)
-                .WithDimension<Currency>(dataSource)
-                .WithDimension<DeferrableAmountType>(dataSource)
+                    .WithDimension<LineOfBusiness>(dataSource)
+                    .WithDimension<Currency>(dataSource)
+            /*.WithDimension<Scenario>(dataSource)
+            .WithDimension<AmountType>(dataSource)
+            .WithDimension<OciType>(dataSource)
+            .WithDimension<AocType>(dataSource)
+            .WithDimension<CreditRiskRating>(dataSource)
+            .WithDimension<Currency>(dataSource)
+            .WithDimension<DeferrableAmountType>(dataSource)*/
             );
     }
 
@@ -62,7 +65,7 @@ public static class IfrsConfiguration
     public static MessageHubConfiguration ConfigurationViewModelHub(this MessageHubConfiguration configuration)
     {
         // TODO: this needs to be registered in the higher level
-        //var dataSource = configuration.ServiceProvider.GetService<IDataSource>();
+        //var dataSource = financialDataConfiguration.ServiceProvider.GetService<IDataSource>();
         // TODO: What content should be here? -A.K.
 
         /* AM (1.2.2024) personal idea:

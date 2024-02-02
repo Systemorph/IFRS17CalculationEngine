@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.DataModel.TransactionalData;
 using Systemorph.Vertex.Equality;
 
 namespace OpenSmc.Ifrs17.Domain.Utils;

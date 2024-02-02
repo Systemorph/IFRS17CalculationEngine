@@ -1,3 +1,4 @@
+using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using Systemorph.Vertex.Api.Attributes;
 using Systemorph.Vertex.Attributes.Arithmetics;

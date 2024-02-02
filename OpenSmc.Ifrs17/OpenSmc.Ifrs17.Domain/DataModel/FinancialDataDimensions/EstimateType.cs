@@ -1,7 +1,8 @@
 using OpenSmc.Domain.Abstractions.Attributes;
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
+using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 
-namespace OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
+namespace OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
 
 public record EstimateType : KeyedOrderedDimensionWithExternalId
 {

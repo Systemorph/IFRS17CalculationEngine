@@ -1,7 +1,6 @@
 using FluentAssertions;
 using OpenSmc.Collections;
-using OpenSmc.Ifrs17.Domain.DataModel;
-
+using OpenSmc.Ifrs17.Domain.DataModel.TransactionalData;
 using Systemorph.Vertex.Pivot.Reporting;
 using Systemorph.Vertex.Pivot.Reporting.Builder;
 

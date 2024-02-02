@@ -2,6 +2,7 @@ using OpenSmc.Collections;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.DataModel.TransactionalData;
 using OpenSmc.Ifrs17.Domain.Import.LossRecoveryComponent;
 using OpenSmc.Ifrs17.Domain.Utils;
 using OpenSmc.Scopes;

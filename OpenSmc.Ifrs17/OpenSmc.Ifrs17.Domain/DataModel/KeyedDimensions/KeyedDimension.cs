@@ -4,7 +4,7 @@ using OpenSmc.Domain.Abstractions.Attributes;
 
 namespace OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 
-public abstract record KeyedDimension : INamed
+public abstract record KeyedDimension : INamed // TODO: we should inherit from Dimension and stored it in Domain.Abstraction
 {
     [Key]
     [IdentityProperty]

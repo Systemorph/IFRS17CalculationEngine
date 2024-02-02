@@ -1,4 +1,4 @@
-using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.DataModel.TransactionalData;
 using OpenSmc.Ifrs17.Domain.Import.ToIfrsVariableScopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import.IfrsVarsComputations;

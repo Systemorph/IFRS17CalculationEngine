@@ -6,7 +6,9 @@ using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.Constants.Validations;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.DataModel.Args;
+using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
+using OpenSmc.Ifrs17.Domain.DataModel.TransactionalData;
 using OpenSmc.Ifrs17.Domain.Import;
 using OpenSmc.Ifrs17.Domain.Utils;
 using OpenSmc.Scopes.Proxy;
@@ -18,6 +20,9 @@ namespace OpenSmc.Ifrs17.Domain.Test;
 
 public class ImportStorageTest : Tests.TestBase
 {
+    
+
+
     public ImportStorageTest(IImportVariable import, IDataSource dataSource,
         IWorkspaceVariable work, IActivityVariable activity, IScopeFactory scopes) :
         base(import, dataSource, work, activity, scopes)

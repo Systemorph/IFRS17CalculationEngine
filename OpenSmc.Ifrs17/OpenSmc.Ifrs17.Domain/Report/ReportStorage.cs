@@ -11,6 +11,7 @@ using OpenSmc.Domain.Abstractions;
 using Systemorph.Vertex.DataCubes;
 using Systemorph.Vertex.DataCubes.Api;
 using Systemorph.Vertex.Export.Factory;
+using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
 
 namespace OpenSmc.Ifrs17.Domain.Report;
 

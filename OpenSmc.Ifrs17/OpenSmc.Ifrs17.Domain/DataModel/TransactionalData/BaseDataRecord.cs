@@ -6,7 +6,7 @@ using OpenSmc.Partition;
 using Systemorph.Vertex.Persistence.EntityFramework.Conversions.Api;
 using Systemorph.Vertex.Persistence.EntityFramework.Conversions.Converters;
 
-namespace OpenSmc.Ifrs17.Domain.DataModel;
+namespace OpenSmc.Ifrs17.Domain.DataModel.TransactionalData;
 
 public abstract record BaseDataRecord : BaseVariableIdentity, IKeyed, IPartitioned
 {

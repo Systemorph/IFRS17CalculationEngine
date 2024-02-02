@@ -1,5 +1,6 @@
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Domain.Abstractions.Attributes;
+using OpenSmc.Ifrs17.Domain.DataModel.TransactionalData;
 
 namespace OpenSmc.Ifrs17.Domain.DataModel;
 

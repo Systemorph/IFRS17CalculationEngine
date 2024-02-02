@@ -1,6 +1,6 @@
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
-using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
+using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
 using Systemorph.Vertex.DataCubes;
 using Systemorph.Vertex.DataCubes.Api;
 

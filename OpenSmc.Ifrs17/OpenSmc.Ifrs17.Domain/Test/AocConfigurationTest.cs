@@ -4,6 +4,7 @@ using OpenSmc.DataSource.Abstractions;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using OpenSmc.Scopes.Proxy;
 using OpenSmc.Workspace;

@@ -38,7 +38,9 @@
 		<PackageReference Include="Systemorph.Test" Version="1.6.5" />
 		<PackageReference Include="Systemorph.Workspace" Version="1.6.4" />
 		<PackageReference Include="Systemorph.Reporting" Version="1.6.5" />
+		<ProjectReference Include="..\..\OpenSmc\test\OpenSmc.Hub.Fixture\OpenSmc.Hub.Fixture.csproj" />
 		<ProjectReference Include="..\OpenSmc.Ifrs17.Domain\OpenSmc.Ifrs17.Domain.csproj" />
+		<ProjectReference Include="..\OpenSmc.Ifrs17.ReferenceDataHub\OpenSmc.Ifrs17.ReferenceDataHub.csproj" />
 	</ItemGroup>
 
 </Project>

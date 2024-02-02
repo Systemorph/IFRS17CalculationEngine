@@ -20,6 +20,7 @@ using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.Report.ReportScopes.CalculationScopes;
 using OpenSmc.Scopes;
 using OpenSmc.Workspace;
+using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
 
 // TODO : Check if this is no entirely obsolete - A.K.
 

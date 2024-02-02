@@ -1,6 +1,7 @@
 using OpenSmc.Domain.Abstractions.Attributes;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.Domain.Import.PresentValueCalculation;
 using OpenSmc.Scopes;

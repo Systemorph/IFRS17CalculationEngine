@@ -1,7 +1,7 @@
 using OpenSmc.Domain.Abstractions.Attributes;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 
-namespace OpenSmc.Ifrs17.Domain.DataModel;
+namespace OpenSmc.Ifrs17.Domain.DataModel.TransactionalData;
 
 public abstract record BaseVariableIdentity
 {

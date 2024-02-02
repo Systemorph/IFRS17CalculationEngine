@@ -1,4 +1,4 @@
-using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
+using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
 using Systemorph.Vertex.Api.Attributes;
 
 namespace OpenSmc.Ifrs17.Domain.Report.ReportParameters;

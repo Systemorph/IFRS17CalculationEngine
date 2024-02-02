@@ -13,6 +13,7 @@ using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.Constants.Validations;
 using OpenSmc.Workspace;
 using Systemorph.Vertex.DataCubes.Api;
+using OpenSmc.Ifrs17.Domain.DataModel.TransactionalData;
 
 namespace OpenSmc.Ifrs17.Domain.Report;
 

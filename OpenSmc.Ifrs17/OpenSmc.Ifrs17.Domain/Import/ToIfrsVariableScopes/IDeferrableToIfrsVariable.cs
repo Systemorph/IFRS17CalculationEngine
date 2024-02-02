@@ -1,6 +1,7 @@
 using OpenSmc.Collections;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.DataModel.TransactionalData;
 using OpenSmc.Ifrs17.Domain.Import.DiscountedDeferrableCalculation;
 using OpenSmc.Ifrs17.Domain.Import.NominalDeferrableCalculation;
 using OpenSmc.Ifrs17.Domain.Utils;

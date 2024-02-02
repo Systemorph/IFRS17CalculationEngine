@@ -4,6 +4,7 @@ using OpenSmc.DataSource.Abstractions;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
+using OpenSmc.Ifrs17.Domain.DataModel.TransactionalData;
 using OpenSmc.Ifrs17.Domain.Report;
 using OpenSmc.Ifrs17.Domain.Tests;
 using OpenSmc.Ifrs17.Domain.Utils;

@@ -18,6 +18,8 @@ using OpenSmc.Ifrs17.Domain.Constants.Validations;
 using OpenSmc.Scopes.Proxy;
 using OpenSmc.Workspace;
 using Systemorph.Vertex.Activities;
+using OpenSmc.Ifrs17.Domain.DataModel.TransactionalData;
+using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 

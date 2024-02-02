@@ -6,7 +6,7 @@ using OpenSmc.Partition;
 
 namespace OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 
-public record DataNode : KeyedDimension, IPartitioned
+public record DataNode : KeyedDimension, IPartitioned // TODO: migrate to 
 {
     [NotVisible]
     [PartitionKey(typeof(PartitionByReportingNode))]
