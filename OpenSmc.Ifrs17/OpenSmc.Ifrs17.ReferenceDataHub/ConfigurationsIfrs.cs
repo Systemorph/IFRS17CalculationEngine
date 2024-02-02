@@ -39,7 +39,6 @@ public static class IfrsConfiguration
                 .WithDimension<CreditRiskRating>(dataSource)
                 .WithDimension<Currency>(dataSource)
                 .WithDimension<DeferrableAmountType>(dataSource)
-                .WithDimension<DataNode>(dataSource)
             );
     }
 
