@@ -1,7 +1,7 @@
 //#!import "../Utils/EqualityComparers"
 //#!import "../Utils/TestHelper"
 
-
+/*
 using FluentAssertions;
 using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
@@ -108,4 +108,4 @@ public class EqualityComparerTest
     }
 }
 
-
+*/

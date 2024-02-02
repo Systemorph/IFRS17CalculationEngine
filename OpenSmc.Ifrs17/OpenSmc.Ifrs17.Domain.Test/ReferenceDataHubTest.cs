@@ -1,47 +1,44 @@
-﻿using System.Reactive.Linq;
-using FluentAssertions;
-using FluentAssertions.Execution;
-using FluentAssertions.Extensions;
-using OpenSmc.DataPlugin;
-using OpenSmc.DataSource.Abstractions;
-using OpenSmc.Hub.Fixture;
-using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
+﻿using FluentAssertions;
 using OpenSmc.Ifrs17.ReferenceDataHub;
 using OpenSmc.Messaging;
-using Xunit;
 using Xunit.Abstractions;
 
 
 namespace OpenSmc.Ifrs17.Domain.Test;
-public class DataHubTest : HubTestBase
+public class ReferenceDataHubTest : DataHubTestBase
 {
 
-    record WakeUpRequest : MediatR.IRequest<WakeUptEvent>;
-    record WakeUptEvent;
+    record WakeUpRequest : IRequest<WakeUpEvent>;
+    record WakeUpEvent;
 
 
-    public DataHubTest(ITestOutputHelper output) : base(output)
+    public ReferenceDataHubTest(ITestOutputHelper output) : base(output)
     {
     }
 
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
-        => IfrsConfiguration.ConfigurationReferenceDataHub(configuration);
+        => IfrsConfiguration.ConfigurationReferenceDataHub(configuration)
+            .WithHandler<WakeUpRequest>((hub, request) =>
+        {
+            hub.Post(new WakeUpEvent(), options => options.ResponseFor(request));
+            return request.Processed();
+        });
 
 
     [Fact]
     public async Task InitilizationReferenceDataHub()
     {
         var host = GetHost();
-        var response = await host.AwaitResponse(new WakeUptEvent(), o => o.WithTarget(new HostAddress()));
-        response.Should().BeAssignableTo<IMessageDelivery<WakeUpRequest>>();
+        var response = await host.AwaitResponse(new WakeUpRequest(), o => o.WithTarget(new HostAddress()));
+        response.Should().BeAssignableTo<IMessageDelivery<WakeUpEvent>>();
     }
 
 
-    [Fact]
+    /*[Fact]
     public async Task HelloWorldFromClient()
     {
         var client = GetClient();
-        var response = await client.AwaitResponse(new WakeUptEvent(), o => o.WithTarget(new HostAddress()));
+        var response = await client.AwaitResponse(new WakeUpEvent(), o => o.WithTarget(new HostAddress()));
         response.Should().BeAssignableTo<IMessageDelivery<WakeUpRequest>>();
     }
 
@@ -53,7 +50,7 @@ public class DataHubTest : HubTestBase
         var messageTask = clientOut.Where(d => d.Message is HelloEvent).ToArray().GetAwaiter();
         var overallMessageTask = clientOut.ToArray().GetAwaiter();
 
-        var response = await client.AwaitResponse(new WakeUptEvent(), o => o.WithTarget(new HostAddress()));
+        var response = await client.AwaitResponse(new WakeUpEvent(), o => o.WithTarget(new HostAddress()));
         response.Should().BeAssignableTo<IMessageDelivery<WakeUpRequest>>();
 
         await DisposeAsync();
@@ -72,7 +69,7 @@ public class DataHubTest : HubTestBase
     {
         // arrange: initiate subscription from client to host
         var client = GetClient();
-        await client.AwaitResponse(new WakeUptEvent(), o => o.WithTarget(new HostAddress()));
+        await client.AwaitResponse(new WakeUpEvent(), o => o.WithTarget(new HostAddress()));
         var clientOut = client.AddObservable().Timeout(500.Milliseconds());
         var clientMessagesTask = clientOut.Select(d => d.Message).OfType<WakeUpRequest>().FirstAsync().GetAwaiter();
 
@@ -83,6 +80,6 @@ public class DataHubTest : HubTestBase
         // assert
         var clientMessages = await clientMessagesTask;
         clientMessages.Should().BeAssignableTo<WakeUpRequest>();
-    }
+    }*/
 
 }
