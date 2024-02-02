@@ -11,7 +11,7 @@ using Systemorph.Vertex.Import;
 
 namespace OpenSmc.Ifrs17.Domain.Test;
 
-public class AocConfigurationTest : TestBase
+public class AocConfigurationTest : TestBaseOld
 {
     protected Workspace.Workspace Workspace;
 

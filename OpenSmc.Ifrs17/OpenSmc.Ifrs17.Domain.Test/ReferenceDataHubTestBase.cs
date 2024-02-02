@@ -1,5 +1,4 @@
-﻿using FluentAssertions.Common;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using OpenSmc.Fixture;
 using OpenSmc.Messaging;
 using OpenSmc.ServiceProvider;

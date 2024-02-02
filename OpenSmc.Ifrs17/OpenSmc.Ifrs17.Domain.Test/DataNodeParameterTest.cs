@@ -14,7 +14,7 @@ using Systemorph.Vertex.Import;
 
 namespace OpenSmc.Ifrs17.Domain.Test;
 
-public class DataNodeParameterTest : TestBase
+public class DataNodeParameterTest : TestBaseOld
 {
     public DataNodeParameterTest(IImportVariable import, IDataSource dataSource,
         IWorkspaceVariable work, IActivityVariable activity, IScopeFactory scopes) :

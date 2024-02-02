@@ -6,7 +6,7 @@ using Systemorph.Vertex.Import;
 
 namespace OpenSmc.Ifrs17.Domain.Test;
 
-public abstract class TestBase
+public abstract class TestBaseOld
 {
     protected readonly IImportVariable Import;
     protected readonly IDataSource DataSource;
@@ -15,7 +15,7 @@ public abstract class TestBase
     protected readonly IActivityVariable Activity;
     protected readonly IScopeFactory Scopes;
 
-    public TestBase(IImportVariable import,
+    public TestBaseOld(IImportVariable import,
         IWorkspaceVariable work, IScopeFactory scopes)
     {
         Activity = new ActivityVariable();

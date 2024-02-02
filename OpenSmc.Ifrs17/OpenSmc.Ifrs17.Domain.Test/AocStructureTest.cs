@@ -18,7 +18,7 @@ using Error = OpenSmc.Ifrs17.Domain.Constants.Validations.Error;
 
 namespace OpenSmc.Ifrs17.Domain.Test;
 
-public class AocStructureTest : TestBase
+public class AocStructureTest : TestBaseOld
 {
     private RawVariable[]? inputRawVariables;
     private Workspace.Workspace? workspace;

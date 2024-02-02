@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
 using OpenSmc.Ifrs17.ReferenceDataHub;
 using OpenSmc.Messaging;
 using Xunit.Abstractions;
@@ -8,8 +9,8 @@ namespace OpenSmc.Ifrs17.Domain.Test;
 public class ReferenceDataHubTest : DataHubTestBase
 {
 
-    record WakeUpRequest : IRequest<WakeUpEvent>;
-    record WakeUpEvent;
+    record WakeUpRequest : IRequest<Currency>;
+    record Currency;
 
 
     public ReferenceDataHubTest(ITestOutputHelper output) : base(output)
@@ -17,20 +18,15 @@ public class ReferenceDataHubTest : DataHubTestBase
     }
 
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
-        => IfrsConfiguration.ConfigurationReferenceDataHub(configuration)
-            .WithHandler<WakeUpRequest>((hub, request) =>
-        {
-            hub.Post(new WakeUpEvent(), options => options.ResponseFor(request));
-            return request.Processed();
-        });
+        => IfrsConfiguration.ConfigurationReferenceDataHub(configuration);
 
 
     [Fact]
     public async Task InitilizationReferenceDataHub()
     {
         var host = GetHost();
-        var response = await host.AwaitResponse(new WakeUpRequest(), o => o.WithTarget(new HostAddress()));
-        response.Should().BeAssignableTo<IMessageDelivery<WakeUpEvent>>();
+        var response = await host.AwaitResponse<Currency>(new WakeUpRequest(), o => o.WithTarget(new HostAddress()));
+        response.Should().BeAssignableTo<IMessageDelivery<Currency>>();
     }
 
 
