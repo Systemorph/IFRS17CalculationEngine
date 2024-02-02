@@ -35,7 +35,11 @@ public static class IfrsConfiguration
                 .WithReferenceDimension<Scenario>(dataSource)
                 .WithReferenceDimension<AmountType>(dataSource)
                 .WithReferenceDimension<OciType>(dataSource)
-                .WithReferenceDimension<AocType>(dataSource));
+                .WithReferenceDimension<AocType>(dataSource)
+                .WithReferenceDimension<CreditRiskRating>(dataSource)
+                .WithReferenceDimension<Currency>(dataSource)
+                .WithReferenceDimension<DeferrableAmountType>(dataSource)
+            );
     }
 
     private static DataPluginConfiguration WithReferenceDimension<T>(this DataPluginConfiguration configuration,

@@ -12,6 +12,7 @@ using OpenSmc.Scopes.Proxy;
 using OpenSmc.Workspace;
 using Systemorph.Vertex.Activities;
 using Systemorph.Vertex.Import;
+using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 
 namespace OpenSmc.Ifrs17.Domain.Test;
 

@@ -1,9 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using OpenSmc.Domain.Abstractions;
 using OpenSmc.Domain.Abstractions.Attributes;
-using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 
-namespace OpenSmc.Ifrs17.Domain.DataModel;
+namespace OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 
 public record ReportingNode : KeyedDimension, IHierarchicalDimension, Systemorph.Vertex.Api.IHierarchicalDimension
 {

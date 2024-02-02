@@ -1,4 +1,3 @@
-using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using Systemorph.Vertex.Api.Attributes;
 using Systemorph.Vertex.Attributes.Arithmetics;
