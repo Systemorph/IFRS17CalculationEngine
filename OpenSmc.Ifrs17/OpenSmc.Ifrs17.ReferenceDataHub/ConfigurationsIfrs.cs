@@ -32,17 +32,18 @@ public static class IfrsConfiguration
 
         return configuration
             .AddData(data => data
-                .WithReferenceDimension<Scenario>(dataSource)
-                .WithReferenceDimension<AmountType>(dataSource)
-                .WithReferenceDimension<OciType>(dataSource)
-                .WithReferenceDimension<AocType>(dataSource)
-                .WithReferenceDimension<CreditRiskRating>(dataSource)
-                .WithReferenceDimension<Currency>(dataSource)
-                .WithReferenceDimension<DeferrableAmountType>(dataSource)
+                .WithDimension<Scenario>(dataSource)
+                .WithDimension<AmountType>(dataSource)
+                .WithDimension<OciType>(dataSource)
+                .WithDimension<AocType>(dataSource)
+                .WithDimension<CreditRiskRating>(dataSource)
+                .WithDimension<Currency>(dataSource)
+                .WithDimension<DeferrableAmountType>(dataSource)
+                .WithDimension<DataNode>(dataSource)
             );
     }
 
-    private static DataPluginConfiguration WithReferenceDimension<T>(this DataPluginConfiguration configuration,
+    private static DataPluginConfiguration WithDimension<T>(this DataPluginConfiguration configuration,
         IDataSource dataSource)
         where T : class => configuration.WithType<T>(async () => await dataSource.Query<T>().ToArrayAsync(),
         dim => dataSource.UpdateAsync(dim),
@@ -54,10 +55,8 @@ public static class IfrsConfiguration
         var dataSource = configuration.ServiceProvider.GetService<IDataSource>();
 
         return configuration
-            .AddData(data => data.WithType<RawVariable>(
-                async () => await dataSource.Query<RawVariable>().ToArrayAsync(),
-                (scenarios) => dataSource.UpdateAsync(scenarios),
-                (scenarios) => dataSource.DeleteAsync(scenarios))); /* This is delete of data, not of the hub */
+            .AddData(data => data.WithDimension<RawVariable>(dataSource)); 
+        /* This is delete of data, not of the hub */
         /* Delete of Hub must be implemented separately (pr)*/
     }
 
