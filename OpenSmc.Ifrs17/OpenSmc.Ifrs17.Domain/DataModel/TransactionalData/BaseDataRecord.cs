@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using OpenSmc.Domain.Abstractions.Attributes;
+using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
 using OpenSmc.Ifrs17.Domain.DataModel.Interfaces;
-using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using OpenSmc.Partition;
 using Systemorph.Vertex.Persistence.EntityFramework.Conversions.Api;
 using Systemorph.Vertex.Persistence.EntityFramework.Conversions.Converters;

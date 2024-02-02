@@ -47,9 +47,11 @@ public static class IfrsConfiguration
 
     private static DataPluginConfiguration WithDimension<T>(this DataPluginConfiguration configuration,
         IDataSource dataSource)
-        where T : class => configuration.WithType<T>(async () => await dataSource.Query<T>().ToArrayAsync(),
+        where T : class => configuration.WithType<T>(
+        async () =>  null, //await dataSource.Query<T>().ToArrayAsync(),
         dim => dataSource.UpdateAsync(dim),
         dim => dataSource.DeleteAsync(dim));
+
 
     public static MessageHubConfiguration ConfigurationTransactionalDataHub(this MessageHubConfiguration configuration)
     {

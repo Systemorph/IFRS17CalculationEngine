@@ -2,13 +2,15 @@
 using FluentAssertions;
 using FluentAssertions.Execution;
 using FluentAssertions.Extensions;
+using OpenSmc.DataPlugin;
 using OpenSmc.DataSource.Abstractions;
 using OpenSmc.Hub.Fixture;
 using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
+using OpenSmc.Ifrs17.ReferenceDataHub;
 using OpenSmc.Messaging;
 using Xunit;
 using Xunit.Abstractions;
-using OpenSmc.Ifrs17.Re;
+
 
 namespace OpenSmc.Ifrs17.Domain.Test;
 public class DataHubTest : HubTestBase
@@ -21,35 +23,13 @@ public class DataHubTest : HubTestBase
     public DataHubTest(ITestOutputHelper output) : base(output)
     {
     }
-    public static MessageHubConfiguration ConfigurationReferenceDataHub(this MessageHubConfiguration financialDataConfiguration)
-    {
-        // TODO: this needs to be registered in the higher level
-        var dataSource = financialDataConfiguration.ServiceProvider.GetService<IDataSource>();
 
-        return financialDataConfiguration
-            .AddData(data => data
-                    .WithDimension<LineOfBusiness>(dataSource)
-                    .WithDimension<Currency>(dataSource)
-                /*.WithDimension<Scenario>(dataSource)
-                .WithDimension<AmountType>(dataSource)
-                .WithDimension<OciType>(dataSource)
-                .WithDimension<AocType>(dataSource)
-                .WithDimension<CreditRiskRating>(dataSource)
-                .WithDimension<Currency>(dataSource)
-                .WithDimension<DeferrableAmountType>(dataSource)*/
-            );
-    }
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
-        => configuration
-            .WithHandler<WakeUptEvent>((hub, request) =>
-            {
-                hub.Post(new WakeUpRequest(), options => options.ResponseFor(request));
-                return request.Processed();
-            });
+        => IfrsConfiguration.ConfigurationReferenceDataHub(configuration);
 
 
     [Fact]
-    public async Task HelloWorld()
+    public async Task InitilizationReferenceDataHub()
     {
         var host = GetHost();
         var response = await host.AwaitResponse(new WakeUptEvent(), o => o.WithTarget(new HostAddress()));

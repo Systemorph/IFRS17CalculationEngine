@@ -3,6 +3,7 @@ using OpenSmc.Arithmetics;
 using OpenSmc.DataCubes;
 using OpenSmc.Domain.Abstractions.Attributes;
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
+using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
 using OpenSmc.Ifrs17.Domain.DataModel.Interfaces;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 
