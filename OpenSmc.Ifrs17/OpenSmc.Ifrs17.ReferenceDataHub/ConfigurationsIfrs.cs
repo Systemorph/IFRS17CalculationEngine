@@ -24,7 +24,7 @@ namespace OpenSmc.Ifrs17.ReferenceDataHub;
  *  g) monitor the development of the import/export plugin so that we can use them here
  *      in smc v1 
  */
-public static class IfrsConfiguration
+public static class DataHubConfiguration
 {
     public static MessageHubConfiguration ConfigurationReferenceDataHub(this MessageHubConfiguration financialDataConfiguration)
     {
@@ -32,16 +32,9 @@ public static class IfrsConfiguration
         var dataSource = financialDataConfiguration.ServiceProvider.GetService<IDataSource>();
 
         return financialDataConfiguration
-            .AddData(data => data.WithPersistence(p => p.WithDimension<LineOfBusiness>(dataSource)
-                    .WithDimension<Currency>(dataSource))
-                /*.WithDimension<Scenario>(dataSource)
-                .WithDimension<AmountType>(dataSource)
-                .WithDimension<OciType>(dataSource)
-                .WithDimension<AocType>(dataSource)
-                .WithDimension<CreditRiskRating>(dataSource)
-                .WithDimension<Currency>(dataSource)
-                .WithDimension<DeferrableAmountType>(dataSource)*/
-            );
+            .AddData(data => data.WithWorkspace(w => w)
+                    .WithPersistence(p => p.WithDimension<LineOfBusiness>(dataSource)
+                                .WithDimension<Currency>(dataSource)));
     }
 
     private static DataPersistenceConfiguration WithDimension<T>(this DataPersistenceConfiguration configuration,
@@ -52,19 +45,20 @@ public static class IfrsConfiguration
         dim => dataSource.DeleteAsync(dim));
 
 
-    public static MessageHubConfiguration ConfigurationTransactionalDataHub(this MessageHubConfiguration configuration)
+    public static MessageHubConfiguration ConfigurationTransactionalDataHub(this MessageHubConfiguration transactionalHubConfiguration)
     {
         // TODO: this needs to be registered in the higher level
-        var dataSource = configuration.ServiceProvider.GetService<IDataSource>();
+        var dataSource = transactionalHubConfiguration.ServiceProvider.GetService<IDataSource>();
 
-        return configuration
-            .AddData(data => data.WithPersistence(p => p.WithDimension<RawVariable>(dataSource))); 
+        return transactionalHubConfiguration
+            .AddData(data => data.WithWorkspace(w => w)
+                .WithPersistence(p => p.WithDimension<RawVariable>(dataSource))); 
         /* This is delete of data, not of the hub */
         /* Delete of Hub must be implemented separately (pr)*/
     }
 
-    public static MessageHubConfiguration ConfigurationViewModelHub(this MessageHubConfiguration configuration)
-    {
+    //public static MessageHubConfiguration ConfigurationViewModelHub(this MessageHubConfiguration transactionalHubConfiguration)
+    //{
         // TODO: this needs to be registered in the higher level
         //var dataSource = financialDataConfiguration.ServiceProvider.GetService<IDataSource>();
         // TODO: What content should be here? -A.K.
@@ -80,8 +74,8 @@ public static class IfrsConfiguration
          *  per browser tab.
          */
 
-        return configuration;
-    }
+        //return transactionalHubConfiguration;
+    //}/*
 }
 
 

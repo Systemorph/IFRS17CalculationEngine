@@ -18,7 +18,7 @@ public class ReferenceDataHubTest : DataHubTestBase
     }
 
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
-        => IfrsConfiguration.ConfigurationReferenceDataHub(configuration);
+        => DataHubConfiguration.ConfigurationReferenceDataHub(configuration);
 
 
     [Fact]
