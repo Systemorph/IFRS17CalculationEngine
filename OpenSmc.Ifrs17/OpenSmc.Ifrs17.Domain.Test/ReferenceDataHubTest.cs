@@ -25,7 +25,7 @@ public class ReferenceDataHubTest : DataHubTestBase
     public async Task InitilizationReferenceDataHub()
     {
         var host = GetHost();
-        var response = await host.AwaitResponse<Currency>(new WakeUpRequest(), o => o.WithTarget(new HostAddress()));
+        var response = await host.AwaitResponse<Currency>(new WakeUpRequest(), o => o.WithTarget(new Address()));
         response.Should().BeAssignableTo<IMessageDelivery<Currency>>();
     }
 

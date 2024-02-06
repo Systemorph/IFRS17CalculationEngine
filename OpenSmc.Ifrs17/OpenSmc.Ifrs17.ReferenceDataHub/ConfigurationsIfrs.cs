@@ -33,8 +33,9 @@ public static class DataHubConfiguration
 
         return financialDataConfiguration
             .AddData(data => data.WithWorkspace(w => w)
-                    .WithPersistence(p => p.WithDimension<LineOfBusiness>(dataSource)
-                                .WithDimension<Currency>(dataSource)));
+                    .WithPersistence(p => p
+                        .WithDimension<LineOfBusiness>(dataSource)
+                        .WithDimension<Currency>(dataSource)));
     }
 
     private static DataPersistenceConfiguration WithDimension<T>(this DataPersistenceConfiguration configuration,
