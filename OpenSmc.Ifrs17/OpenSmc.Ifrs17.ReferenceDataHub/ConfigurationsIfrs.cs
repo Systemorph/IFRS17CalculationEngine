@@ -1,10 +1,7 @@
-﻿using DocumentFormat.OpenXml.Drawing;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using OpenSmc.Data;
 using OpenSmc.DataSource.Abstractions;
 using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
-using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.Domain.DataModel.TransactionalData;
 using OpenSmc.Messaging;
 
