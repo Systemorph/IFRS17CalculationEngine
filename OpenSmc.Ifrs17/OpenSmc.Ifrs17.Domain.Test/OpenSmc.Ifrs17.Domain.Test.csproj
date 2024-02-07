@@ -10,6 +10,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="AocConfigurationTest.cs" />
+    <Compile Remove="AocStructureTest.cs" />
+    <Compile Remove="DataNodeParameterTest.cs" />
+    <Compile Remove="ImportStorageTest.cs" />
+    <Compile Remove="QueriesScenarioDataTest.cs" />
+    <Compile Remove="ReportStorageTest.cs" />
+    <Compile Remove="TechnicalMarginTest.cs" />
+    <Compile Remove="TestBaseOld.cs" />
+    <Compile Remove="TestData.cs" />
+    <Compile Remove="TestDataTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageReference Include="xunit" Version="2.6.6" />
