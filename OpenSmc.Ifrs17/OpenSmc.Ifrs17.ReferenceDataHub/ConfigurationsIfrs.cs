@@ -29,13 +29,14 @@ public static class DataHubConfiguration
         // TODO: this needs to be registered in the higher level
         //var dataSource = financialDataConfiguration.ServiceProvider.GetService<IDataSource>();
 
-        return configuration
-            .AddData(data => data.WithWorkspace(w => w)
-                .WithPersistence(p => p
-                    .WithDimension<LineOfBusiness>()
-                    .WithDimension<Currency>()))
-        .WithHandlers<Currency>()
-        .WithHandlers<LineOfBusiness>();
+        return configuration.AddPlugin(hub => new DataPlugin(hub, conf => conf
+            .WithWorkspace(workspace => workspace.Key<Currency>(x => x.SystemName)
+                .Key<LineOfBusiness>(x => x.SystemName))
+            .WithPersistence(p => p
+                .WithDimension<LineOfBusiness>()
+                .WithDimension<Currency>())));
+        //.WithHandlers<Currency>()
+        //.WithHandlers<LineOfBusiness>();
     }
 
     private static DataPersistenceConfiguration WithDimension<T>(this DataPersistenceConfiguration configuration
