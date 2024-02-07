@@ -7,7 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-	<ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Data\OpenSmc.Data.csproj" />
+    <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Data.Contract\OpenSmc.Data.Contract.csproj" />
+    <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Data\OpenSmc.Data.csproj" />
     <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Messaging.Hub\OpenSmc.Messaging.Hub.csproj" />
     <ProjectReference Include="..\OpenSmc.Ifrs17.Domain\OpenSmc.Ifrs17.Domain.csproj" />
   </ItemGroup>
