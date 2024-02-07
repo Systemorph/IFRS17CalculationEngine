@@ -2,7 +2,9 @@
 using Microsoft.Graph;
 using OpenSmc.Data;
 using OpenSmc.DataSource.Abstractions;
+using OpenSmc.Domain.Abstractions;
 using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
+using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.Domain.DataModel.TransactionalData;
 using OpenSmc.Messaging;
 
@@ -30,13 +32,11 @@ public static class DataHubConfiguration
         //var dataSource = financialDataConfiguration.ServiceProvider.GetService<IDataSource>();
 
         return configuration.AddPlugin(hub => new DataPlugin(hub, conf => conf
-            .WithWorkspace(workspace => workspace.Key<Currency>(x => x.SystemName)
-                .Key<LineOfBusiness>(x => x.SystemName))
+            .WithWorkspace(workspace => workspace.WithKey<Currency>()
+                .WithKey<LineOfBusiness>())
             .WithPersistence(p => p
                 .WithDimension<LineOfBusiness>()
                 .WithDimension<Currency>())));
-        //.WithHandlers<Currency>()
-        //.WithHandlers<LineOfBusiness>();
     }
 
     private static DataPersistenceConfiguration WithDimension<T>(this DataPersistenceConfiguration configuration
@@ -51,6 +51,10 @@ public static class DataHubConfiguration
             _ => Task.CompletedTask);
         // dataSource.DeleteAsync(dim));
     }
+
+    private static WorkspaceConfiguration WithKey<T>(this WorkspaceConfiguration configuration)
+        where T : KeyedDimension =>
+        configuration.Key<T>(x => x.SystemName);
 
     private static MessageHubConfiguration WithHandlers<TDim>(this MessageHubConfiguration configuration)
     where TDim : class, new()

@@ -1,5 +1,4 @@
 ﻿using OpenSmc.Activities;
-using OpenSmc.Import.Contract.Builders;
 using OpenSmc.Messaging;
 using OpenSmc.ServiceProvider;
 
@@ -13,7 +12,7 @@ public class TransactionalDataHub : MessageHubPlugin<TransactionalDataHub>
 
     public TransactionalDataHub(IMessageHub hub, MessageHubConfiguration options) : base(hub)
     {
-        options = options.AddImport(x => x);
+        //options = options.AddImport(x => x);
     }
 }
 
