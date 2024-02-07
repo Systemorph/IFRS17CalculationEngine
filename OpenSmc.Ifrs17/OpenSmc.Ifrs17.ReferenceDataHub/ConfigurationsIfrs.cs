@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Graph;
 using OpenSmc.Data;
 using OpenSmc.DataSource.Abstractions;
-using OpenSmc.Domain.Abstractions;
 using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.Domain.DataModel.TransactionalData;
