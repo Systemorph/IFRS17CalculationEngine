@@ -9,8 +9,6 @@ namespace OpenSmc.Ifrs17.Domain.Test;
 public class ReferenceDataHubTest : DataHubTestBase
 {
 
-    record ReadCurrencyRequest : IRequest<Currency>;
-    record ReadManyCurrencyRequest : IRequest<IReadOnlyCollection<Currency>>;
 
 
     public ReferenceDataHubTest(ITestOutputHelper output) : base(output)
@@ -18,24 +16,14 @@ public class ReferenceDataHubTest : DataHubTestBase
     }
 
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
-        => configuration.ConfigurationReferenceDataHub()
-            .WithHandler<ReadCurrencyRequest>((hub, request) =>
-            {
-                hub.Post<Currency>(new Currency(), options => options.ResponseFor(request));
-                return request.Processed();
-            })
-            .WithHandler<ReadManyCurrencyRequest>((hub, request) =>
-            {
-                hub.Post(new List<Currency>(), options => options.ResponseFor(request));
-                return request.Processed();
-            });
+        => configuration.ConfigurationReferenceDataHub();
 
 
     [Fact]
     public async Task InitilizationReferenceDataHub()
     {
         var host = GetHost();
-        var response = await host.AwaitResponse<Currency>(new ReadCurrencyRequest(), o => o.WithTarget(new Address()));
+        var response = await host.AwaitResponse(new DataHubConfiguration.ReadCurrencyRequest(), o => o.WithTarget(new Address()));
         response.Should().BeAssignableTo<IMessageDelivery<Currency>>();
     }
 

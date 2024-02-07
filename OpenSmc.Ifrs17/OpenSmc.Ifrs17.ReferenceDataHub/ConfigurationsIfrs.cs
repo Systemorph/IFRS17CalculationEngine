@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Graph;
 using OpenSmc.Data;
 using OpenSmc.DataSource.Abstractions;
 using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
@@ -23,6 +24,15 @@ namespace OpenSmc.Ifrs17.ReferenceDataHub;
  */
 public static class DataHubConfiguration
 {
+
+    public record ReadCurrencyRequest : IRequest<Currency>;
+
+    public record ReadLobRequest : IRequest<LineOfBusiness>;
+
+    public record ReadManyCurrencyRequest : IRequest<ReadCurrencyRequest>;
+
+    public record  ReadManyLobRequest : IRequest<ReadLobRequest>;
+
     public static MessageHubConfiguration ConfigurationReferenceDataHub(this MessageHubConfiguration configuration)
     {
         // TODO: this needs to be registered in the higher level
@@ -32,7 +42,9 @@ public static class DataHubConfiguration
             .AddData(data => data.WithWorkspace(w => w)
                     .WithPersistence(p => p
                         .WithDimension<LineOfBusiness>()
-                        .WithDimension<Currency>()));
+                        .WithDimension<Currency>()))
+            .WithHandlers<Currency,ReadCurrencyRequest,ReadManyCurrencyRequest>()
+            .WithHandlers<LineOfBusiness,ReadLobRequest,ReadManyLobRequest>();
     }
 
     private static DataPersistenceConfiguration WithDimension<T>(this DataPersistenceConfiguration configuration
@@ -43,8 +55,25 @@ public static class DataHubConfiguration
         return configuration.WithType(
             () => new Task<IReadOnlyCollection<T>>(() => new List<T> { new() }), //await dataSource.Query<T>().ToArrayAsync(),
             dim => Task.CompletedTask, // dataSource.UpdateAsync(dim),
-            dim => Task.CompletedTask);
+            _ => Task.CompletedTask);
         // dataSource.DeleteAsync(dim));
+    }
+
+    private static MessageHubConfiguration WithHandlers<TDim,TRead,TReadMany>(this MessageHubConfiguration configuration)
+    where TDim : class, new()
+    where TRead : IRequest<TDim>
+    where TReadMany : IRequest<TRead>
+    {
+        return configuration.WithHandler<TRead>((hub, request) =>
+        {
+            hub.Post(new TDim(), o => o.ResponseFor(request));
+            return request.Processed();
+        })
+            .WithHandler<TReadMany>((hub, request) =>
+            {
+                hub.Post(new List<TDim>(), o => o.ResponseFor(request));
+                return request.Processed();
+            } );
     }
 
 
