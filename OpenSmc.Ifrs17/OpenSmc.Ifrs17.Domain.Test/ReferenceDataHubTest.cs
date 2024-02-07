@@ -35,7 +35,7 @@ public class ReferenceDataHubTest : DataHubTestBase
     {
         var host = GetHost();
         var response = await host.AwaitResponse(new GetManyRequest<Currency>(), o => o.WithTarget(new Address()));
-        response.Should().BeAssignableTo<GetManyResponse<Currency>>();
+        response.Message.Should().BeAssignableTo<GetManyResponse<Currency>>();
     }
 
 

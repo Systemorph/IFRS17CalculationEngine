@@ -45,7 +45,8 @@ public static class DataHubConfiguration
         where T : class, new()
     {
         return configuration.WithType(
-            () => new Task<IReadOnlyCollection<T>>(() => new List<T> { new() }), //await dataSource.Query<T>().ToArrayAsync(),
+            () =>
+                Task.FromResult<IReadOnlyCollection<T>>(new List<T>{}), //await dataSource.Query<T>().ToArrayAsync(),
             dim => Task.CompletedTask, // dataSource.UpdateAsync(dim),
             _ => Task.CompletedTask);
         // dataSource.DeleteAsync(dim));
