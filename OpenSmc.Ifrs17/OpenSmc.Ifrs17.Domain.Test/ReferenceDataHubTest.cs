@@ -33,7 +33,7 @@ public class ReferenceDataHubTest : DataHubTestBase
     public async Task InitilizationReferenceDataHub()
     {
         var host = GetHost();
-        var response = await host.AwaitResponse(new ReadCurrencyRequest(), o => o.WithTarget(new Address()));
+        var response = await host.AwaitResponse(new FinancialDimesnionRequest<Currency>(), o => o.WithTarget(new Address()));
         response.Should().BeAssignableTo<IMessageDelivery<Currency>>();
     }
 

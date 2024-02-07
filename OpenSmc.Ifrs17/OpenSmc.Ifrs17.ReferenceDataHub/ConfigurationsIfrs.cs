@@ -34,8 +34,8 @@ public static class DataHubConfiguration
                 .WithPersistence(p => p
                     .WithDimension<LineOfBusiness>()
                     .WithDimension<Currency>()))
-        .WithHandlers<Currency,ReadCurrencyRequest,ReadManyCurrencyRequest>()
-        .WithHandlers<LineOfBusiness,ReadLobRequest,ReadManyLobRequest>();
+        .WithHandlers<Currency>()
+        .WithHandlers<LineOfBusiness>();
     }
 
     private static DataPersistenceConfiguration WithDimension<T>(this DataPersistenceConfiguration configuration
@@ -50,17 +50,15 @@ public static class DataHubConfiguration
         // dataSource.DeleteAsync(dim));
     }
 
-    private static MessageHubConfiguration WithHandlers<TDim,TRead,TReadMany>(this MessageHubConfiguration configuration)
+    private static MessageHubConfiguration WithHandlers<TDim>(this MessageHubConfiguration configuration)
     where TDim : class, new()
-    where TRead : IRequest<TDim>
-    where TReadMany : IRequest<IReadOnlyCollection<TDim>>
     {
-        return configuration.WithHandler<TRead>((hub, request) =>
+        return configuration.WithHandler<FinancialDimesnionRequest<TDim>>((hub, request) =>
         {
             hub.Post(new TDim(), o => o.ResponseFor(request));
             return request.Processed();
         })
-            .WithHandler<TReadMany>((hub, request) =>
+            .WithHandler<FinancialDimensionManyRequest<TDim>>((hub, request) =>
             {
                 hub.Post(new List<TDim>(), o => o.ResponseFor(request));
                 return request.Processed();

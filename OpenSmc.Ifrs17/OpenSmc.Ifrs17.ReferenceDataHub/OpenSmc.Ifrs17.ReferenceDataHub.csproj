@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ReadCurrencyRequest.cs" />
+    <Compile Remove="ReadLobRequest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Data.Contract\OpenSmc.Data.Contract.csproj" />
     <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Data\OpenSmc.Data.csproj" />
     <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Messaging.Hub\OpenSmc.Messaging.Hub.csproj" />
