@@ -26,23 +26,28 @@ namespace OpenSmc.Ifrs17.ReferenceDataHub;
  */
 public static class DataHubConfiguration
 {
-    public static MessageHubConfiguration ConfigurationReferenceDataHub(this MessageHubConfiguration financialDataConfiguration)
+    public static MessageHubConfiguration ConfigurationReferenceDataHub(this MessageHubConfiguration configuration)
     {
         // TODO: this needs to be registered in the higher level
-        var dataSource = financialDataConfiguration.ServiceProvider.GetService<IDataSource>();
+        //var dataSource = financialDataConfiguration.ServiceProvider.GetService<IDataSource>();
 
-        return financialDataConfiguration
+        return configuration
             .AddData(data => data.WithWorkspace(w => w)
-                    .WithPersistence(p => p.WithDimension<LineOfBusiness>(dataSource)
-                                .WithDimension<Currency>(dataSource)));
+                    .WithPersistence(p => p
+                        .WithDimension<Currency>()));
     }
 
-    private static DataPersistenceConfiguration WithDimension<T>(this DataPersistenceConfiguration configuration,
-        IDataSource dataSource)
-        where T : class => configuration.WithType<T>(
-        async () =>  null, //await dataSource.Query<T>().ToArrayAsync(),
-        dim => dataSource.UpdateAsync(dim),
-        dim => dataSource.DeleteAsync(dim));
+    private static DataPersistenceConfiguration WithDimension<T>(this DataPersistenceConfiguration configuration
+        //IDataSource dataSource
+    )
+        where T : class, new()
+    {
+        return configuration.WithType(
+            () => new Task<IReadOnlyCollection<T>>(() => new List<T> { new() }), //await dataSource.Query<T>().ToArrayAsync(),
+            dim => Task.CompletedTask, // dataSource.UpdateAsync(dim),
+            dim => Task.CompletedTask);
+        // dataSource.DeleteAsync(dim));
+    }
 
 
     public static MessageHubConfiguration ConfigurationTransactionalDataHub(this MessageHubConfiguration transactionalHubConfiguration)
@@ -52,7 +57,7 @@ public static class DataHubConfiguration
 
         return transactionalHubConfiguration
             .AddData(data => data.WithWorkspace(w => w)
-                .WithPersistence(p => p.WithDimension<RawVariable>(dataSource))); 
+                .WithPersistence(p => p.WithDimension<RawVariable>())); 
         /* This is delete of data, not of the hub */
         /* Delete of Hub must be implemented separately (pr)*/
     }
