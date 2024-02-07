@@ -1,7 +1,7 @@
 ﻿using DocumentFormat.OpenXml.Drawing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using OpenSmc.DataPlugin;
+using OpenSmc.Data;
 using OpenSmc.DataSource.Abstractions;
 using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
@@ -34,8 +34,8 @@ public static class DataHubConfiguration
         return configuration
             .AddData(data => data.WithWorkspace(w => w)
                     .WithPersistence(p => p
-                        .WithDimension<LineOfBusiness>(dataSource)
-                        .WithDimension<Currency>(dataSource)));
+                        .WithDimension<LineOfBusiness>()
+                        .WithDimension<Currency>()));
     }
 
     private static DataPersistenceConfiguration WithDimension<T>(this DataPersistenceConfiguration configuration

@@ -129,6 +129,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.DataPlugin", "..\Op
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Hub.DataPlugin.Test", "..\OpenSmc\test\OpenSmc.Hub.DataPlugin.Test\OpenSmc.Hub.DataPlugin.Test.csproj", "{CA992514-B382-4A1E-8815-E9C6DD252747}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Data", "..\OpenSmc\src\OpenSmc.Data\OpenSmc.Data.csproj", "{255E64CB-41A6-4599-8B53-9743483DBA6F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -871,6 +873,18 @@ Global
 		{CA992514-B382-4A1E-8815-E9C6DD252747}.Release|arm64.Build.0 = Release|Any CPU
 		{CA992514-B382-4A1E-8815-E9C6DD252747}.Release|x86.ActiveCfg = Release|Any CPU
 		{CA992514-B382-4A1E-8815-E9C6DD252747}.Release|x86.Build.0 = Release|Any CPU
+		{255E64CB-41A6-4599-8B53-9743483DBA6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{255E64CB-41A6-4599-8B53-9743483DBA6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{255E64CB-41A6-4599-8B53-9743483DBA6F}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{255E64CB-41A6-4599-8B53-9743483DBA6F}.Debug|arm64.Build.0 = Debug|Any CPU
+		{255E64CB-41A6-4599-8B53-9743483DBA6F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{255E64CB-41A6-4599-8B53-9743483DBA6F}.Debug|x86.Build.0 = Debug|Any CPU
+		{255E64CB-41A6-4599-8B53-9743483DBA6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{255E64CB-41A6-4599-8B53-9743483DBA6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{255E64CB-41A6-4599-8B53-9743483DBA6F}.Release|arm64.ActiveCfg = Release|Any CPU
+		{255E64CB-41A6-4599-8B53-9743483DBA6F}.Release|arm64.Build.0 = Release|Any CPU
+		{255E64CB-41A6-4599-8B53-9743483DBA6F}.Release|x86.ActiveCfg = Release|Any CPU
+		{255E64CB-41A6-4599-8B53-9743483DBA6F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
