@@ -1,5 +1,5 @@
 ﻿using OpenSmc.Activities;
-using OpenSmc.Import.Builders;
+using OpenSmc.Import.Contract.Builders;
 using OpenSmc.Messaging;
 using OpenSmc.ServiceProvider;
 
