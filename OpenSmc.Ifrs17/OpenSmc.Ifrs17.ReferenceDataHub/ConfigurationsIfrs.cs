@@ -24,15 +24,6 @@ namespace OpenSmc.Ifrs17.ReferenceDataHub;
  */
 public static class DataHubConfiguration
 {
-
-    public record ReadCurrencyRequest : IRequest<Currency>;
-
-    public record ReadLobRequest : IRequest<LineOfBusiness>;
-
-    public record ReadManyCurrencyRequest : IRequest<ReadCurrencyRequest>;
-
-    public record  ReadManyLobRequest : IRequest<ReadLobRequest>;
-
     public static MessageHubConfiguration ConfigurationReferenceDataHub(this MessageHubConfiguration configuration)
     {
         // TODO: this needs to be registered in the higher level
@@ -40,11 +31,11 @@ public static class DataHubConfiguration
 
         return configuration
             .AddData(data => data.WithWorkspace(w => w)
-                    .WithPersistence(p => p
-                        .WithDimension<LineOfBusiness>()
-                        .WithDimension<Currency>()))
-            .WithHandlers<Currency,ReadCurrencyRequest,ReadManyCurrencyRequest>()
-            .WithHandlers<LineOfBusiness,ReadLobRequest,ReadManyLobRequest>();
+                .WithPersistence(p => p
+                    .WithDimension<LineOfBusiness>()
+                    .WithDimension<Currency>()))
+        .WithHandlers<Currency,ReadCurrencyRequest,ReadManyCurrencyRequest>()
+        .WithHandlers<LineOfBusiness,ReadLobRequest,ReadManyLobRequest>();
     }
 
     private static DataPersistenceConfiguration WithDimension<T>(this DataPersistenceConfiguration configuration
@@ -62,7 +53,7 @@ public static class DataHubConfiguration
     private static MessageHubConfiguration WithHandlers<TDim,TRead,TReadMany>(this MessageHubConfiguration configuration)
     where TDim : class, new()
     where TRead : IRequest<TDim>
-    where TReadMany : IRequest<TRead>
+    where TReadMany : IRequest<IReadOnlyCollection<TDim>>
     {
         return configuration.WithHandler<TRead>((hub, request) =>
         {
@@ -109,7 +100,6 @@ public static class DataHubConfiguration
         //return transactionalHubConfiguration;
     //}/*
 }
-
 
 
 /* Outdated comment

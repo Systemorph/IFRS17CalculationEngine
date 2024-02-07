@@ -17,13 +17,23 @@ public class ReferenceDataHubTest : DataHubTestBase
 
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
         => configuration.ConfigurationReferenceDataHub();
+            //WithHandler<ReadCurrencyRequest>((hub, request) =>
+            //{
+            //    hub.Post<Currency>(new Currency(), options => options.ResponseFor(request));
+            //    return request.Processed();
+            //})
+            //.WithHandler<ReadManyCurrencyRequest>((hub, request) =>
+            //{
+            //    hub.Post(new List<Currency>(), options => options.ResponseFor(request));
+            //    return request.Processed();
+            //});
 
 
     [Fact]
     public async Task InitilizationReferenceDataHub()
     {
         var host = GetHost();
-        var response = await host.AwaitResponse(new DataHubConfiguration.ReadCurrencyRequest(), o => o.WithTarget(new Address()));
+        var response = await host.AwaitResponse(new ReadCurrencyRequest(), o => o.WithTarget(new Address()));
         response.Should().BeAssignableTo<IMessageDelivery<Currency>>();
     }
 
