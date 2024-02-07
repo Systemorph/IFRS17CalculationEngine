@@ -45,6 +45,7 @@ public class DataHubTestBase : TestBase
     {
         Services.AddSingleton<IMessageHub>(sp => sp.CreateMessageHub(new Address(),
             conf => conf.AddPlugin(hub => testPlugin = new TestDataPlugin(hub))));
+                .WithForwards(forward => forward
     }
 
     protected virtual MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration) => configuration;
