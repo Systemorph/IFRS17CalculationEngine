@@ -39,18 +39,49 @@ public static class DataHubConfiguration
         return configuration.AddData(dc => dc.WithDataSource("ReferenceDataSource",
             ds => ds.WithType<AmountType>(t => t.WithKey(x => x.Id)
                         .WithInitialization(async () => await Task.FromResult(referenceData.ReferenceAmountTypes))
-                    //.WithUpdate(x => )
-                    //.WithDelete()
+                        .WithUpdate(AddAmountType)
+                        .WithAdd(AddAmountType)
+                        .WithDelete(RemoveAmountType)
                 )
                 .WithType<AocStep>(t => t.WithKey(x => x.Id)
-                    .WithInitialization(async () => await Task.FromResult(referenceData.ReferenceAocSteps)))));
-        //AddPlugin(hub => new DataPlugin(hub, conf => conf
-        //.WithWorkspace(workspace => workspace.WithKey<Currency>()
-        //    .WithKey<LineOfBusiness>())
-        //.WithPersistence(p => p
-        //    .WithDimension<LineOfBusiness>()
-        //    .WithDimension<Currency>())));
+                    .WithInitialization(async () => await Task.FromResult(referenceData.ReferenceAocSteps))
+                    .WithUpdate(AddAocStep)
+                    .WithAdd(AddAocStep)
+                    .WithAdd(RemoveAocStep))));
     }
+
+    private static void RemoveAocStep(IReadOnlyCollection<AocStep> obj)
+    {
+        referenceData.ReferenceAocSteps = referenceData.ReferenceAocSteps
+            .Where(x => !obj.Select(y => y.AocType).Contains(x.AocType) && 
+                        !obj.Select(y => y.Novelty).Contains(x.Novelty))
+            .ToArray();
+    }
+
+    private static void RemoveAmountType(IReadOnlyCollection<AmountType> obj)
+    {
+        referenceData.ReferenceAmountTypes = referenceData.ReferenceAmountTypes
+            .Where(x => !obj.Select(y => y.SystemName).Contains(x.SystemName))
+            .ToArray();
+    }
+
+    private static void AddAmountType(IReadOnlyCollection<AmountType> newAmountTypes)
+    {
+        referenceData.ReferenceAmountTypes = referenceData.ReferenceAmountTypes
+            .Concat(newAmountTypes)
+            .Distinct()
+            .ToArray();
+    }
+
+    private static void AddAocStep(IEnumerable<AocStep> newElements)
+    {
+        referenceData.ReferenceAocSteps = referenceData.ReferenceAocSteps
+            .Concat(newElements)
+            .Distinct()
+            .ToArray();
+    }
+
+
 
     //private static DataPersistenceConfiguration WithDimension<T>(this DataPersistenceConfiguration configuration
     //    //IDataSource dataSource
