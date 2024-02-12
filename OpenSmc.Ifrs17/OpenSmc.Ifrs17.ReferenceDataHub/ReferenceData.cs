@@ -3,7 +3,7 @@ using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
 
 namespace OpenSmc.Ifrs17.ReferenceDataHub
 {
-    internal class ReferenceData
+    public class ReferenceData
     {
         public AocStep[] ReferenceAocSteps { get; set; }
 
