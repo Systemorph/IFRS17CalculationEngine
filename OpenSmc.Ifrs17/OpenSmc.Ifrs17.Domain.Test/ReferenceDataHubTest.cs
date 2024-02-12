@@ -35,9 +35,8 @@ public class ReferenceDataHubTest : HubTestBase
     [Fact]
     public async Task InitilizationReferenceDataHub()
     {
-        var host = GetHost();
         var client = GetClient();
-        var response = await host.AwaitResponse(new GetManyRequest<AocStep>(), o => o.WithTarget(new Address()));
+        var response = await client.AwaitResponse(new GetManyRequest<AocStep>(), o => o.WithTarget(new HostAddress()));
         response.Message.Should().BeAssignableTo<GetManyResponse<AocStep>>();
     }
 
