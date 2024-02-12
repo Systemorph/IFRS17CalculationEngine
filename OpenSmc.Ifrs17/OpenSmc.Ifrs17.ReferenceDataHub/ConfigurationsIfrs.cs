@@ -1,9 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using OpenSmc.Data;
-using OpenSmc.DataSource.Abstractions;
+﻿using OpenSmc.Data;
+using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
-using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
-using OpenSmc.Ifrs17.Domain.DataModel.TransactionalData;
 using OpenSmc.Messaging;
 
 namespace OpenSmc.Ifrs17.ReferenceDataHub;
@@ -22,6 +19,9 @@ namespace OpenSmc.Ifrs17.ReferenceDataHub;
  *  g) monitor the development of the import/export plugin so that we can use them here
  *      in smc v1 
  */
+
+
+
 public static class DataHubConfiguration
 {
     public static MessageHubConfiguration ConfigurationReferenceDataHub(this MessageHubConfiguration configuration)
@@ -29,58 +29,76 @@ public static class DataHubConfiguration
         // TODO: this needs to be registered in the higher level
         //var dataSource = financialDataConfiguration.ServiceProvider.GetService<IDataSource>();
 
-        return configuration.AddPlugin(hub => new DataPlugin(hub, conf => conf
-            .WithWorkspace(workspace => workspace.WithKey<Currency>()
-                .WithKey<LineOfBusiness>())
-            .WithPersistence(p => p
-                .WithDimension<LineOfBusiness>()
-                .WithDimension<Currency>())));
+        // Make Pluguin available 
+        // There should  be a way to get Workspace from plugin
+
+        return configuration.AddData(dc => dc.WithDataSource("ReferenceDataSource",
+            ds => ds.WithType<AmountType>(t => t.WithKey(x => x.ExternalId)
+                        .WithInitialization(async () => await Task.FromResult(ReferenceData.ReferenceAmountTypes))
+                    //.WithUpdate(x => )
+                    //.WithDelete()
+                )
+                .WithType<AocStep>(t => t.WithKey(x => x.AocType)
+                    .WithInitialization(async () => await Task.FromResult(ReferenceData.ReferenceAocSteps)))));
+        //AddPlugin(hub => new DataPlugin(hub, conf => conf
+        //.WithWorkspace(workspace => workspace.WithKey<Currency>()
+        //    .WithKey<LineOfBusiness>())
+        //.WithPersistence(p => p
+        //    .WithDimension<LineOfBusiness>()
+        //    .WithDimension<Currency>())));
     }
 
-    private static DataPersistenceConfiguration WithDimension<T>(this DataPersistenceConfiguration configuration
-        //IDataSource dataSource
-    )
-        where T : class, new()
-    {
-        return configuration.WithType(
-            () =>
-                Task.FromResult<IReadOnlyCollection<T>>(new List<T>{}), //await dataSource.Query<T>().ToArrayAsync(),
-            dim => Task.CompletedTask, // dataSource.UpdateAsync(dim),
-            _ => Task.CompletedTask);
-        // dataSource.DeleteAsync(dim));
-    }
+    //private static DataPersistenceConfiguration WithDimension<T>(this DataPersistenceConfiguration configuration
+    //    //IDataSource dataSource
+    //)
+    //    where T : class, new()
+    //{
+    //    return configuration.WithType(
+    //        () =>
+    //            Task.FromResult<IReadOnlyCollection<T>>(new List<T>{}), //await dataSource.Query<T>().ToArrayAsync()
+    //        _ => Task.CompletedTask, // dataSource.UpdateAsync(dim),
+    //        _ => Task.CompletedTask);
+    //    // dataSource.DeleteAsync(dim));
+    //}
 
-    private static WorkspaceConfiguration WithKey<T>(this WorkspaceConfiguration configuration)
-        where T : KeyedDimension =>
-        configuration.Key<T>(x => x.SystemName);
-
-    private static MessageHubConfiguration WithHandlers<TDim>(this MessageHubConfiguration configuration)
-    where TDim : class, new()
-    {
-        return configuration.WithHandler<FinancialDimesnionRequest<TDim>>((hub, request) =>
-        {
-            hub.Post(new TDim(), o => o.ResponseFor(request));
-            return request.Processed();
-        })
-            .WithHandler<FinancialDimensionManyRequest<TDim>>((hub, request) =>
-            {
-                hub.Post(new List<TDim>(), o => o.ResponseFor(request));
-                return request.Processed();
-            } );
-    }
+    //public static Task<IReadOnlyCollection<T>> Initialize<T>(IReadOnlyCollection<T> initData)
+    //{
+    //    return Task.FromResult(initData);
+    //}
 
 
-    public static MessageHubConfiguration ConfigurationTransactionalDataHub(this MessageHubConfiguration transactionalHubConfiguration)
-    {
-        // TODO: this needs to be registered in the higher level
-        var dataSource = transactionalHubConfiguration.ServiceProvider.GetService<IDataSource>();
 
-        return transactionalHubConfiguration
-            .AddData(data => data.WithWorkspace(w => w)
-                .WithPersistence(p => p.WithDimension<RawVariable>())); 
-        /* This is delete of data, not of the hub */
-        /* Delete of Hub must be implemented separately (pr)*/
-    }
+    //private static WorkspaceConfiguration WithKey<T>(this WorkspaceConfiguration configuration)
+    //    where T : KeyedDimension =>
+    //    configuration.Key<T>(x => x.SystemName);
+
+    //private static MessageHubConfiguration WithHandlers<TDim>(this MessageHubConfiguration configuration)
+    //where TDim : class, new()
+    //{
+    //    return configuration.WithHandler<FinancialDimesnionRequest<TDim>>((hub, request) =>
+    //    {
+    //        hub.Post(new TDim(), o => o.ResponseFor(request));
+    //        return request.Processed();
+    //    })
+    //        .WithHandler<FinancialDimensionManyRequest<TDim>>((hub, request) =>
+    //        {
+    //            hub.Post(new List<TDim>(), o => o.ResponseFor(request));
+    //            return request.Processed();
+    //        } );
+    //}
+
+
+    //public static MessageHubConfiguration ConfigurationTransactionalDataHub(this MessageHubConfiguration transactionalHubConfiguration)
+    //{
+    //    // TODO: this needs to be registered in the higher level
+    //    var dataSource = transactionalHubConfiguration.ServiceProvider.GetService<IDataSource>();
+
+    //    return transactionalHubConfiguration
+    //        .AddData(data => data.WithWorkspace(w => w)
+    //            .WithPersistence(p => p.WithDimension<RawVariable>())); 
+    //    /* This is delete of data, not of the hub */
+    //    /* Delete of Hub must be implemented separately (pr)*/
+    //}
 
     //public static MessageHubConfiguration ConfigurationViewModelHub(this MessageHubConfiguration transactionalHubConfiguration)
     //{
