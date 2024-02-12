@@ -1,13 +1,15 @@
 ﻿using FluentAssertions;
 using OpenSmc.Data;
-using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
+using OpenSmc.Hub.Fixture;
+using OpenSmc.Ifrs17.Domain.DataModel;
 using OpenSmc.Ifrs17.ReferenceDataHub;
 using OpenSmc.Messaging;
+using Xunit;
 using Xunit.Abstractions;
 
 
 namespace OpenSmc.Ifrs17.Domain.Test;
-public class ReferenceDataHubTest : DataHubTestBase
+public class ReferenceDataHubTest : HubTestBase
 {
 
 
@@ -33,9 +35,9 @@ public class ReferenceDataHubTest : DataHubTestBase
     [Fact]
     public async Task InitilizationReferenceDataHub()
     {
-        var host = GetHost();
-        var response = await host.AwaitResponse(new GetManyRequest<Currency>(), o => o.WithTarget(new Address()));
-        response.Message.Should().BeAssignableTo<GetManyResponse<Currency>>();
+        var client = GetClient();
+        var response = await client.AwaitResponse(new GetManyRequest<AocStep>(), o => o.WithTarget(new HostAddress()));
+        response.Message.Should().BeAssignableTo<GetManyResponse<AocStep>>();
     }
 
 
