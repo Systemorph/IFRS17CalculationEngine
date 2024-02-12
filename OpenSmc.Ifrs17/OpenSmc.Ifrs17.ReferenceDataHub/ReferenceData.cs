@@ -16,11 +16,11 @@ namespace OpenSmc.Ifrs17.ReferenceDataHub
                 new("BoP", "I"), new("IA", "I"), new("NB", "N"), new("C", "M")
             };
 
-            ReferenceAmountTypes = new AmountType[]
-            {
+            ReferenceAmountTypes =
+            [
                 new AmountType() {SystemName = "E", DisplayName = "Expenses"},
-                new AmountType() {SystemName = "P", DisplayName = "Premiums"}, 
-            };
+                new AmountType() {SystemName = "P", DisplayName = "Premiums"}
+            ];
         }
     };
 }

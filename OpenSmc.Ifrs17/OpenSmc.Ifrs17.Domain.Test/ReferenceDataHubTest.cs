@@ -53,6 +53,34 @@ public class ReferenceDataHubTest(ITestOutputHelper output) : HubTestBase(output
         response.Message.Should().NotBeEquivalentTo(expected);
     }
 
+    [Fact]
+    public async Task UpdateAmountType()
+    {
+        var updateItems = new AmountType[]
+        {
+            new()
+            {
+                SystemName = "W", DisplayName = "WriteOff"
+
+            }
+        };
+        var client = GetClient();
+        var updateResponse = await client.AwaitResponse(new UpdateDataRequest(updateItems), 
+            o => o.WithTarget(new HostAddress()));
+        await Task.Delay(300);
+        var expected = new DataChanged(1);
+        updateResponse.Message.Should().BeEquivalentTo(expected);
+        DataHubConfiguration.GetAmountTypes().Select(x => new Dimension()
+        {
+            SystemName = x.SystemName,
+            DisplayName = x.DisplayName
+        }).Should().Contain(updateItems.Select(x => new Dimension()
+        {
+            SystemName = x.SystemName,
+            DisplayName = x.DisplayName
+        }).FirstOrDefault() ?? throw new Exception("Element not found"));
+    }
+
     /*[Fact]
     public async Task HelloWorldFromClient()
     {

@@ -81,6 +81,8 @@ public static class DataHubConfiguration
             .ToArray();
     }
 
+    public static AmountType[] GetAmountTypes() => referenceData.ReferenceAmountTypes;
+
 
 
     //private static DataPersistenceConfiguration WithDimension<T>(this DataPersistenceConfiguration configuration
