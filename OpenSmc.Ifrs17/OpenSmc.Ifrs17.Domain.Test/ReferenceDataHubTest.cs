@@ -1,7 +1,9 @@
 ﻿using FluentAssertions;
 using OpenSmc.Data;
+using OpenSmc.Domain.Abstractions;
 using OpenSmc.Hub.Fixture;
 using OpenSmc.Ifrs17.Domain.DataModel;
+using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
 using OpenSmc.Ifrs17.ReferenceDataHub;
 using OpenSmc.Messaging;
 using Xunit;
@@ -9,37 +11,47 @@ using Xunit.Abstractions;
 
 
 namespace OpenSmc.Ifrs17.Domain.Test;
-public class ReferenceDataHubTest : HubTestBase
+public class ReferenceDataHubTest(ITestOutputHelper output) : HubTestBase(output)
 {
 
-
-
-    public ReferenceDataHubTest(ITestOutputHelper output) : base(output)
-    {
-    }
+    private readonly ReferenceData _referenceData = new();
 
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
-        => configuration.ConfigurationReferenceDataHub();
-            //WithHandler<ReadCurrencyRequest>((hub, request) =>
-            //{
-            //    hub.Post<Currency>(new Currency(), options => options.ResponseFor(request));
-            //    return request.Processed();
-            //})
-            //.WithHandler<ReadManyCurrencyRequest>((hub, request) =>
-            //{
-            //    hub.Post(new List<Currency>(), options => options.ResponseFor(request));
-            //    return request.Processed();
-            //});
-
+        => base.ConfigureHost(configuration).ConfigurationReferenceDataHub();
 
     [Fact]
-    public async Task InitilizationReferenceDataHub()
+    public async Task InitializationReferenceDataHubAoc()
     {
         var client = GetClient();
         var response = await client.AwaitResponse(new GetManyRequest<AocStep>(), o => o.WithTarget(new HostAddress()));
+        var expected = new GetManyResponse<AocStep>(_referenceData.ReferenceAocSteps.Length, 
+            _referenceData.ReferenceAocSteps);
         response.Message.Should().BeAssignableTo<GetManyResponse<AocStep>>();
+        response.Message.Total.Should().Be(expected.Total);
+        foreach (var element in expected.Items.Select(x => (x.AocType, x.Novelty)))
+            response.Message.Items.Select(x => (x.AocType, x.Novelty)).Should().Contain(element);
     }
 
+
+    [Fact]
+    public async Task InitializationReferenceDataHubAmountType()
+    {
+        var client = GetClient();
+        var response = await client.AwaitResponse(new GetManyRequest<AmountType>(),
+            o => o.WithTarget(new HostAddress()));
+        var expected = new GetManyResponse<AmountType>(_referenceData.ReferenceAmountTypes.Length,
+            _referenceData.ReferenceAmountTypes);
+        response.Message.Should().BeAssignableTo<GetManyResponse<AmountType>>();
+        response.Message.Total.Should().Be(expected.Total);
+        foreach (var element in expected.Items.Select(x => new Dimension(){SystemName = x.SystemName, DisplayName = x.DisplayName}))
+        {
+            response.Message.Items
+                .Select(x => new Dimension(){SystemName = x.SystemName, DisplayName = x.DisplayName})
+                .Should().Contain(element);
+        }
+
+        response.Message.Should().NotBeEquivalentTo(expected);
+    }
 
     /*[Fact]
     public async Task HelloWorldFromClient()
