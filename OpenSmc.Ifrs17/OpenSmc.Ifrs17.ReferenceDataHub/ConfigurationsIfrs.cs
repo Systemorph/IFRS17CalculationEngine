@@ -24,6 +24,9 @@ namespace OpenSmc.Ifrs17.ReferenceDataHub;
 
 public static class DataHubConfiguration
 {
+
+    internal static ReferenceData referenceData = new ReferenceData();
+
     public static MessageHubConfiguration ConfigurationReferenceDataHub(this MessageHubConfiguration configuration)
     {
         // TODO: this needs to be registered in the higher level
@@ -32,14 +35,15 @@ public static class DataHubConfiguration
         // Make Pluguin available 
         // There should  be a way to get Workspace from plugin
 
+
         return configuration.AddData(dc => dc.WithDataSource("ReferenceDataSource",
-            ds => ds.WithType<AmountType>(t => t.WithKey(x => x.ExternalId)
-                        .WithInitialization(async () => await Task.FromResult(ReferenceData.ReferenceAmountTypes))
+            ds => ds.WithType<AmountType>(t => t.WithKey(x => x.Id)
+                        .WithInitialization(async () => await Task.FromResult(referenceData.ReferenceAmountTypes))
                     //.WithUpdate(x => )
                     //.WithDelete()
                 )
-                .WithType<AocStep>(t => t.WithKey(x => x.AocType)
-                    .WithInitialization(async () => await Task.FromResult(ReferenceData.ReferenceAocSteps)))));
+                .WithType<AocStep>(t => t.WithKey(x => x.Id)
+                    .WithInitialization(async () => await Task.FromResult(referenceData.ReferenceAocSteps)))));
         //AddPlugin(hub => new DataPlugin(hub, conf => conf
         //.WithWorkspace(workspace => workspace.WithKey<Currency>()
         //    .WithKey<LineOfBusiness>())

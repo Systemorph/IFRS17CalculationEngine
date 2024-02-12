@@ -7,7 +7,14 @@ namespace OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
 
 public record AmountType : KeyedOrderedDimensionWithExternalId, IHierarchicalDimension
 {
+    public Guid Id { get; set; }
+
     [Dimension(typeof(AmountType))] public string Parent { get; init; }
 
     [Dimension(typeof(PeriodType))] public PeriodType PeriodType { get; init; }
+
+    public AmountType()
+    {
+        Id = Guid.NewGuid();
+    }
 }

@@ -19,7 +19,7 @@ public class ReferenceDataHubTest : HubTestBase
     }
 
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
-        => configuration.ConfigurationReferenceDataHub();
+        => base.ConfigureHost(configuration).ConfigurationReferenceDataHub();
             //WithHandler<ReadCurrencyRequest>((hub, request) =>
             //{
             //    hub.Post<Currency>(new Currency(), options => options.ResponseFor(request));
