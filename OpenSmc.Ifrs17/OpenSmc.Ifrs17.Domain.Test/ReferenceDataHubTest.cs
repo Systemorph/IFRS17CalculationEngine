@@ -49,8 +49,6 @@ public class ReferenceDataHubTest(ITestOutputHelper output) : HubTestBase(output
                 .Select(x => new Dimension(){SystemName = x.SystemName, DisplayName = x.DisplayName})
                 .Should().Contain(element);
         }
-
-        response.Message.Should().NotBeEquivalentTo(expected);
     }
 
     [Fact]
@@ -81,52 +79,32 @@ public class ReferenceDataHubTest(ITestOutputHelper output) : HubTestBase(output
         }).FirstOrDefault() ?? throw new Exception("Element not found"));
     }
 
-    /*[Fact]
-    public async Task HelloWorldFromClient()
-    {
-        var client = GetClient();
-        var response = await client.AwaitResponse(new WakeUpEvent(), o => o.WithTarget(new HostAddress()));
-        response.Should().BeAssignableTo<IMessageDelivery<WakeUpRequest>>();
-    }
-
     [Fact]
-    public async Task ClientToServerWithMessageTraffic()
+    public async Task DeleteAmountType()
     {
-        var client = GetClient();
-        var clientOut = client.AddObservable();
-        var messageTask = clientOut.Where(d => d.Message is HelloEvent).ToArray().GetAwaiter();
-        var overallMessageTask = clientOut.ToArray().GetAwaiter();
-
-        var response = await client.AwaitResponse(new WakeUpEvent(), o => o.WithTarget(new HostAddress()));
-        response.Should().BeAssignableTo<IMessageDelivery<WakeUpRequest>>();
-
-        await DisposeAsync();
-
-        var helloEvents = await messageTask;
-        var overallMessages = await overallMessageTask;
-        using (new AssertionScope())
+        var deleteItems = new AmountType[]
         {
-            helloEvents.Should().ContainSingle();
-            overallMessages.Should().HaveCountLessThan(10);
-        }
-    }
-
-    [Fact]
-    public async Task Subscribers()
-    {
-        // arrange: initiate subscription from client to host
+            new()
+            {
+                SystemName = "E",
+                DisplayName = "Expenses"
+            }
+        };
         var client = GetClient();
-        await client.AwaitResponse(new WakeUpEvent(), o => o.WithTarget(new HostAddress()));
-        var clientOut = client.AddObservable().Timeout(500.Milliseconds());
-        var clientMessagesTask = clientOut.Select(d => d.Message).OfType<WakeUpRequest>().FirstAsync().GetAwaiter();
-
-        // act 
-        var host = GetHost();
-        host.Post(new WakeUpRequest(), o => o.WithTarget(MessageTargets.Subscribers));
-
-        // assert
-        var clientMessages = await clientMessagesTask;
-        clientMessages.Should().BeAssignableTo<WakeUpRequest>();
-    }*/
+        var deleteResponse = await client.AwaitResponse(new DeleteDataRequest(deleteItems),
+            o => o.WithTarget(new HostAddress()));
+        await Task.Delay(300);
+        var expected = new DataChanged(1);
+        deleteResponse.Message.Should().BeEquivalentTo(expected);
+        DataHubConfiguration.GetAmountTypes().Select(x => new Dimension()
+        {
+            SystemName = x.SystemName,
+            DisplayName = x.DisplayName
+        }).Should().NotContain(deleteItems.Select(x => new Dimension()
+        {
+            SystemName = x.SystemName,
+            DisplayName = x.DisplayName
+        }).FirstOrDefault() ?? throw new Exception("Delete element not found"));
+    }
 
 }

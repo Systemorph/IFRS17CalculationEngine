@@ -25,29 +25,25 @@ namespace OpenSmc.Ifrs17.ReferenceDataHub;
 public static class DataHubConfiguration
 {
 
-    internal static ReferenceData referenceData = new ReferenceData();
+    internal static ReferenceData referenceData = new();
 
     public static MessageHubConfiguration ConfigurationReferenceDataHub(this MessageHubConfiguration configuration)
     {
         // TODO: this needs to be registered in the higher level
-        //var dataSource = financialDataConfiguration.ServiceProvider.GetService<IDataSource>();
-
-        // Make Pluguin available 
-        // There should  be a way to get Workspace from plugin
 
 
         return configuration.AddData(dc => dc.WithDataSource("ReferenceDataSource",
-            ds => ds.WithType<AmountType>(t => t.WithKey(x => x.Id)
+            ds => ds.WithType<AmountType>(t => t.WithKey(x => x.SystemName)
                         .WithInitialization(async () => await Task.FromResult(referenceData.ReferenceAmountTypes))
                         .WithUpdate(AddAmountType)
                         .WithAdd(AddAmountType)
                         .WithDelete(RemoveAmountType)
                 )
-                .WithType<AocStep>(t => t.WithKey(x => x.Id)
+                .WithType<AocStep>(t => t.WithKey(x => (x.AocType, x.Novelty))
                     .WithInitialization(async () => await Task.FromResult(referenceData.ReferenceAocSteps))
                     .WithUpdate(AddAocStep)
                     .WithAdd(AddAocStep)
-                    .WithAdd(RemoveAocStep))));
+                    .WithDelete(RemoveAocStep))));
     }
 
     private static void RemoveAocStep(IReadOnlyCollection<AocStep> obj)
@@ -64,6 +60,8 @@ public static class DataHubConfiguration
             .Where(x => !obj.Select(y => y.SystemName).Contains(x.SystemName))
             .ToArray();
     }
+
+
 
     private static void AddAmountType(IReadOnlyCollection<AmountType> newAmountTypes)
     {
@@ -82,6 +80,8 @@ public static class DataHubConfiguration
     }
 
     public static AmountType[] GetAmountTypes() => referenceData.ReferenceAmountTypes;
+
+    public static AocStep[] GetAocSteps() => referenceData.ReferenceAocSteps;
 
 
 
