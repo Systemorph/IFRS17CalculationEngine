@@ -17,10 +17,40 @@ public class ReferenceDataHubTest(ITestOutputHelper output) : HubTestBase(output
     private readonly ReferenceData _referenceData = new();
 
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
-        => base.ConfigureHost(configuration).ConfigurationReferenceDataHub();
+        => base.ConfigureHost(configuration).AddData(dc => dc.WithDataSource("ReferenceDataSource", 
+            ds => ds.WithType<AmountType>(t => t.WithKey(x => x.SystemName)
+                .WithInitialization(async () => await Task.FromResult(_referenceData.ReferenceAmountTypes))
+                .WithUpdate(AddAmountType)
+                .WithAdd(AddAmountType)
+                .WithDelete(DeleteAmountType))
+                .WithType<AocStep>(t => t.WithKey(x => (x.AocType, x.Novelty))
+                    .WithInitialization(async () => await Task.FromResult(_referenceData.ReferenceAocSteps))
+                    .WithUpdate(AddAocStep)
+                    .WithAdd(AddAocStep)
+                    .WithDelete(DeleteAocStep))));
+
+    private void DeleteAocStep(IReadOnlyCollection<AocStep> obj)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void AddAocStep(IReadOnlyCollection<AocStep> obj)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void DeleteAmountType(IReadOnlyCollection<AmountType> obj)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void AddAmountType(IReadOnlyCollection<AmountType> obj)
+    {
+        throw new NotImplementedException();
+    }
 
     [Fact]
-    public async Task InitializationReferenceDataHubAoc()
+    public async Task InitializationRdhAocTest()
     {
         var client = GetClient();
         var response = await client.AwaitResponse(new GetManyRequest<AocStep>(), o => o.WithTarget(new HostAddress()));
@@ -34,7 +64,7 @@ public class ReferenceDataHubTest(ITestOutputHelper output) : HubTestBase(output
 
 
     [Fact]
-    public async Task InitializationReferenceDataHubAmountType()
+    public async Task InitializationRdhAmountTypeTest()
     {
         var client = GetClient();
         var response = await client.AwaitResponse(new GetManyRequest<AmountType>(),
@@ -52,7 +82,7 @@ public class ReferenceDataHubTest(ITestOutputHelper output) : HubTestBase(output
     }
 
     [Fact]
-    public async Task UpdateAmountType()
+    public async Task UpdateRdhAmountTypeTest()
     {
         var updateItems = new AmountType[]
         {
@@ -80,7 +110,7 @@ public class ReferenceDataHubTest(ITestOutputHelper output) : HubTestBase(output
     }
 
     [Fact]
-    public async Task DeleteAmountType()
+    public async Task DeleteRdhAmountTypeTest()
     {
         var deleteItems = new AmountType[]
         {
@@ -106,5 +136,6 @@ public class ReferenceDataHubTest(ITestOutputHelper output) : HubTestBase(output
             DisplayName = x.DisplayName
         }).FirstOrDefault() ?? throw new Exception("Delete element not found"));
     }
+
 
 }
