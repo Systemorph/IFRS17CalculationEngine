@@ -14,45 +14,81 @@ namespace OpenSmc.Ifrs17.Domain.Test;
 public class ReferenceDataHubTest(ITestOutputHelper output) : HubTestBase(output)
 {
 
-    private readonly ReferenceData _referenceData = new();
+    private readonly TestReferenceData _testReferenceData = new();
 
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
-        => base.ConfigureHost(configuration).ConfigurationReferenceDataHub();
+        => base.ConfigureHost(configuration).AddData(dc => dc.WithDataSource("ReferenceDataSource", 
+            ds => ds.WithType<AmountType>(t => t.WithKey(x => x.SystemName)
+                .WithInitialization(async () => await Task.FromResult(_testReferenceData.ReferenceAmountTypes))
+                .WithUpdate(AddAmountType)
+                .WithAdd(AddAmountType)
+                .WithDelete(DeleteAmountType))
+                .WithType<AocStep>(t => t.WithKey(x => (x.AocType, x.Novelty))
+                    .WithInitialization(async () => await Task.FromResult(_testReferenceData.ReferenceAocSteps))
+                    .WithUpdate(AddAocStep)
+                    .WithAdd(AddAocStep)
+                    .WithDelete(DeleteAocStep))));
+
+    private void DeleteAocStep(IReadOnlyCollection<AocStep> obj)
+    {
+        _testReferenceData.ReferenceAocSteps = _testReferenceData.ReferenceAocSteps
+            .Where(x => !obj.Contains(x))
+            .ToArray();
+    }
+
+    private void AddAocStep(IReadOnlyCollection<AocStep> obj)
+    {
+        _testReferenceData.ReferenceAocSteps = _testReferenceData.ReferenceAocSteps
+            .Concat(obj)
+            .Distinct()
+            .ToArray();
+    }
+
+    private void DeleteAmountType(IReadOnlyCollection<AmountType> obj)
+    { 
+        _testReferenceData.ReferenceAmountTypes = _testReferenceData.ReferenceAmountTypes
+            .Where(x => !obj.Contains(x))
+            .ToArray();
+    }
+
+    private void AddAmountType(IReadOnlyCollection<AmountType> obj)
+    {
+        _testReferenceData.ReferenceAmountTypes = _testReferenceData.ReferenceAmountTypes
+            .Concat(obj)
+            .Distinct()
+            .ToArray();
+    }
 
     [Fact]
-    public async Task InitializationReferenceDataHubAoc()
+    public async Task InitializationRdhAocTest()
     {
+        _testReferenceData.Reset();
         var client = GetClient();
         var response = await client.AwaitResponse(new GetManyRequest<AocStep>(), o => o.WithTarget(new HostAddress()));
-        var expected = new GetManyResponse<AocStep>(_referenceData.ReferenceAocSteps.Length, 
-            _referenceData.ReferenceAocSteps);
+        var expected = new GetManyResponse<AocStep>(_testReferenceData.ReferenceAocSteps.Length, 
+            _testReferenceData.ReferenceAocSteps);
         response.Message.Should().BeAssignableTo<GetManyResponse<AocStep>>();
         response.Message.Total.Should().Be(expected.Total);
-        foreach (var element in expected.Items.Select(x => (x.AocType, x.Novelty)))
-            response.Message.Items.Select(x => (x.AocType, x.Novelty)).Should().Contain(element);
+        response.Message.Should().BeEquivalentTo(expected);
     }
 
 
     [Fact]
-    public async Task InitializationReferenceDataHubAmountType()
+    public async Task InitializationRdhAmountTypeTest()
     {
+        _testReferenceData.Reset();
         var client = GetClient();
         var response = await client.AwaitResponse(new GetManyRequest<AmountType>(),
             o => o.WithTarget(new HostAddress()));
-        var expected = new GetManyResponse<AmountType>(_referenceData.ReferenceAmountTypes.Length,
-            _referenceData.ReferenceAmountTypes);
+        var expected = new GetManyResponse<AmountType>(_testReferenceData.ReferenceAmountTypes.Length,
+            _testReferenceData.ReferenceAmountTypes);
         response.Message.Should().BeAssignableTo<GetManyResponse<AmountType>>();
         response.Message.Total.Should().Be(expected.Total);
-        foreach (var element in expected.Items.Select(x => new Dimension(){SystemName = x.SystemName, DisplayName = x.DisplayName}))
-        {
-            response.Message.Items
-                .Select(x => new Dimension(){SystemName = x.SystemName, DisplayName = x.DisplayName})
-                .Should().Contain(element);
-        }
+        response.Message.Should().BeEquivalentTo(expected);
     }
 
     [Fact]
-    public async Task UpdateAmountType()
+    public async Task UpdateRdhAmountTypeTest()
     {
         var updateItems = new AmountType[]
         {
@@ -68,20 +104,13 @@ public class ReferenceDataHubTest(ITestOutputHelper output) : HubTestBase(output
         await Task.Delay(300);
         var expected = new DataChanged(1);
         updateResponse.Message.Should().BeEquivalentTo(expected);
-        DataHubConfiguration.GetAmountTypes().Select(x => new Dimension()
-        {
-            SystemName = x.SystemName,
-            DisplayName = x.DisplayName
-        }).Should().Contain(updateItems.Select(x => new Dimension()
-        {
-            SystemName = x.SystemName,
-            DisplayName = x.DisplayName
-        }).FirstOrDefault() ?? throw new Exception("Element not found"));
+        _testReferenceData.ReferenceAmountTypes.Should().Contain(updateItems);
     }
 
     [Fact]
-    public async Task DeleteAmountType()
+    public async Task DeleteRdhAmountTypeTest()
     {
+        _testReferenceData.Reset();
         var deleteItems = new AmountType[]
         {
             new()
@@ -96,15 +125,8 @@ public class ReferenceDataHubTest(ITestOutputHelper output) : HubTestBase(output
         await Task.Delay(300);
         var expected = new DataChanged(1);
         deleteResponse.Message.Should().BeEquivalentTo(expected);
-        DataHubConfiguration.GetAmountTypes().Select(x => new Dimension()
-        {
-            SystemName = x.SystemName,
-            DisplayName = x.DisplayName
-        }).Should().NotContain(deleteItems.Select(x => new Dimension()
-        {
-            SystemName = x.SystemName,
-            DisplayName = x.DisplayName
-        }).FirstOrDefault() ?? throw new Exception("Delete element not found"));
+        _testReferenceData.ReferenceAmountTypes.Should().NotContain(deleteItems);
     }
+
 
 }
