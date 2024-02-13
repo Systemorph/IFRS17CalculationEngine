@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using Systemorph.Vertex.Pivot.Builder;
 using OpenSmc.Collections;
-using OpenSmc.DataSource.Abstractions;
+//using OpenSmc.DataSource.Abstractions;
 //using OpenSmc.DataCubes;
 using OpenSmc.Ifrs17.Domain.Constants;
 using OpenSmc.Ifrs17.Domain.DataModel;
@@ -11,9 +11,10 @@ using Systemorph.Vertex.Pivot.Reporting.Builder;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
 using OpenSmc.Ifrs17.Domain.Constants.Validations;
-using OpenSmc.Workspace;
+//using OpenSmc.Workspace;
 using Systemorph.Vertex.DataCubes.Api;
 using OpenSmc.Ifrs17.Domain.DataModel.TransactionalData;
+using OpenSmc.Data;
 
 namespace OpenSmc.Ifrs17.Domain.Report;
 
