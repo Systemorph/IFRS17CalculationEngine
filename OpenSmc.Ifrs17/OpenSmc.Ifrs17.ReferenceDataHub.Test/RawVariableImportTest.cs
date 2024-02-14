@@ -21,9 +21,9 @@ public class RawVariableImportTest(ITestOutputHelper output) : HubTestBase(outpu
 {
     private const string cashFlowCsv =
         @"@@RawVariable,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-ReportingNode,Year,Quarter,Scenario,DataNode,AmountType,EstimateType,AocType,Novelty,AccidentYear,CashFlowPeriodicity,InterpolationMethod,Values0,Values1,Values2,Values3,Values4,Values5,Values6,Values7,Values8,Values9,Values10,Values11,Values12,Values13,Values14,Values15,Values16,Values17,Values18,Values19,Values20,Values21,Values22,Values23
-DT10.2,DAE,BE,BOP,N,,Monthly,Uniform,1000,0,1300
-DT10.2,PR,BE,BOP,N,,Monthly,Uniform,1000,";
+ReportingNode,Year,Quarter,Scenario,DataNode,AmountType,EstimateType,AocType,Novelty,AccidentYear,CashFlowPeriodicity,InterpolationMethod,Value
+CH,2020,12,,DT10.2,DAE,BE,BOP,N,,Monthly,Uniform,1000,0,1300
+CH,2020,12,,DT10.2,PR,BE,BOP,N,,Monthly,Uniform,1000,";
 
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration) =>
         base.ConfigureHost(configuration).AddData(data => data.WithDataSource(nameof(DataSource), 
@@ -38,6 +38,10 @@ DT10.2,PR,BE,BOP,N,,Monthly,Uniform,1000,";
             AmountType = "DAE",
             AocType = "BOP", 
             Novelty = "N", 
+            ReportingNode = "CH",
+            Year = 2020,
+            Month = 12, 
+            Scenario = null,
             Value = 15
         }}}};
 
