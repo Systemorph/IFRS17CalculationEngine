@@ -5,16 +5,16 @@ using OpenSmc.Ifrs17.DataTypes.DataModel.Interfaces;
 
 namespace OpenSmc.Ifrs17.DataTypes.DataModel.TransactionalData;
 
-public abstract record BaseDataRecord : BaseVariableIdentity, IKeyed, IPartitioned
+public abstract record BaseDataRecord : BaseVariableIdentity, IKeyed
 {
     [Key][NotVisible] public Guid Id { get; init; }
 
-    [NotVisible]
+    //[NotVisible]
     //[PartitionKey(typeof(PartitionByReportingNodeAndPeriod))]
-    public Guid Partition { get; init; }
+    //public Guid Partition { get; init; }
 
     //[Conversion(typeof(PrimitiveArrayConverter))]
-    public double[] Values { get; set; }
+    public double Value { get; set; }
 
     [NotVisible]
     [Dimension(typeof(EstimateType))]
