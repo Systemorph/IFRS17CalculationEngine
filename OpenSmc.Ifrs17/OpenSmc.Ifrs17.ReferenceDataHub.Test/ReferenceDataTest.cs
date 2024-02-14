@@ -7,28 +7,13 @@ using OpenSmc.Import;
 using Xunit;
 using Xunit.Abstractions;
 using System.ComponentModel.DataAnnotations;
+using System.IO.Enumeration;
+using OpenSmc.Ifrs17.DataTypes.Constants.Enumerates;
 using OpenSmc.Import.Test;
+using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
+using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 
 namespace OpenSmc.Ifrs17.ReferenceDataHub.Test;
-
-public static class ImportReferenceDataTestExtensions
-{
-    public record AmountType(
-        [property: Key] string SystemName,
-        string DisplayName,
-        string Parent,
-        int Order,
-        string PeriodType);
-
-    public record DeferrableAmountType(
-        [property: Key] string SystemName,
-        string DisplayName,
-        string Parent,
-        int Order,
-        string PeriodType);
-
-
-
 
     public class ImportTest(ITestOutputHelper output) : HubTestBase(output)
     {
@@ -36,8 +21,8 @@ public static class ImportReferenceDataTestExtensions
             =
             new()
             {
-                { typeof(AmountType), new AmountType[] { new("PR", "WrongPremiums", "", 10, "BeginningOfPeriod") } },
-                { typeof(DeferrableAmountType), new DeferrableAmountType[] { new("DE", "WrongDeferrals", "", 10, "BeginningOfPeriod") } }
+                { typeof(AmountType), new[] { new AmountType( "PR", "WrongPremiums", "", 10, PeriodType.BeginningOfPeriod ) } },
+                { typeof(DeferrableAmountType), new DeferrableAmountType[] { new("DE", "WrongDeferrals", "", 10, PeriodType.BeginningOfPeriod) } }
             };
 
         protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
@@ -360,5 +345,5 @@ P17,Year+10 to Year+15,120,60,180,,,,,,,,
 P18,Year+15 to Year+20,180,60,190,,,,,,,,
 P19,Years Over +20,240,9999,200,,,,,,,,
 ";
-    }
+    
 }
