@@ -7,64 +7,49 @@ using OpenSmc.Import;
 using Xunit;
 using Xunit.Abstractions;
 using System.ComponentModel.DataAnnotations;
-using OpenSmc.Ifrs17.ReferenceDataHub.Test;
+using OpenSmc.Import.Test;
 
 namespace OpenSmc.Ifrs17.ReferenceDataHub.Test;
 
 public static class ImportReferenceDataTestExtensions
 {
-    public static IEnumerable<Type> ReferenceDataDomain()
-            =>
-            [
-                typeof(AmountType),
-                typeof(DeferrableAmountType),
-            ];
-
     public record AmountType(
-            [property: Key] string SystemName,
-            string DisplayName,
-            string Parent,
-            int Order,
-            string PeriodType);
+        [property: Key] string SystemName,
+        string DisplayName,
+        string Parent,
+        int Order,
+        string PeriodType);
 
     public record DeferrableAmountType(
-                [property: Key] string SystemName,
-                string DisplayName,
-                string Parent,
-                int Order,
-                string PeriodType);
-
-    public static DataSource ConfigureReferenceData(this DataSource dataSource)
-        => ReferenceDataDomain().Aggregate(dataSource, (ds, t) => ds));
-}
+        [property: Key] string SystemName,
+        string DisplayName,
+        string Parent,
+        int Order,
+        string PeriodType);
 
 
-public class ImportTest(ITestOutputHelper output) : HubTestBase(output)
-{
-    private static readonly ImportReferenceDataTestExtensions.AmountType[] InitialAmountTypes =
-        {
-        new("PR" ,"WrongPremiums", "",10,"BeginningOfPeriod"),
-        };
-        private static readonly ImportReferenceDataTestExtensions.DeferrableAmountType[] InitialDeferrableAmountTypes =
-        {
-            new("DE" ,"WrongDeferrals", "",10,"BeginningOfPeriod"),
-        };
+
+
+    public class ImportTest(ITestOutputHelper output) : HubTestBase(output)
+    {
+        public static readonly Dictionary<Type, IEnumerable<object>> ReferenceDataDomain
+            =
+            new()
+            {
+                { typeof(AmountType), new AmountType[] { new("PR", "WrongPremiums", "", 10, "BeginningOfPeriod") } },
+                { typeof(DeferrableAmountType), new DeferrableAmountType[] { new("DE", "WrongDeferrals", "", 10, "BeginningOfPeriod") } }
+            };
 
         protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
         {
 
             return base.ConfigureHost(configuration)
-                    .AddData(
-                        data => data.WithDataSource
-                        (
-                            nameof(DataSource),
-                            source => source.ConfigureReferenceData()
-                        .WithType<ImportReferenceDataTestExtensions.AmountType>(type => type
-                            .WithBackingCollection(InitialAmountTypes.ToDictionary(x => (object)x.SystemName)))
-                        .WithType<ImportReferenceDataTestExtensions.DeferrableAmountType>(type => type.WithBackingCollection(InitialDeferrableAmountTypes.ToDictionary(x => (object)x.SystemName)))
-                    ))
-                    .AddImport(import => import)
-                ;
+                .AddData(data => data.WithDataSource
+                (
+                    nameof(DataSource),
+                    source => source.ConfigureCategory(ReferenceDataDomain)
+                ))
+                .AddImport(import => import);
         }
 
         [Fact]
@@ -75,7 +60,7 @@ public class ImportTest(ITestOutputHelper output) : HubTestBase(output)
             var importResponse = await client.AwaitResponse(importRequest, o => o.WithTarget(new HostAddress()));
             importResponse.Message.Log.Status.Should().Be(ActivityLogStatus.Succeeded);
 
-            var items = await client.AwaitResponse(new GetManyRequest<ImportReferenceDataTestExtensions.ImportTest.AmountType>(),
+            var items = await client.AwaitResponse(new GetManyRequest<AmountType>(),
                 o => o.WithTarget(new HostAddress()));
             items.Message.Items.Should().HaveCount(18)
                 .And.ContainSingle(i => i.SystemName == "PR")
@@ -84,7 +69,7 @@ public class ImportTest(ITestOutputHelper output) : HubTestBase(output)
         }
 
         private const string DimensionsCsv =
-    @"@@AmountType,,,,,,,,,,,,
+            @"@@AmountType,,,,,,,,,,,,
 SystemName,DisplayName,Parent,Order,PeriodType,,,,,,,,
 PR,Premiums,,10,BeginningOfPeriod,,,,,,,,
 CL,Claims,,20,EndOfPeriod,,,,,,,,
@@ -111,8 +96,8 @@ DAE,Aquisition Expenses,DE,20,BeginningOfPeriod,,,,,,,,
 ,,,,,,,,,,,,
 ";
 
-            private const string NotImported = 
-                @"
+        private const string NotImported =
+            @"
 @@AocType,,,,,,,,,,,,
 SystemName,DisplayName,Parent,Order,,,,,,,,,
 BOP,Opening Balance,,10,,,,,,,,,
@@ -372,3 +357,4 @@ P18,Year+15 to Year+20,180,60,190,,,,,,,,
 P19,Years Over +20,240,9999,200,,,,,,,,
 ";
     }
+}
