@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using OpenSmc.Domain.Abstractions.Attributes;
 
 
-namespace OpenSmc.Ifrs17.Domain.DataModel;
+namespace OpenSmc.Ifrs17.DataTypes.DataModel;
 
 public record GroupOfReinsuranceContract : GroupOfContract
 {

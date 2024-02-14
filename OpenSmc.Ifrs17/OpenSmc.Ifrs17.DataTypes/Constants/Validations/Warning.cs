@@ -1,4 +1,6 @@
-namespace OpenSmc.Ifrs17.Domain.Constants.Validations;
+using OpenSmc.Ifrs17.DataTypes.Constants;
+
+namespace OpenSmc.Ifrs17.DataTypes.Constants.Validations;
 
 public class Warning : ValidationBase
 {

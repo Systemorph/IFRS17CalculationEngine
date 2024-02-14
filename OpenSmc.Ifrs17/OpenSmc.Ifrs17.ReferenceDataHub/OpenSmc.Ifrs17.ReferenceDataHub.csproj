@@ -7,8 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="FinancialDimensionManyRequest.cs" />
+    <Compile Remove="FinancialDimesnionRequest.cs" />
     <Compile Remove="ReadCurrencyRequest.cs" />
     <Compile Remove="ReadLobRequest.cs" />
+    <Compile Remove="ReferenceData.cs" />
   </ItemGroup>
 
   <ItemGroup>

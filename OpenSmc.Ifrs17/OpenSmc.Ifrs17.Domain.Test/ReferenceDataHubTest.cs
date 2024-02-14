@@ -1,10 +1,8 @@
 ﻿using FluentAssertions;
 using OpenSmc.Data;
-using OpenSmc.Domain.Abstractions;
 using OpenSmc.Hub.Fixture;
-using OpenSmc.Ifrs17.Domain.DataModel;
-using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
-using OpenSmc.Ifrs17.ReferenceDataHub;
+using OpenSmc.Ifrs17.DataTypes.DataModel;
+using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
 using OpenSmc.Messaging;
 using Xunit;
 using Xunit.Abstractions;
@@ -19,12 +17,12 @@ public class ReferenceDataHubTest(ITestOutputHelper output) : HubTestBase(output
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
         => base.ConfigureHost(configuration).AddData(dc => dc.WithDataSource("ReferenceDataSource", 
             ds => ds.WithType<AmountType>(t => t.WithKey(x => x.SystemName)
-                .WithInitialization(async () => await Task.FromResult(_testReferenceData.ReferenceAmountTypes))
+                .WithInitialData(async () => await Task.FromResult(_testReferenceData.ReferenceAmountTypes))
                 .WithUpdate(AddAmountType)
                 .WithAdd(AddAmountType)
                 .WithDelete(DeleteAmountType))
                 .WithType<AocStep>(t => t.WithKey(x => (x.AocType, x.Novelty))
-                    .WithInitialization(async () => await Task.FromResult(_testReferenceData.ReferenceAocSteps))
+                    .WithInitialData(async () => await Task.FromResult(_testReferenceData.ReferenceAocSteps))
                     .WithUpdate(AddAocStep)
                     .WithAdd(AddAocStep)
                     .WithDelete(DeleteAocStep))));

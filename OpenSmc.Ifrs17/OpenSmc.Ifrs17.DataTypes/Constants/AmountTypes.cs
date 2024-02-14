@@ -1,4 +1,4 @@
-namespace OpenSmc.Ifrs17.Domain.Constants;
+namespace OpenSmc.Ifrs17.DataTypes.Constants;
 
 public static class AmountTypes
 {

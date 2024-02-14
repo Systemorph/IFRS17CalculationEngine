@@ -13,8 +13,13 @@
     <Compile Remove="AocConfigurationTest.cs" />
     <Compile Remove="AocStructureTest.cs" />
     <Compile Remove="DataNodeParameterTest.cs" />
+    <Compile Remove="EqualityComparerTest.cs" />
+    <Compile Remove="ExtentionsTest.cs" />
     <Compile Remove="ImportStorageTest.cs" />
+    <Compile Remove="OtherTest.cs" />
     <Compile Remove="QueriesScenarioDataTest.cs" />
+    <Compile Remove="QueriesTest.cs" />
+    <Compile Remove="ReferenceDataHubTestBase.cs" />
     <Compile Remove="ReportStorageTest.cs" />
     <Compile Remove="TechnicalMarginTest.cs" />
     <Compile Remove="TestBaseOld.cs" />
@@ -37,20 +42,6 @@
   </ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="morelinq" Version="4.1.0" />
-		<PackageReference Include="Systemorph.Activities" Version="1.6.5" />
-		<PackageReference Include="Systemorph.Arithmetics" Version="1.6.5" />
-		<PackageReference Include="Systemorph.DataSetReader" Version="1.6.7" />
-		<PackageReference Include="Systemorph.DataSource" Version="1.6.4" />
-		<PackageReference Include="Systemorph.DataSource.Conversions" Version="1.6.4" />
-		<PackageReference Include="Systemorph.Export" Version="1.6.7" />
-		<PackageReference Include="Systemorph.Import" Version="1.6.7" />
-		<PackageReference Include="Systemorph.InteractiveObjects" Version="1.6.5" />
-		<PackageReference Include="Systemorph.OneDrive" Version="1.6.5" />
-		<PackageReference Include="Systemorph.Scopes" Version="1.6.5" />
-		<PackageReference Include="Systemorph.SharePoint" Version="1.6.5" />
-		<PackageReference Include="Systemorph.Test" Version="1.6.5" />
-		<PackageReference Include="Systemorph.Workspace" Version="1.6.4" />
-		<PackageReference Include="Systemorph.Reporting" Version="1.6.5" />
 		<ProjectReference Include="..\..\OpenSmc\test\OpenSmc.Hub.Fixture\OpenSmc.Hub.Fixture.csproj" />
 		<ProjectReference Include="..\OpenSmc.Ifrs17.ReferenceDataHub\OpenSmc.Ifrs17.ReferenceDataHub.csproj" />
 	</ItemGroup>

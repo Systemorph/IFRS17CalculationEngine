@@ -1,10 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using OpenSmc.Domain.Abstractions.Attributes;
-using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
-using OpenSmc.Ifrs17.Domain.DataModel.Interfaces;
+using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
+using OpenSmc.Ifrs17.DataTypes.DataModel.Interfaces;
 
-
-namespace OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
+namespace OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 
 public record DataNode : KeyedDimension, IPartitioned // TODO: migrate to 
 {

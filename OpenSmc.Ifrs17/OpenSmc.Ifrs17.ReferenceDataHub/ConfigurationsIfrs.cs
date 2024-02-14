@@ -1,6 +1,6 @@
 ﻿using OpenSmc.Data;
-using OpenSmc.Ifrs17.Domain.DataModel;
-using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
+using OpenSmc.Ifrs17.DataTypes.DataModel;
+using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
 using OpenSmc.Messaging;
 
 namespace OpenSmc.Ifrs17.ReferenceDataHub;
@@ -25,8 +25,6 @@ namespace OpenSmc.Ifrs17.ReferenceDataHub;
 public static class DataHubConfiguration
 {
 
-    internal static ReferenceData referenceData = new();
-
     public static MessageHubConfiguration ConfigurationReferenceDataHub(this MessageHubConfiguration configuration)
     {
         // TODO: this needs to be registered in the higher level
@@ -34,13 +32,13 @@ public static class DataHubConfiguration
 
         return configuration.AddData(dc => dc.WithDataSource("ReferenceDataSource",
             ds => ds.WithType<AmountType>(t => t.WithKey(x => x.SystemName)
-                        .WithInitialization(async () => await Task.FromResult(referenceData.ReferenceAmountTypes))
+                        .WithInitialData(async () => await Task.FromResult(new List<AmountType>()))
                         .WithUpdate(AddAmountType)
                         .WithAdd(AddAmountType)
                         .WithDelete(RemoveAmountType)
                 )
                 .WithType<AocStep>(t => t.WithKey(x => (x.AocType, x.Novelty))
-                    .WithInitialization(async () => await Task.FromResult(referenceData.ReferenceAocSteps))
+                    .WithInitialData(async () => await Task.FromResult(new List<AocStep>()))
                     .WithUpdate(AddAocStep)
                     .WithAdd(AddAocStep)
                     .WithDelete(RemoveAocStep))));
