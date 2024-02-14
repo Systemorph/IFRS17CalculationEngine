@@ -20,14 +20,16 @@ namespace OpenSmc.Ifrs17.ReferenceDataHub.Test;
 public class RawVariableImportTest(ITestOutputHelper output) : HubTestBase(output) 
 {
     private const string cashFlowCsv =
-        @"@@RawVariable,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+        @"@@RawVariable
 ReportingNode,Year,Quarter,Scenario,DataNode,AmountType,EstimateType,AocType,Novelty,AccidentYear,CashFlowPeriodicity,InterpolationMethod,Value
-CH,2020,12,,DT10.2,DAE,BE,BOP,N,,Monthly,Uniform,1000,
-CH,2020,12,,DT10.2,PR,BE,BOP,N,,Monthly,Uniform,1000,";
+CH,2020,12,,DT10,DAE,BE,BOP,N,,Monthly,Uniform,1000
+CH,2020,12,,DT10,PR,BE,BOP,N,,Monthly,Uniform,1000";
 
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration) =>
         base.ConfigureHost(configuration).AddData(data => data.WithDataSource(nameof(DataSource), 
-            source => source.ConfigureCategory(_referenceRawVariable)))
+            source => source.WithType<RawVariable>(t => t.WithKey(x => 
+                (x.ReportingNode, x.Year, x.AmountType, x.Novelty, x.Year, x.DataNode, x.EstimateType))
+                .WithInitialData(_referenceRawVariable[typeof(RawVariable)].Cast<RawVariable>()))))
             .AddImport(imp => imp);
 
     private readonly Dictionary<Type, IEnumerable<object>> _referenceRawVariable = 
@@ -54,7 +56,7 @@ CH,2020,12,,DT10.2,PR,BE,BOP,N,,Monthly,Uniform,1000,";
         importResponse.Message.Log.Status.Should().Be(ActivityLogStatus.Succeeded);
         var rawVariableItems = await client.AwaitResponse(new GetManyRequest<RawVariable>(), 
             o => o.WithTarget(new HostAddress()));
-        rawVariableItems.Message.Items.Count.Should().Be(2);
+        rawVariableItems.Message.Items.Count.Should().Be(3);
     }
 }
 
