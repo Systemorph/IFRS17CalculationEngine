@@ -13,8 +13,13 @@
     <Compile Remove="AocConfigurationTest.cs" />
     <Compile Remove="AocStructureTest.cs" />
     <Compile Remove="DataNodeParameterTest.cs" />
+    <Compile Remove="EqualityComparerTest.cs" />
+    <Compile Remove="ExtentionsTest.cs" />
     <Compile Remove="ImportStorageTest.cs" />
+    <Compile Remove="OtherTest.cs" />
     <Compile Remove="QueriesScenarioDataTest.cs" />
+    <Compile Remove="QueriesTest.cs" />
+    <Compile Remove="ReferenceDataHubTestBase.cs" />
     <Compile Remove="ReportStorageTest.cs" />
     <Compile Remove="TechnicalMarginTest.cs" />
     <Compile Remove="TestBaseOld.cs" />
