@@ -62,10 +62,16 @@ public static class ImportReferenceDataTestExtensions
 
             var items = await client.AwaitResponse(new GetManyRequest<AmountType>(),
                 o => o.WithTarget(new HostAddress()));
-            items.Message.Items.Should().HaveCount(18)
+            var items2 = await client.AwaitResponse(new GetManyRequest<DeferrableAmountType>(),
+                o => o.WithTarget(new HostAddress()));
+            items.Message.Items.Should().HaveCount(17)
                 .And.ContainSingle(i => i.SystemName == "PR")
                 .Which.DisplayName.Should().Be("Premiums"); // we started with WrongPremiums....
             items.Message.Items.Should().ContainSingle(i => i.SystemName == "NIC").Which.Parent.Should().Be("CL");
+
+            items2.Message.Items.Should().HaveCount(2)
+                .And.ContainSingle(i => i.SystemName == "DE")
+                .Which.DisplayName.Should().Be("Deferrals");
         }
 
         private const string DimensionsCsv =
@@ -88,12 +94,10 @@ AC,Attributable Commission,,120,BeginningOfPeriod,,,,,,,,
 ACA,Aquisition,AC,130,BeginningOfPeriod,,,,,,,,
 ACM,Maitenance,AC,140,EndOfPeriod,,,,,,,,
 CU,Coverage Units,,150,EndOfPeriod,,,,,,,,
-,,,,,,,,,,,,
 @@DeferrableAmountType,,,,,,,,,,,,
 SystemName,DisplayName,Parent,Order,PeriodType,,,,,,,,
 DE,Deferrals,,10,BeginningOfPeriod,,,,,,,,
 DAE,Aquisition Expenses,DE,20,BeginningOfPeriod,,,,,,,,
-,,,,,,,,,,,,
 ";
 
         private const string NotImported =
