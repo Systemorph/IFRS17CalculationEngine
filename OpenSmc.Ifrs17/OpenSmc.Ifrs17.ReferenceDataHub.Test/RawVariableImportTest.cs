@@ -22,7 +22,7 @@ public class RawVariableImportTest(ITestOutputHelper output) : HubTestBase(outpu
     private const string cashFlowCsv =
         @"@@RawVariable,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 ReportingNode,Year,Quarter,Scenario,DataNode,AmountType,EstimateType,AocType,Novelty,AccidentYear,CashFlowPeriodicity,InterpolationMethod,Value
-CH,2020,12,,DT10.2,DAE,BE,BOP,N,,Monthly,Uniform,1000,0,1300
+CH,2020,12,,DT10.2,DAE,BE,BOP,N,,Monthly,Uniform,1000,
 CH,2020,12,,DT10.2,PR,BE,BOP,N,,Monthly,Uniform,1000,";
 
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration) =>
