@@ -1,21 +1,22 @@
 using OpenSmc.Hub.Fixture;
-using System.ComponentModel.DataAnnotations;
 using FluentAssertions;
 using OpenSmc.Activities;
 using OpenSmc.Messaging;
 using OpenSmc.Data;
 using OpenSmc.Import;
+using Xunit;
 using Xunit.Abstractions;
+using System.ComponentModel.DataAnnotations;
 
 namespace OpenSmc.Ifrs17.ReferenceDataHub.Test
 {
     public class ImportTest(ITestOutputHelper output) : HubTestBase(output)
     {
-        public record AmountType(string SystemName, string DisplayName, string Parent, int Order, string PeriodType);
+        public record AmountType([property: Key] string SystemName, string DisplayName, string Parent, int Order, string PeriodType);
 
         private static readonly AmountType[] InitialAmountTypes =
         {
-        new("PR" ,"WrongPremiums", "",10,"BeginningOfPeriod"),
+        new("WPR" ,"WrongPremiums", "",10,"BeginningOfPeriod"),
     };
 
         protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
