@@ -7,17 +7,48 @@ using OpenSmc.Import;
 using Xunit;
 using Xunit.Abstractions;
 using System.ComponentModel.DataAnnotations;
+using OpenSmc.Ifrs17.ReferenceDataHub.Test;
 
-namespace OpenSmc.Ifrs17.ReferenceDataHub.Test
+namespace OpenSmc.Ifrs17.ReferenceDataHub.Test;
+
+public static class ImportReferenceDataTestExtensions
 {
-    public class ImportTest(ITestOutputHelper output) : HubTestBase(output)
-    {
-        public record AmountType([property: Key] string SystemName, string DisplayName, string Parent, int Order, string PeriodType);
+    public static IEnumerable<Type> ReferenceDataDomain()
+            =>
+            [
+                typeof(AmountType),
+                typeof(DeferrableAmountType),
+            ];
 
-        private static readonly AmountType[] InitialAmountTypes =
+    public record AmountType(
+            [property: Key] string SystemName,
+            string DisplayName,
+            string Parent,
+            int Order,
+            string PeriodType);
+
+    public record DeferrableAmountType(
+                [property: Key] string SystemName,
+                string DisplayName,
+                string Parent,
+                int Order,
+                string PeriodType);
+
+    public static DataSource ConfigureReferenceData(this DataSource dataSource)
+        => ReferenceDataDomain().Aggregate(dataSource, (ds, t) => ds));
+}
+
+
+public class ImportTest(ITestOutputHelper output) : HubTestBase(output)
+{
+    private static readonly ImportReferenceDataTestExtensions.AmountType[] InitialAmountTypes =
         {
-        new("WPR" ,"WrongPremiums", "",10,"BeginningOfPeriod"),
-    };
+        new("PR" ,"WrongPremiums", "",10,"BeginningOfPeriod"),
+        };
+        private static readonly ImportReferenceDataTestExtensions.DeferrableAmountType[] InitialDeferrableAmountTypes =
+        {
+            new("DE" ,"WrongDeferrals", "",10,"BeginningOfPeriod"),
+        };
 
         protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
         {
@@ -27,12 +58,11 @@ namespace OpenSmc.Ifrs17.ReferenceDataHub.Test
                         data => data.WithDataSource
                         (
                             nameof(DataSource),
-                            source => source
-                        .WithType<AmountType>(type => type
-                            .WithBackingCollection(InitialAmountTypes.ToDictionary(x => (object)x.SystemName))
-                        )
-                        )
-                    )
+                            source => source.ConfigureReferenceData()
+                        .WithType<ImportReferenceDataTestExtensions.AmountType>(type => type
+                            .WithBackingCollection(InitialAmountTypes.ToDictionary(x => (object)x.SystemName)))
+                        .WithType<ImportReferenceDataTestExtensions.DeferrableAmountType>(type => type.WithBackingCollection(InitialDeferrableAmountTypes.ToDictionary(x => (object)x.SystemName)))
+                    ))
                     .AddImport(import => import)
                 ;
         }
@@ -45,7 +75,7 @@ namespace OpenSmc.Ifrs17.ReferenceDataHub.Test
             var importResponse = await client.AwaitResponse(importRequest, o => o.WithTarget(new HostAddress()));
             importResponse.Message.Log.Status.Should().Be(ActivityLogStatus.Succeeded);
 
-            var items = await client.AwaitResponse(new GetManyRequest<AmountType>(),
+            var items = await client.AwaitResponse(new GetManyRequest<ImportReferenceDataTestExtensions.ImportTest.AmountType>(),
                 o => o.WithTarget(new HostAddress()));
             items.Message.Items.Should().HaveCount(18)
                 .And.ContainSingle(i => i.SystemName == "PR")
@@ -53,7 +83,7 @@ namespace OpenSmc.Ifrs17.ReferenceDataHub.Test
             items.Message.Items.Should().ContainSingle(i => i.SystemName == "NIC").Which.Parent.Should().Be("CL");
         }
 
-        private const string DimensionsCsv = 
+        private const string DimensionsCsv =
     @"@@AmountType,,,,,,,,,,,,
 SystemName,DisplayName,Parent,Order,PeriodType,,,,,,,,
 PR,Premiums,,10,BeginningOfPeriod,,,,,,,,
@@ -74,14 +104,15 @@ ACA,Aquisition,AC,130,BeginningOfPeriod,,,,,,,,
 ACM,Maitenance,AC,140,EndOfPeriod,,,,,,,,
 CU,Coverage Units,,150,EndOfPeriod,,,,,,,,
 ,,,,,,,,,,,,
-";
-
-            private const string NotImported = 
-                @"@@DeferrableAmountType,,,,,,,,,,,,
+@@DeferrableAmountType,,,,,,,,,,,,
 SystemName,DisplayName,Parent,Order,PeriodType,,,,,,,,
 DE,Deferrals,,10,BeginningOfPeriod,,,,,,,,
 DAE,Aquisition Expenses,DE,20,BeginningOfPeriod,,,,,,,,
 ,,,,,,,,,,,,
+";
+
+            private const string NotImported = 
+                @"
 @@AocType,,,,,,,,,,,,
 SystemName,DisplayName,Parent,Order,,,,,,,,,
 BOP,Opening Balance,,10,,,,,,,,,
@@ -341,4 +372,3 @@ P18,Year+15 to Year+20,180,60,190,,,,,,,,
 P19,Years Over +20,240,9999,200,,,,,,,,
 ";
     }
-}
