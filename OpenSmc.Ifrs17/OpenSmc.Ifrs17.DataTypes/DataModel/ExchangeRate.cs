@@ -1,12 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using OpenSmc.Arithmetics;
 using OpenSmc.Domain.Abstractions.Attributes;
-using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
-using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
-using OpenSmc.Ifrs17.Domain.DataModel.Interfaces;
-using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
+using OpenSmc.Ifrs17.DataTypes.Constants.Enumerates;
+using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
+using OpenSmc.Ifrs17.DataTypes.DataModel.Interfaces;
+using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 
-namespace OpenSmc.Ifrs17.Domain.DataModel;
+namespace OpenSmc.Ifrs17.DataTypes.DataModel;
 
 public record ExchangeRate : KeyedRecord, IWithYearMonthAndScenario
 {

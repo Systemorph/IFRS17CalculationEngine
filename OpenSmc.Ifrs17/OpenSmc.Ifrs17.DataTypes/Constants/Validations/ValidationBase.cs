@@ -1,4 +1,4 @@
-namespace OpenSmc.Ifrs17.Domain.Constants.Validations;
+namespace OpenSmc.Ifrs17.DataTypes.Constants.Validations;
 
 public abstract class ValidationBase
 {

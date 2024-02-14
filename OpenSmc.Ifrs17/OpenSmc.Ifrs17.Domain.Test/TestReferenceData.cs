@@ -1,5 +1,5 @@
-﻿using OpenSmc.Ifrs17.Domain.DataModel;
-using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
+﻿using OpenSmc.Ifrs17.DataTypes.DataModel;
+using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
 
 namespace OpenSmc.Ifrs17.Domain.Test
 {

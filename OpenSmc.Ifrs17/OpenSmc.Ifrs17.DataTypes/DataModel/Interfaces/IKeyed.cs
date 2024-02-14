@@ -1,4 +1,4 @@
-﻿namespace OpenSmc.Ifrs17.Domain.DataModel.Interfaces
+﻿namespace OpenSmc.Ifrs17.DataTypes.DataModel.Interfaces
 {
     public interface IKeyed
     {

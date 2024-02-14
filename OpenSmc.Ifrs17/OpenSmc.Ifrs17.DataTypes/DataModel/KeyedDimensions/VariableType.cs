@@ -1,6 +1,6 @@
 using OpenSmc.Domain.Abstractions;
 
-namespace OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
+namespace OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 
 public record VariableType : KeyedOrderedDimension, IHierarchicalDimension
 {

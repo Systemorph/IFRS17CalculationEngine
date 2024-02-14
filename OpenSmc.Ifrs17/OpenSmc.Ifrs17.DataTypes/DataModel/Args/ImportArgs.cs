@@ -1,6 +1,6 @@
-using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
+using OpenSmc.Ifrs17.DataTypes.Constants.Enumerates;
 
-namespace OpenSmc.Ifrs17.Domain.DataModel.Args;
+namespace OpenSmc.Ifrs17.DataTypes.DataModel.Args;
 
 public record ImportArgs : Args
 {

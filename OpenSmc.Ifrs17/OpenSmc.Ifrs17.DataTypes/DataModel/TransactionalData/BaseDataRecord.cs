@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using OpenSmc.Domain.Abstractions.Attributes;
-using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
-using OpenSmc.Ifrs17.Domain.DataModel.Interfaces;
+using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
+using OpenSmc.Ifrs17.DataTypes.DataModel.Interfaces;
 
-namespace OpenSmc.Ifrs17.Domain.DataModel.TransactionalData;
+namespace OpenSmc.Ifrs17.DataTypes.DataModel.TransactionalData;
 
 public abstract record BaseDataRecord : BaseVariableIdentity, IKeyed, IPartitioned
 {

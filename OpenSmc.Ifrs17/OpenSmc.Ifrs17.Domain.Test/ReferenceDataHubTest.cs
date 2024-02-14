@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
 using OpenSmc.Data;
 using OpenSmc.Hub.Fixture;
-using OpenSmc.Ifrs17.Domain.DataModel;
-using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
+using OpenSmc.Ifrs17.DataTypes.DataModel;
+using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
 using OpenSmc.Messaging;
 using Xunit;
 using Xunit.Abstractions;

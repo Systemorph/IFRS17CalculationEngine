@@ -1,4 +1,4 @@
-namespace OpenSmc.Ifrs17.Domain.Constants.Enumerates;
+namespace OpenSmc.Ifrs17.DataTypes.Constants.Enumerates;
 
 [Flags]
 public enum StructureType

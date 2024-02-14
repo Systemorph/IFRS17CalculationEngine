@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using OpenSmc.Domain.Abstractions;
 using OpenSmc.Domain.Abstractions.Attributes;
-using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
+using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
 
-namespace OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
+namespace OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 
 public record ReportingNode : KeyedDimension, IHierarchicalDimension
 {

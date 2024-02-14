@@ -1,7 +1,7 @@
 using OpenSmc.DataCubes;
 using OpenSmc.Domain.Abstractions.Attributes;
 
-namespace OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
+namespace OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 
 public abstract record KeyedOrderedDimension : KeyedDimension, IOrdered
 {
