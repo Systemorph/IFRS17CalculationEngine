@@ -6,8 +6,6 @@ using OpenSmc.Data;
 using OpenSmc.Import;
 using Xunit;
 using Xunit.Abstractions;
-using System.ComponentModel.DataAnnotations;
-using System.IO.Enumeration;
 using OpenSmc.Ifrs17.DataTypes.Constants.Enumerates;
 using OpenSmc.Import.Test;
 using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
@@ -15,7 +13,7 @@ using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 
 namespace OpenSmc.Ifrs17.ReferenceDataHub.Test;
 
-    public class ImportTest(ITestOutputHelper output) : HubTestBase(output)
+    public class ImportReferenceDataTest(ITestOutputHelper output) : HubTestBase(output)
     {
         public static readonly Dictionary<Type, IEnumerable<object>> ReferenceDataDomain
             =
