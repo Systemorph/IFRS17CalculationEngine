@@ -38,7 +38,7 @@ CH,2020,12,,DT10.2,PR,BE,BOP,N,,Monthly,Uniform,1000,";
             AmountType = "DAE",
             AocType = "BOP", 
             Novelty = "N", 
-            ReportingNode = "CH",
+            ReportingNode = "DE",
             Year = 2020,
             Month = 12, 
             Scenario = null,
@@ -54,6 +54,7 @@ CH,2020,12,,DT10.2,PR,BE,BOP,N,,Monthly,Uniform,1000,";
         importResponse.Message.Log.Status.Should().Be(ActivityLogStatus.Succeeded);
         var rawVariableItems = await client.AwaitResponse(new GetManyRequest<RawVariable>(), 
             o => o.WithTarget(new HostAddress()));
+        rawVariableItems.Message.Items.Count.Should().Be(2);
     }
 }
 
