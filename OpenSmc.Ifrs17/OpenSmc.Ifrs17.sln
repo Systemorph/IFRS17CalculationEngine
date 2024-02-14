@@ -121,6 +121,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.DataStorage.EntityF
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Import.Test", "..\OpenSmc\test\OpenSmc.Import.Test\OpenSmc.Import.Test.csproj", "{0B5C8819-E213-43BC-A820-039281E7BC48}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenSmc.Ifrs17.ReferenceDataHub.Test", "OpenSmc.Ifrs17.ReferenceDataHub.Test\OpenSmc.Ifrs17.ReferenceDataHub.Test.csproj", "{C3C7626C-501F-4348-A50C-3DC85060CB08}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -815,6 +817,18 @@ Global
 		{0B5C8819-E213-43BC-A820-039281E7BC48}.Release|arm64.Build.0 = Release|Any CPU
 		{0B5C8819-E213-43BC-A820-039281E7BC48}.Release|x86.ActiveCfg = Release|Any CPU
 		{0B5C8819-E213-43BC-A820-039281E7BC48}.Release|x86.Build.0 = Release|Any CPU
+		{C3C7626C-501F-4348-A50C-3DC85060CB08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3C7626C-501F-4348-A50C-3DC85060CB08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3C7626C-501F-4348-A50C-3DC85060CB08}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{C3C7626C-501F-4348-A50C-3DC85060CB08}.Debug|arm64.Build.0 = Debug|Any CPU
+		{C3C7626C-501F-4348-A50C-3DC85060CB08}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C3C7626C-501F-4348-A50C-3DC85060CB08}.Debug|x86.Build.0 = Debug|Any CPU
+		{C3C7626C-501F-4348-A50C-3DC85060CB08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3C7626C-501F-4348-A50C-3DC85060CB08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3C7626C-501F-4348-A50C-3DC85060CB08}.Release|arm64.ActiveCfg = Release|Any CPU
+		{C3C7626C-501F-4348-A50C-3DC85060CB08}.Release|arm64.Build.0 = Release|Any CPU
+		{C3C7626C-501F-4348-A50C-3DC85060CB08}.Release|x86.ActiveCfg = Release|Any CPU
+		{C3C7626C-501F-4348-A50C-3DC85060CB08}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
