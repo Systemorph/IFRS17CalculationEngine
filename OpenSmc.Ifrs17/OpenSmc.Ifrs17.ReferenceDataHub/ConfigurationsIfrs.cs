@@ -32,13 +32,13 @@ public static class DataHubConfiguration
 
         return configuration.AddData(dc => dc.WithDataSource("ReferenceDataSource",
             ds => ds.WithType<AmountType>(t => t.WithKey(x => x.SystemName)
-                        .WithInitialization(async () => await Task.FromResult(new List<AmountType>()))
+                        .WithInitialData(async () => await Task.FromResult(new List<AmountType>()))
                         .WithUpdate(AddAmountType)
                         .WithAdd(AddAmountType)
                         .WithDelete(RemoveAmountType)
                 )
                 .WithType<AocStep>(t => t.WithKey(x => (x.AocType, x.Novelty))
-                    .WithInitialization(async () => await Task.FromResult(new List<AocStep>()))
+                    .WithInitialData(async () => await Task.FromResult(new List<AocStep>()))
                     .WithUpdate(AddAocStep)
                     .WithAdd(AddAocStep)
                     .WithDelete(RemoveAocStep))));
