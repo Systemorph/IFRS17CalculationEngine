@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Dynamic;
 using OpenSmc.Domain.Abstractions.Attributes;
 using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
 using OpenSmc.Ifrs17.DataTypes.DataModel.Interfaces;
@@ -15,6 +16,8 @@ public abstract record BaseDataRecord : BaseVariableIdentity, IKeyed
     //public Guid Partition { get; init; }
 
     //[Conversion(typeof(PrimitiveArrayConverter))]
+    public double[] Values { get; init; }
+
     public double Value { get; set; }
 
     [NotVisible]

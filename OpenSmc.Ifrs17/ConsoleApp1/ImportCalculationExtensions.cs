@@ -1,19 +1,17 @@
 using OpenSmc.Data;
+using OpenSmc.DataCubes;
 using OpenSmc.DataStructures;
 using OpenSmc.Hierarchies;
-using OpenSmc.Ifrs17.Domain.Constants;
-using OpenSmc.Ifrs17.Domain.Constants.Enumerates;
-using OpenSmc.Ifrs17.Domain.DataModel;
-using OpenSmc.Ifrs17.Domain.DataModel.Args;
-using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
-using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
-using OpenSmc.Ifrs17.Domain.DataModel.TransactionalData;
-using Systemorph.Vertex.DataCubes;
-using Systemorph.Vertex.DataCubes.Api;
+using OpenSmc.Ifrs17.DataTypes.Constants;
+using OpenSmc.Ifrs17.DataTypes.Constants.Enumerates;
+using OpenSmc.Ifrs17.DataTypes.DataModel;
+using OpenSmc.Ifrs17.DataTypes.DataModel.Args;
+using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
+using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
+using OpenSmc.Ifrs17.DataTypes.DataModel.TransactionalData;
 
 
-
-namespace OpenSmc.Ifrs17.Domain.Utils;
+namespace OpenSms.Ifrs17.CalculationScopes;
 
 public static class ImportCalculationExtensions
 {
@@ -43,7 +41,7 @@ public static class ImportCalculationExtensions
         double nonPerformanceRiskRate) //NonPerformanceRiskRate consider to be constant in time. Refinement would it be an array that takes as input tau/t.
     {
         if (!monthlyDiscounting.Any())
-            monthlyDiscounting = new[] {1d}; //Empty discounting array triggers Cumulation.
+            monthlyDiscounting = new[] { 1d }; //Empty discounting array triggers Cumulation.
         return Enumerable.Range(0, nominalValues.Length)
             .Select(t => Enumerable.Range(t, nominalValues.Length - t)
                 .Select(tau =>
@@ -54,34 +52,34 @@ public static class ImportCalculationExtensions
     }
 
 
-    public static IDataCube<RawVariable> ComputeDiscountAndCumulate(this IDataCube<RawVariable>? nominalRawVariables,
-        double[] yearlyDiscountRates, AmountType[] amountTypes)
-    {
-        if (nominalRawVariables == null) return Enumerable.Empty<RawVariable>().ToDataCube();
-        Dictionary<string?, PeriodType> periodTypeByAmountType = amountTypes.ToDictionary(x => x.SystemName, x => x.PeriodType);
+    //public static IDataCube<RawVariable> ComputeDiscountAndCumulate(this IDataCube<RawVariable>? nominalRawVariables,
+    //    double[] yearlyDiscountRates, AmountType[] amountTypes)
+    //{
+    //    if (nominalRawVariables == null) return Enumerable.Empty<RawVariable>().ToDataCube();
+    //    Dictionary<string?, PeriodType> periodTypeByAmountType = amountTypes.ToDictionary(x => x.SystemName, x => x.PeriodType);
 
-        return nominalRawVariables.Select(rv =>
-            {
-                var values = rv.Values.ToArray();
-                var cdcf = new double[values.Length];
-                periodTypeByAmountType.TryGetValue(rv.AmountType, out var period);
+    //    return nominalRawVariables.Select(rv =>
+    //        {
+    //            var values = rv.Values.ToArray();
+    //            var cdcf = new double[values.Length];
+    //            periodTypeByAmountType.TryGetValue(rv.AmountType, out var period);
 
-                if (period == PeriodType.BeginningOfPeriod)
-                {
-                    for (var i = cdcf.Length - 1; i >= 0; i--)
-                        cdcf[i] = values[i] + cdcf.GetValidElement(i + 1) * yearlyDiscountRates.GetValidElement(i / 12);
-                }
-                else
-                {
-                    for (var i = cdcf.Length - 1; i >= 0; i--)
-                        cdcf[i] = (values[i] + cdcf.GetValidElement(i + 1)) *
-                                  yearlyDiscountRates.GetValidElement(i / 12);
-                }
+    //            if (period == PeriodType.BeginningOfPeriod)
+    //            {
+    //                for (var i = cdcf.Length - 1; i >= 0; i--)
+    //                    cdcf[i] = values[i] + cdcf.GetValidElement(i + 1) * yearlyDiscountRates.GetValidElement(i / 12);
+    //            }
+    //            else
+    //            {
+    //                for (var i = cdcf.Length - 1; i >= 0; i--)
+    //                    cdcf[i] = (values[i] + cdcf.GetValidElement(i + 1)) *
+    //                              yearlyDiscountRates.GetValidElement(i / 12);
+    //            }
 
-                return rv with {Values = cdcf};
-            })
-            .ToDataCube();
-    }
+    //            return rv with { Values = cdcf };
+    //        })
+    //        .ToDataCube();
+    //}
 
 
     public static double NewBusinessInterestAccretion(this IEnumerable<double> values,
@@ -211,22 +209,22 @@ public static class ImportCalculationExtensions
     }
 
 
-    public static HashSet<string> GetNonAttributableAmountTypes() => new string[] {AmountTypes.NE}.ToHashSet();
+    public static HashSet<string> GetNonAttributableAmountTypes() => new string[] { AmountTypes.NE }.ToHashSet();
 
 
     public static HashSet<string> GetTechnicalMarginEstimateType()
     {
-        return new[] {EstimateTypes.C, EstimateTypes.L, EstimateTypes.LR,}.ToHashSet();
+        return new[] { EstimateTypes.C, EstimateTypes.L, EstimateTypes.LR, }.ToHashSet();
     }
 
 
     public static HashSet<string> GetAocTypeWithoutCsmSwitch() =>
-        new[] {AocTypes.BOP, AocTypes.EOP, AocTypes.AM, AocTypes.EA}.ToHashSet();
+        new[] { AocTypes.BOP, AocTypes.EOP, AocTypes.AM, AocTypes.EA }.ToHashSet();
 
 
     public static class ComputationHelper
     {
-        public static HashSet<string> ReinsuranceAocType = new[] {AocTypes.CRU, AocTypes.RCU}.ToHashSet();
+        public static HashSet<string> ReinsuranceAocType = new[] { AocTypes.CRU, AocTypes.RCU }.ToHashSet();
 
         public static Dictionary<AocStep, IEnumerable<AocStep>> ReferenceAocSteps => new()
         {
@@ -239,7 +237,7 @@ public static class ImportCalculationExtensions
             {{EstimateTypes.A, EstimateTypes.APA}, {EstimateTypes.BE, EstimateTypes.BEPA}};
 
         public static HashSet<DataType> CurrentPeriodCalculatedDataTypes =
-            new[] {DataType.Calculated, DataType.CalculatedTelescopic}.ToHashSet();
+            new[] { DataType.Calculated, DataType.CalculatedTelescopic }.ToHashSet();
     }
 
 
