@@ -25,6 +25,13 @@ ReportingNode,Year,Quarter,Scenario,DataNode,AmountType,EstimateType,AocType,Nov
 CH,2020,12,,DT10,DAE,BE,BOP,N,,Monthly,Uniform,1000
 CH,2020,12,,DT10,PR,BE,BOP,N,,Monthly,Uniform,1000";
 
+    private const string actualsCsv =
+        @"@@RawVariable
+ReportingNode,Year,Month,Scenario,DataNode,AocType,AmountType,EstimateType,AccidentYear,Value
+CH,2020,12,,DT1,CF,PR,A,,400
+CH,2020,12,,DT1,CF,NIC,A,,-280
+CH,2020,12,,DT1,CF,DAE,A,,-140";
+
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration) =>
         base.ConfigureHost(configuration).AddData(data => data.WithDataSource(nameof(DataSource), 
             source => source.WithType<RawVariable>(t => t.WithKey(x => 
@@ -57,6 +64,18 @@ CH,2020,12,,DT10,PR,BE,BOP,N,,Monthly,Uniform,1000";
         var rawVariableItems = await client.AwaitResponse(new GetManyRequest<RawVariable>(), 
             o => o.WithTarget(new HostAddress()));
         rawVariableItems.Message.Items.Count.Should().Be(3);
+    }
+
+    [Fact]
+    public async Task ImportActualsTest()
+    {
+        var client = GetClient();
+        var importRequest = new ImportRequest(actualsCsv);
+        var importResponse = await client.AwaitResponse(importRequest, o => o.WithTarget(new HostAddress()));
+        importResponse.Message.Log.Status.Should().Be(ActivityLogStatus.Succeeded);
+        var rawVariableItems = await client.AwaitResponse(new GetManyRequest<RawVariable>(),
+            o => o.WithTarget(new HostAddress()));
+        rawVariableItems.Message.Items.Count.Should().Be(4);
     }
 }
 
