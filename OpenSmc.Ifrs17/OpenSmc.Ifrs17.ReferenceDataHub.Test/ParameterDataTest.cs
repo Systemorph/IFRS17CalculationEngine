@@ -38,9 +38,10 @@ public class ImportParameterTest(ITestOutputHelper output) : HubTestBase(output)
 
     private const string YieldCurveCsv =
         @"@@YieldCurve
-Year,Month,Currency,Scenario,Name,Values0,Values1,Values2,Values3
-2019,12,CHF,,,0,0,1,2
-2019,12,XTSHY,,,1,1,1,1
-2019,12,EUR,,,0,0,0,0
-2019,12,EUR,,NoDiscount,0,0,0,0";
+            Year,Month,Currency,Scenario,Name,Values0,Values1,Values2,Values3
+            2019,12,CHF,,0,0,0.015,0.02
+            2019,12,XTSHY,,0.85,0.85,0.85,0.85
+            2019,12,EUR,,0,0,0,0
+            2019,12,EUR,NoDiscount,0,0,0,0
+            2019,12,EUR,3PCT,0.03,0.03,0.03,0.03";
 }
