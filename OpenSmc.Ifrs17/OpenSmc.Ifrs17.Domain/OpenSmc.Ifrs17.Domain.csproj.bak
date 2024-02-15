@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="morelinq" Version="4.1.0" />
+    <PackageReference Include="Systemorph.Activities" Version="1.6.5" /> 
+    <PackageReference Include="Systemorph.DataSource" Version="1.6.4" />
+    <PackageReference Include="Systemorph.DataSource.Conversions" Version="1.6.4" />
+    <PackageReference Include="Systemorph.Export" Version="1.6.7" />
+    <PackageReference Include="Systemorph.Import" Version="1.6.7" />
+    <PackageReference Include="Systemorph.InteractiveObjects" Version="1.6.5" />
+    <PackageReference Include="Systemorph.OneDrive" Version="1.6.5" />
+    <PackageReference Include="Systemorph.SharePoint" Version="1.6.5" />
+    <PackageReference Include="Systemorph.Test" Version="1.6.5" />
+	<PackageReference Include="Systemorph.Reporting" Version="1.6.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Arithmetics\OpenSmc.Arithmetics.csproj" />
+    <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.DataCubes.Abstractions\OpenSmc.DataCubes.Abstractions.csproj" />
+    <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.DataStructures\OpenSmc.DataStructures.csproj" />
+    <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Hierarchies\OpenSmc.Hierarchies.csproj" />
+    <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Pivot\OpenSmc.Pivot.csproj" />
+    <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Scopes\OpenSmc.Scopes.csproj" />
+  </ItemGroup>
+
+</Project>
