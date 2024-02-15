@@ -35,7 +35,7 @@ CH,2020,12,,DT1,CF,DAE,A,,-140";
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration) =>
         base.ConfigureHost(configuration).AddData(data => data.WithDataSource(nameof(DataSource), 
             source => source.WithType<RawVariable>(t => t.WithKey(x => 
-                (x.ReportingNode, x.Year, x.Month, x.AmountType, x.Novelty, x.DataNode, x.EstimateType))
+                (x.ReportingNode, x.Year, x.AmountType, x.Novelty, x.Month, x.DataNode, x.EstimateType))
                 .WithInitialData(_referenceRawVariable[typeof(RawVariable)].Cast<RawVariable>()))))
             .AddImport(imp => imp);
 
