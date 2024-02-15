@@ -7,7 +7,7 @@ using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 
 namespace OpenSmc.Ifrs17.DataTypes.DataModel;
 
-public record YieldCurve : /*KeyedRecord,*/ IWithYearMonthAndScenario
+public record YieldCurve : IKeyed, IWithYearMonthAndScenario
 {
     public YieldCurve(string currency, int year, int month, string? scenario, string? name, double[] values)
     {
@@ -18,6 +18,8 @@ public record YieldCurve : /*KeyedRecord,*/ IWithYearMonthAndScenario
         Name = name;
         Values = values;
     }
+
+    [Key][NotVisible] public Guid Id { get; init; }
 
     [Required]
     [IdentityProperty]

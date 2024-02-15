@@ -12,7 +12,7 @@ namespace OpenSmc.Ifrs17.ReferenceDataHub.Test;
 
 public class ImportParameterTest(ITestOutputHelper output) : HubTestBase(output)
 {
-    public static readonly Dictionary<Type, IEnumerable<object>> FinancialDataDomain
+    private static readonly Dictionary<Type, IEnumerable<object>> FinancialDataDomain
         =
         new() { { typeof(YieldCurve), new[] { new YieldCurve("USD", 2019, 12, null, null, new []{0.0, 0.1, 0.2, 0.0} ) } } };
 
