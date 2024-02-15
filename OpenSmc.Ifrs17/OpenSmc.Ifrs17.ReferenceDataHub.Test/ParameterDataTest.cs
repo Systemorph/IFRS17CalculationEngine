@@ -14,7 +14,7 @@ public class ImportParameterTest(ITestOutputHelper output) : HubTestBase(output)
 {
     private static readonly Dictionary<Type, IEnumerable<object>> FinancialDataDomain
         =
-        new() { { typeof(YieldCurve), new[] { new YieldCurve("USD", 2019, 12, null, null, new []{0.0, 0.1, 0.2, 0.0} ) } } };
+        new() { { typeof(YieldCurve), new[] { new YieldCurve("CHF", 2019, 12, null, null, new []{0.0, 0.1, 0.2, 0.0} ) } } };
 
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration) =>
        base.ConfigureHost(configuration).AddData(data => data.WithDataSource(nameof(DataSource),
@@ -33,15 +33,14 @@ public class ImportParameterTest(ITestOutputHelper output) : HubTestBase(output)
 
         var items = await client.AwaitResponse(new GetManyRequest<YieldCurve>(),
             o => o.WithTarget(new HostAddress()));
-        items.Message.Items.Should().HaveCount(5);
+        items.Message.Items.Should().HaveCount(4);
     }
 
     private const string YieldCurveCsv =
-        @"@@YieldCurve,,,,,
+        @"@@YieldCurve
 Year,Month,Currency,Scenario,Name,Values0,Values1,Values2,Values3
-2019,12,CHF,,,0,0,0.015,0.02
-2019,12,XTSHY,,,0.85,0.85,0.85,0.85
+2019,12,CHF,,,0,0,1,2
+2019,12,XTSHY,,,1,1,1,1
 2019,12,EUR,,,0,0,0,0
-2019,12,EUR,,NoDiscount,0,0,0,0
-2019,12,EUR,,3PCT,0.03,0.03,0.03,0.03";
+2019,12,EUR,,NoDiscount,0,0,0,0";
 }
