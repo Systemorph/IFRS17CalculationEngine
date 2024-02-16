@@ -2,7 +2,7 @@
 using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
 using OpenSmc.Scopes;
 
-namespace OpenSms.Ifrs17.CalculationScopes.QueryScopes
+namespace OpenSmc.Ifrs17.CalculationScopes.QueryScopes
 {
     internal interface IAmountType : IScope<(ImportIdentity Identity, string name), ImportStorage>
     {

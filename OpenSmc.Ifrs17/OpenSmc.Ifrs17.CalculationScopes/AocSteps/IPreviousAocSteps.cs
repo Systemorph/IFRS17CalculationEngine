@@ -1,10 +1,10 @@
+using OpenSmc.Ifrs17.CalculationScopes.Identities;
 using OpenSmc.Ifrs17.DataTypes.Constants;
 using OpenSmc.Ifrs17.DataTypes.Constants.Enumerates;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Scopes;
-using OpenSms.Ifrs17.CalculationScopes.Identities;
 
-namespace OpenSms.Ifrs17.CalculationScopes.AocSteps;
+namespace OpenSmc.Ifrs17.CalculationScopes.AocSteps;
 
 public interface IPreviousAocSteps : IScope<(ImportIdentity Id, StructureType AocStructure), ImportStorage>
 {

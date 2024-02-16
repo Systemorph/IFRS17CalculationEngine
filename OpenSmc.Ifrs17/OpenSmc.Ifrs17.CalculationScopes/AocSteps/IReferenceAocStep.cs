@@ -4,18 +4,18 @@ using OpenSmc.Ifrs17.DataTypes.Constants.Enumerates;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Scopes;
 
-namespace OpenSms.Ifrs17.CalculationScopes.AocSteps;
+namespace OpenSmc.Ifrs17.CalculationScopes.AocSteps;
 
 public interface IReferenceAocStep : IScope<ImportIdentity, ImportStorage>
 {
     static int FirstNextYearProjection() => 0;
 
     static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>
-        builder.ForScope<IReferenceAocStep>(s => s.WithApplicability<IReferenceAocStepForProjections>(x => 
+        builder.ForScope<IReferenceAocStep>(s => s.WithApplicability<IReferenceAocStepForProjections>(x =>
             x.Identity.ProjectionPeriod >= FirstNextYearProjection()));
 
     protected IEnumerable<AocStep> referenceForCalculated => GetScope<IPreviousAocSteps>((Identity, StructureType.AocPresentValue)).Values
-        .GroupBy(g => g.Novelty, 
+        .GroupBy(g => g.Novelty,
             (g, val) => val.Last(aocStep => !ImportCalculationExtensions
                 .ComputationHelper
                 .CurrentPeriodCalculatedDataTypes

@@ -1,9 +1,9 @@
+using OpenSmc.Ifrs17.CalculationScopes.AocSteps;
 using OpenSmc.Ifrs17.DataTypes.Constants;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Scopes;
-using OpenSms.Ifrs17.CalculationScopes.AocSteps;
 
-namespace OpenSms.Ifrs17.CalculationScopes.NominalCashflow;
+namespace OpenSmc.Ifrs17.CalculationScopes.NominalCashflow;
 
 public interface INominalCashflow : IScope<(ImportIdentity Id, string AmountType, string EstimateType, int? AccidentYear), ImportStorage>
 {

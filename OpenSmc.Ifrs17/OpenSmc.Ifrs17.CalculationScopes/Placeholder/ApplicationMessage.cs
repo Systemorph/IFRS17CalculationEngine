@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 using OpenSmc.Activities;
 using OpenSmc.Ifrs17.DataTypes.Constants.Validations;
 
-namespace OpenSms.Ifrs17.CalculationScopes.Placeholder;
+namespace OpenSmc.Ifrs17.CalculationScopes.Placeholder;
 
 public static class ApplicationMessage
 {

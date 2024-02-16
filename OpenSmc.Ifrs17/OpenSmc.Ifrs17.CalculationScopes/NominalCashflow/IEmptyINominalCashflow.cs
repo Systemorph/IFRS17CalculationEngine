@@ -1,4 +1,4 @@
-namespace OpenSms.Ifrs17.CalculationScopes.NominalCashflow;
+namespace OpenSmc.Ifrs17.CalculationScopes.NominalCashflow;
 
 public interface IEmptyINominalCashflow : INominalCashflow
 {
