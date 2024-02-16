@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using OpenSmc.Data;
 using OpenSmc.Hub.Fixture;
+using OpenSmc.Ifrs17.DataTypes.Constants.Enumerates;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
 using OpenSmc.Messaging;
@@ -90,11 +91,8 @@ public class ReferenceDataHubTest(ITestOutputHelper output) : HubTestBase(output
     {
         var updateItems = new AmountType[]
         {
-            new()
-            {
-                SystemName = "W", DisplayName = "WriteOff"
-
-            }
+            new AmountType( "W", "WriteOff", "", 10, PeriodType.BeginningOfPeriod)
+            
         };
         var client = GetClient();
         var updateResponse = await client.AwaitResponse(new UpdateDataRequest(updateItems), 
@@ -111,11 +109,7 @@ public class ReferenceDataHubTest(ITestOutputHelper output) : HubTestBase(output
         _testReferenceData.Reset();
         var deleteItems = new AmountType[]
         {
-            new()
-            {
-                SystemName = "E",
-                DisplayName = "Expenses"
-            }
+            new AmountType("E", "Expenses","", 10, PeriodType.BeginningOfPeriod)
         };
         var client = GetClient();
         var deleteResponse = await client.AwaitResponse(new DeleteDataRequest(deleteItems),
