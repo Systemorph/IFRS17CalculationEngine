@@ -37,8 +37,9 @@
   </ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="morelinq" Version="4.1.0" />
+		<ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Data\OpenSmc.Data.csproj" />
 		<ProjectReference Include="..\..\OpenSmc\test\OpenSmc.Hub.Fixture\OpenSmc.Hub.Fixture.csproj" />
-		<ProjectReference Include="..\OpenSmc.Ifrs17.ReferenceDataHub\OpenSmc.Ifrs17.ReferenceDataHub.csproj" />
+		<ProjectReference Include="..\OpenSmc.Ifrs17.DataTypes\OpenSmc.Ifrs17.DataTypes.csproj" />
 	</ItemGroup>
 
 </Project>
