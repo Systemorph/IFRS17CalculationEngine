@@ -6,16 +6,25 @@ using OpenSmc.Scopes;
 
 namespace OpenSms.Ifrs17.CalculationScopes.AocSteps;
 
-public interface IReferenceAocStep : IScope<ImportIdentity>
+public interface IReferenceAocStep : IScope<ImportIdentity, ImportStorage>
 {
     static int FirstNextYearProjection() => 0;
+
     static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>
-        builder.ForScope<IReferenceAocStep>(s => s.WithApplicability<IReferenceAocStepForProjections>(x => x.Identity.ProjectionPeriod >= FirstNextYearProjection()));
+        builder.ForScope<IReferenceAocStep>(s => s.WithApplicability<IReferenceAocStepForProjections>(x => 
+            x.Identity.ProjectionPeriod >= FirstNextYearProjection()));
 
     protected IEnumerable<AocStep> referenceForCalculated => GetScope<IPreviousAocSteps>((Identity, StructureType.AocPresentValue)).Values
-        .GroupBy(g => g.Novelty, (g, val) => val.Last(aocStep => !ImportCalculationExtensions.ComputationHelper.CurrentPeriodCalculatedDataTypes.Any(dt => GetStorage().AocConfigurationByAocStep[aocStep].DataType.Contains(dt))));
+        .GroupBy(g => g.Novelty, 
+            (g, val) => val.Last(aocStep => !ImportCalculationExtensions
+                .ComputationHelper
+                .CurrentPeriodCalculatedDataTypes
+                .Any(dt => GetStorage().AocConfigurationByAocStep[aocStep].DataType.RepeatOnce().Contains(dt))));
 
-    protected bool IsCalculatedAocStep => ImportCalculationExtensions.ComputationHelper.CurrentPeriodCalculatedDataTypes.Any(dt => GetStorage().AocConfigurationByAocStep[Identity.AocStep].DataType.Contains(dt));
+    protected bool IsCalculatedAocStep => ImportCalculationExtensions.ComputationHelper
+        .CurrentPeriodCalculatedDataTypes
+        .Any(dt => GetStorage().AocConfigurationByAocStep[Identity.AocStep]
+            .DataType.RepeatOnce().Contains(dt));
 
     IEnumerable<AocStep> Values => (
         IsCalculatedAocStep,

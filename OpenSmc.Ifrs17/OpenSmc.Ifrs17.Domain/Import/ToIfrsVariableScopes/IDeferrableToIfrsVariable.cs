@@ -9,7 +9,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import.ToIfrsVariableScopes;
 
-public interface IDeferrableToIfrsVariable : IScope<ImportIdentity, ImportStorage>
+public interface IDeferrableToIfrsVariable : IScope<ImportIdentity, ImportStorageOld>
 {
     protected string EconomicBasis => GetStorage().GetEconomicBasisDriver(Identity.DataNode);
     private int TimeStep => GetStorage().GetTimeStep(Identity.ProjectionPeriod);

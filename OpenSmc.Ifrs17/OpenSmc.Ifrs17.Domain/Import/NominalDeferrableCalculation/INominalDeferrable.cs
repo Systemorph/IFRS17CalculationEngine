@@ -7,7 +7,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import.NominalDeferrableCalculation;
 
-public interface INominalDeferrable : IScope<(ImportIdentity Id, int MonthlyShift), ImportStorage>
+public interface INominalDeferrable : IScope<(ImportIdentity Id, int MonthlyShift), ImportStorageOld>
 {
     static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>
         builder.ForScope<INominalDeferrable>(s => s

@@ -3,7 +3,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
-public interface IValidAmountType : IScope<string, ImportStorage>
+public interface IValidAmountType : IScope<string, ImportStorageOld>
 {
     static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>
         builder.ForScope<IValidAmountType>(s => s.WithApplicability<IBeAmountTypesFromIfrsVariables>(x => x.GetStorage().ImportFormat != ImportFormats.Cashflow ||

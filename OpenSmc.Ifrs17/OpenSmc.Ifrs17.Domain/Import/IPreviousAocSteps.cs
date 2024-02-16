@@ -5,7 +5,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
-public interface IPreviousAocSteps : IScope<(ImportIdentity Id, StructureType AocStructure), ImportStorage>
+public interface IPreviousAocSteps : IScope<(ImportIdentity Id, StructureType AocStructure), ImportStorageOld>
 {   
     private int AocStepOrder => GetStorage().AocConfigurationByAocStep[Identity.Id.AocStep].Order;
 

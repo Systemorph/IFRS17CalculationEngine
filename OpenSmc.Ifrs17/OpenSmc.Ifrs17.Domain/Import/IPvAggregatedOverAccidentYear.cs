@@ -6,7 +6,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
-public interface IPvAggregatedOverAccidentYear : IScope<(ImportIdentity Id, string AmountType, string EstimateType), ImportStorage>
+public interface IPvAggregatedOverAccidentYear : IScope<(ImportIdentity Id, string AmountType, string EstimateType), ImportStorageOld>
 {   
     [IdentityProperty][NotVisible][Dimension(typeof(EconomicBasis))]
     string EconomicBasis => GetContext();

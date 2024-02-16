@@ -7,7 +7,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
-public interface IRaLocked : IScope<ImportIdentity, ImportStorage>
+public interface IRaLocked : IScope<ImportIdentity, ImportStorageOld>
 {   
     [IdentityProperty][NotVisible][Dimension(typeof(EconomicBasis))]
     string EconomicBasis => EconomicBases.L;

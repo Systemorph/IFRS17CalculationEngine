@@ -5,7 +5,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
-public interface ITechnicalMarginAmountType : IScope<(ImportIdentity Id, string EstimateType), ImportStorage>
+public interface ITechnicalMarginAmountType : IScope<(ImportIdentity Id, string EstimateType), ImportStorageOld>
 {
     protected IEnumerable<string> AmountTypesToExclude => (Identity.EstimateType, Identity.Id.ValuationApproach) switch {
         (EstimateTypes.LR, ValuationApproaches.PAA) => GetStorage().GetCoverageUnits().Concat(GetStorage().GetNonAttributableAmountType()).Concat(AmountTypes.CDR.RepeatOnce()).Concat(GetStorage().GetAttributableExpenses()).Concat(GetStorage().GetDeferrableExpenses()).Concat(GetStorage().GetPremiums()),

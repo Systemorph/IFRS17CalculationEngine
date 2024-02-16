@@ -4,7 +4,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
-public interface IMonthlyRate : IScope<ImportIdentity, ImportStorage>
+public interface IMonthlyRate : IScope<ImportIdentity, ImportStorageOld>
 {
     private string EconomicBasis => GetContext();
     

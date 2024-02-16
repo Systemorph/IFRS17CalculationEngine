@@ -7,8 +7,7 @@ public interface ICreditDefaultRiskINominalCashflow : INominalCashflow
 {
     private double[] NominalClaimsCashflow => ReferenceAocSteps.SelectMany(refAocStep =>
             GetStorage().GetClaims()
-                .Select(claim => GetStorage().GetRawVariables()
-                    .GetValues(Identity.Id with { AocType = refAocStep.AocType, Novelty = refAocStep.Novelty }, claim, Identity.EstimateType, Identity.AccidentYear)))
+                .Select(claim => GetStorage().GetValues(Identity.Id with { AocType = refAocStep.AocType, Novelty = refAocStep.Novelty }, claim, Identity.EstimateType, Identity.AccidentYear)))
         .AggregateDoubleArray();
 
     private string CdrBasis => Identity.AmountType == AmountTypes.CDR ? EconomicBases.C : EconomicBases.L;

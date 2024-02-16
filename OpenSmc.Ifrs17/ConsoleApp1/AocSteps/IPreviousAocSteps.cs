@@ -6,7 +6,7 @@ using OpenSms.Ifrs17.CalculationScopes.Identities;
 
 namespace OpenSms.Ifrs17.CalculationScopes.AocSteps;
 
-public interface IPreviousAocSteps : IScope<(ImportIdentity Id, StructureType AocStructure)>
+public interface IPreviousAocSteps : IScope<(ImportIdentity Id, StructureType AocStructure), ImportStorage>
 {
     private int AocStepOrder => GetStorage().AocConfigurationByAocStep[Identity.Id.AocStep].Order;
 

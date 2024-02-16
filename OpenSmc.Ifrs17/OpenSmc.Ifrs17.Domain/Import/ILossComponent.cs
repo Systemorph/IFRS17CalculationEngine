@@ -6,7 +6,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
-public interface ILossComponent : IScope<ImportIdentity, ImportStorage>
+public interface ILossComponent : IScope<ImportIdentity, ImportStorageOld>
 {
     [NotVisible]string EstimateType => EstimateTypes.L;
     

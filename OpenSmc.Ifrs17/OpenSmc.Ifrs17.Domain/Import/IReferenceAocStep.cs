@@ -7,7 +7,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
-public interface IReferenceAocStep : IScope<ImportIdentity, ImportStorage>
+public interface IReferenceAocStep : IScope<ImportIdentity, ImportStorageOld>
 {
     static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>
         builder.ForScope<IReferenceAocStep>(s => s.WithApplicability<IReferenceAocStepForProjections>(x => x.Identity.ProjectionPeriod >= x.GetStorage().FirstNextYearProjection));

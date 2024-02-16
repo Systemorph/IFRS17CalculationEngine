@@ -4,7 +4,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
-public interface IGetIdentities : IScope<string, ImportStorage>
+public interface IGetIdentities : IScope<string, ImportStorageOld>
 {
     static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>
         builder.ForScope<IGetIdentities>(s => s.WithApplicability<ICashflowIGetIdentities>(x => x.GetStorage().ImportFormat == ImportFormats.Cashflow));

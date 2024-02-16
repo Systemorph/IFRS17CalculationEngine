@@ -7,7 +7,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
-public interface IContractualServiceMargin : IScope<ImportIdentity, ImportStorage>
+public interface IContractualServiceMargin : IScope<ImportIdentity, ImportStorageOld>
 {
     [NotVisible]string EstimateType => EstimateTypes.C;
      

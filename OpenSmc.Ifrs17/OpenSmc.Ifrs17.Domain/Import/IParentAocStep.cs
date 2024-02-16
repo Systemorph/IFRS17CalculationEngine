@@ -8,7 +8,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
-public interface IParentAocStep : IScope<(ImportIdentity Id, string AmountType, StructureType AocStructure), ImportStorage>
+public interface IParentAocStep : IScope<(ImportIdentity Id, string AmountType, StructureType AocStructure), ImportStorageOld>
 {
     private IEnumerable<AocStep> CalculatedAocStep => GetStorage().AocConfigurationByAocStep.Where(kvp => kvp.Value.DataType.Contains(DataType.Calculated)).Select(kvp => kvp.Key);
     

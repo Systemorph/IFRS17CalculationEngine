@@ -4,7 +4,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSms.Ifrs17.CalculationScopes.Identities;
 
-public interface IGetIdentities : IScope<string>
+public interface IGetIdentities : IScope<string, ImportStorage>
 {
     static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>
         builder.ForScope<IGetIdentities>(s => s.WithApplicability<ICashflowIGetIdentities>(x => x.GetStorage().ImportFormat == ImportFormats.Cashflow));

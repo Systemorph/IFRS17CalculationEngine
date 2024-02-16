@@ -7,7 +7,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import.LossRecoveryComponent;
 
-public interface ILossRecoveryComponent : IScope<ImportIdentity, ImportStorage>
+public interface ILossRecoveryComponent : IScope<ImportIdentity, ImportStorageOld>
 {
     static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>
         builder.ForScope<ILossRecoveryComponent>(s => s

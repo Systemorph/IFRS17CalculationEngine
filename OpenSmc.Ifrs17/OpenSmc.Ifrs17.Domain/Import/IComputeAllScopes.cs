@@ -7,7 +7,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
-public interface IComputeAllScopes: IScope<string, ImportStorage>
+public interface IComputeAllScopes: IScope<string, ImportStorageOld>
 {
     private IEnumerable<ImportIdentity> identities => Enumerable.Range(0, GetStorage().GetProjectionCount(Identity))
         .SelectMany(projectionPeriod => GetScope<IGetIdentities>(Identity).Identities.Select(id => id with { ProjectionPeriod = projectionPeriod}));

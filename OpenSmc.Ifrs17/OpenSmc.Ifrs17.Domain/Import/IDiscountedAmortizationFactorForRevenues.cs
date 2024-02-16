@@ -6,7 +6,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
-public interface IDiscountedAmortizationFactorForRevenues : IScope<ImportIdentity, ImportStorage>
+public interface IDiscountedAmortizationFactorForRevenues : IScope<ImportIdentity, ImportStorageOld>
 {
     [IdentityProperty][NotVisible][Dimension(typeof(EconomicBasis))] private string EconomicBasis => GetContext();
     

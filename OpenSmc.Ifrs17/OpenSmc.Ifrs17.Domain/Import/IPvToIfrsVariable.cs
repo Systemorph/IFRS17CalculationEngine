@@ -8,7 +8,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
-public interface IPvToIfrsVariable: IScope<ImportIdentity, ImportStorage>
+public interface IPvToIfrsVariable: IScope<ImportIdentity, ImportStorageOld>
 {
     static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>
         builder.ForScope<IPvToIfrsVariable>(s => s.WithApplicability<IEmptyIPvIfrsVariable>(x => 
