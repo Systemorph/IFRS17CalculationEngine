@@ -1,3 +1,4 @@
+using System.IO.Enumeration;
 using OpenSmc.Hub.Fixture;
 using FluentAssertions;
 using OpenSmc.Activities;
@@ -7,20 +8,30 @@ using OpenSmc.Import;
 using Xunit;
 using Xunit.Abstractions;
 using OpenSmc.Ifrs17.DataTypes.Constants.Enumerates;
+using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Import.Test;
 using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
 using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
+using OpenSmc.Ifrs17.DataTypes.Constants;
 
 namespace OpenSmc.Ifrs17.ReferenceDataHub.Test;
 
-    public class ImportReferenceDataTest(ITestOutputHelper output) : HubTestBase(output)
+public class ImportReferenceDataTest(ITestOutputHelper output) : HubTestBase(output)
     {
         public static readonly Dictionary<Type, IEnumerable<object>> ReferenceDataDomain
             =
             new()
             {
                 { typeof(AmountType), new[] { new AmountType( "PR", "WrongPremiums", "", 10, PeriodType.BeginningOfPeriod ) } },
-                { typeof(DeferrableAmountType), new DeferrableAmountType[] { new("DE", "WrongDeferrals", "", 10, PeriodType.BeginningOfPeriod) } }
+                { typeof(DeferrableAmountType), new DeferrableAmountType[] { new("DE", "WrongDeferrals", "", 10, PeriodType.BeginningOfPeriod) } },
+                { typeof(AocType), new AocType[] { new() { SystemName = "BoP", DisplayName = "BoP", Parent = "", Order = 10 } } },
+                { typeof(AocConfiguration), new AocConfiguration[] { new()
+                {
+                    AocType = "BoP", Novelty = "N", DataType = DataType.CalculatedProjection|DataType.Optional , InputSource = InputSource.Cashflow|InputSource.Actual|InputSource.Opening,
+                    StructureType = StructureType.PVACTM, FxPeriod = FxPeriod.BeginningOfPeriod,
+                    YcPeriod = PeriodType.BeginningOfPeriod, CdrPeriod = PeriodType.BeginningOfPeriod,
+                    ValuationPeriod = ValuationPeriod.BeginningOfPeriod, RcPeriod = PeriodType.BeginningOfPeriod, Order = 10, Year = 1900, Month = 1
+                } } }
             };
 
         protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
@@ -43,18 +54,27 @@ namespace OpenSmc.Ifrs17.ReferenceDataHub.Test;
             var importResponse = await client.AwaitResponse(importRequest, o => o.WithTarget(new HostAddress()));
             importResponse.Message.Log.Status.Should().Be(ActivityLogStatus.Succeeded);
 
-            var items = await client.AwaitResponse(new GetManyRequest<AmountType>(),
+            var atItems = await client.AwaitResponse(new GetManyRequest<AmountType>(),
                 o => o.WithTarget(new HostAddress()));
-            var items2 = await client.AwaitResponse(new GetManyRequest<DeferrableAmountType>(),
+            var datItems = await client.AwaitResponse(new GetManyRequest<DeferrableAmountType>(),
                 o => o.WithTarget(new HostAddress()));
-            items.Message.Items.Should().HaveCount(17)
+            var aocItems = await client.AwaitResponse(new GetManyRequest<AocType>(),
+                o => o.WithTarget(new HostAddress()));
+            var aoccItems = await client.AwaitResponse(new GetManyRequest<AocConfiguration>(),
+                o => o.WithTarget(new HostAddress()));
+
+            atItems.Message.Items.Should().HaveCount(17)
                 .And.ContainSingle(i => i.SystemName == "PR")
                 .Which.DisplayName.Should().Be("Premiums"); // we started with WrongPremiums....
-            items.Message.Items.Should().ContainSingle(i => i.SystemName == "NIC").Which.Parent.Should().Be("CL");
-
-            items2.Message.Items.Should().HaveCount(2)
+            atItems.Message.Items.Should().ContainSingle(i => i.SystemName == "NIC").Which.Parent.Should().Be("CL");
+            
+            datItems.Message.Items.Should().HaveCount(2)
                 .And.ContainSingle(i => i.SystemName == "DE")
                 .Which.DisplayName.Should().Be("Deferrals");
+
+            aocItems.Message.Items.Should().HaveCount(18);
+
+            aoccItems.Message.Items.Should().HaveCount(20);
         }
 
         private const string DimensionsCsv =
@@ -81,10 +101,6 @@ CU,Coverage Units,,150,EndOfPeriod,,,,,,,,
 SystemName,DisplayName,Parent,Order,PeriodType,,,,,,,,
 DE,Deferrals,,10,BeginningOfPeriod,,,,,,,,
 DAE,Aquisition Expenses,DE,20,BeginningOfPeriod,,,,,,,,
-";
-
-        private const string NotImported =
-            @"
 @@AocType,,,,,,,,,,,,
 SystemName,DisplayName,Parent,Order,,,,,,,,,
 BOP,Opening Balance,,10,,,,,,,,,
@@ -104,7 +120,6 @@ EA,Experience Adjustment,,140,,,,,,,,,
 AM,Amortization,,150,,,,,,,,,
 FX,FX Impact,,160,,,,,,,,,
 EOP,Closing Balance,,170,,,,,,,,,
-,,,,,,,,,,,,
 @@AocConfiguration,,,,,,,,,,,,
 AocType,Novelty,DataType,InputSource,StructureType,FxPeriod,YcPeriod,CdrPeriod,ValuationPeriod,RcPeriod,Order,Year,Month
 BOP,I,17,7,PV|AC|TM,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,BeginningOfPeriod,10,1900,1
@@ -128,6 +143,10 @@ CF,C,17,6,AC,Average,NotApplicable,NotApplicable,NotApplicable,NotApplicable,193
 WO,C,17,2,AC,Average,NotApplicable,NotApplicable,NotApplicable,NotApplicable,195,1900,1
 AM,C,4,6,TM,EndOfPeriod,NotApplicable,NotApplicable,NotApplicable,EndOfPeriod,200,1900,1
 EOP,C,4,6,PV|AC|TM,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,1900,1
+";
+
+        private const string NotImported =
+            @"
 ,,,,,,,,,,,,
 @@CreditRiskRating,,,,,,,,,,,,
 SystemName,DisplayName,,,,,,,,,,,

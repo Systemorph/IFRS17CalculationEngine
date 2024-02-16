@@ -1,6 +1,5 @@
 using OpenSmc.Collections;
 using OpenSmc.Ifrs17.DataTypes.Constants;
-using OpenSmc.Ifrs17.DataTypes.Constants.Enumerates;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Scopes;
 
