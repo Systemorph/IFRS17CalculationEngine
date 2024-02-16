@@ -3,7 +3,7 @@ using OpenSmc.Data;
 using OpenSmc.Domain.Abstractions;
 using OpenSmc.Hierarchies;
 
-namespace OpenSms.Ifrs17.CalculationScopes;
+namespace OpenSms.Ifrs17.CalculationScopes.Placeholder;
 
 public class HierarchyWithWorkspace<T> : IHierarchy<T>
     where T : class, IHierarchicalDimension
@@ -11,11 +11,11 @@ public class HierarchyWithWorkspace<T> : IHierarchy<T>
     private IDictionary<string, T> elementsBySystemName;
     private readonly IDictionary<string, IDictionary<int, string>> elementsBySystemNameAndLevels;
     private readonly IDictionary<int, IList<string>> dimensionsByLevel;
-    private readonly IWorkspace querySource;
+    private readonly IWorkspace _workspace;
 
-    public HierarchyWithWorkspace(IWorkspace querySource)
+    public HierarchyWithWorkspace(IWorkspace workspace)
     {
-        this.querySource = querySource;
+        _workspace = workspace;
         dimensionsByLevel = new Dictionary<int, IList<string>>();
         elementsBySystemNameAndLevels = new Dictionary<string, IDictionary<int, string>>();
     }
@@ -29,7 +29,7 @@ public class HierarchyWithWorkspace<T> : IHierarchy<T>
 
     public async Task InitializeAsync()
     {
-        elementsBySystemName = await querySource.GetData<T>().ToAsyncEnumerable().ToDictionaryAsync(x => x.SystemName);
+        elementsBySystemName = await _workspace.GetData<T>().ToAsyncEnumerable().ToDictionaryAsync(x => x.SystemName);
         AddChildren(0, GetPairs());
     }
 
@@ -41,9 +41,9 @@ public class HierarchyWithWorkspace<T> : IHierarchy<T>
     private IEnumerable<ChildParent> GetPairs()
     {
         return from dim in elementsBySystemName.Values
-            join parent in elementsBySystemName.Values on dim.Parent equals parent.SystemName into joined
-            from parent in joined.DefaultIfEmpty()
-            select new ChildParent { Child = dim, Parent = parent };
+               join parent in elementsBySystemName.Values on dim.Parent equals parent.SystemName into joined
+               from parent in joined.DefaultIfEmpty()
+               select new ChildParent { Child = dim, Parent = parent };
     }
 
     public T Get(string systemName)

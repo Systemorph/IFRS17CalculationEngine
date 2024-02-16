@@ -1,5 +1,4 @@
 using OpenSmc.Data;
-using OpenSmc.DataCubes;
 using OpenSmc.DataStructures;
 using OpenSmc.Hierarchies;
 using OpenSmc.Ifrs17.DataTypes.Constants;

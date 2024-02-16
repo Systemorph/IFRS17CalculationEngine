@@ -1,6 +1,5 @@
 using OpenSmc.Collections;
 using OpenSmc.Data;
-using OpenSmc.DataCubes;
 using OpenSmc.Domain.Abstractions;
 using OpenSmc.Hierarchies;
 using OpenSmc.Ifrs17.DataTypes.Constants;
@@ -11,24 +10,24 @@ using OpenSmc.Ifrs17.DataTypes.DataModel.Args;
 using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
 using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.DataTypes.DataModel.TransactionalData;
-using OpenSmc.Reflection;
 using OpenSmc.ServiceProvider;
+using OpenSms.Ifrs17.CalculationScopes.Placeholder;
 
 
 namespace OpenSms.Ifrs17.CalculationScopes;
 
 public class ImportStorage
 {
-    [Inject] private readonly IWorkspace workspace;
-    private readonly HierarchicalDimensionCacheWithWorkspace hierarchyCache;
-    private readonly ImportArgs args;
+    [Inject] public readonly IWorkspace Workspace; // This is the only row to survive 
+    private readonly HierarchicalDimensionCacheWithWorkspace _hierarchyCache;
+    private readonly ImportArgs _args;
 
     //Format
-    public string ImportFormat => args.ImportFormat;
+    public string ImportFormat => _args.ImportFormat;
 
     //Time Periods 
-    public (int Year, int Month) CurrentReportingPeriod => (args.Year, args.Month);
-    public (int Year, int Month) PreviousReportingPeriod => (args.Year - 1, Consts.MonthInAYear); // YTD Logic
+    public (int Year, int Month) CurrentReportingPeriod => (_args.Year, _args.Month);
+    public (int Year, int Month) PreviousReportingPeriod => (_args.Year - 1, Consts.MonthInAYear); // YTD Logic
 
 
     //Projections
@@ -57,18 +56,18 @@ public class ImportStorage
 
     private Dictionary<StructureType, HashSet<AocStep>> aocStepByStructureType;
 
-    //Dimensions
+    //Dimensions -- natural to get rid of dictionaries
     public Dictionary<string, AmountType> AmountTypeDimension { get; private set; }
     public Dictionary<string, Novelty> NoveltyDimension { get; private set; }
     public Dictionary<string, EstimateType> EstimateTypeDimension { get; private set; }
     public Dictionary<string, HashSet<string>> EstimateTypesByImportFormat { get; private set; }
 
     //Constructor
-    public ImportStorage(ImportArgs args, IWorkspace workspace)
+    public ImportStorage(ImportArgs args)
     {
-        this.workspace = workspace;
-        hierarchyCache = new HierarchicalDimensionCacheWithWorkspace(workspace);
-        this.args = args;
+        _hierarchyCache = new HierarchicalDimensionCacheWithWorkspace(Workspace);
+        this._args = args;
+
     }
 
     //Periods
@@ -95,7 +94,7 @@ public class ImportStorage
     public double[] GetYearlyYieldCurve(ImportIdentity id, string economicBasis)
     {
         var yc = GetYieldCurve(id, economicBasis);
-        var ret = yc.Values.Skip(args.Year - yc.Year);
+        var ret = yc.Values.Skip(_args.Year - yc.Year);
         return (ret.Any() ? ret : yc.Values.Last().RepeatOnce()).ToArray();
     }
 
@@ -108,8 +107,8 @@ public class ImportStorage
         (EconomicBases.C, PeriodType.EndOfPeriod) => GetCurrentYieldCurve(id.DataNode, Consts.CurrentPeriod),
         (EconomicBases.L, _) => LockedInYieldCurve.TryGetValue(id.DataNode, out var yc) && yc != null ? yc :
                                 (YieldCurve)ApplicationMessage.Log(Error.YieldCurveNotFound, id.DataNode, DataNodeDataBySystemName[id.DataNode].ContractualCurrency,
-                                                            DataNodeDataBySystemName[id.DataNode].Year.ToString(), args.Month.ToString(),
-                                                            args.Scenario, DataNodeDataBySystemName[id.DataNode].YieldCurveName),
+                                                            DataNodeDataBySystemName[id.DataNode].Year.ToString(), _args.Month.ToString(),
+                                                            _args.Scenario, DataNodeDataBySystemName[id.DataNode].YieldCurveName),
         (_, PeriodType.NotApplicable) => (YieldCurve)ApplicationMessage.Log(Error.YieldCurvePeriodNotApplicable, id.AocType, id.Novelty),
         (_, _) => (YieldCurve)ApplicationMessage.Log(Error.EconomicBasisNotFound, id.DataNode)
     };
@@ -152,7 +151,7 @@ public class ImportStorage
         if (!DataNodeDataBySystemName.TryGetValue(dataNode, out var dataNodeData)) ApplicationMessage.Log(Error.DataNodeNotFound, dataNode);
         if (AccidentYearsByDataNode.TryGetValue(dataNode, out var accidentYears))
             return dataNodeData.LiabilityType == LiabilityTypes.LIC
-                ? accidentYears.Where(ay => Consts.MonthInAYear * ay <= Consts.MonthInAYear * args.Year + GetShift(projectionPeriod) || ay == default).ToHashSet()
+                ? accidentYears.Where(ay => Consts.MonthInAYear * ay <= Consts.MonthInAYear * _args.Year + GetShift(projectionPeriod) || ay == default).ToHashSet()
                 : accidentYears;
         return new int?[] { default };
     }
@@ -246,258 +245,21 @@ public class ImportStorage
     public bool IsSecondaryScope(string dataNode) => DataNodesByImportScope[ImportScope.Secondary].Contains(dataNode);
 
     // Other
-    public IHierarchy<T> GetHierarchy<T>() where T : class, IHierarchicalDimension => hierarchyCache.Get<T>();
-    public IEnumerable<string> GetNonAttributableAmountType() => ImportCalculationExtensions.GetNonAttributableAmountTypes().SelectMany(at => hierarchyCache.Get<AmountType>(at).Descendants(includeSelf: true).Select(x => x.SystemName));
-    public IEnumerable<string> GetAttributableExpenseAndCommissionAmountType() => hierarchyCache.Get<AmountType>(AmountTypes.ACA).Descendants(includeSelf: true).Select(x => x.SystemName)
-                                                                                   .Concat(hierarchyCache.Get<AmountType>(AmountTypes.AEA).Descendants(includeSelf: true).Select(x => x.SystemName));
-    public IEnumerable<string> GetInvestmentClaims() => hierarchyCache.Get<AmountType>(AmountTypes.ICO).Descendants(includeSelf: true).Select(x => x.SystemName);
-    public IEnumerable<string> GetAttributableExpenses() => hierarchyCache.Get<AmountType>(AmountTypes.AE).Descendants(includeSelf: true).Select(x => x.SystemName);
-    public IEnumerable<string> GetDeferrableExpenses() => hierarchyCache.Get<AmountType>(AmountTypes.DE).Descendants(includeSelf: true).Select(x => x.SystemName);
-    public IEnumerable<string> GetPremiums() => hierarchyCache.Get<AmountType>(AmountTypes.PR).Descendants(includeSelf: true).Select(x => x.SystemName);
-    public IEnumerable<string> GetClaims() => hierarchyCache.Get<AmountType>(AmountTypes.CL).Descendants().Select(x => x.SystemName);
-    public IEnumerable<string> GetCdr() => hierarchyCache.Get<AmountType>(AmountTypes.CDR).Descendants(includeSelf: true).Select(x => x.SystemName);
-    public IEnumerable<string> GetCoverageUnits() => hierarchyCache.Get<AmountType>(AmountTypes.CU).Descendants(includeSelf: true).Select(x => x.SystemName);
+    public IHierarchy<T> GetHierarchy<T>() where T : class, IHierarchicalDimension => _hierarchyCache.Get<T>();
+    public IEnumerable<string> GetNonAttributableAmountType() => ImportCalculationExtensions.GetNonAttributableAmountTypes().SelectMany(at => _hierarchyCache.Get<AmountType>(at).Descendants(includeSelf: true).Select(x => x.SystemName));
+    public IEnumerable<string> GetAttributableExpenseAndCommissionAmountType() => _hierarchyCache.Get<AmountType>(AmountTypes.ACA).Descendants(includeSelf: true).Select(x => x.SystemName)
+                                                                                   .Concat(_hierarchyCache.Get<AmountType>(AmountTypes.AEA).Descendants(includeSelf: true).Select(x => x.SystemName));
+    public IEnumerable<string> GetInvestmentClaims() => _hierarchyCache.Get<AmountType>(AmountTypes.ICO).Descendants(includeSelf: true).Select(x => x.SystemName);
+    public IEnumerable<string> GetAttributableExpenses() => _hierarchyCache.Get<AmountType>(AmountTypes.AE).Descendants(includeSelf: true).Select(x => x.SystemName);
+    public IEnumerable<string> GetDeferrableExpenses() => _hierarchyCache.Get<AmountType>(AmountTypes.DE).Descendants(includeSelf: true).Select(x => x.SystemName);
+    public IEnumerable<string> GetPremiums() => _hierarchyCache.Get<AmountType>(AmountTypes.PR).Descendants(includeSelf: true).Select(x => x.SystemName);
+    public IEnumerable<string> GetClaims() => _hierarchyCache.Get<AmountType>(AmountTypes.CL).Descendants().Select(x => x.SystemName);
+    public IEnumerable<string> GetCdr() => _hierarchyCache.Get<AmountType>(AmountTypes.CDR).Descendants(includeSelf: true).Select(x => x.SystemName);
+    public IEnumerable<string> GetCoverageUnits() => _hierarchyCache.Get<AmountType>(AmountTypes.CU).Descendants(includeSelf: true).Select(x => x.SystemName);
 
     private YieldCurve GetCurrentYieldCurve(string dn, int period) =>
         CurrentYieldCurve.TryGetValue(dn, out var ycByPeriod) && ycByPeriod != null && ycByPeriod.TryGetValue(period, out var yc) ? yc :
         (YieldCurve)ApplicationMessage.Log(Error.YieldCurveNotFound, dn, DataNodeDataBySystemName[dn].ContractualCurrency, DataNodeDataBySystemName[dn].Year.ToString(),
-                                        args.Month.ToString(), args.Scenario, DataNodeDataBySystemName[dn].YieldCurveName);
-}
-
-
-
-public class HierarchicalDimensionCacheWithWorkspace : IHierarchicalDimensionCache
-{
-    private readonly IWorkspace querySource;
-    private readonly Dictionary<Type, IHierarchy> cachedDimensions = new();
-
-    public HierarchicalDimensionCacheWithWorkspace() { }
-
-    public HierarchicalDimensionCacheWithWorkspace(IWorkspace querySource)
-    {
-        this.querySource = querySource;
-    }
-
-    public IHierarchyNode<T> Get<T>(string systemName)
-        where T : class, IHierarchicalDimension
-    {
-        return Get<T>()?.GetHierarchyNode(systemName);
-    }
-
-    public IHierarchy<T> Get<T>()
-        where T : class, IHierarchicalDimension
-    {
-        if (!cachedDimensions.TryGetValue(typeof(T), out var inner))
-            return null;
-        return (IHierarchy<T>)inner;
-    }
-
-    public async Task InitializeAsync(params DimensionDescriptor[] dimensionDescriptors)
-    {
-        foreach (var type in dimensionDescriptors.Where(d => d.Type != null).Select(d => d.Type))
-        {
-            if (typeof(IHierarchicalDimension).IsAssignableFrom(type))
-                await InitializeAsyncMethod.MakeGenericMethod(type).InvokeAsActionAsync(this);
-        }
-    }
-
-    private static readonly IGenericMethodCache InitializeAsyncMethod =
-#pragma warning disable 4014
-        GenericCaches.GetMethodCache<HierarchicalDimensionCacheWithWorkspace>(x => x.InitializeAsync<IHierarchicalDimension>());
-#pragma warning restore 4014
-
-    public async Task InitializeAsync<T>()
-        where T : class, IHierarchicalDimension
-    {
-        if (querySource != null && !cachedDimensions.TryGetValue(typeof(T), out _))
-        {
-            var hierarchy = new HierarchyWithWorkspace<T>(querySource);
-            await hierarchy.InitializeAsync();
-            cachedDimensions[typeof(T)] = hierarchy;
-        }
-    }
-
-    public void Initialize<T>(IDictionary<string, T> outerElementsBySystemName)
-        where T : class, IHierarchicalDimension
-    {
-        if (outerElementsBySystemName != null && !cachedDimensions.TryGetValue(typeof(T), out _))
-        {
-            var hierarchy = new HierarchyWithWorkspace<T>(outerElementsBySystemName);
-            hierarchy.Initialize();
-            cachedDimensions[typeof(T)] = hierarchy;
-        }
-    }
-}
-
-
-
-public class HierarchyWithWorkspace<T> : IHierarchy<T>
-    where T : class, IHierarchicalDimension
-{
-    private IDictionary<string, T> elementsBySystemName;
-    private readonly IDictionary<string, IDictionary<int, string>> elementsBySystemNameAndLevels;
-    private readonly IDictionary<int, IList<string>> dimensionsByLevel;
-    private readonly IWorkspace querySource;
-
-    public HierarchyWithWorkspace(IWorkspace querySource)
-    {
-        this.querySource = querySource;
-        dimensionsByLevel = new Dictionary<int, IList<string>>();
-        elementsBySystemNameAndLevels = new Dictionary<string, IDictionary<int, string>>();
-    }
-
-    public HierarchyWithWorkspace(IDictionary<string, T> outerElementsBySystemName)
-    {
-        elementsBySystemName = outerElementsBySystemName;
-        dimensionsByLevel = new Dictionary<int, IList<string>>();
-        elementsBySystemNameAndLevels = new Dictionary<string, IDictionary<int, string>>();
-    }
-
-    public async Task InitializeAsync()
-    {
-        elementsBySystemName = await querySource.GetData<T>().ToAsyncEnumerable().ToDictionaryAsync(x => x.SystemName);
-        AddChildren(0, GetPairs());
-    }
-
-    public void Initialize()
-    {
-        if (elementsBySystemName != null) AddChildren(0, GetPairs());
-    }
-
-    private IEnumerable<ChildParent> GetPairs()
-    {
-        return from dim in elementsBySystemName.Values
-               join parent in elementsBySystemName.Values on dim.Parent equals parent.SystemName into joined
-               from parent in joined.DefaultIfEmpty()
-               select new ChildParent { Child = dim, Parent = parent };
-    }
-
-    public T Get(string systemName)
-    {
-        if (systemName == null || !elementsBySystemName.TryGetValue(systemName, out var ret))
-            return null;
-        return ret;
-    }
-
-    public IHierarchyNode<T> GetHierarchyNode(string systemName)
-    {
-        if (systemName == null || !elementsBySystemName.ContainsKey(systemName))
-            return null;
-        return new HierarchyNode<T>(systemName, this);
-    }
-
-    private readonly Dictionary<string, T[]> children = new();
-
-    public T[] Children(string systemName)
-    {
-        systemName ??= "";
-
-        return children.GetOrAdd(systemName, _ => elementsBySystemName.Values.Where(x => x.Parent == systemName).ToArray());
-    }
-
-    private readonly Dictionary<string, T[]> descendants = new();
-    private readonly Dictionary<string, T[]> descendantWithSelf = new();
-
-    public T[] Descendants(string systemName, bool includeSelf = false)
-    {
-        systemName ??= "";
-
-        if (includeSelf) return descendantWithSelf.GetOrAdd(systemName, _ => elementsBySystemNameAndLevels.Where(x => x.Value.Values.Contains(systemName))
-                                                                                                          .Select(x => elementsBySystemName[x.Key])
-                                                                                                          .ToArray());
-
-        return descendants.GetOrAdd(systemName, _ => elementsBySystemNameAndLevels.Where(x => x.Key != systemName && x.Value.Values.Contains(systemName))
-                                                                                      .Select(x => elementsBySystemName[x.Key])
-                                                                                      .ToArray());
-    }
-
-    private readonly Dictionary<string, T[]> ancestors = new();
-    private readonly Dictionary<string, T[]> ancestorsSelf = new();
-
-    public T[] Ancestors(string systemName, bool includeSelf = false)
-    {
-        systemName ??= "";
-
-        if (!elementsBySystemNameAndLevels.TryGetValue(systemName, out var levels)) return default;
-
-        if (includeSelf) return ancestorsSelf.GetOrAdd(systemName, _ => levels.Select(x => elementsBySystemName[x.Value]).ToArray());
-
-        return ancestors.GetOrAdd(systemName, _ => levels.Where(x => x.Value != systemName).Select(x => elementsBySystemName[x.Value]).ToArray());
-    }
-
-    private readonly Dictionary<string, T[]> siblings = new();
-    private readonly Dictionary<string, T[]> siblingsSelf = new();
-
-    public T[] Siblings(string systemName, bool includeSelf = false)
-    {
-        systemName ??= "";
-
-        if (includeSelf) return siblingsSelf.GetOrAdd(systemName, _ => elementsBySystemName.Values.Where(x => x.Parent == Get(systemName).Parent).ToArray());
-
-        return siblings.GetOrAdd(systemName, _ => elementsBySystemName.Values.Where(x => x.Parent == Get(systemName).Parent && x.SystemName != systemName).ToArray());
-    }
-
-    public int Level(string systemName)
-    {
-        if (!elementsBySystemNameAndLevels.TryGetValue(systemName, out var levels)) return 0;
-        return levels.Keys.Max();
-    }
-
-    public T AncestorAtLevel(string systemName, int level)
-    {
-        if (!elementsBySystemNameAndLevels.TryGetValue(systemName, out var levels)) return null;
-        if (!levels.TryGetValue(level, out var dimName)) return null;
-        elementsBySystemName.TryGetValue(dimName, out var dim);
-        return dim;
-    }
-
-    private readonly Dictionary<(string, int), T[]> descendantsAtLevel = new();
-
-    public T[] DescendantsAtLevel(string systemName, int level)
-    {
-        systemName ??= "";
-
-        return descendantsAtLevel.GetOrAdd((systemName, level),
-                                           _ => elementsBySystemNameAndLevels.Where(x => x.Value.Values.Contains(systemName) && x.Value.Keys.Max() == level)
-                                                                             .Select(x => elementsBySystemName[x.Key])
-                                                                             .ToArray());
-    }
-
-    private class ChildParent
-    {
-        public T Child { get; init; }
-        public T Parent { get; init; }
-    }
-
-    private void AddChildren(int level, IEnumerable<ChildParent> pairs)
-    {
-        var dimensionsFormPreviousLevel = level == 0
-                                              ? new List<string>()
-                                              : dimensionsByLevel[level - 1];
-
-        var dimensionsByThisLevel = pairs.GroupBy(x => level == 0 ? x.Parent == null : dimensionsFormPreviousLevel.Contains(x.Parent.SystemName))
-                                         .ToDictionary(x => x.Key, y => y);
-
-        if (dimensionsByThisLevel.TryGetValue(true, out var dimensionsOnThisLevel))
-        {
-            foreach (var dim in dimensionsOnThisLevel)
-            {
-                elementsBySystemNameAndLevels[dim.Child.SystemName] = new Dictionary<int, string>
-                                                                      {
-                                                                          { level, dim.Child.SystemName }
-                                                                      };
-
-                if (dim.Parent != null)
-                {
-                    foreach (var element in elementsBySystemNameAndLevels[dim.Parent.SystemName])
-                        elementsBySystemNameAndLevels[dim.Child.SystemName].Add(element.Key, element.Value);
-                }
-            }
-
-            dimensionsByLevel[level] = dimensionsOnThisLevel.Select(x => x.Child.SystemName).ToList();
-        }
-
-        if (dimensionsByThisLevel.TryGetValue(false, out var otherDimensions))
-            AddChildren(level + 1, otherDimensions);
-    }
+                                        _args.Month.ToString(), _args.Scenario, DataNodeDataBySystemName[dn].YieldCurveName);
+    public void PopulateWorkspace(){}
 }

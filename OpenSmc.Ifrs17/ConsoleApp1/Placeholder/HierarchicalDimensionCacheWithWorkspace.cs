@@ -4,16 +4,16 @@ using OpenSmc.Domain.Abstractions;
 using OpenSmc.Hierarchies;
 using OpenSmc.Reflection;
 
-namespace OpenSms.Ifrs17.CalculationScopes;
+namespace OpenSms.Ifrs17.CalculationScopes.Placeholder;
 
 public class HierarchicalDimensionCacheWithWorkspace : IHierarchicalDimensionCache
 {
-    private readonly IWorkspace _querySource;
+    private readonly IWorkspace _workspace;
     private readonly Dictionary<Type, IHierarchy> _cachedDimensions = new();
 
-    public HierarchicalDimensionCacheWithWorkspace(IWorkspace querySource)
+    public HierarchicalDimensionCacheWithWorkspace(IWorkspace workspace)
     {
-        this._querySource = querySource;
+        _workspace = workspace;
     }
 
     public IHierarchyNode<T> Get<T>(string systemName)
@@ -47,9 +47,9 @@ public class HierarchicalDimensionCacheWithWorkspace : IHierarchicalDimensionCac
     public async Task InitializeAsync<T>()
         where T : class, IHierarchicalDimension
     {
-        if (_querySource != null && !_cachedDimensions.TryGetValue(typeof(T), out _))
+        if (_workspace != null && !_cachedDimensions.TryGetValue(typeof(T), out _))
         {
-            var hierarchy = new HierarchyWithWorkspace<T>(_querySource);
+            var hierarchy = new HierarchyWithWorkspace<T>(_workspace);
             await hierarchy.InitializeAsync();
             _cachedDimensions[typeof(T)] = hierarchy;
         }
