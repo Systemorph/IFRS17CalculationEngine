@@ -121,7 +121,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Import.Test", "..\O
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Ifrs17.ReferenceDataHub.Test", "OpenSmc.Ifrs17.ReferenceDataHub.Test\OpenSmc.Ifrs17.ReferenceDataHub.Test.csproj", "{C3C7626C-501F-4348-A50C-3DC85060CB08}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSms.Ifrs17.CalculationScopes", "ConsoleApp1\OpenSms.Ifrs17.CalculationScopes.csproj", "{73CBBBD7-67E8-4F53-A6DE-E071FB2A319A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Ifrs17.CalculationScopes", "OpenSmc.Ifrs17.CalculationScopes\OpenSmc.Ifrs17.CalculationScopes.csproj", "{73CBBBD7-67E8-4F53-A6DE-E071FB2A319A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Ifrs17.Domain", "OpenSmc.Ifrs17.Domain\OpenSmc.Ifrs17.Domain.csproj", "{985067AA-BF7F-4B1A-BCB0-D3CA1744E8A4}"
 EndProject
