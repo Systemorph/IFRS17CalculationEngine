@@ -6,7 +6,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import.TechnicalMarginAllocation;
 
-public interface IAllocateTechnicalMargin : IScope<ImportIdentity, ImportStorage>
+public interface IAllocateTechnicalMargin : IScope<ImportIdentity, ImportStorageOld>
 {
     static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>
         builder.ForScope<IAllocateTechnicalMargin>(s => s

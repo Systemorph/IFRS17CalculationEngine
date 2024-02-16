@@ -8,7 +8,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import.ExperienceAdjustmentForPremium;
 
-public interface IBeExperienceAdjustmentForPremium : IScope<ImportIdentity, ImportStorage>
+public interface IBeExperienceAdjustmentForPremium : IScope<ImportIdentity, ImportStorageOld>
 {
     static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>
         builder.ForScope<IBeExperienceAdjustmentForPremium>(s => s

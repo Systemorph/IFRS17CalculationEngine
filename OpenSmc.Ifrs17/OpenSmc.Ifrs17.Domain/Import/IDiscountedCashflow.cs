@@ -7,7 +7,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
-public interface IDiscountedCashflow : IScope<(ImportIdentity Id, string AmountType, string EstimateType, int? AccidentYear), ImportStorage>
+public interface IDiscountedCashflow : IScope<(ImportIdentity Id, string AmountType, string EstimateType, int? AccidentYear), ImportStorageOld>
 {
     static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>
         builder.ForScope<IDiscountedCashflow>(s => s

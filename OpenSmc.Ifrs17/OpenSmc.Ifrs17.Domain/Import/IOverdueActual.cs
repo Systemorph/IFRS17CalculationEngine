@@ -7,7 +7,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
-public interface IOverdueActual : IScope<ImportIdentity, ImportStorage>
+public interface IOverdueActual : IScope<ImportIdentity, ImportStorageOld>
 {
     [IdentityProperty][NotVisible][Dimension(typeof(EstimateType))]
     string EstimateType => EstimateTypes.OA;

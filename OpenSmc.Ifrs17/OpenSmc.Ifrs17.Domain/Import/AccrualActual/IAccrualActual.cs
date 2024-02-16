@@ -5,7 +5,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import.AccrualActual;
 
-public interface IAccrualActual : IScope<(ImportIdentity Id, string AmountType, string EstimateType, int? AccidentYear), ImportStorage>
+public interface IAccrualActual : IScope<(ImportIdentity Id, string AmountType, string EstimateType, int? AccidentYear), ImportStorageOld>
 {
     static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>
         builder.ForScope<IAccrualActual>(s => s

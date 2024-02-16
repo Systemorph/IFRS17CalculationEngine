@@ -7,7 +7,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
-public interface IAmReferenceDeferrable: IScope<(ImportIdentity Id, int MonthlyShift), ImportStorage>{
+public interface IAmReferenceDeferrable: IScope<(ImportIdentity Id, int MonthlyShift), ImportStorageOld>{
     private int ProjectionShift => GetStorage().GetShift(Identity.Id.ProjectionPeriod);
     private IEnumerable<AocStep> PreviousAocSteps => GetScope<IPreviousAocSteps>((Identity.Id, StructureType.AocTechnicalMargin)).Values.Where(aocStep => aocStep.Novelty != Novelties.C);
     double ReferenceCashflow => PreviousAocSteps

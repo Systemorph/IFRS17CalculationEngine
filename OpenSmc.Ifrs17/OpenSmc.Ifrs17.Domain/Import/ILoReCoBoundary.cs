@@ -5,7 +5,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
-public interface ILoReCoBoundary : IScope<ImportIdentity, ImportStorage>
+public interface ILoReCoBoundary : IScope<ImportIdentity, ImportStorageOld>
 {
     private IEnumerable<string> UnderlyingGic => GetStorage().GetUnderlyingGic(Identity, LiabilityTypes.LRC);
    

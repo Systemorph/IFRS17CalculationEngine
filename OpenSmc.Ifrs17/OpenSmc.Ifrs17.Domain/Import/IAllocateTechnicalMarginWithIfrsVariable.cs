@@ -5,7 +5,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
-public interface IAllocateTechnicalMarginWithIfrsVariable: IScope<ImportIdentity, ImportStorage>
+public interface IAllocateTechnicalMarginWithIfrsVariable: IScope<ImportIdentity, ImportStorageOld>
 {                                  
     double Value => ComputeTechnicalMarginFromIfrsVariables(Identity);
     double AggregatedValue => GetScope<IPreviousAocSteps>((Identity, StructureType.AocTechnicalMargin)).Values

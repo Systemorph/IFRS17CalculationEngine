@@ -7,7 +7,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
-public interface ITelescopicDifference : IScope<(ImportIdentity Id, string AmountType, string EstimateType, int? Accidentyear), ImportStorage>
+public interface ITelescopicDifference : IScope<(ImportIdentity Id, string AmountType, string EstimateType, int? Accidentyear), ImportStorageOld>
 {
     [NotVisible]
     string EconomicBasis => GetContext();

@@ -5,7 +5,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
-public interface ICurrentPeriodAmortizationFactor : IScope<(ImportIdentity Id, string AmountType, int patternShift), ImportStorage>
+public interface ICurrentPeriodAmortizationFactor : IScope<(ImportIdentity Id, string AmountType, int patternShift), ImportStorageOld>
 {
     static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>
         builder.ForScope<ICurrentPeriodAmortizationFactor>(s => 

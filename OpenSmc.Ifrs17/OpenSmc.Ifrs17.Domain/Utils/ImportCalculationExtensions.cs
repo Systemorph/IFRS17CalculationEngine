@@ -1,3 +1,4 @@
+using OpenSmc.Data;
 using OpenSmc.DataStructures;
 using OpenSmc.Hierarchies;
 using OpenSmc.Ifrs17.Domain.Constants;
@@ -7,7 +8,6 @@ using OpenSmc.Ifrs17.Domain.DataModel.Args;
 using OpenSmc.Ifrs17.Domain.DataModel.FinancialDataDimensions;
 using OpenSmc.Ifrs17.Domain.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.Domain.DataModel.TransactionalData;
-using OpenSmc.Workspace;
 using Systemorph.Vertex.DataCubes;
 using Systemorph.Vertex.DataCubes.Api;
 

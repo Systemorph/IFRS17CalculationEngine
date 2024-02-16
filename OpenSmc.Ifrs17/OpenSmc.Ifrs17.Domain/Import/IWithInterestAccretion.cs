@@ -7,7 +7,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
-public interface IWithInterestAccretion : IScope<(ImportIdentity Id, string AmountType, string EstimateType, int? AccidentYear), ImportStorage>
+public interface IWithInterestAccretion : IScope<(ImportIdentity Id, string AmountType, string EstimateType, int? AccidentYear), ImportStorageOld>
 {
     private double[] ParentDiscountedValues => ArithmeticOperations.Multiply(-1d, GetScope<IDiscountedCashflow>(Identity).Values);    
     private double[] ParentNominalValues => GetScope<INominalCashflow>(Identity).Values;

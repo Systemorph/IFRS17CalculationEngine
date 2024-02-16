@@ -7,7 +7,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import.ToIfrsVariableScopes;
 
-public interface IActualToIfrsVariable : IScope<ImportIdentity, ImportStorage>
+public interface IActualToIfrsVariable : IScope<ImportIdentity, ImportStorageOld>
 {
     IEnumerable<IfrsVariable> Actual => Identity.AocType == AocTypes.CF && Identity.Novelty == Novelties.C
         ? GetScope<IActual>(Identity).Actuals.Select(written =>

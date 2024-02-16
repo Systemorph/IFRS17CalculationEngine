@@ -9,7 +9,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import.ToIfrsVariableScopes;
 
-public interface IEaForPremiumToIfrsVariable : IScope<ImportIdentity, ImportStorage>
+public interface IEaForPremiumToIfrsVariable : IScope<ImportIdentity, ImportStorageOld>
 {
     private string EconomicBasis => GetStorage().GetEconomicBasisDriver(Identity.DataNode);
     IEnumerable<IfrsVariable> BeEaForPremium => Identity.AocType == AocTypes.CF && GetStorage().DataNodeDataBySystemName[Identity.DataNode].LiabilityType != LiabilityTypes.LIC && !Identity.IsReinsurance

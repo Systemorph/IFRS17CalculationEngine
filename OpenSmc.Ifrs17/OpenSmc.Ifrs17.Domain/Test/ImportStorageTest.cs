@@ -85,7 +85,7 @@ public class ImportStorageTest : TestBase
         await DataSource.UpdateAsync<PartitionByReportingNode>(TestData.partitionReportingNode.RepeatOnce());
     }
 
-    public async Task StorageInitializeAsync<T>(ImportStorage storage, IEnumerable<T> inputForWorkspace,
+    public async Task StorageInitializeAsync<T>(ImportStorageOld storage, IEnumerable<T> inputForWorkspace,
         IEnumerable<T> inputForDataSource, ImportArgs args)
     {
         //Prepare Workspace and DataSource

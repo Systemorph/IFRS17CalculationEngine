@@ -5,7 +5,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
-public interface IDiscountedAmortizationFactorForDeferrals : IScope<ImportIdentity, ImportStorage>
+public interface IDiscountedAmortizationFactorForDeferrals : IScope<ImportIdentity, ImportStorageOld>
 {
     private string EconomicBasis => GetContext();
     double Value => GetScope<ICurrentPeriodAmortizationFactor>((Identity, AmountTypes.DAE, 0), o => o.WithContext(EconomicBasis)).EffectiveAmountType == AmountTypes.DAE

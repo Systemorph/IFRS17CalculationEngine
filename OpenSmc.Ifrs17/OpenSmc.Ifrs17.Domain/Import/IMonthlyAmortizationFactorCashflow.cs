@@ -7,7 +7,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
-public interface IMonthlyAmortizationFactorCashflow : IScope<(ImportIdentity Id, string AmountType, int patternShift), ImportStorage>
+public interface IMonthlyAmortizationFactorCashflow : IScope<(ImportIdentity Id, string AmountType, int patternShift), ImportStorageOld>
 {
     (string? EffectiveAmountType, double[] Values) releasePattern => GetStorage().GetReleasePattern(Identity.Id, Identity.AmountType, Identity.patternShift);
 

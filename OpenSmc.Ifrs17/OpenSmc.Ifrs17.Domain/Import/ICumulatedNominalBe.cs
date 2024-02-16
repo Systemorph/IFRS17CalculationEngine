@@ -7,7 +7,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
-public interface ICumulatedNominalBe : IScope<ImportIdentity, ImportStorage> {  
+public interface ICumulatedNominalBe : IScope<ImportIdentity, ImportStorageOld> {  
     [IdentityProperty][NotVisible][Dimension(typeof(EconomicBasis))]
     string EconomicBasis => EconomicBases.N;
     

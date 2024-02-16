@@ -6,7 +6,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
-public interface IWithGetValueFromValues : IScope<(ImportIdentity Id, string AmountType, string EstimateType, int? AccidentYear), ImportStorage>
+public interface IWithGetValueFromValues : IScope<(ImportIdentity Id, string AmountType, string EstimateType, int? AccidentYear), ImportStorageOld>
 {
     private int Shift => GetStorage().GetShift(Identity.Id.ProjectionPeriod);
     private int TimeStep => 

@@ -8,7 +8,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import.DiscountedDeferrableCalculation;
 
-public interface IDiscountedDeferrable : IScope<ImportIdentity, ImportStorage>
+public interface IDiscountedDeferrable : IScope<ImportIdentity, ImportStorageOld>
 {
     static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>
         builder.ForScope<IDiscountedDeferrable>(s => s

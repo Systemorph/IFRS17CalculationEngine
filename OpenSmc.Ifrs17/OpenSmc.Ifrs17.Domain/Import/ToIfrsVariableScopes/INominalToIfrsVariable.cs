@@ -7,7 +7,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import.ToIfrsVariableScopes;
 
-public interface INominalToIfrsVariable : IScope<ImportIdentity, ImportStorage>
+public interface INominalToIfrsVariable : IScope<ImportIdentity, ImportStorageOld>
 {
     static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>
         builder.ForScope<INominalToIfrsVariable>(s => s.WithApplicability<IEmptyINominalToIfrsVariable>(x =>

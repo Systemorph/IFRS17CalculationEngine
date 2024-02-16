@@ -6,7 +6,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import.TechnicalMarginCalculation;
 
-public interface ITechnicalMargin : IScope<ImportIdentity, ImportStorage>
+public interface ITechnicalMargin : IScope<ImportIdentity, ImportStorageOld>
 {
     static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>
         builder.ForScope<ITechnicalMargin>(s => s.WithApplicability<ITechnicalMarginForCurrentBasis>(x => x.Identity.ValuationApproach == ValuationApproaches.VFA, p => p.ForMember(s => s.EconomicBasis))

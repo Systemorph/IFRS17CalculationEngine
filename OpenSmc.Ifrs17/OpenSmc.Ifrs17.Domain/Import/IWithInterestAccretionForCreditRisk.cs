@@ -7,7 +7,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
-public interface IWithInterestAccretionForCreditRisk : IScope<(ImportIdentity Id, string AmountType, string EstimateType, int? AccidentYear), ImportStorage>
+public interface IWithInterestAccretionForCreditRisk : IScope<(ImportIdentity Id, string AmountType, string EstimateType, int? AccidentYear), ImportStorageOld>
 {
     private double[] NominalClaimsCashflow => GetScope<IAllClaimsCashflow>(Identity).Values;
     private double[] NominalValuesCreditRisk => ArithmeticOperations.Multiply(-1, GetScope<ICreditDefaultRiskINominalCashflow>(Identity with {Id = Identity.Id with {AocType = AocTypes.CF}}).Values);

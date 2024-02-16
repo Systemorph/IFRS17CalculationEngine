@@ -4,7 +4,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
-public interface INewBusinessInterestAccretion : IScope<ImportIdentity, ImportStorage>
+public interface INewBusinessInterestAccretion : IScope<ImportIdentity, ImportStorageOld>
 {
     private int timeStep => GetStorage().GetTimeStep(Identity.ProjectionPeriod);
     private int shift => GetStorage().GetShift(Identity.ProjectionPeriod);

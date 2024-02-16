@@ -16,7 +16,7 @@ using OpenSmc.Workspace;
 
 namespace OpenSmc.Ifrs17.Domain.Import;
 
-public class ImportStorage
+public class ImportStorageOld
 {   
     private readonly IDataSource querySource; 
     private readonly IWorkspace workspace;
@@ -69,7 +69,7 @@ public class ImportStorage
     public Dictionary<string, HashSet<string>> EstimateTypesByImportFormat { get; private set; }
 
     //Constructor
-    public ImportStorage(ImportArgs args, IDataSource querySource, IWorkspace workspace)
+    public ImportStorageOld(ImportArgs args, IDataSource querySource, IWorkspace workspace)
     {
         this.querySource = querySource;
         this.workspace = workspace;

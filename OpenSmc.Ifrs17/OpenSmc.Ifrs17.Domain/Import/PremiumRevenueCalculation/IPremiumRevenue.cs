@@ -8,7 +8,7 @@ using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.Domain.Import.PremiumRevenueCalculation;
 
-public interface IPremiumRevenue : IScope<ImportIdentity, ImportStorage>
+public interface IPremiumRevenue : IScope<ImportIdentity, ImportStorageOld>
 {
     static ApplicabilityBuilder ScopeApplicabilityBuilder(ApplicabilityBuilder builder) =>
         builder.ForScope<IPremiumRevenue>(s => s
