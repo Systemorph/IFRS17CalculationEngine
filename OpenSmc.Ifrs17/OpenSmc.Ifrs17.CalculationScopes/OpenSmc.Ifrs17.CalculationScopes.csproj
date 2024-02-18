@@ -1,8 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-	  <PackageReference Include="morelinq" Version="4.1.0" />
-	  <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.DataStructures\OpenSmc.DataStructures.csproj" />
+    <PackageReference Include="morelinq" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.DataStructures\OpenSmc.DataStructures.csproj" />
     <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Hierarchies\OpenSmc.Hierarchies.csproj" />
     <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Scopes\OpenSmc.Scopes.csproj" />
     <ProjectReference Include="..\OpenSmc.Ifrs17.DataTypes\OpenSmc.Ifrs17.DataTypes.csproj" />

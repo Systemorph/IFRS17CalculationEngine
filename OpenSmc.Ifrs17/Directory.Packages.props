@@ -1,4 +1,7 @@
 <Project>
+  <ItemGroup>
+    <PackageVersion Include="morelinq" Version="4.1.0" />
+  </ItemGroup>
   <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Packages.props', '$(MSBuildThisFileDirectory)../OpenSmc/'))" />
   <PropertyGroup>
     <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
