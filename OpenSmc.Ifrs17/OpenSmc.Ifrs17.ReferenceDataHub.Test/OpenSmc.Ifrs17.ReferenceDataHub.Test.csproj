@@ -27,12 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Data\OpenSmc.Data.csproj" />
     <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Import\OpenSmc.Import.csproj" />
     <ProjectReference Include="..\..\OpenSmc\test\OpenSmc.Hub.Fixture\OpenSmc.Hub.Fixture.csproj" />
-    <ProjectReference Include="..\..\OpenSmc\test\OpenSmc.Import.Test\OpenSmc.Import.Test.csproj" />
     <ProjectReference Include="..\OpenSmc.Ifrs17.CalculationScopes\OpenSmc.Ifrs17.CalculationScopes.csproj" />
-    <ProjectReference Include="..\OpenSmc.Ifrs17.DataTypes\OpenSmc.Ifrs17.DataTypes.csproj" />
   </ItemGroup>
 
 </Project>
