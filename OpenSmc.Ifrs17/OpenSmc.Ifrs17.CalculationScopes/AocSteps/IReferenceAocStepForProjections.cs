@@ -2,7 +2,7 @@ using OpenSmc.Collections;
 using OpenSmc.Ifrs17.DataTypes.Constants;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
 
-namespace OpenSms.Ifrs17.CalculationScopes.AocSteps;
+namespace OpenSmc.Ifrs17.CalculationScopes.AocSteps;
 
 public interface IReferenceAocStepForProjections : IReferenceAocStep
 {

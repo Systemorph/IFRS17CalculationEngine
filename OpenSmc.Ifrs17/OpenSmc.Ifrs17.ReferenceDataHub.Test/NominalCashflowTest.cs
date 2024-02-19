@@ -1,13 +1,13 @@
 ﻿using OpenSmc.Data;
 using OpenSmc.DataStructures;
 using OpenSmc.Hub.Fixture;
+using OpenSmc.Ifrs17.CalculationScopes;
 using OpenSmc.Ifrs17.DataTypes.Constants.Enumerates;
 using OpenSmc.Ifrs17.DataTypes.DataModel.Args;
 using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.DataTypes.DataModel.TransactionalData;
 using OpenSmc.Import;
 using OpenSmc.Messaging;
-using OpenSms.Ifrs17.CalculationScopes;
 using Xunit.Abstractions;
 
 namespace OpenSmc.Ifrs17.ReferenceDataHub.Test

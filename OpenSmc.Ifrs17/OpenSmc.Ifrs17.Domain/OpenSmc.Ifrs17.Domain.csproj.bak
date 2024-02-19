@@ -1,13 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="morelinq" Version="4.1.0" />
     <PackageReference Include="Systemorph.Activities" Version="1.6.5" /> 
     <PackageReference Include="Systemorph.DataSource" Version="1.6.4" />
     <PackageReference Include="Systemorph.DataSource.Conversions" Version="1.6.4" />

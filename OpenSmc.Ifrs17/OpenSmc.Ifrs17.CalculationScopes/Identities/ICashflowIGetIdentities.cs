@@ -1,11 +1,10 @@
 using OpenSmc.Collections;
+using OpenSmc.Ifrs17.CalculationScopes.AocSteps;
 using OpenSmc.Ifrs17.DataTypes.Constants;
 using OpenSmc.Ifrs17.DataTypes.Constants.Enumerates;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
-using OpenSms.Ifrs17.CalculationScopes;
-using OpenSms.Ifrs17.CalculationScopes.AocSteps;
 
-namespace OpenSms.Ifrs17.CalculationScopes.Identities;
+namespace OpenSmc.Ifrs17.CalculationScopes.Identities;
 
 public interface ICashflowIGetIdentities : IGetIdentities
 {
@@ -24,7 +23,7 @@ public interface ICashflowIGetIdentities : IGetIdentities
                         .Any(y => x.DataType.RepeatOnce().Contains(y)) &&
                             (!IsReinsurance ? !ImportCalculationExtensions
                                 .ComputationHelper.ReinsuranceAocType
-                                .Contains(x.AocType) : true) && 
+                                .Contains(x.AocType) : true) &&
                             RawVariableNovelties.Contains(x.Novelty) ||
                             x.DataType.RepeatOnce()
                                 .Contains(DataType.CalculatedProjection))
@@ -35,7 +34,7 @@ public interface ICashflowIGetIdentities : IGetIdentities
         .Concat(GetStorage().AocConfigurationByAocStep
             .Values
             .Where(x => (!IsReinsurance ? !ImportCalculationExtensions.ComputationHelper
-                .ReinsuranceAocType.Contains(x.AocType) : true) && 
+                .ReinsuranceAocType.Contains(x.AocType) : true) &&
                         x.DataType.RepeatOnce().Contains(DataType.Calculated) && x.Novelty == Novelties.I)
             .Select(aocStep => new ImportIdentity { AocType = aocStep.AocType, Novelty = aocStep.Novelty, DataNode = Identity }));
 

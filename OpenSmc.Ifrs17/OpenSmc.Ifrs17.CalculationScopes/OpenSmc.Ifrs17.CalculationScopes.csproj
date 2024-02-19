@@ -1,14 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
-
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <InvariantGlobalization>true</InvariantGlobalization>
-  </PropertyGroup>
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="morelinq" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.DataStructures\OpenSmc.DataStructures.csproj" />
+    <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Hierarchies\OpenSmc.Hierarchies.csproj" />
+    <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Scopes\OpenSmc.Scopes.csproj" />
+    <ProjectReference Include="..\OpenSmc.Ifrs17.DataTypes\OpenSmc.Ifrs17.DataTypes.csproj" />
   </ItemGroup>
 
 </Project>

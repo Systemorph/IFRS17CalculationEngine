@@ -9,8 +9,7 @@ using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
 using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.DataTypes.DataModel.TransactionalData;
 
-
-namespace OpenSms.Ifrs17.CalculationScopes;
+namespace OpenSmc.Ifrs17.CalculationScopes;
 
 public static class ImportCalculationExtensions
 {

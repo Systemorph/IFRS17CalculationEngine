@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using OpenSmc.Activities;
 
-namespace OpenSms.Ifrs17.CalculationScopes.Placeholder;
+namespace OpenSmc.Ifrs17.CalculationScopes.Placeholder;
 
 public static class ActivityLogUtils
 {

@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using OpenSmc.Activities;
 using OpenSmc.Data;
 using OpenSmc.Hub.Fixture;
-using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
 using OpenSmc.Ifrs17.DataTypes.DataModel.TransactionalData;
 using OpenSmc.Import;
-using OpenSmc.Import.Test;
 using OpenSmc.Messaging;
 using Xunit;
 using Xunit.Abstractions;

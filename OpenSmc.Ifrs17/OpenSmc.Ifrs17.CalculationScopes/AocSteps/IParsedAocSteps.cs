@@ -1,8 +1,7 @@
 using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Scopes;
 
-
-namespace OpenSms.Ifrs17.CalculationScopes.AocSteps;
+namespace OpenSmc.Ifrs17.CalculationScopes.AocSteps;
 
 public interface IParsedAocSteps : IScope<string, ImportStorage>
 {

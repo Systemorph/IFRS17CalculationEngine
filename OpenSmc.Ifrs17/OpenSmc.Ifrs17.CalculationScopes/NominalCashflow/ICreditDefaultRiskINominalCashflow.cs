@@ -1,7 +1,7 @@
 using OpenSmc.Arithmetics;
 using OpenSmc.Ifrs17.DataTypes.Constants;
 
-namespace OpenSms.Ifrs17.CalculationScopes.NominalCashflow;
+namespace OpenSmc.Ifrs17.CalculationScopes.NominalCashflow;
 
 public interface ICreditDefaultRiskINominalCashflow : INominalCashflow
 {

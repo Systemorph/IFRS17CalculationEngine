@@ -4,7 +4,7 @@ using OpenSmc.Domain.Abstractions;
 using OpenSmc.Hierarchies;
 using OpenSmc.Reflection;
 
-namespace OpenSms.Ifrs17.CalculationScopes.Placeholder;
+namespace OpenSmc.Ifrs17.CalculationScopes.Placeholder;
 
 public class HierarchicalDimensionCacheWithWorkspace : IHierarchicalDimensionCache
 {

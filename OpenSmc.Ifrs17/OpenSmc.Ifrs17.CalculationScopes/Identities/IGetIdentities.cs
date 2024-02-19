@@ -2,7 +2,7 @@ using OpenSmc.Ifrs17.DataTypes.Constants;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Scopes;
 
-namespace OpenSms.Ifrs17.CalculationScopes.Identities;
+namespace OpenSmc.Ifrs17.CalculationScopes.Identities;
 
 public interface IGetIdentities : IScope<string, ImportStorage>
 {

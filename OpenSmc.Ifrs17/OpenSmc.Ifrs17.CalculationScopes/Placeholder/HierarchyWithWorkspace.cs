@@ -3,7 +3,7 @@ using OpenSmc.Data;
 using OpenSmc.Domain.Abstractions;
 using OpenSmc.Hierarchies;
 
-namespace OpenSms.Ifrs17.CalculationScopes.Placeholder;
+namespace OpenSmc.Ifrs17.CalculationScopes.Placeholder;
 
 public class HierarchyWithWorkspace<T> : IHierarchy<T>
     where T : class, IHierarchicalDimension
