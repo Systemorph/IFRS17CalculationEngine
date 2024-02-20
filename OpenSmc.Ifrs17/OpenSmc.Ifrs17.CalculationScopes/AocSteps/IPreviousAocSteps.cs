@@ -1,6 +1,7 @@
 using OpenSmc.Ifrs17.CalculationScopes.Identities;
 using OpenSmc.Ifrs17.DataTypes.Constants;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
+using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.CalculationScopes.AocSteps;

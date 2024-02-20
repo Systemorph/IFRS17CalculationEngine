@@ -38,7 +38,7 @@ public record AocConfiguration : KeyedRecord, IWithYearAndMonth, IOrdered
 
     [Dimension(typeof(Constants.Enumerates.DataType))] public Constants.Enumerates.DataType DataType { get; init; }
 
-    [Dimension(typeof(StructureType))] public string StructureType { get; init; }
+    [Dimension(typeof(StructureTypes))] public string StructureType { get; init; }
 
     [Dimension(typeof(InputSource))] public InputSource InputSource { get; init; }
 

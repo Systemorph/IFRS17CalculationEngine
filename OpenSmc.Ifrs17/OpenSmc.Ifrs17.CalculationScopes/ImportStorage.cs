@@ -74,7 +74,7 @@ public class ImportStorage
     public PeriodType GetYieldCurvePeriod(ImportIdentity id) => AocConfigurationByAocStep[new AocStep(id.AocType, id.Novelty)].YcPeriod;
     public PeriodType GetCreditDefaultRiskPeriod(ImportIdentity id) => AocConfigurationByAocStep[new AocStep(id.AocType, id.Novelty)].CdrPeriod;
 
-    public IEnumerable<AocStep> GetAllAocSteps(StructureType structureType) => aocStepByStructureType[structureType];
+    public IEnumerable<AocStep> GetAllAocSteps(StructureType structureTypes) => aocStepByStructureType[structureTypes];
 
     public IEnumerable<AocStep> GetCalculatedTelescopicAocSteps() => AocConfigurationByAocStep.Where(kvp => kvp.Value.DataType == DataType.CalculatedTelescopic).Select(kvp => kvp.Key);
 
@@ -142,7 +142,7 @@ public class ImportStorage
     //Novelty
     private IEnumerable<string> GetNoveltiesForAocType(string aocType, IEnumerable<AocStep> aocConfiguration) => aocConfiguration.Where(aocStep => aocStep.AocType == aocType).Select(aocStep => aocStep.Novelty);
     public IEnumerable<string> GetNovelties() => NoveltyDimension.Keys;
-    public IEnumerable<string> GetNovelties(string aocType, StructureType structureType) => GetNoveltiesForAocType(aocType, aocStepByStructureType[structureType]);
+    public IEnumerable<string> GetNovelties(string aocType, StructureType structureTypes) => GetNoveltiesForAocType(aocType, aocStepByStructureType[structureTypes]);
 
     //Accident years
     public IEnumerable<int?> GetAccidentYears(string dataNode, int projectionPeriod)

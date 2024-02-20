@@ -13,7 +13,7 @@ public interface IReferenceAocStep : IScope<ImportIdentity, ImportStorage>
         builder.ForScope<IReferenceAocStep>(s => s.WithApplicability<IReferenceAocStepForProjections>(x =>
             x.Identity.ProjectionPeriod >= FirstNextYearProjection()));
 
-    protected IEnumerable<AocStep> referenceForCalculated => GetScope<IPreviousAocSteps>((Identity, StructureType.AocPresentValue)).Values
+    protected IEnumerable<AocStep> referenceForCalculated => GetScope<IPreviousAocSteps>((Identity, StructureTypes.AocPresentValue)).Values
         .GroupBy(g => g.Novelty,
             (g, val) => val.Last(aocStep => !ImportCalculationExtensions
                 .ComputationHelper

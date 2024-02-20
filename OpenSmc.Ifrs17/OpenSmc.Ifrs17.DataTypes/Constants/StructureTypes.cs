@@ -1,6 +1,6 @@
 namespace OpenSmc.Ifrs17.DataTypes.Constants;
 
-public class StructureType
+public static class StructureTypes
 {
     public const string None = "NO";
     public const string AocPresentValue = "PV";

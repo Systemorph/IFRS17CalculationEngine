@@ -67,6 +67,17 @@ WO,C,17,2,AC,Average,NotApplicable,NotApplicable,NotApplicable,NotApplicable,195
 AM,C,4,6,TM,EndOfPeriod,NotApplicable,NotApplicable,NotApplicable,EndOfPeriod,200,1900,1
 EOP,C,4,6,PV|AC|TM,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,EndOfPeriod,220,1900,1
 ,,,,,,,,,,,,
+@@StructureType
+SystemName,DisplayName
+NO,None
+PV,AocPresentValue
+AC,AocAccrual
+TM,AocTechnicalMargin
+PV|AC,AocPvAc
+PV|TM,AocPvTmg
+AC|TM,AocAcTm
+PV|AC|TM,AocPvAcTm
+,,,,,,,,,,,,
 @@CreditRiskRating,,,,,,,,,,,,
 SystemName,DisplayName,,,,,,,,,,,
 AAA,AAA,,,,,,,,,,,
