@@ -27,8 +27,8 @@ public class ImportReferenceDataTest(ITestOutputHelper output) : HubTestBase(out
                 { typeof(AocType), new AocType[] { new() { SystemName = "BoP", DisplayName = "BoP", Parent = "", Order = 10 } } },
                 { typeof(AocConfiguration), new AocConfiguration[] { new()
                 {
-                    AocType = "BoP", Novelty = "N", DataType = DataType.CalculatedProjection|DataType.Optional , InputSource = InputSource.Cashflow|InputSource.Actual|InputSource.Opening,
-                    StructureType = StructureType.PVACTM, FxPeriod = FxPeriod.BeginningOfPeriod,
+                    AocType = "BoP", Novelty = "N", DataType = DataTypes.Constants.Enumerates.DataType.CalculatedProjection|DataTypes.Constants.Enumerates.DataType.Optional , InputSource = InputSource.Cashflow|InputSource.Actual|InputSource.Opening,
+                    StructureType = StructureType.AocPvAcTm, FxPeriod = FxPeriod.BeginningOfPeriod,
                     YcPeriod = PeriodType.BeginningOfPeriod, CdrPeriod = PeriodType.BeginningOfPeriod,
                     ValuationPeriod = ValuationPeriod.BeginningOfPeriod, RcPeriod = PeriodType.BeginningOfPeriod, Order = 10, Year = 1900, Month = 1
                 } } }

@@ -25,7 +25,7 @@ namespace OpenSmc.Ifrs17.ReferenceDataHub;
 public static class DataHubConfiguration
 {
 
-    public static MessageHubConfiguration ConfigurationReferenceDataHub(this MessageHubConfiguration configuration)
+    public static MessageHubConfiguration ConfigureReferenceData(this MessageHubConfiguration configuration)
     {
         // TODO: this needs to be registered in the higher level
 
