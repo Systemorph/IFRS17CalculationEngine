@@ -71,7 +71,6 @@ public class ReferenceDataHubTest(ITestOutputHelper output) : HubTestBase(output
         response.Message.Should().BeEquivalentTo(expected);
     }
 
-
     [Fact]
     public async Task InitializationRdhAmountTypeTest()
     {
@@ -91,7 +90,7 @@ public class ReferenceDataHubTest(ITestOutputHelper output) : HubTestBase(output
     {
         var updateItems = new AmountType[]
         {
-            new AmountType( "W", "WriteOff", "", 10, PeriodType.BeginningOfPeriod)
+            new AmountType{ SystemName = "W", DisplayName = "WriteOff", Parent = "", Order = 10, PeriodType = PeriodType.BeginningOfPeriod }
             
         };
         var client = GetClient();
@@ -109,7 +108,7 @@ public class ReferenceDataHubTest(ITestOutputHelper output) : HubTestBase(output
         _testReferenceData.Reset();
         var deleteItems = new AmountType[]
         {
-            new AmountType("E", "Expenses","", 10, PeriodType.BeginningOfPeriod)
+            new AmountType{ SystemName = "E", DisplayName = "Expenses", Parent = "", Order = 10, PeriodType = PeriodType.BeginningOfPeriod }
         };
         var client = GetClient();
         var deleteResponse = await client.AwaitResponse(new DeleteDataRequest(deleteItems),

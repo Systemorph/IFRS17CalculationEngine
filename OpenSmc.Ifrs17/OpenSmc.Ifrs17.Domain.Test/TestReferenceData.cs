@@ -24,8 +24,8 @@ namespace OpenSmc.Ifrs17.Domain.Test
 
             ReferenceAmountTypes =
             [
-                new AmountType("E", "Expenses", "", 10, PeriodType.BeginningOfPeriod),
-                new AmountType("PR", "Premiums", "", 10, PeriodType.BeginningOfPeriod)
+                new AmountType { SystemName = "E", DisplayName = "Expenses", Parent = "", Order = 10, PeriodType = PeriodType.BeginningOfPeriod },
+                new AmountType { SystemName = "PR", DisplayName = "Premiums", Parent = "", Order = 10, PeriodType = PeriodType.BeginningOfPeriod }
             ];
         }
     };
