@@ -19,26 +19,26 @@ public class ImportReferenceDataTest(ITestOutputHelper output) : HubTestBase(out
             =
             new()
             {
-                { typeof(AmountType), new[] { new AmountType() } },
-                { typeof(DeferrableAmountType), new[] { new DeferrableAmountType() } },
-                { typeof(AocType), new[] { new AocType() } },
-                { typeof(AocConfiguration), new[] { new AocConfiguration() } },
-                { typeof(StructureType), new[] { new StructureType() } },
-                { typeof(CreditDefaultRate), new[] {new CreditDefaultRate() } },
-                { typeof(Currency), new[] { new Currency() } },
-                { typeof(EconomicBasis), new[] { new EconomicBasis() } },
-                { typeof(EstimateType), new[] { new EstimateType() } },
-                { typeof(LiabilityType), new[] { new LiabilityType() } },
-                { typeof(LineOfBusiness), new[] {new LineOfBusiness() } },
-                { typeof(Novelty), new [] { new Novelty() } },
-                { typeof(OciType), new [] { new OciType()}},
-                { typeof(Partner), new [] {new Partner()}},
-                { typeof(BsVariableType), new [] {new BsVariableType()}},
-                { typeof(PnlVariableType), new [] { new PnlVariableType()}},
-                { typeof(RiskDriver), new [] {new RiskDriver()} },
-                { typeof(Scenario), new [] {new Scenario()} },
-                { typeof(ValuationApproach), new [] {new ValuationApproach()} },
-                { typeof(ProjectionConfiguration), new [] {new ProjectionConfiguration()} },
+                { typeof(AmountType), new AmountType[] {} },
+                { typeof(DeferrableAmountType), new DeferrableAmountType[] {} },
+                { typeof(AocType), new AocType[] {} },
+                { typeof(AocConfiguration), new AocConfiguration[] {} },
+                { typeof(StructureType), new StructureType[] {} },
+                { typeof(CreditDefaultRate), new CreditDefaultRate[] {} },
+                { typeof(Currency), new Currency[] {} },
+                { typeof(EconomicBasis), new EconomicBasis[] {} },
+                { typeof(EstimateType), new EstimateType[] {} },
+                { typeof(LiabilityType), new LiabilityType[] {} },
+                { typeof(LineOfBusiness), new LineOfBusiness[] {} },
+                { typeof(Novelty), new  Novelty[] {} },
+                { typeof(OciType), new  OciType[] {} },
+                { typeof(Partner), new  Partner[] {} },
+                { typeof(BsVariableType), new  BsVariableType[] {} },
+                { typeof(PnlVariableType), new  PnlVariableType[] {} },
+                { typeof(RiskDriver), new  RiskDriver[] {} },
+                { typeof(Scenario), new  Scenario[] {} },
+                { typeof(ValuationApproach), new  ValuationApproach[] {} },
+                { typeof(ProjectionConfiguration), new  ProjectionConfiguration[] {} },
             };
 
         protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
@@ -104,7 +104,7 @@ public class ImportReferenceDataTest(ITestOutputHelper output) : HubTestBase(out
 
             atItems.Message.Items.Should().HaveCount(17);
             datItems.Message.Items.Should().HaveCount(2);
-            aocItems.Message.Items.Should().HaveCount(18);
+            aocItems.Message.Items.Should().HaveCount(17);
             aoccItems.Message.Items.Should().HaveCount(20);
         }
 
