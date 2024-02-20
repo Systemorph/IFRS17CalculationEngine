@@ -14,14 +14,22 @@ public class ImportParameterTest(ITestOutputHelper output) : HubTestBase(output)
 {
     private static readonly Dictionary<Type, IEnumerable<object>> FinancialDataDomain
         =
-        new() { { typeof(YieldCurve), new[] { new YieldCurve("CHF", 2019, 12, null, null, new []{0.0, 0.1, 0.2, 0.0} ) } } };
+        new()
+        {
+            { typeof(YieldCurve), Array.Empty<YieldCurve>() },
+            { typeof(ExchangeRate), Array.Empty<ExchangeRate>() },
+        };
 
-    protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration) =>
-       base.ConfigureHost(configuration).AddData(data => data.WithDataSource(nameof(DataSource),
-                source => source.WithType<YieldCurve>( yc => yc
-                    .WithKey(x => (x.Year, x.Month, x.Currency, x.Scenario, x.Name))
-                    .WithInitialData(FinancialDataDomain[typeof(YieldCurve)].Cast<YieldCurve>()))))
+    protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
+    {
+        return base.ConfigureHost(configuration)
+            .AddData(data => data.WithDataSource
+            (
+                nameof(DataSource),
+                source => source.ConfigureCategory(FinancialDataDomain)
+            ))
             .AddImport(import => import);
+    }
 
     [Fact]
     public async Task ImportFinancialParameterTest()
@@ -31,17 +39,33 @@ public class ImportParameterTest(ITestOutputHelper output) : HubTestBase(output)
         var importResponse = await client.AwaitResponse(importRequest, o => o.WithTarget(new HostAddress()));
         importResponse.Message.Log.Status.Should().Be(ActivityLogStatus.Succeeded);
 
-        var items = await client.AwaitResponse(new GetManyRequest<YieldCurve>(),
-            o => o.WithTarget(new HostAddress()));
-        items.Message.Items.Should().HaveCount(4);
+        var ycItems = await client.AwaitResponse(new GetManyRequest<YieldCurve>(), o => o.WithTarget(new HostAddress()));
+        var erItems = await client.AwaitResponse(new GetManyRequest<ExchangeRate>(), o => o.WithTarget(new HostAddress()));
+
+        ycItems.Message.Items.Should().HaveCount(4);
+        erItems.Message.Items.Should().HaveCount(12);
     }
 
     private const string YieldCurveCsv =
         @"@@YieldCurve
-            Year,Month,Currency,Scenario,Name,Values0,Values1,Values2,Values3
-            2019,12,CHF,,0,0,0.015,0.02
-            2019,12,XTSHY,,0.85,0.85,0.85,0.85
-            2019,12,EUR,,0,0,0,0
-            2019,12,EUR,NoDiscount,0,0,0,0
-            2019,12,EUR,3PCT,0.03,0.03,0.03,0.03";
+Year,Month,Currency,Scenario,Name,Values0,Values1,Values2,Values3
+2019,12,CHF,,0,0,0.015,0.02
+2019,12,XTSHY,,0.85,0.85,0.85,0.85
+2019,12,EUR,,0,0,0,0
+2019,12,EUR,NoDiscount,0,0,0,0
+2019,12,EUR,3PCT,0.03,0.03,0.03,0.03
+@@ExchangeRate
+Currency,Year,Month,FxType,FxToGroupCurrency
+EUR,2021,3,Average,1.2012
+EUR,2021,3,Spot,1.2013
+EUR,2020,12,Average,1.2014
+EUR,2020,12,Spot,1.2015
+USD,2021,3,Average,1.2016
+USD,2021,3,Spot,1.2017
+USD,2020,12,Average,1.2018
+USD,2020,12,Spot,1.2019
+GBP,2021,3,Average,1.4016
+GBP,2021,3,Spot,1.4017
+GBP,2020,12,Average,1.4018
+GBP,2020,12,Spot,1.4019";
 }

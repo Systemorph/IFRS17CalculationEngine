@@ -19,7 +19,7 @@ public class ImportReferenceDataTest(ITestOutputHelper output) : HubTestBase(out
             =
             new()
             {
-                { typeof(AmountType), new AmountType[] {} },
+                { typeof(AmountType), Array.Empty<AmountType>() },
                 { typeof(DeferrableAmountType), new DeferrableAmountType[] {} },
                 { typeof(AocType), new AocType[] {} },
                 { typeof(AocConfiguration), new AocConfiguration[] {} },

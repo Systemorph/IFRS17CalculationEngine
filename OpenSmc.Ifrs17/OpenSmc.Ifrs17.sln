@@ -77,7 +77,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Disposables", "..\O
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Ifrs17.ReferenceDataHub", "OpenSmc.Ifrs17.ReferenceDataHub\OpenSmc.Ifrs17.ReferenceDataHub.csproj", "{7298EA13-F86D-4E87-88B8-BC024B71D381}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Ifrs17.TransactionalDataHub", "OpenSmc.Ifrs17.TransactionalDataHub\OpenSmc.Ifrs17.TransactionalDataHub.csproj", "{48AA6B36-9753-4C14-8C83-EE45DE2BD556}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Ifrs17.IfrsVariableHub", "OpenSmc.Ifrs17.TransactionalDataHub\OpenSmc.Ifrs17.IfrsVariableHub.csproj", "{48AA6B36-9753-4C14-8C83-EE45DE2BD556}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{D0B454E6-A2B2-45A3-A874-14582B243C51}"
 EndProject
