@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Data\OpenSmc.Data.csproj" />
+    <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Import\OpenSmc.Import.csproj" />
     <ProjectReference Include="..\OpenSmc.Ifrs17.DataTypes\OpenSmc.Ifrs17.DataTypes.csproj" />
   </ItemGroup>
 

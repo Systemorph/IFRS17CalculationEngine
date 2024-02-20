@@ -25,6 +25,7 @@
     <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Import\OpenSmc.Import.csproj" />
     <ProjectReference Include="..\..\OpenSmc\test\OpenSmc.Hub.Fixture\OpenSmc.Hub.Fixture.csproj" />
     <ProjectReference Include="..\OpenSmc.Ifrs17.CalculationScopes\OpenSmc.Ifrs17.CalculationScopes.csproj" />
+    <ProjectReference Include="..\OpenSmc.Ifrs17.ReferenceDataHub\OpenSmc.Ifrs17.ReferenceDataHub.csproj" />
   </ItemGroup>
 
 </Project>
