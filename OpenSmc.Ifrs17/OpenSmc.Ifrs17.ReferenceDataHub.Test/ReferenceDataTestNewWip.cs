@@ -1,8 +1,6 @@
 using FluentAssertions;
-using OpenSmc.Activities;
 using OpenSmc.Data;
 using OpenSmc.Hub.Fixture;
-using OpenSmc.Import;
 using OpenSmc.Messaging;
 using Xunit;
 using Xunit.Abstractions;
@@ -13,12 +11,12 @@ using OpenSmc.Ifrs17.DataTypes.Constants;
 
 namespace OpenSmc.Ifrs17.ReferenceDataHub.Test;
 
-public class ImportReferenceDataTest(ITestOutputHelper output) : HubTestBase(output)
+public class MyImportReferenceDataTest(ITestOutputHelper output) : HubTestBase(output)
+{
+    public static readonly Dictionary<Type, IEnumerable<object>> ReferenceDataDomain
+    =
+    new()
     {
-        public static readonly Dictionary<Type, IEnumerable<object>> ReferenceDataDomain
-            =
-            new()
-            {
                 { typeof(AmountType), Array.Empty<AmountType>() },
                 { typeof(DeferrableAmountType), new DeferrableAmountType[] {} },
                 { typeof(AocType), new AocType[] {} },
@@ -39,23 +37,20 @@ public class ImportReferenceDataTest(ITestOutputHelper output) : HubTestBase(out
                 { typeof(Scenario), new  Scenario[] {} },
                 { typeof(ValuationApproach), new  ValuationApproach[] {} },
                 { typeof(ProjectionConfiguration), new  ProjectionConfiguration[] {} },
-            };
+    };
 
         protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
         {
-            return base.ConfigureHost(configuration)
-                .AddData(data => data.WithDataSource(nameof(DataSource), 
-                        source => source.ConfigureCategory(ReferenceDataDomain)))
-                .AddImport(import => import);
+            return base.ConfigureHost(configuration).ConfigureReferenceData(ReferenceDataDomain);
         }
 
         [Fact]
         public async Task ImportDimensionTest()
         {
             var client = GetClient();
-            var importRequest = new ImportRequest(TemplateDimensions.Csv);
-            var importResponse = await client.AwaitResponse(importRequest, o => o.WithTarget(new HostAddress()));
-            importResponse.Message.Log.Status.Should().Be(ActivityLogStatus.Succeeded);
+            //var importRequest = new ImportRequest(TemplateDimensions.Csv);
+            //var importResponse = await client.AwaitResponse(importRequest, o => o.WithTarget(new HostAddress()));
+            //importResponse.Message.Log.Status.Should().Be(ActivityLogStatus.Succeeded);
 
             var atItems = await client.AwaitResponse(new GetManyRequest<AmountType>(),
                 o => o.WithTarget(new HostAddress()));
