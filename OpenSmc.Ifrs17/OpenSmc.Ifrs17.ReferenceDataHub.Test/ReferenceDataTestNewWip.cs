@@ -12,10 +12,36 @@ using OpenSmc.Ifrs17.DataTypes.Constants;
 namespace OpenSmc.Ifrs17.ReferenceDataHub.Test;
 
 public class MyImportReferenceDataTest(ITestOutputHelper output) : HubTestBase(output)
+{
+    public static readonly Dictionary<Type, IEnumerable<object>> ReferenceDataDomain
+    =
+    new()
     {
+                { typeof(AmountType), Array.Empty<AmountType>() },
+                { typeof(DeferrableAmountType), new DeferrableAmountType[] {} },
+                { typeof(AocType), new AocType[] {} },
+                { typeof(AocConfiguration), new AocConfiguration[] {} },
+                { typeof(StructureType), new StructureType[] {} },
+                { typeof(CreditRiskRating), new CreditRiskRating[] {} },
+                { typeof(Currency), new Currency[] {} },
+                { typeof(EconomicBasis), new EconomicBasis[] {} },
+                { typeof(EstimateType), new EstimateType[] {} },
+                { typeof(LiabilityType), new LiabilityType[] {} },
+                { typeof(LineOfBusiness), new LineOfBusiness[] {} },
+                { typeof(Novelty), new  Novelty[] {} },
+                { typeof(OciType), new  OciType[] {} },
+                { typeof(Partner), new  Partner[] {} },
+                { typeof(BsVariableType), new  BsVariableType[] {} },
+                { typeof(PnlVariableType), new  PnlVariableType[] {} },
+                { typeof(RiskDriver), new  RiskDriver[] {} },
+                { typeof(Scenario), new  Scenario[] {} },
+                { typeof(ValuationApproach), new  ValuationApproach[] {} },
+                { typeof(ProjectionConfiguration), new  ProjectionConfiguration[] {} },
+    };
+
         protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
         {
-            return base.ConfigureHost(configuration).ConfigureReferenceData();
+            return base.ConfigureHost(configuration).ConfigureReferenceData(ReferenceDataDomain);
         }
 
         [Fact]
