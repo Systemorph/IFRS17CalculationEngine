@@ -6,11 +6,11 @@ namespace OpenSmc.Ifrs17.TransactionalDataHub;
 
 /* For now, this hub owns all data except Dimensions and ReportVariable (subject to change).
  */
-public class TransactionalDataHub : MessageHubPlugin<TransactionalDataHub>
+public class IfrsVariableHub : MessageHubPlugin<IfrsVariableHub>
 {
     [Inject] private IActivityService activityService;
 
-    public TransactionalDataHub(IMessageHub hub, MessageHubConfiguration options) : base(hub)
+    public IfrsVariableHub(IMessageHub hub, MessageHubConfiguration options) : base(hub)
     {
         //options = options.AddImport(x => x);
     }
