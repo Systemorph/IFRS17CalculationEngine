@@ -24,7 +24,7 @@ public class ImportReferenceDataTest(ITestOutputHelper output) : HubTestBase(out
                 { typeof(AocType), new AocType[] {} },
                 { typeof(AocConfiguration), new AocConfiguration[] {} },
                 { typeof(StructureType), new StructureType[] {} },
-                { typeof(CreditDefaultRate), new CreditDefaultRate[] {} },
+                { typeof(CreditRiskRating), new CreditRiskRating[] {} },
                 { typeof(Currency), new Currency[] {} },
                 { typeof(EconomicBasis), new EconomicBasis[] {} },
                 { typeof(EstimateType), new EstimateType[] {} },

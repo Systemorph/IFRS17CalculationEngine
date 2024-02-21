@@ -12,12 +12,17 @@ public static class DataHubConfiguration
         return configuration
             .AddData(dc => dc
                 .WithDataSource("ReferenceDataSource", ds => ds)
-                .WithInMemoryInitialization(Initialization(TemplateDimensions.Csv)))
+                .WithInMemoryInitialization(InitializationAsync(TemplateDimensions.Csv)))
             .AddImport(import => import);
     }
 
-    private static Action<IMessageHub> Initialization(string csvFile)
+    private static Func<IMessageHub, CancellationToken, Task> InitializationAsync(string csvFile)
     {
-        return hub => hub.Post(new ImportRequest(csvFile));
+        return async (hub, cancellationToken) =>
+        {
+            var request = new ImportRequest(csvFile);
+            hub.Post(request);
+            await hub.AwaitResponse(request, cancellationToken);
+        };
     }
 }

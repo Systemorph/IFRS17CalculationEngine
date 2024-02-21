@@ -157,7 +157,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenSmc.Ifrs17.ParameterDataHub", "OpenSmc.Ifrs17.ParameterDataHub\OpenSmc.Ifrs17.ParameterDataHub.csproj", "{3CAA3C8B-9F39-44AF-9410-14FFB3AD87F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Ifrs17.ParameterDataHub", "OpenSmc.Ifrs17.ParameterDataHub\OpenSmc.Ifrs17.ParameterDataHub.csproj", "{3CAA3C8B-9F39-44AF-9410-14FFB3AD87F4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Data.TestDomain", "..\OpenSmc\test\OpenSmc.Data.Domain\OpenSmc.Data.TestDomain.csproj", "{05F2CDF2-7594-43C7-B9E7-0338304C2FAA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -997,6 +999,18 @@ Global
 		{3CAA3C8B-9F39-44AF-9410-14FFB3AD87F4}.Release|arm64.Build.0 = Release|Any CPU
 		{3CAA3C8B-9F39-44AF-9410-14FFB3AD87F4}.Release|x86.ActiveCfg = Release|Any CPU
 		{3CAA3C8B-9F39-44AF-9410-14FFB3AD87F4}.Release|x86.Build.0 = Release|Any CPU
+		{05F2CDF2-7594-43C7-B9E7-0338304C2FAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05F2CDF2-7594-43C7-B9E7-0338304C2FAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05F2CDF2-7594-43C7-B9E7-0338304C2FAA}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{05F2CDF2-7594-43C7-B9E7-0338304C2FAA}.Debug|arm64.Build.0 = Debug|Any CPU
+		{05F2CDF2-7594-43C7-B9E7-0338304C2FAA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{05F2CDF2-7594-43C7-B9E7-0338304C2FAA}.Debug|x86.Build.0 = Debug|Any CPU
+		{05F2CDF2-7594-43C7-B9E7-0338304C2FAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05F2CDF2-7594-43C7-B9E7-0338304C2FAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05F2CDF2-7594-43C7-B9E7-0338304C2FAA}.Release|arm64.ActiveCfg = Release|Any CPU
+		{05F2CDF2-7594-43C7-B9E7-0338304C2FAA}.Release|arm64.Build.0 = Release|Any CPU
+		{05F2CDF2-7594-43C7-B9E7-0338304C2FAA}.Release|x86.ActiveCfg = Release|Any CPU
+		{05F2CDF2-7594-43C7-B9E7-0338304C2FAA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1064,6 +1078,7 @@ Global
 		{CE5F2FC3-8B56-414F-807D-906DE4DE3123} = {74F80CED-05CC-4D74-A4C1-57FC8BCC0BC9}
 		{F4515ED6-789C-4C34-A430-FBE3CFB38E9E} = {74F80CED-05CC-4D74-A4C1-57FC8BCC0BC9}
 		{F70F144A-C970-4EC4-8D59-3375F788E42A} = {74F80CED-05CC-4D74-A4C1-57FC8BCC0BC9}
+		{05F2CDF2-7594-43C7-B9E7-0338304C2FAA} = {74F80CED-05CC-4D74-A4C1-57FC8BCC0BC9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2F53264C-6C10-4A4F-986B-50102C8E2371}
