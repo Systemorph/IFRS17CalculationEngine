@@ -44,7 +44,8 @@ public class ImportReferenceDataTest(ITestOutputHelper output) : HubTestBase(out
         protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
         {
             return base.ConfigureHost(configuration)
-                .AddData(data => data.WithDataSource(nameof(DataSource), source => source.ConfigureCategory(ReferenceDataDomain)))
+                .AddData(data => data.WithDataSource(nameof(DataSource), 
+                        source => source.ConfigureCategory(ReferenceDataDomain)))
                 .AddImport(import => import);
         }
 

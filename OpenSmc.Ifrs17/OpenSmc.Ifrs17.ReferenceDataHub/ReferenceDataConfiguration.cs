@@ -1,7 +1,4 @@
-﻿using AngleSharp.Io;
-using OpenSmc.Data;
-using OpenSmc.Ifrs17.DataTypes.DataModel;
-using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
+﻿using OpenSmc.Data;
 using OpenSmc.Import;
 using OpenSmc.Messaging;
 
