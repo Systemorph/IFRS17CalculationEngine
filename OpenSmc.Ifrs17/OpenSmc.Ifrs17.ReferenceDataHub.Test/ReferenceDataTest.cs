@@ -22,7 +22,6 @@ public class ImportReferenceDataTest(ITestOutputHelper output) : HubTestBase(out
                 { typeof(AmountType), Array.Empty<AmountType>() },
                 { typeof(DeferrableAmountType), new DeferrableAmountType[] {} },
                 { typeof(AocType), new AocType[] {} },
-                { typeof(AocConfiguration), new AocConfiguration[] {} },
                 { typeof(StructureType), new StructureType[] {} },
                 { typeof(CreditRiskRating), new CreditRiskRating[] {} },
                 { typeof(Currency), new Currency[] {} },
@@ -45,7 +44,9 @@ public class ImportReferenceDataTest(ITestOutputHelper output) : HubTestBase(out
         {
             return base.ConfigureHost(configuration)
                 .AddData(data => data.WithDataSource(nameof(DataSource), 
-                        source => source.ConfigureCategory(ReferenceDataDomain)))
+                        source => source.ConfigureCategory(ReferenceDataDomain)
+                            .WithType<AocConfiguration>(t => t.WithKey(x => (x.Year, x.Month, x.AocType, x.Novelty)).WithInitialData(Array.Empty<AocConfiguration>()))
+                        ))
                 .AddImport(import => import);
         }
 
@@ -101,6 +102,6 @@ public class ImportReferenceDataTest(ITestOutputHelper output) : HubTestBase(out
             atItems.Message.Items.Should().HaveCount(17);
             datItems.Message.Items.Should().HaveCount(2);
             aocItems.Message.Items.Should().HaveCount(17);
-            aoccItems.Message.Items.Should().HaveCount(20);
+            aoccItems.Message.Items.Should().HaveCount(21);
         }
 }
