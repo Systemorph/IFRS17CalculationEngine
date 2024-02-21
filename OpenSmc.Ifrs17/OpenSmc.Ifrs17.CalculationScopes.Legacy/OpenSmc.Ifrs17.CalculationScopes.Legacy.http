@@ -1,6 +1,0 @@
-@OpenSmc.Ifrs17.CalculationScopes_HostAddress = http://localhost:5287
-
-GET {{OpenSmc.Ifrs17.CalculationScopes_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

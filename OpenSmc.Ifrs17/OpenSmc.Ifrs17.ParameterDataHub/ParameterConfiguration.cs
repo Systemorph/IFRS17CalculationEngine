@@ -2,17 +2,16 @@
 using OpenSmc.Import;
 using OpenSmc.Messaging;
 
-namespace OpenSmc.Ifrs17.ReferenceDataHub;
+namespace OpenSmc.Ifrs17.ParameterDataHub;
 
-public static class DataHubConfiguration
+public static class ParameterConfiguration
 {
-
     public static MessageHubConfiguration ConfigureReferenceData(this MessageHubConfiguration configuration)
     {
         return configuration
             .AddData(dc => dc
                 .WithDataSource("ReferenceDataSource", ds => ds)
-                .WithInMemoryInitialization(Initialization(TemplateDimensions.Csv)))
+                .WithInMemoryInitialization(Initialization(TemplateParameter.Csv)))
             .AddImport(import => import);
     }
 
