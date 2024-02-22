@@ -1,4 +1,8 @@
 ﻿using OpenSmc.Data;
+using OpenSmc.Ifrs17.DataTypes.DataModel;
+using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
+using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
+using OpenSmc.Ifrs17.ReferenceDataHub;
 using OpenSmc.Import;
 using OpenSmc.Messaging;
 using OpenSmc.Reflection;
@@ -8,22 +12,55 @@ namespace OpenSmc.Ifrs17.DataNodeHub;
 
 public static class DataHubConfiguration
 {
-    private static readonly TypeArrayKey Referencetypes = ReferenceDataDomain.GetKey();
-    public static MessageHubConfiguration ConfigureDataNodes(this MessageHubConfiguration configuration, Dictionary<Type, IEnumerable<object>> types)
+    public static readonly Dictionary<Type, IEnumerable<object>> DataNodeDomain
+    = 
+    new[] { typeof(InsurancePortfolio), typeof(ReinsurancePortfolio), 
+            typeof(GroupOfInsuranceContract), typeof(GroupOfReinsuranceContract) }
+    .ToDictionary(x => x, x => Enumerable.Empty<object>());
+
+    public static MessageHubConfiguration ConfigureRefDataAndDataNodes(this MessageHubConfiguration configuration)
     {
+        var refDataAddress = new ReferenceDataAddress(configuration.Address);
+        var dataNodeAddress = new DataNodeAddress(configuration.Address);
+
         return configuration
-            .AddImport(import => import)
-            .AddData(dc => dc
-                .WithDataSource("DataNodeSource", ds => ds.ConfigureCategory(types))
-                .WithInitialization(InitializationAsync(configuration, TemplateDataNodes.Csv)));
+
+            .WithHostedHub(refDataAddress, config => config
+                .AddImport(import => import)
+                .AddData(dc => dc
+                .WithDataSource("ReferenceDataSource",
+                    ds => ds.ConfigureCategory(ReferenceDataHubConfiguration.ReferenceDataDomain)
+                            .ConfigureCategory(ReferenceDataHubConfiguration.ReferenceDataDomainExtra))
+                .WithInitialization(ReferenceDataHubConfiguration.RefDataInit(configuration, TemplateDimensions.Csv))))
+
+            .WithHostedHub(dataNodeAddress, config => config
+                .AddImport(import => import)
+                .AddData(dc => dc
+                .WithDataSource("DataNodeDataSource",
+                    ds => ds.ConfigureCategory(DataNodeDomain).ConfigureCategory(DataNodeDomainExtra))
+                .WithInitialization(DataNodeInit(configuration, TemplateDimensions.Csv, refDataAddress))))
+
+            .WithRoutes(routes => routes
+                .RouteMessage<GetManyRequest>(_ => refDataAddress));
     }
 
-    private static Func<IMessageHub, CancellationToken, Task> InitializationAsync(MessageHubConfiguration config, string csvFile)
+    private static Func<IMessageHub, CancellationToken, Task> DataNodeInit(MessageHubConfiguration config, string csvFile, ReferenceDataAddress refDataAddress)
     {
+        var refDataRequired = new[] { typeof(ValuationApproach), typeof(Currency), typeof(LineOfBusiness), typeof(OciType),
+                                      typeof(LiabilityType), typeof(Profitability), typeof(YieldCurve), typeof(Partner) };
+
         return async (hub, cancellationToken) =>
         {
-            var request = new ImportRequest(csvFile);
-            await hub.AwaitResponse(request, o => o.WithTarget(new ImportAddress(config.Address)), cancellationToken);
+            var refDataRequest = new GetManyRequest(refDataRequired);
+            await hub.AwaitResponse(refDataRequest, o => o.WithTarget(refDataAddress), cancellationToken);
+            var importRequest = new ImportRequest(csvFile);
+            await hub.AwaitResponse(importRequest, o => o.WithTarget(new ImportAddress(config.Address)), cancellationToken);
         };
     }
+
+    public static readonly IEnumerable<TypeDomainDescriptor> DataNodeDomainExtra = new TypeDomainDescriptor[]
+    {
+        new TypeDomainDescriptor<AocConfiguration>()
+        { TypeConfig = t => t.WithKey(x => (x.Year, x.Month, x.AocType, x.Novelty)) },
+    };
 }

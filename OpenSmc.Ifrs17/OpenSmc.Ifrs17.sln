@@ -161,9 +161,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Ifrs17.ParameterDat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Data.TestDomain", "..\OpenSmc\test\OpenSmc.Data.Domain\OpenSmc.Data.TestDomain.csproj", "{05F2CDF2-7594-43C7-B9E7-0338304C2FAA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenSmc.Ifrs17.DataNodeHub", "OpenSmc.Ifrs17.DataNodeHub\OpenSmc.Ifrs17.DataNodeHub.csproj", "{FC921520-EAD0-448F-86AE-E95E668F241B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Ifrs17.DataNodeHub", "OpenSmc.Ifrs17.DataNodeHub\OpenSmc.Ifrs17.DataNodeHub.csproj", "{FC921520-EAD0-448F-86AE-E95E668F241B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenSmc.Ifrs17.DataNodeHub.Test", "OpenSmc.Ifrs17.DataNodeHub.Test\OpenSmc.Ifrs17.DataNodeHub.Test.csproj", "{4C18FF19-B6A6-4DD2-9BB0-C830C6E6C2D7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Ifrs17.DataNodeHub.Test", "OpenSmc.Ifrs17.DataNodeHub.Test\OpenSmc.Ifrs17.DataNodeHub.Test.csproj", "{4C18FF19-B6A6-4DD2-9BB0-C830C6E6C2D7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

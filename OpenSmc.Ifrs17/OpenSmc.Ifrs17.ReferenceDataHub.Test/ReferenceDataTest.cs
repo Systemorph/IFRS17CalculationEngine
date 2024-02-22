@@ -20,7 +20,12 @@ public class ImportReferenceDataTest(ITestOutputHelper output) : HubTestBase(out
 {
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
     {
-        return base.ConfigureHost(configuration).ConfigureReferenceDataDictInit();
+        return base.ConfigureHost(configuration)
+            .AddImport(import => import)
+            .AddData(dc => dc
+                .WithDataSource("ReferenceDataSource",
+                    ds => ds.ConfigureCategory(TemplateData.TemplateReferenceData)
+                            .ConfigureCategory(ReferenceDataHubConfiguration.ReferenceDataDomainExtra)));
     }
 
     [Fact]

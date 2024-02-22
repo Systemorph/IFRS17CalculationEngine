@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using OpenSmc.Activities;
-using OpenSmc.Data;
+﻿using OpenSmc.Data;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Import;
 using OpenSmc.Messaging;
@@ -12,69 +10,28 @@ using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 
 namespace OpenSmc.Ifrs17.ReferenceDataHub;
 
-public static class DataHubConfiguration
+public static class ReferenceDataHubConfiguration
 {
-    public record ReferenceDataAddress(object Host);
-    public record DataNodeAddress(object Host);
-
-    public static MessageHubConfiguration ConfigureIFRS17(this MessageHubConfiguration configuration, Dictionary<Type, IEnumerable<object>> types)
-    {
-        var refDataAddress = new ReferenceDataAddress(configuration.Address);
-        var dataNodeAddress = new DataNodeAddress(configuration.Address);
-
-        return configuration
-            .WithHostedHub(refDataAddress, config => config
-                .AddImport(import => import)
-                .AddData(dc => dc
-                .WithDataSource("ReferenceDataSource",
-                    ds => ds.ConfigureCategory(types).ConfigureCategory(ReferenceDataDomainExtra))
-                .WithInitialization(RefDataInit(configuration, TemplateDimensions.Csv))))
-            .WithHostedHub(refDataAddress, config => config
-                .AddImport(import => import)
-                .AddData(dc => dc
-                .WithDataSource("DataNodeDataSource",
-                    ds => ds.ConfigureCategory(types).ConfigureCategory(ReferenceDataDomainExtra))
-                .WithInitialization(RefDataInit(configuration, TemplateDimensions.Csv))))
-            .WithRoutes(routes => routes
-                .RouteMessage<GetManyRequest>(_ => refDataAddress));
-    }
-
     public static readonly Dictionary<Type, IEnumerable<object>> ReferenceDataDomain
-        =
-        new()
-        {
-            { typeof(AmountType), Array.Empty<AmountType>() },
-            { typeof(DeferrableAmountType), new DeferrableAmountType[] {} },
-            { typeof(AocType), new AocType[] {} },
-            { typeof(StructureType), new StructureType[] {} },
-            { typeof(CreditRiskRating), new CreditRiskRating[] {} },
-            { typeof(Currency), new Currency[] {} },
-            { typeof(EconomicBasis), new EconomicBasis[] {} },
-            { typeof(EstimateType), new EstimateType[] {} },
-            { typeof(LiabilityType), new LiabilityType[] {} },
-            { typeof(LineOfBusiness), new LineOfBusiness[] {} },
-            { typeof(Novelty), new  Novelty[] {} },
-            { typeof(OciType), new  OciType[] {} },
-            { typeof(Partner), new  Partner[] {} },
-            { typeof(BsVariableType), new  BsVariableType[] {} },
-            { typeof(PnlVariableType), new  PnlVariableType[] {} },
-            { typeof(RiskDriver), new  RiskDriver[] {} },
-            { typeof(Scenario), new  Scenario[] {} },
-            { typeof(ValuationApproach), new  ValuationApproach[] {} },
-            { typeof(ProjectionConfiguration), new  ProjectionConfiguration[] {} },
-        };
-
-    public static MessageHubConfiguration ConfigureReferenceData(this MessageHubConfiguration configuration, Dictionary<Type, IEnumerable<object>> types)
+    =
+    new[] { typeof(AmountType), typeof(DeferrableAmountType), typeof(AocType), typeof(StructureType),
+                typeof(CreditRiskRating), typeof(Currency), typeof(EconomicBasis), typeof(EstimateType),
+                typeof(LiabilityType), typeof(LineOfBusiness), typeof(Novelty), typeof(OciType),
+                typeof(Partner), typeof(BsVariableType), typeof(PnlVariableType), typeof(RiskDriver),
+                typeof(Scenario), typeof(ValuationApproach), typeof(ProjectionConfiguration) }
+    .ToDictionary(x => x, x => Enumerable.Empty<object>());
+    
+    public static MessageHubConfiguration ConfigureReferenceDataImportInit(this MessageHubConfiguration configuration)
     {
         return configuration
             .AddImport(import => import)
             .AddData(dc => dc
                 .WithDataSource("ReferenceDataSource", 
-                    ds => ds.ConfigureCategory(types).ConfigureCategory(ReferenceDataDomainExtra))
+                    ds => ds.ConfigureCategory(ReferenceDataDomain).ConfigureCategory(ReferenceDataDomainExtra))
                 .WithInitialization(RefDataInit(configuration, TemplateDimensions.Csv)));
     }
 
-    private static Func<IMessageHub, CancellationToken, Task> RefDataInit(MessageHubConfiguration config, string csvFile)
+    public static Func<IMessageHub, CancellationToken, Task> RefDataInit(MessageHubConfiguration config, string csvFile)
     {
         return async (hub, cancellationToken) =>
         {
@@ -83,32 +40,26 @@ public static class DataHubConfiguration
         };
     }
 
-    private static Func<IMessageHub, CancellationToken, Task> DataNodeInit(MessageHubConfiguration config, string csvFile, ReferenceDataAddress refDataAddress)
-    {
-        return async (hub, cancellationToken) =>
-        {
-            var refDataRequest = new GetManyRequest(Types);
-            await hub.AwaitResponse(refDataRequest, o => o.WithTarget(refDataAddress), cancellationToken);
-            var importRequest = new ImportRequest(csvFile);
-            await hub.AwaitResponse(importRequest, o => o.WithTarget(new ImportAddress(config.Address)), cancellationToken);
-        };
-    }
-
     public static MessageHubConfiguration ConfigureReferenceDataDictInit(this MessageHubConfiguration configuration)
     {
         return configuration
-            .AddImport(import => import)
             .AddData(dc => dc
                 .WithDataSource("ReferenceDataSource",
-                    ds => ds.ConfigureCategory(TemplateData.TemplateReferenceData).ConfigureCategory(ReferenceDataDomainExtra)));
+                    ds => ds.ConfigureCategory(TemplateData.TemplateReferenceData)
+                            .ConfigureCategory(ReferenceDataDomainExtra)));
     }
+
+    public static readonly IEnumerable<TypeDomainDescriptor> ReferenceDataDomainExtra = new TypeDomainDescriptor[]
+    {
+        new TypeDomainDescriptor<AocConfiguration>() 
+        { TypeConfig = t => t.WithKey(x => (x.Year, x.Month, x.AocType, x.Novelty)) },
+    };
 }
 
 
 
 /*  The following types and method extensions 
- *  enable types with multiple IdentityProperty
- */
+ *  enable types with multiple IdentityProperty */
 public record TypeDomainDescriptor;
 public record TypeDomainDescriptor<T>() : TypeDomainDescriptor where T : class
 {

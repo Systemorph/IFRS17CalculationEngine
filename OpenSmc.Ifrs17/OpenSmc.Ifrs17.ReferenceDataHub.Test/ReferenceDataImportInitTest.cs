@@ -11,16 +11,17 @@ using OpenSmc.Ifrs17.DataTypes.Constants;
 
 namespace OpenSmc.Ifrs17.ReferenceDataHub.Test;
 
-public class ReferenceDataDictInitTest(ITestOutputHelper output) : HubTestBase(output)
+public class ReferenceDataImportInit(ITestOutputHelper output) : HubTestBase(output)
 {
+    
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
     {
         return base.ConfigureHost(configuration)
-                   .ConfigureReferenceDataDictInit();
+                   .ConfigureReferenceDataImportInit();
     }
 
     [Fact]
-    public async Task InitializedDataTest()
+    public async Task InitReferenceDataTest()
     {
         var client = GetClient();
 
