@@ -13,14 +13,15 @@ using OpenSmc.Ifrs17.DataTypes.DataModel.TransactionalData;
 
 namespace OpenSmc.Ifrs17.DataNodeHub
 {
+    /*
     public async Task<ActivityLog> UploadDataNodesToWorkspaceAsync(IDataSet dataSet, IWorkspace workspace, IDataSource targetDataSource)
     {
-        /*workspace.Reset(x => x.ResetInitializationRules().ResetCurrentPartitions());
-        workspace.Initialize(x => x.FromSource(targetDataSource)
-                                   .DisableInitialization<RawVariable>()
-                                   .DisableInitialization<IfrsVariable>()
-                                   .DisableInitialization<DataNodeState>()
-                                   .DisableInitialization<DataNodeParameter>());*/
+        //workspace.Reset(x => x.ResetInitializationRules().ResetCurrentPartitions());
+        //workspace.Initialize(x => x.FromSource(targetDataSource)
+        //                           .DisableInitialization<RawVariable>()
+        //                           .DisableInitialization<IfrsVariable>()
+        //                           .DisableInitialization<DataNodeState>()
+        //                           .DisableInitialization<DataNodeParameter>());
 
         //Activity.Start();
         //var args = await GetArgsAndCommitPartitionAsync<PartitionByReportingNode>(dataSet, targetDataSource);
@@ -130,4 +131,5 @@ namespace OpenSmc.Ifrs17.DataNodeHub
 
         return Activity.Finish().Merge(importLogPortfolios).Merge(importLogGroupOfContracts);
     }
+*/
 }

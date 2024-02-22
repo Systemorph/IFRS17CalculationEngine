@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace OpenSmc.Ifrs17.DataNodeHub
 {
+    /*
     public class ParsingStorage
     {
         private readonly IDataSource dataSource;
@@ -220,4 +221,5 @@ namespace OpenSmc.Ifrs17.DataNodeHub
             return eb;
         }
     }
+    */
 }

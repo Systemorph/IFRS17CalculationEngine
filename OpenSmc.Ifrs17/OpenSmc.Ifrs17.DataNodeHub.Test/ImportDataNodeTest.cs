@@ -3,9 +3,7 @@ using OpenSmc.Hub.Fixture;
 using Xunit;
 using Xunit.Abstractions;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
-using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
-using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
-using OpenSmc.Ifrs17.DataTypes.Constants;
+using OpenSmc.Messaging;
 
 namespace OpenSmc.Ifrs17.ReferenceDataHub.Test;
 
@@ -23,7 +21,7 @@ public class ImportDataNodeTest(ITestOutputHelper output) : HubTestBase(output)
 
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
     {
-        return base.ConfigureHost(configuration).ConfigureDataNodes(DataNodeDomain);
+        return base.ConfigureHost(configuration);//.ConfigureDataNodes(DataNodeDomain);
     }
 
     [Fact]
