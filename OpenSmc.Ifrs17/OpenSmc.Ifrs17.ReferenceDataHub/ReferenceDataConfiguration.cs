@@ -46,7 +46,8 @@ public static class ReferenceDataHubConfiguration
             .AddData(dc => dc
                 .WithDataSource("ReferenceDataSource",
                     ds => ds.ConfigureCategory(TemplateData.TemplateReferenceData)
-                            .ConfigureCategory(ReferenceDataDomainExtra)));
+                        .WithType<AocConfiguration>(t => t.WithKey(x => (x.Year, x.Month, x.AocType, x.Novelty)).WithInitialData(TemplateData.AocConfiguration[typeof(AocConfiguration)]))
+                ));
     }
 
     public static readonly IEnumerable<TypeDomainDescriptor> ReferenceDataDomainExtra = new TypeDomainDescriptor[]

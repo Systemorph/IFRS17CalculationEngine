@@ -1,4 +1,3 @@
-using System.Reflection;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using OpenSmc.Activities;
@@ -10,7 +9,6 @@ using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.DataTypes.Constants;
 using OpenSmc.Import;
 using OpenSmc.Messaging;
-using OpenSmc.Reflection;
 using Xunit;
 using Xunit.Abstractions;
 
