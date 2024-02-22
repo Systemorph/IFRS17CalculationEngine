@@ -5,8 +5,6 @@ using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.ReferenceDataHub;
 using OpenSmc.Import;
 using OpenSmc.Messaging;
-using OpenSmc.Reflection;
-using OpenSmc.Ifrs17.ReferenceDataHub;
 
 namespace OpenSmc.Ifrs17.DataNodeHub;
 

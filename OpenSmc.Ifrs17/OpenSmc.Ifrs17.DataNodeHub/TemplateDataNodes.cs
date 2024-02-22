@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace OpenSmc.Ifrs17.DataNodeHub;
 
-namespace OpenSmc.Ifrs17.DataNodeHub
+public static class TemplateDataNodes
 {
-    public static class TemplateDataNodes
-    {
-        public const string Csv = @"@@InsurancePortfolio
+    public const string Csv = @"@@InsurancePortfolio
 SystemName,DisplayName,ContractualCurrency,LineOfBusiness,ValuationApproach,OciType,
 DT,DT Complex CF,USD,ANN,BBA,Default,
 DT1,DT1 OCI,USD,ANN,BBA,Default,
@@ -47,5 +41,4 @@ DTR1.3,DTR1.3 Adv and Ove Actuals on DTR1.1,DTR1,2020,LRC,P,PT1
 DTR1.4,DTR1.4 OA and WO Claims on DTR1.1,DTR1,2020,LRC,P,PT1
 DTR2.1,DTR2.1 NOCI LRC,DTR2,2020,LRC,P,PT1
 DTR2.2,DTR2.2 NOCI LIC,DTR2,2020,LIC,P,PT1";
-    }
 }
