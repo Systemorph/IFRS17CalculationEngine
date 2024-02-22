@@ -14,7 +14,7 @@ public static class DataHubConfiguration
             .AddImport(import => import)
             .AddData(dc => dc
                 .WithDataSource("ReferenceDataSource", ds => ds.ConfigureCategory(types))
-                .WithInMemoryInitialization(InitializationAsync(configuration, TemplateDimensions.Csv)));
+                .WithInitialization(InitializationAsync(configuration, TemplateDimensions.Csv)));
     }
 
     private static Func<IMessageHub, CancellationToken, Task> InitializationAsync(MessageHubConfiguration config, string csvFile)
