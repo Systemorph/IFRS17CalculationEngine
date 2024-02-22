@@ -1,12 +1,14 @@
 ﻿using OpenSmc.Data;
-using OpenSmc.Ifrs17.DataNodeHub;
 using OpenSmc.Import;
 using OpenSmc.Messaging;
+using OpenSmc.Reflection;
+using OpenSmc.Ifrs17.ReferenceDataHub;
 
-namespace OpenSmc.Ifrs17.ReferenceDataHub;
+namespace OpenSmc.Ifrs17.DataNodeHub;
 
 public static class DataHubConfiguration
 {
+    private static readonly TypeArrayKey Referencetypes = ReferenceDataDomain.GetKey();
     public static MessageHubConfiguration ConfigureDataNodes(this MessageHubConfiguration configuration, Dictionary<Type, IEnumerable<object>> types)
     {
         return configuration
