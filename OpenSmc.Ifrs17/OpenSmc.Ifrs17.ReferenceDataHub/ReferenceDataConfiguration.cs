@@ -13,7 +13,7 @@ using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 namespace OpenSmc.Ifrs17.ReferenceDataHub;
 
 public static class DataHubConfiguration
-{/*
+{
     public record ReferenceDataAddress(object Host);
     public record DataNodeAddress(object Host);
 
@@ -24,66 +24,20 @@ public static class DataHubConfiguration
 
         return configuration
             .WithHostedHub(refDataAddress, config => config
-                .WithServices(services => services.AddSingleton<IActivityService, ActivityService>()
-                                                  .AddSingleton<IWorkspace, DataPlugin>())
-
-                .AddPlugin(hub => (DataPlugin)hub.ServiceProvider.GetRequiredService<IWorkspace>())
-
-                .WithHostedHub(new ReferenceDataAddress(config.Address), c => c.AddPlugin(h => new ImportPlugin(h, importConfig => importConfig)))
-
-
-                .Set(configuration.GetListOfLambdas().Add(dc => dc))
-
-                .WithRoutes(routes => routes
-                    .RouteMessage<ImportRequest>(_ => new ImportAddress(config.Address))
-                    .RouteMessage<StartDataSynchronizationRequest>(_ => new PersistenceAddress(routes.Hub.Address))
-                    .RouteMessage<StopDataSynchronizationRequest>(_ => new PersistenceAddress(routes.Hub.Address))
-                    .RouteMessage<DataSynchronizationState>(_ => new PersistenceAddress(routes.Hub.Address))))
-            
-            .WithHostedHub(dataNodeAddress, config => config
-                .WithServices(services => services.AddSingleton<IActivityService, ActivityService>()
-                                                  .AddSingleton<IWorkspace, DataPlugin>())
-
-                .AddPlugin(hub => (DataPlugin)hub.ServiceProvider.GetRequiredService<IWorkspace>())
-
-                .WithHostedHub(new DataNodeAddress(config.Address), c => c.AddPlugin(h => new ImportPlugin(h, importConfig => importConfig)))
-
-
-                .Set(configuration.GetListOfLambdas().Add(dc => dc))
-
-                .WithRoutes(routes => routes
-                    .RouteMessage<ImportRequest>(_ => new ImportAddress(config.Address))
-                    .RouteMessage<StartDataSynchronizationRequest>(_ => new PersistenceAddress(routes.Hub.Address))
-                    .RouteMessage<StopDataSynchronizationRequest>(_ => new PersistenceAddress(routes.Hub.Address))
-                    .RouteMessage<DataSynchronizationState>(_ => new PersistenceAddress(routes.Hub.Address))))
-            
+                .AddImport(import => import)
+                .AddData(dc => dc
+                .WithDataSource("ReferenceDataSource",
+                    ds => ds.ConfigureCategory(types).ConfigureCategory(ReferenceDataDomainExtra))
+                .WithInitialization(RefDataInit(configuration, TemplateDimensions.Csv))))
+            .WithHostedHub(refDataAddress, config => config
+                .AddImport(import => import)
+                .AddData(dc => dc
+                .WithDataSource("DataNodeDataSource",
+                    ds => ds.ConfigureCategory(types).ConfigureCategory(ReferenceDataDomainExtra))
+                .WithInitialization(RefDataInit(configuration, TemplateDimensions.Csv))))
             .WithRoutes(routes => routes
                 .RouteMessage<GetManyRequest>(_ => refDataAddress));
     }
-
-    public static MessageHubConfiguration ConfigureIFRS17bis(this MessageHubConfiguration configuration, Dictionary<Type, IEnumerable<object>> types)
-    {
-        var refDataAddress = new ReferenceDataAddress(configuration.Address);
-        var dataNodeAddress = new DataNodeAddress(configuration.Address);
-
-        return configuration
-                .WithServices(services => services.AddSingleton<IActivityService, ActivityService>()
-                                                  .AddSingleton<IWorkspace, DataPlugin>())
-
-                .AddPlugin(hub => (DataPlugin)hub.ServiceProvider.GetRequiredService<IWorkspace>())
-
-                .WithHostedHub(new ReferenceDataAddress(config.Address), c => c.AddPlugin(h => new ImportPlugin(h, importConfig => importConfig)))
-
-
-                .Set(configuration.GetListOfLambdas().Add(dc => dc))
-
-                .WithRoutes(routes => routes
-                    .RouteMessage<ImportRequest>(_ => new ImportAddress(config.Address))
-                    .RouteMessage<StartDataSynchronizationRequest>(_ => new PersistenceAddress(routes.Hub.Address))
-                    .RouteMessage<StopDataSynchronizationRequest>(_ => new PersistenceAddress(routes.Hub.Address))
-                    .RouteMessage<DataSynchronizationState>(_ => new PersistenceAddress(routes.Hub.Address)));
-    }
-    */
 
     public static readonly Dictionary<Type, IEnumerable<object>> ReferenceDataDomain
         =
@@ -110,12 +64,6 @@ public static class DataHubConfiguration
             { typeof(ProjectionConfiguration), new  ProjectionConfiguration[] {} },
         };
 
-    private static readonly IEnumerable<TypeDomainDescriptor> ReferenceDataDomainExtra =
-        new TypeDomainDescriptor[]
-        {
-            new TypeDomainDescriptor<AocConfiguration>() { TypeConfig = t => t.WithKey(x => (x.Year, x.Month, x.AocType, x.Novelty)) },
-        };
-
     public static MessageHubConfiguration ConfigureReferenceData(this MessageHubConfiguration configuration, Dictionary<Type, IEnumerable<object>> types)
     {
         return configuration
@@ -123,15 +71,26 @@ public static class DataHubConfiguration
             .AddData(dc => dc
                 .WithDataSource("ReferenceDataSource", 
                     ds => ds.ConfigureCategory(types).ConfigureCategory(ReferenceDataDomainExtra))
-                .WithInitialization(InitializationAsync(configuration, TemplateDimensions.Csv)));
+                .WithInitialization(RefDataInit(configuration, TemplateDimensions.Csv)));
     }
 
-    private static Func<IMessageHub, CancellationToken, Task> InitializationAsync(MessageHubConfiguration config, string csvFile)
+    private static Func<IMessageHub, CancellationToken, Task> RefDataInit(MessageHubConfiguration config, string csvFile)
     {
         return async (hub, cancellationToken) =>
         {
             var request = new ImportRequest(csvFile);
             await hub.AwaitResponse(request, o => o.WithTarget(new ImportAddress(config.Address)), cancellationToken);
+        };
+    }
+
+    private static Func<IMessageHub, CancellationToken, Task> DataNodeInit(MessageHubConfiguration config, string csvFile, ReferenceDataAddress refDataAddress)
+    {
+        return async (hub, cancellationToken) =>
+        {
+            var refDataRequest = new GetManyRequest(Types);
+            await hub.AwaitResponse(refDataRequest, o => o.WithTarget(refDataAddress), cancellationToken);
+            var importRequest = new ImportRequest(csvFile);
+            await hub.AwaitResponse(importRequest, o => o.WithTarget(new ImportAddress(config.Address)), cancellationToken);
         };
     }
 
