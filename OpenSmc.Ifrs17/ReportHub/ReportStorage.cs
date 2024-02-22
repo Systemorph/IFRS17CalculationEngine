@@ -1,4 +1,5 @@
 ﻿using OpenSmc.Collections;
+using OpenSmc.Data;
 using OpenSmc.DataCubes;
 using OpenSmc.Domain.Abstractions;
 using OpenSmc.Ifrs17.DataTypes.Constants;
