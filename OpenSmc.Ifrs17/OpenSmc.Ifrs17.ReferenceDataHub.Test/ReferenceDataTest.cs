@@ -51,12 +51,7 @@ public class ImportReferenceDataTest(ITestOutputHelper output) : HubTestBase(out
 
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
     {
-        return base.ConfigureHost(configuration)
-            .AddData(data => data.WithDataSource(nameof(DataSource), 
-                    source => source.ConfigureCategory(ReferenceDataDomain)
-                        .ConfigureCategory(ReferenceDataDomainExtra)
-                    ))
-            .AddImport(import => import);
+        return base.ConfigureHost(configuration).ConfigureReferenceDataDictInit();
     }
 
     [Fact]
@@ -132,22 +127,4 @@ public class ImportReferenceDataTest(ITestOutputHelper output) : HubTestBase(out
             pcItems.Message.Items.Should().HaveCount(20);
         }
     }
-}
-
-public record TypeDomainDescriptor;
-public record TypeDomainDescriptor<T>() : TypeDomainDescriptor where T : class
-{
-    public IEnumerable<T> InitialData { get; init; } = Array.Empty<T>();
-    public Func<TypeSource<T>, TypeSource<T>> TypeConfig { get; init; } = typeConfig => typeConfig;
-}
-
-public static class DataSourceDomainExtensions
-{
-    public static DataSource ConfigureCategory(this DataSource dataSource, IEnumerable<TypeDomainDescriptor> typeDescriptors)
-        => typeDescriptors.Aggregate(dataSource, (ds, t) => (DataSource)ConfigureTypeMethod.MakeGenericMethod(t.GetType().GetGenericArguments().First()).InvokeAsFunction(ds, t));
-
-    private static readonly MethodInfo ConfigureTypeMethod = ReflectionHelper.GetStaticMethodGeneric(() => ConfigureType<object>(null, null));
-
-    private static DataSource ConfigureType<T>(DataSource dataSource, TypeDomainDescriptor<T> typeDescriptor) where T : class
-        => dataSource.WithType<T>(t => typeDescriptor.TypeConfig(t.WithInitialData(typeDescriptor.InitialData)));
 }

@@ -11,7 +11,7 @@ public static class ParameterConfiguration
         return configuration
             .AddData(dc => dc
                 .WithDataSource("ReferenceDataSource", ds => ds)
-                .WithInMemoryInitialization(InitializationAsync(TemplateParameter.Csv)))
+                .WithInitialization(InitializationAsync(TemplateParameter.Csv)))
             .AddImport(import => import);
     }
 

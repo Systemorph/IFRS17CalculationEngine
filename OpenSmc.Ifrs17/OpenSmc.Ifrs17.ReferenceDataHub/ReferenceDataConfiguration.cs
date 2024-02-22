@@ -1,19 +1,93 @@
-﻿using OpenSmc.Data;
+﻿using Microsoft.Extensions.DependencyInjection;
+using OpenSmc.Activities;
+using OpenSmc.Data;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Import;
 using OpenSmc.Messaging;
+using OpenSmc.Reflection;
+using System.Reflection;
 
 namespace OpenSmc.Ifrs17.ReferenceDataHub;
 
 public static class DataHubConfiguration
-{
+{/*
+    public record ReferenceDataAddress(object Host);
+    public record DataNodeAddress(object Host);
 
+    public static MessageHubConfiguration ConfigureIFRS17(this MessageHubConfiguration configuration, Dictionary<Type, IEnumerable<object>> types)
+    {
+        var refDataAddress = new ReferenceDataAddress(configuration.Address);
+        var dataNodeAddress = new DataNodeAddress(configuration.Address);
+
+        return configuration
+            .WithHostedHub(refDataAddress, config => config
+                .WithServices(services => services.AddSingleton<IActivityService, ActivityService>()
+                                                  .AddSingleton<IWorkspace, DataPlugin>())
+
+                .AddPlugin(hub => (DataPlugin)hub.ServiceProvider.GetRequiredService<IWorkspace>())
+
+                .WithHostedHub(new ReferenceDataAddress(config.Address), c => c.AddPlugin(h => new ImportPlugin(h, importConfig => importConfig)))
+
+
+                .Set(configuration.GetListOfLambdas().Add(dc => dc))
+
+                .WithRoutes(routes => routes
+                    .RouteMessage<ImportRequest>(_ => new ImportAddress(config.Address))
+                    .RouteMessage<StartDataSynchronizationRequest>(_ => new PersistenceAddress(routes.Hub.Address))
+                    .RouteMessage<StopDataSynchronizationRequest>(_ => new PersistenceAddress(routes.Hub.Address))
+                    .RouteMessage<DataSynchronizationState>(_ => new PersistenceAddress(routes.Hub.Address))))
+            
+            .WithHostedHub(dataNodeAddress, config => config
+                .WithServices(services => services.AddSingleton<IActivityService, ActivityService>()
+                                                  .AddSingleton<IWorkspace, DataPlugin>())
+
+                .AddPlugin(hub => (DataPlugin)hub.ServiceProvider.GetRequiredService<IWorkspace>())
+
+                .WithHostedHub(new DataNodeAddress(config.Address), c => c.AddPlugin(h => new ImportPlugin(h, importConfig => importConfig)))
+
+
+                .Set(configuration.GetListOfLambdas().Add(dc => dc))
+
+                .WithRoutes(routes => routes
+                    .RouteMessage<ImportRequest>(_ => new ImportAddress(config.Address))
+                    .RouteMessage<StartDataSynchronizationRequest>(_ => new PersistenceAddress(routes.Hub.Address))
+                    .RouteMessage<StopDataSynchronizationRequest>(_ => new PersistenceAddress(routes.Hub.Address))
+                    .RouteMessage<DataSynchronizationState>(_ => new PersistenceAddress(routes.Hub.Address))))
+            
+            .WithRoutes(routes => routes
+                .RouteMessage<GetManyRequest>(_ => refDataAddress));
+    }
+
+    public static MessageHubConfiguration ConfigureIFRS17bis(this MessageHubConfiguration configuration, Dictionary<Type, IEnumerable<object>> types)
+    {
+        var refDataAddress = new ReferenceDataAddress(configuration.Address);
+        var dataNodeAddress = new DataNodeAddress(configuration.Address);
+
+        return configuration
+                .WithServices(services => services.AddSingleton<IActivityService, ActivityService>()
+                                                  .AddSingleton<IWorkspace, DataPlugin>())
+
+                .AddPlugin(hub => (DataPlugin)hub.ServiceProvider.GetRequiredService<IWorkspace>())
+
+                .WithHostedHub(new ReferenceDataAddress(config.Address), c => c.AddPlugin(h => new ImportPlugin(h, importConfig => importConfig)))
+
+
+                .Set(configuration.GetListOfLambdas().Add(dc => dc))
+
+                .WithRoutes(routes => routes
+                    .RouteMessage<ImportRequest>(_ => new ImportAddress(config.Address))
+                    .RouteMessage<StartDataSynchronizationRequest>(_ => new PersistenceAddress(routes.Hub.Address))
+                    .RouteMessage<StopDataSynchronizationRequest>(_ => new PersistenceAddress(routes.Hub.Address))
+                    .RouteMessage<DataSynchronizationState>(_ => new PersistenceAddress(routes.Hub.Address)));
+    }
+    */
     public static MessageHubConfiguration ConfigureReferenceData(this MessageHubConfiguration configuration, Dictionary<Type, IEnumerable<object>> types)
     {
         return configuration
             .AddImport(import => import)
             .AddData(dc => dc
-                .WithDataSource("ReferenceDataSource", ds => ds.ConfigureCategory(types))
+                .WithDataSource("ReferenceDataSource", 
+                    ds => ds.ConfigureCategory(types).ConfigureCategory(ReferenceDataDomainExtra))
                 .WithInitialization(InitializationAsync(configuration, TemplateDimensions.Csv)));
     }
 
@@ -29,10 +103,37 @@ public static class DataHubConfiguration
     public static MessageHubConfiguration ConfigureReferenceDataDictInit(this MessageHubConfiguration configuration)
     {
         return configuration
+            .AddImport(import => import)
             .AddData(dc => dc
                 .WithDataSource("ReferenceDataSource",
-                    ds => ds.ConfigureCategory(TemplateData.TemplateReferenceData)
-                        .WithType<AocConfiguration>(t => t.WithKey(x => (x.Year, x.Month, x.AocType, x.Novelty)).WithInitialData(TemplateData.AocConfiguration[typeof(AocConfiguration)]))
-                ));
+                    ds => ds.ConfigureCategory(TemplateData.TemplateReferenceData).ConfigureCategory(ReferenceDataDomainExtra)));
     }
+
+    private static readonly IEnumerable<TypeDomainDescriptor> ReferenceDataDomainExtra = new TypeDomainDescriptor[]
+    {
+        new TypeDomainDescriptor<AocConfiguration>() { TypeConfig = t => t.WithKey(x => (x.Year, x.Month, x.AocType, x.Novelty)) },
+    };
+}
+
+
+
+/*  The following types and method extensions 
+ *  enable types with multiple IdentityProperty
+ */
+public record TypeDomainDescriptor;
+public record TypeDomainDescriptor<T>() : TypeDomainDescriptor where T : class
+{
+    public IEnumerable<T> InitialData { get; init; } = Array.Empty<T>();
+    public Func<TypeSource<T>, TypeSource<T>> TypeConfig { get; init; } = typeConfig => typeConfig;
+}
+
+public static class DataSourceDomainExtensions
+{
+    public static DataSource ConfigureCategory(this DataSource dataSource, IEnumerable<TypeDomainDescriptor> typeDescriptors)
+        => typeDescriptors.Aggregate(dataSource, (ds, t) => (DataSource)ConfigureTypeMethod.MakeGenericMethod(t.GetType().GetGenericArguments().First()).InvokeAsFunction(ds, t));
+
+    private static readonly MethodInfo ConfigureTypeMethod = ReflectionHelper.GetStaticMethodGeneric(() => ConfigureType<object>(null, null));
+
+    private static DataSource ConfigureType<T>(DataSource dataSource, TypeDomainDescriptor<T> typeDescriptor) where T : class
+        => dataSource.WithType<T>(t => typeDescriptor.TypeConfig(t.WithInitialData(typeDescriptor.InitialData)));
 }
