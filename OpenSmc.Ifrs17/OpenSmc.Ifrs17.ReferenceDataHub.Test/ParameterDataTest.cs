@@ -7,14 +7,38 @@ using OpenSmc.Import;
 using Xunit;
 using Xunit.Abstractions;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
+using OpenSmc.Ifrs17.ParameterDataHub;
 
 namespace OpenSmc.Ifrs17.ReferenceDataHub.Test;
 
-public class ImportParameterTest(ITestOutputHelper output) : HubTestBase(output)
+//Test ParameterDataDictInit configuration
+public class ParameterDataDictInitTest(ITestOutputHelper output) : HubTestBase(output)
 {
-    private static readonly Dictionary<Type, IEnumerable<object>> FinancialDataDomain
-        =
-        new()
+    protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
+    {
+        return base.ConfigureHost(configuration)
+            .ConfigureParameterDataDictInit();
+    }
+
+    [Fact]
+    public async Task InitializedDataTest()
+    {
+        var client = GetClient();
+
+        var exchangeRateData = await client.AwaitResponse(new GetManyRequest<ExchangeRate>(), o => o.WithTarget(new HostAddress()));
+        //var CdrData = await client.AwaitResponse(new GetManyRequest<CreditDefaultRate>(),o => o.WithTarget(new HostAddress()));
+        //var partnerRatingData = await client.AwaitResponse(new GetManyRequest<PartnerRating>(), o => o.WithTarget(new HostAddress()));
+
+        exchangeRateData.Message.Items.Should().HaveCount(4);
+    }
+
+
+}
+
+//Test Import of Parameters
+public class ImportParameterDataTest(ITestOutputHelper output) : HubTestBase(output)
+    {
+        private static readonly Dictionary<Type, IEnumerable<object>> FinancialDataDomain = new()
         {
             { typeof(YieldCurve), Array.Empty<YieldCurve>() },
             { typeof(ExchangeRate), Array.Empty<ExchangeRate>() },
@@ -32,7 +56,7 @@ public class ImportParameterTest(ITestOutputHelper output) : HubTestBase(output)
     }
 
     [Fact]
-    public async Task ImportFinancialParameterTest()
+    public async Task ImportParameterTest()
     {
         var client = GetClient();
         var importRequest = new ImportRequest(YieldCurveCsv);
