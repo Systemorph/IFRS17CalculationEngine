@@ -18,37 +18,6 @@ namespace OpenSmc.Ifrs17.ReferenceDataHub.Test;
 
 public class ImportReferenceDataTest(ITestOutputHelper output) : HubTestBase(output)
 {
-    public static readonly Dictionary<Type, IEnumerable<object>> ReferenceDataDomain
-        =
-        new()
-        {
-            { typeof(AmountType), Array.Empty<AmountType>() },
-            { typeof(DeferrableAmountType), new DeferrableAmountType[] {} },
-            { typeof(AocType), new AocType[] {} },
-            { typeof(StructureType), new StructureType[] {} },
-            { typeof(CreditRiskRating), new CreditRiskRating[] {} },
-            { typeof(Currency), new Currency[] {} },
-            { typeof(EconomicBasis), new EconomicBasis[] {} },
-            { typeof(EstimateType), new EstimateType[] {} },
-            { typeof(LiabilityType), new LiabilityType[] {} },
-            { typeof(LineOfBusiness), new LineOfBusiness[] {} },
-            { typeof(Novelty), new  Novelty[] {} },
-            { typeof(OciType), new  OciType[] {} },
-            { typeof(Partner), new  Partner[] {} },
-            { typeof(BsVariableType), new  BsVariableType[] {} },
-            { typeof(PnlVariableType), new  PnlVariableType[] {} },
-            { typeof(RiskDriver), new  RiskDriver[] {} },
-            { typeof(Scenario), new  Scenario[] {} },
-            { typeof(ValuationApproach), new  ValuationApproach[] {} },
-            { typeof(ProjectionConfiguration), new  ProjectionConfiguration[] {} },
-        };
-
-    private static readonly IEnumerable<TypeDomainDescriptor> ReferenceDataDomainExtra =
-        new TypeDomainDescriptor[]
-        {
-            new TypeDomainDescriptor<AocConfiguration>() { TypeConfig = t => t.WithKey(x => (x.Year, x.Month, x.AocType, x.Novelty)) },
-        };
-
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
     {
         return base.ConfigureHost(configuration).ConfigureReferenceDataDictInit();

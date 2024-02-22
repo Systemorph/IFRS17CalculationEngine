@@ -6,6 +6,9 @@ using OpenSmc.Import;
 using OpenSmc.Messaging;
 using OpenSmc.Reflection;
 using System.Reflection;
+using OpenSmc.Ifrs17.DataTypes.Constants;
+using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
+using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 
 namespace OpenSmc.Ifrs17.ReferenceDataHub;
 
@@ -81,6 +84,38 @@ public static class DataHubConfiguration
                     .RouteMessage<DataSynchronizationState>(_ => new PersistenceAddress(routes.Hub.Address)));
     }
     */
+
+    public static readonly Dictionary<Type, IEnumerable<object>> ReferenceDataDomain
+        =
+        new()
+        {
+            { typeof(AmountType), Array.Empty<AmountType>() },
+            { typeof(DeferrableAmountType), new DeferrableAmountType[] {} },
+            { typeof(AocType), new AocType[] {} },
+            { typeof(StructureType), new StructureType[] {} },
+            { typeof(CreditRiskRating), new CreditRiskRating[] {} },
+            { typeof(Currency), new Currency[] {} },
+            { typeof(EconomicBasis), new EconomicBasis[] {} },
+            { typeof(EstimateType), new EstimateType[] {} },
+            { typeof(LiabilityType), new LiabilityType[] {} },
+            { typeof(LineOfBusiness), new LineOfBusiness[] {} },
+            { typeof(Novelty), new  Novelty[] {} },
+            { typeof(OciType), new  OciType[] {} },
+            { typeof(Partner), new  Partner[] {} },
+            { typeof(BsVariableType), new  BsVariableType[] {} },
+            { typeof(PnlVariableType), new  PnlVariableType[] {} },
+            { typeof(RiskDriver), new  RiskDriver[] {} },
+            { typeof(Scenario), new  Scenario[] {} },
+            { typeof(ValuationApproach), new  ValuationApproach[] {} },
+            { typeof(ProjectionConfiguration), new  ProjectionConfiguration[] {} },
+        };
+
+    private static readonly IEnumerable<TypeDomainDescriptor> ReferenceDataDomainExtra =
+        new TypeDomainDescriptor[]
+        {
+            new TypeDomainDescriptor<AocConfiguration>() { TypeConfig = t => t.WithKey(x => (x.Year, x.Month, x.AocType, x.Novelty)) },
+        };
+
     public static MessageHubConfiguration ConfigureReferenceData(this MessageHubConfiguration configuration, Dictionary<Type, IEnumerable<object>> types)
     {
         return configuration
@@ -108,11 +143,6 @@ public static class DataHubConfiguration
                 .WithDataSource("ReferenceDataSource",
                     ds => ds.ConfigureCategory(TemplateData.TemplateReferenceData).ConfigureCategory(ReferenceDataDomainExtra)));
     }
-
-    private static readonly IEnumerable<TypeDomainDescriptor> ReferenceDataDomainExtra = new TypeDomainDescriptor[]
-    {
-        new TypeDomainDescriptor<AocConfiguration>() { TypeConfig = t => t.WithKey(x => (x.Year, x.Month, x.AocType, x.Novelty)) },
-    };
 }
 
 
