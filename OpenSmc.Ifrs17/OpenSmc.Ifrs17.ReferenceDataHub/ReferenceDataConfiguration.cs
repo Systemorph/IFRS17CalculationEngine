@@ -12,6 +12,18 @@ namespace OpenSmc.Ifrs17.ReferenceDataHub;
 
 public static class ReferenceDataHubConfiguration
 {
+    //Configuration 1: Use a dictionary to initialize the DataHub 
+    public static MessageHubConfiguration ConfigureReferenceDataDictInit(this MessageHubConfiguration configuration)
+    {
+        return configuration
+            .AddData(dc => dc
+                .WithDataSource("ReferenceDataSource",
+                    ds => ds.ConfigureCategory(TemplateData.TemplateReferenceData)
+                        .WithType<AocConfiguration>(t => t.WithKey(x => (x.Year, x.Month, x.AocType, x.Novelty)).WithInitialData(TemplateData.AocConfiguration[typeof(AocConfiguration)]))
+                ));
+    }
+
+    //Configuration 2: Use Import of Dimension.CSV to Initialize the DataHub
     public static readonly Dictionary<Type, IEnumerable<object>> ReferenceDataDomain
     =
     new[] { typeof(AmountType), typeof(DeferrableAmountType), typeof(AocType), typeof(StructureType),
@@ -40,24 +52,12 @@ public static class ReferenceDataHubConfiguration
         };
     }
 
-    public static MessageHubConfiguration ConfigureReferenceDataDictInit(this MessageHubConfiguration configuration)
-    {
-        return configuration
-            .AddData(dc => dc
-                .WithDataSource("ReferenceDataSource",
-                    ds => ds.ConfigureCategory(TemplateData.TemplateReferenceData)
-                        .WithType<AocConfiguration>(t => t.WithKey(x => (x.Year, x.Month, x.AocType, x.Novelty)).WithInitialData(TemplateData.AocConfiguration[typeof(AocConfiguration)]))
-                ));
-    }
-
     public static readonly IEnumerable<TypeDomainDescriptor> ReferenceDataDomainExtra = new TypeDomainDescriptor[]
     {
         new TypeDomainDescriptor<AocConfiguration>() 
         { TypeConfig = t => t.WithKey(x => (x.Year, x.Month, x.AocType, x.Novelty)) },
     };
 }
-
-
 
 /*  The following types and method extensions 
  *  enable types with multiple IdentityProperty */
