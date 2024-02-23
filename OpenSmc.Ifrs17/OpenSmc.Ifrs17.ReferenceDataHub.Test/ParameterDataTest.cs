@@ -1,15 +1,15 @@
-﻿using OpenSmc.Hub.Fixture;
-using FluentAssertions;
+﻿using FluentAssertions;
 using OpenSmc.Activities;
-using OpenSmc.Messaging;
 using OpenSmc.Data;
-using OpenSmc.Import;
-using Xunit;
-using Xunit.Abstractions;
+using OpenSmc.Hub.Fixture;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Ifrs17.ParameterDataHub;
+using OpenSmc.Import;
+using OpenSmc.Messaging;
+using Xunit;
+using Xunit.Abstractions;
 
-namespace OpenSmc.Ifrs17.ReferenceDataHub.Test;
+namespace OpenSmc.Ifrs17.Hub.Test;
 
 //Test ParameterDataDictInit configuration
 public class ParameterDataDictInitTest(ITestOutputHelper output) : HubTestBase(output)
