@@ -229,10 +229,6 @@ public static class TemplateData
                     },
                     new CreditDefaultRate()
                     {
-                        Year = 1900, Month = 12, CreditRiskRating = "CCC", Values = new[] { 0.058891 }, Id = new Guid()
-                    },
-                    new CreditDefaultRate()
-                    {
                         Year = 1900, Month = 12, CreditRiskRating = "CCC-", Values = new[] { 0.079972327 },
                         Id = new Guid()
                     },
