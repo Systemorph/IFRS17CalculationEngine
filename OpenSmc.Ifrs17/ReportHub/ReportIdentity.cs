@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OpenSmc.Arithmetics;
+﻿using OpenSmc.Arithmetics;
 using OpenSmc.Domain.Abstractions.Attributes;
 using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
 using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 using OpenSmc.Scopes;
 
-namespace ReportHub;
+namespace OpenSmc.Ifrs17.ReportHub;
 
 [IdentityAggregationBehaviour(IdentityAggregationBehaviour.Aggregate)]
 public record ReportIdentity

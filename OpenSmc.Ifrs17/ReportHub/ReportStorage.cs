@@ -7,9 +7,10 @@ using OpenSmc.Ifrs17.DataTypes.Constants.Enumerates;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
 using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
+
 using OpenSmc.Hierarchies;
 
-namespace ReportHub;
+namespace OpenSmc.Ifrs17.ReportHub;
 
 public class ReportStorage
 {
@@ -115,21 +116,23 @@ public class ReportStorage
 
     // Getters for Data
     public IDataCube<ReportVariable> GetVariables(ReportIdentity reportIdentity, params string[] estimateTypes)
-        => (!variablesDictionary.TryGetValue(((reportIdentity.Year, reportIdentity.Month), reportIdentity.ReportingNode, reportIdentity.Scenario), out var variablesByIdentity) ||
-            !variablesByIdentity.TryGetValue(reportIdentity, out var variablesByEstimateType))
-        ? Enumerable.Empty<ReportVariable>().ToDataCube()
-        : estimateTypes.Length switch
-        {
-            0 => variablesByEstimateType.SelectMany(x => x.Value).ToDataCube(),
-            1 => variablesByEstimateType.TryGetValue(estimateTypes.First(), out var variables)
-                ? variables.ToDataCube()
-                : Enumerable.Empty<ReportVariable>().ToDataCube(),
-            _ => estimateTypes.Select(et => variablesByEstimateType.TryGetValue(et, out var variables)
-                                      ? variables.ToDataCube()
-                                      : Enumerable.Empty<ReportVariable>())
-                .Aggregate((x, y) => x.Concat(y))
-                .ToDataCube()
-        };
+    {
+        return (!variablesDictionary.TryGetValue(((reportIdentity.Year, reportIdentity.Month), reportIdentity.ReportingNode, reportIdentity.Scenario), out var variablesByIdentity) ||
+                !variablesByIdentity.TryGetValue(reportIdentity, out var variablesByEstimateType))
+            ? Enumerable.Empty<ReportVariable>().ToDataCube()
+            : estimateTypes.Length switch
+            {
+                0 => variablesByEstimateType.SelectMany(x => x.Value).ToDataCube(),
+                1 => variablesByEstimateType.TryGetValue(estimateTypes.First(), out var variables)
+                    ? variables.ToDataCube()
+                    : Enumerable.Empty<ReportVariable>().ToDataCube(),
+                _ => estimateTypes.Select(et => variablesByEstimateType.TryGetValue(et, out var variables)
+                                          ? variables.ToDataCube()
+                                          : Enumerable.Empty<ReportVariable>())
+                    .Aggregate((x, y) => x.Concat(y))
+                    .ToDataCube()
+            };
+    }
 
     // Other getters
     public IWorkspace Workspace => workspace;
