@@ -21,7 +21,7 @@ public class ParameterDataDictInitTest(ITestOutputHelper output) : HubTestBase(o
     }
 
     [Fact]
-    public async Task InitializedDataTest()
+    public async Task InitParameterDataTest()
     {
         var client = GetClient();
 
