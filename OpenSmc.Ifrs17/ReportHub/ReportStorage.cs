@@ -7,7 +7,6 @@ using OpenSmc.Ifrs17.DataTypes.Constants.Enumerates;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
 using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
-
 using OpenSmc.Hierarchies;
 
 namespace OpenSmc.Ifrs17.ReportHub;
@@ -15,9 +14,9 @@ namespace OpenSmc.Ifrs17.ReportHub;
 public class ReportStorage
 {
     protected readonly IWorkspace workspace;
-    protected readonly IExportVariable export;
+    //protected readonly IExportVariable export;
     private readonly IHierarchicalDimensionCache hierarchicalDimensionCache;
-    private readonly Systemorph.Vertex.Pivot.Builder.Interfaces.IPivotFactory reportFactory;
+    //private readonly Systemorph.Vertex.Pivot.Builder.Interfaces.IPivotFactory reportFactory;
 
     // Current Storage Settings
     public ((int Year, int Month) Period, string ReportingNode, string Scenario, CurrencyType CurrencyType) Args { get; private set; }
@@ -39,14 +38,14 @@ public class ReportStorage
     private Dictionary<((int year, int month) period, string reportingNode, string scenario), Dictionary<ReportIdentity, Dictionary<string, IDataCube<ReportVariable>>>> variablesDictionary = new();
 
     // Constructor
-    public ReportStorage(IWorkspace workspace,
-                        Systemorph.Vertex.Pivot.Builder.Interfaces.IPivotFactory reportFactory,
-                        IExportVariable export)
+    public ReportStorage(IWorkspace workspace)//,
+                        //Systemorph.Vertex.Pivot.Builder.Interfaces.IPivotFactory reportFactory,
+                       // IExportVariable export)
     {
         this.workspace = workspace;
-        this.hierarchicalDimensionCache = workspace.ToHierarchicalDimensionCache();
-        this.reportFactory = reportFactory;
-        this.export = export;
+        //this.hierarchicalDimensionCache = workspace.ToHierarchicalDimensionCache();
+        //this.reportFactory = reportFactory;
+        //this.export = export;
     }
 
     // Initializers
@@ -59,9 +58,9 @@ public class ReportStorage
         await hierarchicalDimensionCache.InitializeAsync<ReportingNode>();
 
         // Initial Values
-        var mostRecentPartition = (await workspace.Query<PartitionByReportingNodeAndPeriod>().Where(x => x.Scenario == null).OrderBy(x => x.Year).ThenBy(x => x.Month).ToArrayAsync()).LastOrDefault();
+        var mostRecentPartition = workspace.GetData<PartitionByReportingNodeAndPeriod>().Where(x => x.Scenario == null).OrderBy(x => x.Year).ThenBy(x => x.Month).LastOrDefault();
         InitialReportingPeriod = (mostRecentPartition.Year, mostRecentPartition.Month);
-        var rootReportingNode = (await workspace.Query<ReportingNode>().Where(x => x.Parent == null).ToArrayAsync()).FirstOrDefault();
+        var rootReportingNode = workspace.GetData<ReportingNode>().Where(x => x.Parent == null).FirstOrDefault();
         InitialReportingNode = (rootReportingNode.DisplayName, rootReportingNode.SystemName);
     }
 
@@ -69,17 +68,17 @@ public class ReportStorage
     {
         // Setting the Args --> Temp for the moment
         Args = (period, reportingNode, scenario, currencyType);
-        ProjectionConfigurations = await workspace.Query<ProjectionConfiguration>().ToArrayAsync();
+        ProjectionConfigurations = workspace.GetData<ProjectionConfiguration>().ToArray();
 
-        EstimateTypesWithoutAoc = (await workspace.Query<EstimateType>().Where(x => x.StructureType != StructureType.AoC).Select(x => x.SystemName).ToArrayAsync()).ToHashSet();
+        EstimateTypesWithoutAoc = workspace.GetData<EstimateType>().Where(x => x.StructureType != EstimateTypeStructureTypes.AoC).Select(x => x.SystemName).ToArray().ToHashSet();
         TargetScenarios = await GetScenariosAsync(scenario);
 
         // FX && Fx Parameters
         if (!exchangeRatesByCurrencyByFxTypeAndPeriod.TryGetValue(period, out var exchangeRatesByCurrencyByFxType) || !fxPeriodsByAocStepAndPeriod.TryGetValue(period, out var fxPeriodsByAocStep))
         {
-            exchangeRatesByCurrencyByFxType = await workspace.GetExchangeRatesDictionaryAsync(period.year, period.month);
+            exchangeRatesByCurrencyByFxType = workspace.GetExchangeRatesDictionaryAsync(period.year, period.month);
             exchangeRatesByCurrencyByFxTypeAndPeriod.Add(period, exchangeRatesByCurrencyByFxType);
-            fxPeriodsByAocStep = (await workspace.LoadAocStepConfigurationAsync(period.year, period.month)).Where(x => x.FxPeriod != FxPeriod.NotApplicable).ToDictionary(x => new AocStep(x.AocType, x.Novelty), x => (FxPeriod)x.FxPeriod);
+            fxPeriodsByAocStep = workspace.LoadAocStepConfigurationAsync(period.year, period.month).Where(x => x.FxPeriod != FxPeriod.NotApplicable).ToDictionary(x => new AocStep(x.AocType, x.Novelty), x => (FxPeriod)x.FxPeriod);
             fxPeriodsByAocStepAndPeriod.Add(period, fxPeriodsByAocStep);
         }
 
@@ -90,7 +89,7 @@ public class ReportStorage
             {
                 if (!variablesDictionary.TryGetValue((period, rn, scn), out var variablesByIdentity))
                 {
-                    variablesByIdentity = (await workspace.QueryReportVariablesAsync((period.year, period.month, rn, scn), ProjectionConfigurations.SortRelevantProjections(period.month)))
+                    variablesByIdentity = workspace.QueryReportVariablesAsync((period.year, period.month, rn, scn), ProjectionConfigurations.SortRelevantProjections(period.month))
                         .ToDictionaryGrouped(x => new ReportIdentity
                         {
                             Year = period.year,
@@ -136,10 +135,10 @@ public class ReportStorage
 
     // Other getters
     public IWorkspace Workspace => workspace;
-    public Systemorph.Vertex.Pivot.Builder.Interfaces.IPivotFactory Report => reportFactory;
-    public IExportVariable Export => export;
+    //public Systemorph.Vertex.Pivot.Builder.Interfaces.IPivotFactory Report => reportFactory;
+    //public IExportVariable Export => export;
 
-    public Systemorph.Vertex.Hierarchies.IHierarchy<T> GetHierarchy<T>() where T : class, IHierarchicalDimension => hierarchicalDimensionCache.Get<T>();
+    public IHierarchy<T> GetHierarchy<T>() where T : class, IHierarchicalDimension => hierarchicalDimensionCache.Get<T>();
 
     public HashSet<(ReportIdentity, CurrencyType)> GetIdentities((int year, int month) period, string reportingNode, string scenario, CurrencyType currencyType, string projection = null)
     {
@@ -156,8 +155,8 @@ public class ReportStorage
         if (currentCurrency == targetCurrency) return 1;
         if (!exchangeRatesByCurrencyByFxTypeAndPeriod.TryGetValue(period, out var exchangeRatesByCurrencyByFxType))
             throw new Exception($"No exchange rates for Period {period} were found.");
-        return GetCurrencyToGroupFx(exchangeRatesByCurrencyByFxType, currentCurrency, fxPeriod, GroupCurrency)
-             / GetCurrencyToGroupFx(exchangeRatesByCurrencyByFxType, targetCurrency, fxPeriod, GroupCurrency);
+        return ReportStorageExtensions.GetCurrencyToGroupFx(exchangeRatesByCurrencyByFxType, currentCurrency, fxPeriod, GroupCurrency)
+               / ReportStorageExtensions.GetCurrencyToGroupFx(exchangeRatesByCurrencyByFxType, targetCurrency, fxPeriod, GroupCurrency);
     }
 
     public FxPeriod GetFxPeriod((int year, int month) period, string aocType, string novelty) => fxPeriodsByAocStepAndPeriod[period][new AocStep(aocType, novelty)];
@@ -171,6 +170,6 @@ public class ReportStorage
 
     public async Task<HashSet<string>> GetScenariosAsync(string scenario) =>
         scenario == Scenarios.Delta || scenario == Scenarios.All
-        ? (await workspace.Query<PartitionByReportingNodeAndPeriod>().Select(x => x.Scenario).ToArrayAsync()).ToHashSet()
+        ? workspace.GetData<PartitionByReportingNodeAndPeriod>().Select(x => x.Scenario).ToArray().ToHashSet()
         : scenario.RepeatOnce().ToHashSet();
 }

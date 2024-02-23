@@ -11,3 +11,9 @@ public static class StructureTypes
     public const string AocAcTm = "AC|TM";
     public const string AocPvAcTm = "PV|AC|TM";
 }
+
+public static class EstimateTypeStructureTypes
+{
+    public const string None = default(string);
+    public const string AoC = "AoC";
+}
