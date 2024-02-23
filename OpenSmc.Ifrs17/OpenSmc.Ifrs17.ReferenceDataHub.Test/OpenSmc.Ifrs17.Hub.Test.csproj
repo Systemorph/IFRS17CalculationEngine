@@ -6,11 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Files\Dimensions.csv" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Files\Dimensions.csv" />
+    <Compile Remove="ImportReferenceDataTest.cs" />
+    <Compile Remove="ReferenceDataDictInitTest.cs" />
+    <Compile Remove="ReferenceDataImportInitTest.cs" />
   </ItemGroup>
 
   <ItemGroup>

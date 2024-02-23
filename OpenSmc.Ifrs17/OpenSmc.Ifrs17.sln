@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34408.163
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Ifrs17.Domain.Test", "OpenSmc.Ifrs17.Domain.Test\OpenSmc.Ifrs17.Domain.Test.csproj", "{185CFFE3-D491-4869-AF87-D210A5AFA434}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenSmc", "OpenSmc", "{74F80CED-05CC-4D74-A4C1-57FC8BCC0BC9}"
 	ProjectSection(SolutionItems) = preProject
 		..\OpenSmc\Directory.Build.props = ..\OpenSmc\Directory.Build.props
@@ -147,7 +145,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.CSharp.Roslyn", "..
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Session", "..\OpenSmc\src\OpenSmc.Session\OpenSmc.Session.csproj", "{F70F144A-C970-4EC4-8D59-3375F788E42A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Ifrs17.ReferenceDataHub.Test", "OpenSmc.Ifrs17.ReferenceDataHub.Test\OpenSmc.Ifrs17.ReferenceDataHub.Test.csproj", "{C3C7626C-501F-4348-A50C-3DC85060CB08}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Ifrs17.Hub.Test", "OpenSmc.Ifrs17.ReferenceDataHub.Test\OpenSmc.Ifrs17.Hub.Test.csproj", "{C3C7626C-501F-4348-A50C-3DC85060CB08}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Ifrs17.CalculationScopes", "OpenSmc.Ifrs17.CalculationScopes\OpenSmc.Ifrs17.CalculationScopes.csproj", "{73CBBBD7-67E8-4F53-A6DE-E071FB2A319A}"
 EndProject
@@ -163,8 +161,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Data.TestDomain", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Ifrs17.DataNodeHub", "OpenSmc.Ifrs17.DataNodeHub\OpenSmc.Ifrs17.DataNodeHub.csproj", "{FC921520-EAD0-448F-86AE-E95E668F241B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Ifrs17.DataNodeHub.Test", "OpenSmc.Ifrs17.DataNodeHub.Test\OpenSmc.Ifrs17.DataNodeHub.Test.csproj", "{4C18FF19-B6A6-4DD2-9BB0-C830C6E6C2D7}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Ifrs17.ReportHub", "ReportHub\OpenSmc.Ifrs17.ReportHub.csproj", "{AA1664C5-1140-411E-81EA-30E819582DB2}"
 EndProject
 Global
@@ -177,18 +173,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{185CFFE3-D491-4869-AF87-D210A5AFA434}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{185CFFE3-D491-4869-AF87-D210A5AFA434}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{185CFFE3-D491-4869-AF87-D210A5AFA434}.Debug|arm64.ActiveCfg = Debug|Any CPU
-		{185CFFE3-D491-4869-AF87-D210A5AFA434}.Debug|arm64.Build.0 = Debug|Any CPU
-		{185CFFE3-D491-4869-AF87-D210A5AFA434}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{185CFFE3-D491-4869-AF87-D210A5AFA434}.Debug|x86.Build.0 = Debug|Any CPU
-		{185CFFE3-D491-4869-AF87-D210A5AFA434}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{185CFFE3-D491-4869-AF87-D210A5AFA434}.Release|Any CPU.Build.0 = Release|Any CPU
-		{185CFFE3-D491-4869-AF87-D210A5AFA434}.Release|arm64.ActiveCfg = Release|Any CPU
-		{185CFFE3-D491-4869-AF87-D210A5AFA434}.Release|arm64.Build.0 = Release|Any CPU
-		{185CFFE3-D491-4869-AF87-D210A5AFA434}.Release|x86.ActiveCfg = Release|Any CPU
-		{185CFFE3-D491-4869-AF87-D210A5AFA434}.Release|x86.Build.0 = Release|Any CPU
 		{BEE44D41-7CC0-4E29-A2E5-EBC55C6EED7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BEE44D41-7CC0-4E29-A2E5-EBC55C6EED7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BEE44D41-7CC0-4E29-A2E5-EBC55C6EED7D}.Debug|arm64.ActiveCfg = Debug|Any CPU
@@ -1029,18 +1013,6 @@ Global
 		{FC921520-EAD0-448F-86AE-E95E668F241B}.Release|arm64.Build.0 = Release|Any CPU
 		{FC921520-EAD0-448F-86AE-E95E668F241B}.Release|x86.ActiveCfg = Release|Any CPU
 		{FC921520-EAD0-448F-86AE-E95E668F241B}.Release|x86.Build.0 = Release|Any CPU
-		{4C18FF19-B6A6-4DD2-9BB0-C830C6E6C2D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4C18FF19-B6A6-4DD2-9BB0-C830C6E6C2D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4C18FF19-B6A6-4DD2-9BB0-C830C6E6C2D7}.Debug|arm64.ActiveCfg = Debug|Any CPU
-		{4C18FF19-B6A6-4DD2-9BB0-C830C6E6C2D7}.Debug|arm64.Build.0 = Debug|Any CPU
-		{4C18FF19-B6A6-4DD2-9BB0-C830C6E6C2D7}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{4C18FF19-B6A6-4DD2-9BB0-C830C6E6C2D7}.Debug|x86.Build.0 = Debug|Any CPU
-		{4C18FF19-B6A6-4DD2-9BB0-C830C6E6C2D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4C18FF19-B6A6-4DD2-9BB0-C830C6E6C2D7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4C18FF19-B6A6-4DD2-9BB0-C830C6E6C2D7}.Release|arm64.ActiveCfg = Release|Any CPU
-		{4C18FF19-B6A6-4DD2-9BB0-C830C6E6C2D7}.Release|arm64.Build.0 = Release|Any CPU
-		{4C18FF19-B6A6-4DD2-9BB0-C830C6E6C2D7}.Release|x86.ActiveCfg = Release|Any CPU
-		{4C18FF19-B6A6-4DD2-9BB0-C830C6E6C2D7}.Release|x86.Build.0 = Release|Any CPU
 		{AA1664C5-1140-411E-81EA-30E819582DB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AA1664C5-1140-411E-81EA-30E819582DB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA1664C5-1140-411E-81EA-30E819582DB2}.Debug|arm64.ActiveCfg = Debug|Any CPU

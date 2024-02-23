@@ -12,9 +12,11 @@ public static class ParameterConfiguration
     {
         return configuration
             .AddData(dc => dc.WithDataSource("ParameterDataSource",
-                    ds => ds.WithType<ExchangeRate>(t => t.WithKey(x => (x.Year, x.Month, x.Scenario, x.Currency)).WithInitialData(TemplateData.ExchangeRateData)
-                )));
-
+        ds => ds.WithType<ExchangeRate>(t => t.WithKey(x => (x.Year, x.Month, x.Scenario, x.FxType, x.Currency)).WithInitialData((IEnumerable<ExchangeRate>)TemplateData.ParameterData[typeof(ExchangeRate)]))
+                                        .WithType<CreditDefaultRate>(t => t.WithKey(x => (x.Year, x.Month, x.Scenario, x.CreditRiskRating)).WithInitialData((IEnumerable<CreditDefaultRate>)TemplateData.ParameterData[typeof(CreditDefaultRate)]))
+                                        .WithType<PartnerRating>(t => t.WithKey(x => (x.Year, x.Month, x.Scenario, x.Partner)).WithInitialData((IEnumerable<PartnerRating>)TemplateData.ParameterData[typeof(PartnerRating)]))
+                    ));
+        
     }
 
     //Configuration 2: Use Import of TemplateParameter.CSV to Initialize the DataHub.
