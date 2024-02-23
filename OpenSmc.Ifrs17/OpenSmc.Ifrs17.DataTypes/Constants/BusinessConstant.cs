@@ -9,5 +9,7 @@ namespace OpenSmc.Ifrs17.DataTypes.Constants
     public static class BusinessConstant
     {
         public static int MonthInAYear = 12;
+        public static int MonthInAQuarter = 4;
+        public static string GroupCurrency = "CH";
     }
 }

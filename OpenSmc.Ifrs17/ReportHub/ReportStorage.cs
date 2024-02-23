@@ -33,6 +33,7 @@ public class ReportStorage
     public HashSet<string> EstimateTypesWithoutAoc { get; private set; }
     public HashSet<string> TargetScenarios { get; private set; }
     public ProjectionConfiguration[] ProjectionConfigurations { get; private set; }
+    private string currentPeriodProjection { get; set; }
 
     // Variables and Parameters
     private Dictionary<((int year, int month) period, string reportingNode, string scenario), Dictionary<ReportIdentity, Dictionary<string, IDataCube<ReportVariable>>>> variablesDictionary = new();
@@ -69,6 +70,7 @@ public class ReportStorage
         // Setting the Args --> Temp for the moment
         Args = (period, reportingNode, scenario, currencyType);
         ProjectionConfigurations = workspace.GetData<ProjectionConfiguration>().ToArray();
+        currentPeriodProjection = ProjectionConfigurations.SortRelevantProjections(period.month).First().SystemName;
 
         EstimateTypesWithoutAoc = workspace.GetData<EstimateType>().Where(x => x.StructureType != EstimateTypeStructureTypes.AoC).Select(x => x.SystemName).ToArray().ToHashSet();
         TargetScenarios = await GetScenariosAsync(scenario);
@@ -155,11 +157,12 @@ public class ReportStorage
         if (currentCurrency == targetCurrency) return 1;
         if (!exchangeRatesByCurrencyByFxTypeAndPeriod.TryGetValue(period, out var exchangeRatesByCurrencyByFxType))
             throw new Exception($"No exchange rates for Period {period} were found.");
-        return ReportStorageExtensions.GetCurrencyToGroupFx(exchangeRatesByCurrencyByFxType, currentCurrency, fxPeriod, GroupCurrency)
-               / ReportStorageExtensions.GetCurrencyToGroupFx(exchangeRatesByCurrencyByFxType, targetCurrency, fxPeriod, GroupCurrency);
+        return ReportStorageExtensions.GetCurrencyToGroupFx(exchangeRatesByCurrencyByFxType, currentCurrency, fxPeriod, BusinessConstant.GroupCurrency)
+               / ReportStorageExtensions.GetCurrencyToGroupFx(exchangeRatesByCurrencyByFxType, targetCurrency, fxPeriod, BusinessConstant.GroupCurrency);
     }
 
-    public FxPeriod GetFxPeriod((int year, int month) period, string aocType, string novelty) => fxPeriodsByAocStepAndPeriod[period][new AocStep(aocType, novelty)];
+    public FxPeriod GetFxPeriod((int year, int month) period, string projection, string aocType, string novelty) =>
+        projection == currentPeriodProjection ? fxPeriodsByAocStepAndPeriod[period][new AocStep(aocType, novelty)] : FxPeriod.EndOfPeriod;
 
     // Helpers
     public HashSet<string> GetLeaves<T>(string systemName) where T : class, IHierarchicalDimension

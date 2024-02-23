@@ -1,4 +1,6 @@
-﻿using OpenSmc.Scopes;
+﻿using System.Reflection;
+using OpenSmc.Arithmetics;
+using OpenSmc.Scopes;
 using OpenSmc.DataCubes;
 using OpenSmc.Ifrs17.DataTypes.Constants;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
@@ -38,8 +40,7 @@ public static class ReportScopes
 
         private IDataCube<ReportVariable> CalculatedEops => (NotEopsNotCls + CalculatedCl)
             .AggregateOver(nameof(Novelty), nameof(VariableType))
-            .SelectToDataCube(x =>Math.Abs(x.Value) >= Consts.Precision, 
-                x => x with { VariableType = AocTypes.EOP, Novelty = Novelties.C });
+            .SelectToDataCube( x => x with { VariableType = AocTypes.EOP, Novelty = Novelties.C });
 
         IDataCube<ReportVariable> Data => NotEopsNotCls + CalculatedCl + CalculatedEops;
     }
@@ -54,7 +55,7 @@ public static class ReportScopes
     {
         private double groupFxRate => Identity.CurrencyType switch
         {
-            CurrencyType.Group => GetStorage().GetFx(Identity.Period, Identity.FunctionalCurrency, GroupCurrency,
+            CurrencyType.Group => GetStorage().GetFx(Identity.Period, Identity.FunctionalCurrency, BusinessConstant.GroupCurrency,
                 FxPeriod.Average),
             _ => 1
         };
@@ -80,18 +81,18 @@ public static class ReportScopes
 
         protected IDataCube<ReportVariable> Data => GetScope<Data>((Identity.ReportIdentity, Identity.EstimateType))
             .Data
-            .SelectToDataCube(x => Multiply(GetScope<Fx>((Identity.ReportIdentity.ContractualCurrency,
+            .SelectToDataCube(x => MultiplicationAndDivisionFunction.Multiply<ReportVariable>(x, 
+                    GetScope<Fx>((Identity.ReportIdentity.ContractualCurrency,
                     Identity.ReportIdentity.FunctionalCurrency,
-                    GetStorage().GetFxPeriod(GetStorage().Args.Period, Identity.ReportIdentity.Projection,
-                        x.VariableType, x.Novelty),
+                    GetStorage().GetFxPeriod(GetStorage().Args.Period, Identity.ReportIdentity.Projection, x.VariableType, x.Novelty),
                     (Identity.ReportIdentity.Year, Identity.ReportIdentity.Month),
-                    Identity.CurrencyType)).Fx, x) with
+                    Identity.CurrencyType)).Fx) with
                 {
                     Currency = Identity.CurrencyType switch
                     {
                         CurrencyType.Contractual => x.ContractualCurrency,
                         CurrencyType.Functional => x.FunctionalCurrency,
-                        _ => GroupCurrency
+                        _ => BusinessConstant.GroupCurrency
                     }
                 });
 
@@ -113,8 +114,6 @@ public static class ReportScopes
     {
         IDataCube<ReportVariable> FxData.FxData => Data;
     }
-
-    using System.Reflection;
 
     public static T[] GetAllPublicConstantValues<T>(this Type type,
         IList<T> excludedTerms = null)

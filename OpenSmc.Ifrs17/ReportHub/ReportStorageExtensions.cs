@@ -2,6 +2,7 @@
 using OpenSmc.Collections;
 using OpenSmc.Data;
 using OpenSmc.DataCubes;
+using OpenSmc.Equality;
 using OpenSmc.Ifrs17.DataTypes.Constants;
 using OpenSmc.Ifrs17.DataTypes.Constants.Enumerates;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
@@ -13,8 +14,17 @@ namespace OpenSmc.Ifrs17.ReportHub;
 
 public static class ReportStorageExtensions
 {
-    public static Dictionary<TKey, TResult> ToDictionaryGrouped<TSource, TKey, TResult>(this IEnumerable<TSource> source, Func<TSource, TKey>? keySelector, Func<IGrouping<TKey, TSource>, TResult> elementSelector) => source.GroupBy(keySelector).ToDictionary(g => g.Key, elementSelector);
+    public static Dictionary<TKey, TResult> ToDictionaryGrouped<TSource, TKey, TResult>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<IGrouping<TKey, TSource>, TResult> elementSelector) => source.GroupBy(keySelector).ToDictionary(g => g.Key, elementSelector);
+    
     public static IDataCube<TTarget> SelectToDataCube<TSource, TTarget>(this IEnumerable<TSource> source, Func<TSource, bool> whereClause, Func<TSource, TTarget> selector) => source.Where(whereClause).Select(selector).ToDataCube();
+
+    public static IDataCube<TTarget> SelectToDataCube<TSource, TTarget>(this IEnumerable<TSource> source, Func<TSource, TTarget> selector) => source.SelectToDataCube(x => true, selector);
+
+    public static ProjectionConfiguration[] SortRelevantProjections(this ProjectionConfiguration[] pc, int month) =>
+        pc.Where(x => x.Shift > 0 || x.TimeStep == month || (x.TimeStep > month && x.TimeStep % BusinessConstant.MonthInAQuarter == 0))
+            .OrderBy(x => x.Shift)
+            .ThenBy(x => x.TimeStep)
+            .ToArray();
 
     public static Dictionary<string, Dictionary<FxPeriod, double>> GetExchangeRatesDictionaryAsync(this IWorkspace workspace, int year, int month)
         => (workspace.GetData<ExchangeRate>()
@@ -35,7 +45,7 @@ public static class ReportStorageExtensions
             .GroupBy(x => (x.AocType, x.Novelty),
                 (k, v) => v.OrderByDescending(x => x.Year).ThenByDescending(x => x.Month).First());
 
-    public static T[] LoadParameterAsync<T>(this IWorkspace workspace, int year, int month, Expression<Func<T, bool>>? filterExpression = null)
+    public static T[] LoadParameterAsync<T>(this IWorkspace workspace, int year, int month, Func<T, bool>? filterExpression = null)
         where T : class, IWithYearAndMonth
     {
         return workspace.GetData<T>()
@@ -44,16 +54,16 @@ public static class ReportStorageExtensions
             .ToArray();
     }
 
-    public static async Task<ICollection<ReportVariable>> QueryReportVariablesAsync(this IWorkspace workspace, (int Year, int Month, string ReportingNode, string Scenario) args, ProjectionConfiguration[] orderedProjectionConfigurations)
+    public static ICollection<ReportVariable> QueryReportVariablesAsync(this IWorkspace workspace, (int Year, int Month, string ReportingNode, string Scenario) args, ProjectionConfiguration[] orderedProjectionConfigurations)
     {
-        var bestEstimate = (await workspace.QueryReportVariablesSingleScenarioAsync((args.Year, args.Month, args.ReportingNode, null), orderedProjectionConfigurations));
+        var bestEstimate = workspace.QueryReportVariablesSingleScenarioAsync((args.Year, args.Month, args.ReportingNode, null), orderedProjectionConfigurations);
         return (args.Scenario == null)
             ? bestEstimate
-            : (await workspace.QueryReportVariablesSingleScenarioAsync((args.Year, args.Month, args.ReportingNode, args.Scenario), orderedProjectionConfigurations))
+            : workspace.QueryReportVariablesSingleScenarioAsync((args.Year, args.Month, args.ReportingNode, args.Scenario), orderedProjectionConfigurations)
             .Union(bestEstimate.Select(x => x with { Scenario = args.Scenario }), EqualityComparer<ReportVariable>.Instance).ToArray();
     }
 
-    public static async Task<ReportVariable[]> QueryReportVariablesSingleScenarioAsync(this IWorkspace workspace, (int Year, int Month, string ReportingNode, string Scenario) args,
+    public static ReportVariable[] QueryReportVariablesSingleScenarioAsync(this IWorkspace workspace, (int Year, int Month, string ReportingNode, string Scenario) args,
         ProjectionConfiguration[] orderedProjectionConfigurations)
     {
 
@@ -117,5 +127,37 @@ public static class ReportStorageExtensions
             //ApplicationMessage.Log(Error.ExchangeRateNotFound, currency, fxPeriod.ToString());
             throw new Exception();
         return currencyToGroupFx;
+    }
+}
+
+class EqualityComparer<T> : IEqualityComparer<T>
+{
+    private static readonly System.Reflection.PropertyInfo[] IdentityProperties = typeof(T).GetIdentityProperties().ToArray();
+    private static Func<T, T, bool> compiledEqualityFunction;
+
+    private EqualityComparer()
+    {
+        compiledEqualityFunction = GetEqualityFunction();
+    }
+
+    public static readonly EqualityComparer<T> Instance = new EqualityComparer<T>();
+
+    public bool Equals(T x, T y) => compiledEqualityFunction(x, y);
+    public int GetHashCode(T obj) => 0;
+
+    private static Func<T, T, bool> GetEqualityFunction()
+    {
+        var prm1 = Expression.Parameter(typeof(T));
+        var prm2 = Expression.Parameter(typeof(T));
+
+        // r1 == null && r2 == null
+        var nullConditionExpression = Expression.AndAlso(Expression.Equal(prm1, Expression.Constant(null, typeof(T))), Expression.Equal(prm2, Expression.Constant(null, typeof(T))));
+        // r1 != null && r2 != null
+        var nonNullConditionExpression = Expression.AndAlso(Expression.NotEqual(prm1, Expression.Constant(null, typeof(T))), Expression.NotEqual(prm2, Expression.Constant(null, typeof(T))));
+        // r1.prop1 == r2.prop1 && r1.prop2 == r2.prop2...... 
+        var allPropertiesEqualExpression = IdentityProperties.Select(propertyInfo => Expression.Equal(Expression.Property(prm1, propertyInfo), Expression.Property(prm2, propertyInfo))).Aggregate(Expression.AndAlso);
+
+        var equalityExpr = Expression.OrElse(nullConditionExpression, Expression.AndAlso(nonNullConditionExpression, allPropertiesEqualExpression));
+        return Expression.Lambda<Func<T, T, bool>>(equalityExpr, prm1, prm2).Compile();
     }
 }
