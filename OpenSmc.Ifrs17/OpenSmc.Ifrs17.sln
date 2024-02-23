@@ -165,7 +165,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Ifrs17.DataNodeHub"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Ifrs17.DataNodeHub.Test", "OpenSmc.Ifrs17.DataNodeHub.Test\OpenSmc.Ifrs17.DataNodeHub.Test.csproj", "{4C18FF19-B6A6-4DD2-9BB0-C830C6E6C2D7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReportHub", "ReportHub\ReportHub.csproj", "{AA1664C5-1140-411E-81EA-30E819582DB2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Ifrs17.ReportHub", "ReportHub\OpenSmc.Ifrs17.ReportHub.csproj", "{AA1664C5-1140-411E-81EA-30E819582DB2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
