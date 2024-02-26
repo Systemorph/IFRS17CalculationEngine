@@ -27,10 +27,10 @@ public static class ReferenceDataHubConfiguration
     public static readonly Dictionary<Type, IEnumerable<object>> ReferenceDataDomain
     =
     new[] { typeof(AmountType), typeof(DeferrableAmountType), typeof(AocType), typeof(StructureType),
-                typeof(CreditRiskRating), typeof(Currency), typeof(EconomicBasis), typeof(EstimateType),
-                typeof(LiabilityType), typeof(LineOfBusiness), typeof(Novelty), typeof(OciType),
-                typeof(Partner), typeof(BsVariableType), typeof(PnlVariableType), typeof(RiskDriver),
-                typeof(Scenario), typeof(ValuationApproach), typeof(ProjectionConfiguration) }
+            typeof(CreditRiskRating), typeof(Currency), typeof(EconomicBasis), typeof(EstimateType),
+            typeof(LiabilityType), typeof(LineOfBusiness), typeof(Novelty), typeof(OciType),
+            typeof(Partner), typeof(BsVariableType), typeof(PnlVariableType), typeof(RiskDriver),
+            typeof(Scenario), typeof(ValuationApproach), typeof(ProjectionConfiguration) }
     .ToDictionary(x => x, x => Enumerable.Empty<object>());
     
     public static MessageHubConfiguration ConfigureReferenceDataImportInit(this MessageHubConfiguration configuration)

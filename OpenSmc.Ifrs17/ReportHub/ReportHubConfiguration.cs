@@ -3,6 +3,7 @@ using OpenSmc.Ifrs17.DataNodeHub;
 using OpenSmc.Ifrs17.ReferenceDataHub;
 using OpenSmc.Messaging;
 using OpenSmc.Import;
+using OpenSmc.Ifrs17.ParameterDataHub;
 
 namespace OpenSmc.Ifrs17.ReportHub;
 
@@ -18,19 +19,24 @@ public static class ReportHubConfiguration
             .WithHostedHub(refDataAddress, config => config
                 .AddImport(import => import)
                 .AddData(dc => dc
-                .WithDataSource("ReferenceDataSource",
+                .WithDataSource("ReportDataSource",
                     ds => ds.ConfigureCategory(ReferenceDataHubConfiguration.ReferenceDataDomain)
-                            .ConfigureCategory(ReferenceDataHubConfiguration.ReferenceDataDomainExtra))
-                .WithInitialization(ReferenceDataHubConfiguration.RefDataInit(configuration, TemplateDimensions.Csv))))
+                            .ConfigureCategory(ReferenceDataHubConfiguration.ReferenceDataDomainExtra)
+                            .ConfigureCategory(ParameterHubConfiguration.ParametersDomain)
+                            .ConfigureCategory(ParameterHubConfiguration.ParametersDomainExtra)
+                            .ConfigureCategory(DataNodeHubConfiguration.DataNodeDomain)
+                            .ConfigureCategory(DataNodeHubConfiguration.DataNodeDomainExtra))
+                .WithInitialization(ReportInit(config))));
+    }
 
-            .WithHostedHub(dataNodeAddress, config => config
-                .AddImport(import => import)
-                .AddData(dc => dc
-                .WithDataSource("DataNodeDataSource",
-                    ds => ds.ConfigureCategory(DataNodeHubConfiguration.DataNodeDomain).ConfigureCategory(DataNodeHubConfiguration.DataNodeDomainExtra))
-                .WithInitialization(DataNodeHubConfiguration.DataNodeInit(configuration, TemplateDimensions.Csv, refDataAddress))))
+    public static Func<IMessageHub, CancellationToken, Task> ReportInit(MessageHubConfiguration config)
+    {
+        return async (hub, cancellationToken) =>
+        {
+            await ReferenceDataHubConfiguration.RefDataInit(config, TemplateDimensions.Csv).Invoke(hub, cancellationToken);
+            await ParameterHubConfiguration.ParametersInit(config, TemplateDimensions.Csv).Invoke(hub, cancellationToken);
+            await DataNodeHubConfiguration.DataNodeInit(config, TemplateDimensions.Csv, null).Invoke(hub, cancellationToken);
 
-            .WithRoutes(routes => routes
-                .RouteMessage<GetManyRequest>(_ => refDataAddress));
+        };
     }
 }
