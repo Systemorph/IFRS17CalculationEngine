@@ -1,11 +1,12 @@
 ﻿using OpenSmc.Data;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
+using OpenSmc.Ifrs17.ReferenceDataHub;
 using OpenSmc.Import;
 using OpenSmc.Messaging;
 
 namespace OpenSmc.Ifrs17.ParameterDataHub;
 
-public static class ParameterConfiguration
+public static class ParameterHubConfiguration
 {
     //Configuration 1: Use a dictionary to initialize the DataHub 
     public static MessageHubConfiguration ConfigureParameterDataDictInit(this MessageHubConfiguration configuration)
@@ -20,23 +21,33 @@ public static class ParameterConfiguration
     }
 
     //Configuration 2: Use Import of TemplateParameter.CSV to Initialize the DataHub.
-    //This does not currently work due to Key attribute being on the Id prop not instantiated during Initialization.
+    public static readonly Dictionary<Type, IEnumerable<object>> ParametersDomain =
+        new[] { typeof(ExchangeRate), typeof(CreditDefaultRate), typeof(PartnerRating) }
+        .ToDictionary(x => x, x => Enumerable.Empty<object>());
+
+    public static readonly IEnumerable<TypeDomainDescriptor> ParametersDomainExtra = new TypeDomainDescriptor[]
+    {
+        new TypeDomainDescriptor<ExchangeRate>(){ TypeConfig = t => t.WithKey(x =>  (x.Year, x.Month, x.Scenario, x.FxType, x.Currency)) },
+        new TypeDomainDescriptor<CreditDefaultRate>(){ TypeConfig = t => t.WithKey(x => (x.Year, x.Month, x.Scenario, x.CreditRiskRating)) },
+        new TypeDomainDescriptor<PartnerRating>(){ TypeConfig = t => t.WithKey(x =>  (x.Year, x.Month, x.Scenario, x.Partner)) },
+    };
+
     public static MessageHubConfiguration ConfigureParameterDataImportInit(this MessageHubConfiguration configuration)
     {
         return configuration
+            .AddImport(import => import)
             .AddData(dc => dc
-                .WithDataSource("ParameterDataSource", ds => ds)
-                .WithInitialization(InitializationAsync(TemplateParameter.Csv)))
-            .AddImport(import => import);
+                .WithDataSource("ParameterDataSource",
+                    ds => ds.ConfigureCategory(ParametersDomain).ConfigureCategory(ParametersDomainExtra))
+                .WithInitialization(ParametersInit(configuration, TemplateParameter.Csv)));
     }
 
-    private static Func<IMessageHub, CancellationToken, Task> InitializationAsync(string csvFile)
+    public static Func<IMessageHub, CombinedWorkspaceState, CancellationToken, Task> ParametersInit(MessageHubConfiguration config, string csvFile)
     {
-        return async (hub, cancellationToken) =>
+        return async (hub, workspace, cancellationToken) =>
         {
             var request = new ImportRequest(csvFile);
-            hub.Post(request);
-            await hub.AwaitResponse(request, cancellationToken);
+            await hub.AwaitResponse(request, o => o.WithTarget(new ImportAddress(config.Address)), cancellationToken);
         };
     }
 }

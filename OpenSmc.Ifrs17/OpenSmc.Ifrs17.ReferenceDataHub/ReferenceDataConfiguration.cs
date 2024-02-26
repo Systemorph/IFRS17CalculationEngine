@@ -27,10 +27,10 @@ public static class ReferenceDataHubConfiguration
     public static readonly Dictionary<Type, IEnumerable<object>> ReferenceDataDomain
     =
     new[] { typeof(AmountType), typeof(DeferrableAmountType), typeof(AocType), typeof(StructureType),
-                typeof(CreditRiskRating), typeof(Currency), typeof(EconomicBasis), typeof(EstimateType),
-                typeof(LiabilityType), typeof(LineOfBusiness), typeof(Novelty), typeof(OciType),
-                typeof(Partner), typeof(BsVariableType), typeof(PnlVariableType), typeof(RiskDriver),
-                typeof(Scenario), typeof(ValuationApproach), typeof(ProjectionConfiguration) }
+            typeof(CreditRiskRating), typeof(Currency), typeof(EconomicBasis), typeof(EstimateType),
+            typeof(LiabilityType), typeof(LineOfBusiness), typeof(Novelty), typeof(OciType),
+            typeof(Partner), typeof(BsVariableType), typeof(PnlVariableType), typeof(RiskDriver),
+            typeof(Scenario), typeof(ValuationApproach), typeof(ProjectionConfiguration) }
     .ToDictionary(x => x, x => Enumerable.Empty<object>());
     
     public static MessageHubConfiguration ConfigureReferenceDataImportInit(this MessageHubConfiguration configuration)
@@ -43,9 +43,9 @@ public static class ReferenceDataHubConfiguration
                 .WithInitialization(RefDataInit(configuration, TemplateDimensions.Csv)));
     }
 
-    public static Func<IMessageHub, CancellationToken, Task> RefDataInit(MessageHubConfiguration config, string csvFile)
+    public static Func<IMessageHub, CombinedWorkspaceState, CancellationToken, Task> RefDataInit(MessageHubConfiguration config, string csvFile)
     {
-        return async (hub, cancellationToken) =>
+        return async (hub, workspace, cancellationToken) =>
         {
             var request = new ImportRequest(csvFile);
             await hub.AwaitResponse(request, o => o.WithTarget(new ImportAddress(config.Address)), cancellationToken);

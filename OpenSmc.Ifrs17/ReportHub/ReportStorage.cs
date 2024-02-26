@@ -13,10 +13,10 @@ namespace OpenSmc.Ifrs17.ReportHub;
 
 public class ReportStorage
 {
-    protected readonly IWorkspace workspace;
-    //protected readonly IExportVariable export;
-    private readonly IHierarchicalDimensionCache hierarchicalDimensionCache;
-    //private readonly Systemorph.Vertex.Pivot.Builder.Interfaces.IPivotFactory reportFactory;
+    public CombinedWorkspaceState Workspace { get; }
+    //public IExportVariable Export { get; }
+    public IHierarchicalDimensionCache HierarchicalDimensionCache { get; }
+    //public IPivotFactory ReportFactory { get; }
 
     // Current Storage Settings
     public ((int Year, int Month) Period, string ReportingNode, string Scenario, CurrencyType CurrencyType) Args { get; private set; }
@@ -31,7 +31,7 @@ public class ReportStorage
 
     // Dimensions
     public HashSet<string> EstimateTypesWithoutAoc { get; private set; }
-    public HashSet<string> TargetScenarios { get; private set; }
+    public HashSet<string?> TargetScenarios { get; private set; }
     public ProjectionConfiguration[] ProjectionConfigurations { get; private set; }
     private string currentPeriodProjection { get; set; }
 
@@ -39,48 +39,48 @@ public class ReportStorage
     private Dictionary<((int year, int month) period, string reportingNode, string scenario), Dictionary<ReportIdentity, Dictionary<string, IDataCube<ReportVariable>>>> variablesDictionary = new();
 
     // Constructor
-    public ReportStorage(IWorkspace workspace)//,
-                        //Systemorph.Vertex.Pivot.Builder.Interfaces.IPivotFactory reportFactory,
-                       // IExportVariable export)
+    public ReportStorage(CombinedWorkspaceState workspace)
+                        //IPivotFactory reportFactory,
+                        //IExportVariable export)
     {
-        this.workspace = workspace;
-        //this.hierarchicalDimensionCache = workspace.ToHierarchicalDimensionCache();
-        //this.reportFactory = reportFactory;
-        //this.export = export;
+        Workspace = workspace;
+        //HierarchicalDimensionCache = workspace.ToHierarchicalDimensionCache();
+        //ReportFactory = reportFactory;
+        //Export = export;
     }
 
     // Initializers
     public async Task InitializeReportIndependentCacheAsync()
     {
         // Hierarchical Dimensions
-        await hierarchicalDimensionCache.InitializeAsync<LineOfBusiness>();
-        await hierarchicalDimensionCache.InitializeAsync<AmountType>();
-        await hierarchicalDimensionCache.InitializeAsync<VariableType>();
-        await hierarchicalDimensionCache.InitializeAsync<ReportingNode>();
+        await HierarchicalDimensionCache.InitializeAsync<LineOfBusiness>();
+        await HierarchicalDimensionCache.InitializeAsync<AmountType>();
+        await HierarchicalDimensionCache.InitializeAsync<VariableType>();
+        await HierarchicalDimensionCache.InitializeAsync<ReportingNode>();
 
         // Initial Values
-        var mostRecentPartition = workspace.GetData<PartitionByReportingNodeAndPeriod>().Where(x => x.Scenario == null).OrderBy(x => x.Year).ThenBy(x => x.Month).LastOrDefault();
-        InitialReportingPeriod = (mostRecentPartition.Year, mostRecentPartition.Month);
-        var rootReportingNode = workspace.GetData<ReportingNode>().Where(x => x.Parent == null).FirstOrDefault();
-        InitialReportingNode = (rootReportingNode.DisplayName, rootReportingNode.SystemName);
+        var mostRecentPartition = Workspace.GetItems<PartitionByReportingNodeAndPeriod>().Where(x => x.Scenario == null).OrderBy(x => x.Year).ThenBy(x => x.Month).LastOrDefault();
+        InitialReportingPeriod = (mostRecentPartition?.Year?? 0, mostRecentPartition?.Month?? 0);
+        var rootReportingNode = Workspace.GetItems<ReportingNode>().Where(x => x.Parent == null).FirstOrDefault();
+        InitialReportingNode = (rootReportingNode?.DisplayName?? "", rootReportingNode?.SystemName?? "");
     }
 
-    public async Task InitializeAsync((int year, int month) period, string reportingNode, string scenario, CurrencyType currencyType)
+    public void Initialize((int year, int month) period, string reportingNode, string scenario, CurrencyType currencyType)
     {
         // Setting the Args --> Temp for the moment
         Args = (period, reportingNode, scenario, currencyType);
-        ProjectionConfigurations = workspace.GetData<ProjectionConfiguration>().ToArray();
+        ProjectionConfigurations = Workspace.GetItems<ProjectionConfiguration>().ToArray();
         currentPeriodProjection = ProjectionConfigurations.SortRelevantProjections(period.month).First().SystemName;
 
-        EstimateTypesWithoutAoc = workspace.GetData<EstimateType>().Where(x => x.StructureType != EstimateTypeStructureTypes.AoC).Select(x => x.SystemName).ToArray().ToHashSet();
-        TargetScenarios = await GetScenariosAsync(scenario);
+        EstimateTypesWithoutAoc = Workspace.GetItems<EstimateType>().Where(x => x.StructureType != EstimateTypeStructureTypes.AoC).Select(x => x.SystemName).ToArray().ToHashSet();
+        TargetScenarios = GetScenarios(scenario);
 
         // FX && Fx Parameters
         if (!exchangeRatesByCurrencyByFxTypeAndPeriod.TryGetValue(period, out var exchangeRatesByCurrencyByFxType) || !fxPeriodsByAocStepAndPeriod.TryGetValue(period, out var fxPeriodsByAocStep))
         {
-            exchangeRatesByCurrencyByFxType = workspace.GetExchangeRatesDictionaryAsync(period.year, period.month);
+            exchangeRatesByCurrencyByFxType = Workspace.GetExchangeRatesDictionary(period.year, period.month);
             exchangeRatesByCurrencyByFxTypeAndPeriod.Add(period, exchangeRatesByCurrencyByFxType);
-            fxPeriodsByAocStep = workspace.LoadAocStepConfigurationAsync(period.year, period.month).Where(x => x.FxPeriod != FxPeriod.NotApplicable).ToDictionary(x => new AocStep(x.AocType, x.Novelty), x => (FxPeriod)x.FxPeriod);
+            fxPeriodsByAocStep = Workspace.LoadAocStepConfiguration(period.year, period.month).Where(x => x.FxPeriod != FxPeriod.NotApplicable).ToDictionary(x => new AocStep(x.AocType, x.Novelty), x => (FxPeriod)x.FxPeriod);
             fxPeriodsByAocStepAndPeriod.Add(period, fxPeriodsByAocStep);
         }
 
@@ -91,7 +91,7 @@ public class ReportStorage
             {
                 if (!variablesDictionary.TryGetValue((period, rn, scn), out var variablesByIdentity))
                 {
-                    variablesByIdentity = workspace.QueryReportVariablesAsync((period.year, period.month, rn, scn), ProjectionConfigurations.SortRelevantProjections(period.month))
+                    variablesByIdentity = Workspace.QueryReportVariables((period.year, period.month, rn, scn), ProjectionConfigurations.SortRelevantProjections(period.month))
                         .ToDictionaryGrouped(x => new ReportIdentity
                         {
                             Year = period.year,
@@ -135,12 +135,7 @@ public class ReportStorage
             };
     }
 
-    // Other getters
-    public IWorkspace Workspace => workspace;
-    //public Systemorph.Vertex.Pivot.Builder.Interfaces.IPivotFactory Report => reportFactory;
-    //public IExportVariable Export => export;
-
-    public IHierarchy<T> GetHierarchy<T>() where T : class, IHierarchicalDimension => hierarchicalDimensionCache.Get<T>();
+    public IHierarchy<T> GetHierarchy<T>() where T : class, IHierarchicalDimension => HierarchicalDimensionCache.Get<T>();
 
     public HashSet<(ReportIdentity, CurrencyType)> GetIdentities((int year, int month) period, string reportingNode, string scenario, CurrencyType currencyType, string projection = null)
     {
@@ -167,12 +162,12 @@ public class ReportStorage
     // Helpers
     public HashSet<string> GetLeaves<T>(string systemName) where T : class, IHierarchicalDimension
     {
-        var descendants = hierarchicalDimensionCache.Get<T>(systemName).Descendants(includeSelf: true);
+        var descendants = HierarchicalDimensionCache.Get<T>(systemName).Descendants(includeSelf: true);
         return descendants.Where(x => !descendants.Select(y => y.Parent).Contains(x.SystemName)).Select(x => x.SystemName).ToHashSet();
     }
 
-    public async Task<HashSet<string>> GetScenariosAsync(string scenario) =>
+    public HashSet<string?> GetScenarios(string scenario) =>
         scenario == Scenarios.Delta || scenario == Scenarios.All
-        ? workspace.GetData<PartitionByReportingNodeAndPeriod>().Select(x => x.Scenario).ToArray().ToHashSet()
-        : scenario.RepeatOnce().ToHashSet();
+        ? Workspace.GetItems<PartitionByReportingNodeAndPeriod>().Select(x => x.Scenario).ToArray().ToHashSet()
+        : scenario.RepeatOnce().ToHashSet() as HashSet<string?>;
 }
