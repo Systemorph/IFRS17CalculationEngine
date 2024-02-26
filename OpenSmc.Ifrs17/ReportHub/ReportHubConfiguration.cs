@@ -43,6 +43,8 @@ public static class ReportHubConfiguration
             await IfrsVariablesHubConfiguration.IfrsVarsInit(config, "").Invoke(hub, workspace, cancellationToken);
 
             // TODO: WIP
+            var storage = new ReportStorage(workspace);
+            storage.Initialize((2020, 12), "CH", null, DataTypes.Constants.Enumerates.CurrencyType.Group);
         };
     }
 }
