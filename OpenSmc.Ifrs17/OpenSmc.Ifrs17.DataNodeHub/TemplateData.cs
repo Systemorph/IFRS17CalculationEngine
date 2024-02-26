@@ -35,18 +35,18 @@ namespace OpenSmc.Ifrs17.DataNodeHub
                 }},
                 { typeof(ReinsurancePortfolio), new []
                 {
-                    new ReinsurancePortfolio{SystemName="DTR",DisplayName="DTR complex CF",ContractualCurrency="USD",LineOfBusiness="ANN",ValuationApproach="BBA",OciType="",ReportingNode="CH",FunctionalCurrency="CHF"},
+                    new ReinsurancePortfolio{SystemName="DTR",DisplayName="DTR complex CF",ContractualCurrency="USD",LineOfBusiness="ANN",ValuationApproach="BBA",OciType=null,ReportingNode="CH",FunctionalCurrency="CHF"},
                     new ReinsurancePortfolio{SystemName="DTR1",DisplayName="DTR1 OCI",ContractualCurrency="USD",LineOfBusiness="ANN",ValuationApproach="BBA",OciType="Default",ReportingNode="CH",FunctionalCurrency="CHF"},
-                    new ReinsurancePortfolio{SystemName="DTR2",DisplayName="DTR2 NOCI",ContractualCurrency="USD",LineOfBusiness="ANN",ValuationApproach="BBA",OciType="",ReportingNode="CH",FunctionalCurrency="CHF"},
+                    new ReinsurancePortfolio{SystemName="DTR2",DisplayName="DTR2 NOCI",ContractualCurrency="USD",LineOfBusiness="ANN",ValuationApproach="BBA",OciType=null,ReportingNode="CH",FunctionalCurrency="CHF"},
                 }},
                 {typeof(GroupOfReinsuranceContract), new []
                 {
-                    new GroupOfReinsuranceContract{SystemName="DTR1.1",DisplayName="DTR1.1 OCI LRC",Portfolio="DTR1",ContractualCurrency="USD",LineOfBusiness="ANN",ValuationApproach="BBA",OciType="Default",ReportingNode="CH",FunctionalCurrency="CHF",AnnualCohort=2020,LiabilityType="LRC",Profitability="P",Partner="PT1",},
-                    new GroupOfReinsuranceContract{SystemName="DTR1.1",DisplayName="DTR1.1 OCI LRC",Portfolio="DTR1",ContractualCurrency="USD",LineOfBusiness="ANN",ValuationApproach="BBA",OciType="Default",ReportingNode="CH",FunctionalCurrency="CHF",AnnualCohort=2020,LiabilityType="LRC",Profitability="P",Partner="PT1",},
-                    new GroupOfReinsuranceContract{SystemName="DTR1.1",DisplayName="DTR1.1 OCI LRC",Portfolio="DTR1",ContractualCurrency="USD",LineOfBusiness="ANN",ValuationApproach="BBA",OciType="Default",ReportingNode="CH",FunctionalCurrency="CHF",AnnualCohort=2020,LiabilityType="LRC",Profitability="P",Partner="PT1",},
-                    new GroupOfReinsuranceContract{SystemName="DTR1.1",DisplayName="DTR1.1 OCI LRC",Portfolio="DTR1",ContractualCurrency="USD",LineOfBusiness="ANN",ValuationApproach="BBA",OciType="Default",ReportingNode="CH",FunctionalCurrency="CHF",AnnualCohort=2020,LiabilityType="LRC",Profitability="P",Partner="PT1",},
-                    new GroupOfReinsuranceContract{SystemName="DTR1.1",DisplayName="DTR1.1 OCI LRC",Portfolio="DTR1",ContractualCurrency="USD",LineOfBusiness="ANN",ValuationApproach="BBA",OciType="Default",ReportingNode="CH",FunctionalCurrency="CHF",AnnualCohort=2020,LiabilityType="LRC",Profitability="P",Partner="PT1",},
-                    new GroupOfReinsuranceContract{SystemName="DTR1.1",DisplayName="DTR1.1 OCI LRC",Portfolio="DTR1",ContractualCurrency="USD",LineOfBusiness="ANN",ValuationApproach="BBA",OciType="Default",ReportingNode="CH",FunctionalCurrency="CHF",AnnualCohort=2020,LiabilityType="LRC",Profitability="P",Partner="PT1",},
+                    new GroupOfReinsuranceContract{SystemName="DTR1.1",DisplayName="DTR1.1 OCI LRC",Portfolio="DTR1",ContractualCurrency="USD",FunctionalCurrency="CHF",LineOfBusiness="ANN",ValuationApproach="BBA",OciType="Default",AnnualCohort=2020,LiabilityType="LRC",Profitability="P",Partner="PT1",},
+                    new GroupOfReinsuranceContract{SystemName="DTR1.2",DisplayName="DTR1.2 OCI LIC",Portfolio="DTR1",ContractualCurrency="USD",FunctionalCurrency="CHF",LineOfBusiness="ANN",ValuationApproach="BBA",OciType="Default",AnnualCohort=2020,LiabilityType="LIC",Profitability="P",Partner="PT1",},
+                    new GroupOfReinsuranceContract{SystemName="DTR1.3",DisplayName="DTR1.3 Adv and Ove Actuals on DTR1.1",Portfolio="DTR1",ContractualCurrency="USD",FunctionalCurrency="CHF",LineOfBusiness="ANN",ValuationApproach="BBA",OciType="Default",AnnualCohort=2020,LiabilityType="LRC",Profitability="P",Partner="PT1",},
+                    new GroupOfReinsuranceContract{SystemName="DTR1.4",DisplayName="DTR1.4 OA and WO Claims on DTR1.1",Portfolio="DTR1",ContractualCurrency="USD",FunctionalCurrency="CHF",LineOfBusiness="ANN",ValuationApproach="BBA",OciType="Default",AnnualCohort=2020,LiabilityType="LRC",Profitability="P",Partner="PT1",},
+                    new GroupOfReinsuranceContract{SystemName="DTR2.1",DisplayName="DTR2.1 NOCI LRC",Portfolio="DTR2",ContractualCurrency="USD",FunctionalCurrency="CHF",LineOfBusiness="ANN",ValuationApproach="BBA",OciType=null,AnnualCohort=2020,LiabilityType="LRC",Profitability="P",Partner="PT1",},
+                    new GroupOfReinsuranceContract{SystemName="DTR2.2",DisplayName="DTR2.2 NOCI LIC",Portfolio="DTR2",ContractualCurrency="USD",FunctionalCurrency="CHF",LineOfBusiness="ANN",ValuationApproach="BBA",OciType=null,AnnualCohort=2020,LiabilityType="LIC",Profitability="P",Partner="PT1",},
                 }}
             };
     }

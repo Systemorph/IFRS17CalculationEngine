@@ -36,6 +36,6 @@ public class DataNodeDataIfrsHubTestBase(ITestOutputHelper output) : IfrsHubTest
         { typeof(InsurancePortfolio), 7 },
         { typeof(ReinsurancePortfolio), 3 },
         { typeof(GroupOfContract), 13 },
-        { typeof(GroupOfReinsuranceContract), 1 },//This should be 6
+        { typeof(GroupOfReinsuranceContract), 6 },
     };
 }
