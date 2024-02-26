@@ -24,15 +24,15 @@ public static class IfrsVariablesHubConfiguration
             .AddData(dc => dc
                 .WithDataSource("ParameterDataSource",
                     ds => ds)
-                .WithInitialization(IfrsVarsInit(configuration)));
+                .WithInitialization(IfrsVarsInit(configuration, "")));
     }
 
-    public static Func<IMessageHub, CombinedWorkspaceState, CancellationToken, Task> IfrsVarsInit(MessageHubConfiguration config)
+    public static Func<IMessageHub, CombinedWorkspaceState, CancellationToken, Task> IfrsVarsInit(MessageHubConfiguration config, string csvFile)
     {
         return async (hub, workspace, cancellationToken) =>
         {
-            // TODO: WIP
-            await Task.CompletedTask;
+            var request = new ImportRequest(csvFile);
+            await hub.AwaitResponse(request, o => o.WithTarget(new ImportAddress(config.Address)), cancellationToken);
         };
     }
 

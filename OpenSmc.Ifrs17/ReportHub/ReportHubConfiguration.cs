@@ -38,9 +38,9 @@ public static class ReportHubConfiguration
         return async (hub, workspace, cancellationToken) =>
         {
             await ReferenceDataHubConfiguration.RefDataInit(config, TemplateDimensions.Csv).Invoke(hub, workspace, cancellationToken);
-            await ParameterHubConfiguration.ParametersInit(config, TemplateDimensions.Csv).Invoke(hub, workspace, cancellationToken);
-            await DataNodeHubConfiguration.DataNodeInit(config, TemplateDimensions.Csv, null).Invoke(hub, workspace, cancellationToken);
-            await IfrsVariablesHubConfiguration.IfrsVarsInit(config).Invoke(hub, workspace, cancellationToken);
+            await ParameterHubConfiguration.ParametersInit(config, TemplateParameter.Csv).Invoke(hub, workspace, cancellationToken);
+            await DataNodeHubConfiguration.DataNodeInit(config, "", null).Invoke(hub, workspace, cancellationToken);
+            await IfrsVariablesHubConfiguration.IfrsVarsInit(config, "").Invoke(hub, workspace, cancellationToken);
 
             // TODO: WIP
         };
