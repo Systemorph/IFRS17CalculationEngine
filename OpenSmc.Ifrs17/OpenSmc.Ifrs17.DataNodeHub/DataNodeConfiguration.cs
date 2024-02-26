@@ -43,12 +43,12 @@ public static class DataNodeHubConfiguration
                 .RouteMessage<GetManyRequest>(_ => refDataAddress));
     }
 
-    public static Func<IMessageHub, CancellationToken, Task> DataNodeInit(MessageHubConfiguration config, string csvFile, ReferenceDataAddress refDataAddress)
+    public static Func<IMessageHub, CombinedWorkspaceState, CancellationToken, Task> DataNodeInit(MessageHubConfiguration config, string csvFile, ReferenceDataAddress refDataAddress)
     {
         var refDataRequired = new[] { typeof(ValuationApproach), typeof(Currency), typeof(LineOfBusiness), typeof(OciType),
                                       typeof(LiabilityType), typeof(Profitability), typeof(YieldCurve), typeof(Partner) };
 
-        return async (hub, cancellationToken) =>
+        return async (hub, workspace, cancellationToken) =>
         {
             var refDataRequest = new GetManyRequest(refDataRequired);
             await hub.AwaitResponse(refDataRequest, o => o.WithTarget(refDataAddress), cancellationToken);

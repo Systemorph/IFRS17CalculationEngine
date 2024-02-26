@@ -42,9 +42,9 @@ public static class ParameterHubConfiguration
                 .WithInitialization(ParametersInit(configuration, TemplateParameter.Csv)));
     }
 
-    public static Func<IMessageHub, CancellationToken, Task> ParametersInit(MessageHubConfiguration config, string csvFile)
+    public static Func<IMessageHub, CombinedWorkspaceState, CancellationToken, Task> ParametersInit(MessageHubConfiguration config, string csvFile)
     {
-        return async (hub, cancellationToken) =>
+        return async (hub, workspace, cancellationToken) =>
         {
             var request = new ImportRequest(csvFile);
             await hub.AwaitResponse(request, o => o.WithTarget(new ImportAddress(config.Address)), cancellationToken);

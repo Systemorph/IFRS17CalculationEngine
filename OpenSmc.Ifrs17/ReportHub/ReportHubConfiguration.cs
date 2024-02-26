@@ -29,13 +29,13 @@ public static class ReportHubConfiguration
                 .WithInitialization(ReportInit(config))));
     }
 
-    public static Func<IMessageHub, CancellationToken, Task> ReportInit(MessageHubConfiguration config)
+    public static Func<IMessageHub, CombinedWorkspaceState, CancellationToken, Task> ReportInit(MessageHubConfiguration config)
     {
-        return async (hub, cancellationToken) =>
+        return async (hub, workspace, cancellationToken) =>
         {
-            await ReferenceDataHubConfiguration.RefDataInit(config, TemplateDimensions.Csv).Invoke(hub, cancellationToken);
-            await ParameterHubConfiguration.ParametersInit(config, TemplateDimensions.Csv).Invoke(hub, cancellationToken);
-            await DataNodeHubConfiguration.DataNodeInit(config, TemplateDimensions.Csv, null).Invoke(hub, cancellationToken);
+            await ReferenceDataHubConfiguration.RefDataInit(config, TemplateDimensions.Csv).Invoke(hub, workspace, cancellationToken);
+            await ParameterHubConfiguration.ParametersInit(config, TemplateDimensions.Csv).Invoke(hub, workspace, cancellationToken);
+            await DataNodeHubConfiguration.DataNodeInit(config, TemplateDimensions.Csv, null).Invoke(hub, workspace, cancellationToken);
 
         };
     }
