@@ -18,6 +18,7 @@ public static class DataHubConfiguration
 
     public static MessageHubConfiguration ConfigureRefDataAndDataNodes(this MessageHubConfiguration configuration)
     {
+        // TODO: this is WIP (2024.02.26, AM)
         var refDataAddress = new ReferenceDataAddress(configuration.Address);
         var dataNodeAddress = new DataNodeAddress(configuration.Address);
 
