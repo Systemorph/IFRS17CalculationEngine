@@ -8,8 +8,17 @@ using OpenSmc.Messaging;
 
 namespace OpenSmc.Ifrs17.DataNodeHub;
 
-public static class DataHubConfiguration
+public static class DataNodeHubConfiguration
 {
+    public static MessageHubConfiguration ConfigureDataNodeDataDictInit(this MessageHubConfiguration configuration)
+    {
+        return configuration
+            .AddData(dc => dc
+                .WithDataSource("DataNodeDataSource",
+                    ds => ds.ConfigureCategory(TemplateData.DataNodeData)
+                ));
+    }
+
     public static readonly Dictionary<Type, IEnumerable<object>> DataNodeDomain
     = 
     new[] { typeof(InsurancePortfolio), typeof(ReinsurancePortfolio), 

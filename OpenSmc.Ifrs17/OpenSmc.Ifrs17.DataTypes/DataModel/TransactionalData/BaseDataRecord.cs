@@ -18,7 +18,7 @@ public abstract record BaseDataRecord : BaseVariableIdentity, IKeyed
     //[Conversion(typeof(PrimitiveArrayConverter))]
     public double[] Values { get; init; }
 
-    public double Value { get; set; }
+    public double Value { get; set; } //TODO remove.
 
     [NotVisible]
     [Dimension(typeof(EstimateType))]

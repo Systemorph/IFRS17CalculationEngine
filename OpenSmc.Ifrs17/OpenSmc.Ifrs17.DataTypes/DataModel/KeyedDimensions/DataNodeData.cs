@@ -1,6 +1,6 @@
 using OpenSmc.Ifrs17.DataTypes.Constants.Enumerates;
 
-namespace OpenSmc.Ifrs17.DataTypes.DataModel.TransactionalData;
+namespace OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 
 public record DataNodeData
 {

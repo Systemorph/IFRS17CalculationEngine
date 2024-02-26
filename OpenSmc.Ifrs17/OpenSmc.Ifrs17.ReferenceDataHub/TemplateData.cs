@@ -3,6 +3,7 @@ using OpenSmc.Ifrs17.DataTypes.Constants.Enumerates;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
 using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
+using System.Reactive;
 
 namespace OpenSmc.Ifrs17.ReferenceDataHub;
 
@@ -656,5 +657,16 @@ public class TemplateData
                     new ProjectionConfiguration { SystemName = "P19", DisplayName = "Years Over +20", Shift = 240, TimeStep = 9999, Order = 200 },
                 }
             },
+            {typeof(ReportingNode), new []
+            {
+                new ReportingNode(){ SystemName = "G", DisplayName = "Group", Parent = "", Currency = "CHF"},
+                new ReportingNode(){ SystemName = "CH", DisplayName = "Switzerland", Parent = "G", Currency = "CHF"},
+                new ReportingNode(){ SystemName = "DE", DisplayName = "Germany", Parent = "G", Currency = "EUR"},
+                new ReportingNode(){ SystemName = "ES", DisplayName = "Spain", Parent = "G", Currency = "EUR"},
+                new ReportingNode(){ SystemName = "FR", DisplayName = "France", Parent = "G", Currency = "EUR"},
+                new ReportingNode(){ SystemName = "IT", DisplayName = "Italy", Parent = "G", Currency = "EUR"},
+                new ReportingNode(){ SystemName = "UK", DisplayName = "United Kingdom", Parent = "G", Currency = "GBP"},
+                new ReportingNode(){ SystemName = "SK", DisplayName = "Slovakia", Parent = "G", Currency = "EUR"},
+            }}
         };
 }
