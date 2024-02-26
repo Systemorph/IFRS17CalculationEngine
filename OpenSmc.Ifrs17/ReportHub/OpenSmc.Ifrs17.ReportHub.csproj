@@ -3,9 +3,15 @@
   <ItemGroup>
     <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.DataCubes.Abstractions\OpenSmc.DataCubes.Abstractions.csproj" />
     <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.DataCubes\OpenSmc.DataCubes.csproj" />
+    <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Data\OpenSmc.Data.csproj" />
     <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Hierarchies\OpenSmc.Hierarchies.csproj" />
+    <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Import\OpenSmc.Import.csproj" />
     <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Scopes\OpenSmc.Scopes.csproj" />
+    <ProjectReference Include="..\OpenSmc.Ifrs17.DataNodeHub\OpenSmc.Ifrs17.DataNodeHub.csproj" />
     <ProjectReference Include="..\OpenSmc.Ifrs17.DataTypes\OpenSmc.Ifrs17.DataTypes.csproj" />
+    <ProjectReference Include="..\OpenSmc.Ifrs17.IfrsVariableHub\OpenSmc.Ifrs17.IfrsVariableHub.csproj" />
+    <ProjectReference Include="..\OpenSmc.Ifrs17.ParameterDataHub\OpenSmc.Ifrs17.ParameterDataHub.csproj" />
+    <ProjectReference Include="..\OpenSmc.Ifrs17.ReferenceDataHub\OpenSmc.Ifrs17.ReferenceDataHub.csproj" />
   </ItemGroup>
 
 </Project>
