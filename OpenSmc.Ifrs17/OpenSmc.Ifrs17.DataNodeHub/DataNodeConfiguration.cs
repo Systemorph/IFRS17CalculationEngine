@@ -8,7 +8,7 @@ using OpenSmc.Messaging;
 
 namespace OpenSmc.Ifrs17.DataNodeHub;
 
-public static class DataHubConfiguration
+public static class DataNodeHubConfiguration
 {
     public static readonly Dictionary<Type, IEnumerable<object>> DataNodeDomain
     = 
@@ -43,7 +43,7 @@ public static class DataHubConfiguration
                 .RouteMessage<GetManyRequest>(_ => refDataAddress));
     }
 
-    private static Func<IMessageHub, CancellationToken, Task> DataNodeInit(MessageHubConfiguration config, string csvFile, ReferenceDataAddress refDataAddress)
+    public static Func<IMessageHub, CancellationToken, Task> DataNodeInit(MessageHubConfiguration config, string csvFile, ReferenceDataAddress refDataAddress)
     {
         var refDataRequired = new[] { typeof(ValuationApproach), typeof(Currency), typeof(LineOfBusiness), typeof(OciType),
                                       typeof(LiabilityType), typeof(Profitability), typeof(YieldCurve), typeof(Partner) };
