@@ -9,14 +9,14 @@ namespace OpenSmc.Ifrs17.IfrsVariableHub;
 public static class IfrsVariableHubConfiguration
 {
     public static MessageHubConfiguration ConfigureIfrsDataDictInit(this MessageHubConfiguration configuration) =>
-        configuration.AddData(dc => dc.WithDataSource("SimpleValuesData", 
+        configuration.AddData(dc => dc.WithDataSource("IfrsVariableData", 
             ds => ds.WithType<IfrsVariable>(t => t.
-                WithKey(iv => (iv.EconomicBasis, 
-                    iv.EstimateType, iv.AmountType, iv.AccidentYear, iv.Scenario, iv.Year, iv.Month, 
-                    iv.ReportingNode, iv.DataNode, iv.AocType, iv.Novelty))
-                .WithInitialData(TemplateData.SimplaValueReferenceData))));
-
+                WithKey(iv => (iv.ReportingNode, iv.Year, iv.Month, iv.Scenario,
+                    iv.EconomicBasis, iv.EstimateType, iv.AmountType, iv.AccidentYear,  
+                    iv.DataNode, iv.AocType, iv.Novelty))
+                .WithInitialData(TemplateData.SimpleValueReferenceData))));
 }
+
 
 
 
