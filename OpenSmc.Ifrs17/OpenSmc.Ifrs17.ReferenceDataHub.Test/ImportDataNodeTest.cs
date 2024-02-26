@@ -1,37 +1,41 @@
-using OpenSmc.Data;
-using OpenSmc.Hub.Fixture;
-using OpenSmc.Ifrs17.DataTypes.DataModel;
+using FluentAssertions;
+using OpenSmc.Ifrs17.DataNodeHub;
+using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 using OpenSmc.Messaging;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace OpenSmc.Ifrs17.Hub.Test;
 
-public class DataNodeImportTest(ITestOutputHelper output) : HubTestBase(output)
+public class DataNodeDataDictInitTest(ITestOutputHelper output) : DataNodeDataIfrsHubTestBase(output)
 {
-    public static readonly Dictionary<Type, IEnumerable<object>> DataNodeDomain
-        =
-        new()
-        {
-            { typeof(InsurancePortfolio), new InsurancePortfolio[] { } },
-            { typeof(GroupOfInsuranceContract), new GroupOfInsuranceContract[] { } },
-            { typeof(ReinsurancePortfolio), new ReinsurancePortfolio[] { } },
-            { typeof(GroupOfReinsuranceContract), new GroupOfReinsuranceContract[] { } },
-        };
-
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
     {
-        return base.ConfigureHost(configuration);//.ConfigureDataNodes(DataNodeDomain);
+        return base.ConfigureHost(configuration)
+            .ConfigureDataNodeDataDictInit();
     }
 
-    [Fact(Skip = "Implementation of the Hub and of the Test are pending.")]
-    public async Task ImportDataTest()
+    [Fact]
+    public async Task InitDataNodeDictInitTest()
     {
         var client = GetClient();
-        //var importRequest = new ImportRequest(TemplateDimensions.Csv);
-        //var importResponse = await client.AwaitResponse(importRequest, o => o.WithTarget(new HostAddress()));
-        //importResponse.Message.Log.Status.Should().Be(ActivityLogStatus.Succeeded);
 
-        var atItems = await client.AwaitResponse(new GetManyRequest<InsurancePortfolio>());
+        //Get ActualCountPerType
+        var actualCountsPerType = await GetActualCountsPerType(client, ExpectedCountPerType.Keys);
+
+        //Assert Count per Type
+        actualCountsPerType.Should().Equal(ExpectedCountPerType);
     }
+}
+
+public class DataNodeDataIfrsHubTestBase(ITestOutputHelper output) : IfrsHubTestBase(output)
+{
+
+    internal static readonly Dictionary<Type, int> ExpectedCountPerType = new()
+    {
+        { typeof(InsurancePortfolio), 7 },
+        { typeof(ReinsurancePortfolio), 3 },
+        { typeof(GroupOfContract), 13 },
+        { typeof(GroupOfReinsuranceContract), 1 },//This should be 6
+    };
 }

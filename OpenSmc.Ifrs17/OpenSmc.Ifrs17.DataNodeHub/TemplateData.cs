@@ -33,11 +33,11 @@ namespace OpenSmc.Ifrs17.DataNodeHub
                     new GroupOfInsuranceContract {SystemName="DT10.1",DisplayName="DT10.1 PAA",Portfolio="DT10",ContractualCurrency="USD",LineOfBusiness="ANN",ValuationApproach="PAA",OciType="Default",ReportingNode="CH",FunctionalCurrency="CHF",AnnualCohort=2020,LiabilityType="LIC",Profitability="P",YieldCurveName=null,},
                     new GroupOfInsuranceContract {SystemName="DT10.2",DisplayName="DT10.1 PAA",Portfolio="DT10",ContractualCurrency="USD",LineOfBusiness="ANN",ValuationApproach="PAA",OciType="Default",ReportingNode="CH",FunctionalCurrency="CHF",AnnualCohort=2020,LiabilityType="LRC",Profitability="P",YieldCurveName=null,},
                 }},
-                { typeof(Portfolio), new []
+                { typeof(ReinsurancePortfolio), new []
                 {
-                    new Portfolio{SystemName="DTR",DisplayName="DTR complex CF",ContractualCurrency="USD",LineOfBusiness="ANN",ValuationApproach="BBA",OciType="",ReportingNode="CH",FunctionalCurrency="CHF"},
-                    new Portfolio{SystemName="DTR1",DisplayName="DTR1 OCI",ContractualCurrency="USD",LineOfBusiness="ANN",ValuationApproach="BBA",OciType="Default",ReportingNode="CH",FunctionalCurrency="CHF"},
-                    new Portfolio{SystemName="DTR2",DisplayName="DTR2 NOCI",ContractualCurrency="USD",LineOfBusiness="ANN",ValuationApproach="BBA",OciType="",ReportingNode="CH",FunctionalCurrency="CHF"},
+                    new ReinsurancePortfolio{SystemName="DTR",DisplayName="DTR complex CF",ContractualCurrency="USD",LineOfBusiness="ANN",ValuationApproach="BBA",OciType="",ReportingNode="CH",FunctionalCurrency="CHF"},
+                    new ReinsurancePortfolio{SystemName="DTR1",DisplayName="DTR1 OCI",ContractualCurrency="USD",LineOfBusiness="ANN",ValuationApproach="BBA",OciType="Default",ReportingNode="CH",FunctionalCurrency="CHF"},
+                    new ReinsurancePortfolio{SystemName="DTR2",DisplayName="DTR2 NOCI",ContractualCurrency="USD",LineOfBusiness="ANN",ValuationApproach="BBA",OciType="",ReportingNode="CH",FunctionalCurrency="CHF"},
                 }},
                 {typeof(GroupOfReinsuranceContract), new []
                 {

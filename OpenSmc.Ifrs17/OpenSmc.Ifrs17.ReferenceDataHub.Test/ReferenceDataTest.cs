@@ -1,8 +1,6 @@
-using System.Reflection;
 using FluentAssertions;
 using OpenSmc.Activities;
 using OpenSmc.Data;
-using OpenSmc.Hub.Fixture;
 using OpenSmc.Ifrs17.DataTypes.Constants;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
@@ -10,13 +8,12 @@ using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.ReferenceDataHub;
 using OpenSmc.Import;
 using OpenSmc.Messaging;
-using OpenSmc.Reflection;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace OpenSmc.Ifrs17.Hub.Test;
 
-public class ReferenceDataDictInitTest(ITestOutputHelper output) : ReferenceDataTestHelper(output)
+public class ReferenceDataIfrsHubDictInitTest(ITestOutputHelper output) : ReferenceDataIfrsHubTestBase(output)
 {
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
     {
@@ -30,14 +27,14 @@ public class ReferenceDataDictInitTest(ITestOutputHelper output) : ReferenceData
         var client = GetClient();
 
         //Get ActualCountPerType
-        var actualCountsPerType = await GetActualCountsPerType(client);
+        var actualCountsPerType = await GetActualCountsPerType(client, ExpectedCountPerType.Keys);
 
         //Assert Count per Type
         actualCountsPerType.Should().Equal(ExpectedCountPerType);
     }
 }
 
-public class ReferenceDataImportInitTest(ITestOutputHelper output) : ReferenceDataTestHelper(output)
+public class ReferenceDataIfrsHubImportInitTest(ITestOutputHelper output) : ReferenceDataIfrsHubTestBase(output)
 {
 
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
@@ -52,7 +49,7 @@ public class ReferenceDataImportInitTest(ITestOutputHelper output) : ReferenceDa
         var client = GetClient();
 
         //Get ActualCountPerType
-        var actualCountsPerType = await GetActualCountsPerType(client);
+        var actualCountsPerType = await GetActualCountsPerType(client, ExpectedCountPerType.Keys);
 
         //Assert Count per Type
         actualCountsPerType.Should().Equal(ExpectedCountPerType);
@@ -60,7 +57,7 @@ public class ReferenceDataImportInitTest(ITestOutputHelper output) : ReferenceDa
 }
 
 
-public class ReferenceDataImportTest(ITestOutputHelper output) : ReferenceDataTestHelper(output)
+public class ReferenceDataIfrsHubImportTest(ITestOutputHelper output) : ReferenceDataIfrsHubTestBase(output)
 {
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
     {
@@ -86,7 +83,7 @@ public class ReferenceDataImportTest(ITestOutputHelper output) : ReferenceDataTe
         importResponse.Message.Log.Status.Should().Be(ActivityLogStatus.Succeeded);
 
         //Get ActualCountPerType
-        var actualCountsPerType = await GetActualCountsPerType(client);
+        var actualCountsPerType = await GetActualCountsPerType(client, ExpectedCountPerType.Keys);
 
         //Assert Count per Type
         actualCountsPerType.Should().Equal(ExpectedCountPerType);
@@ -95,7 +92,7 @@ public class ReferenceDataImportTest(ITestOutputHelper output) : ReferenceDataTe
 
 }
 
-public class ReferenceDataTestHelper(ITestOutputHelper output) : HubTestBase(output)
+public class ReferenceDataIfrsHubTestBase(ITestOutputHelper output) : IfrsHubTestBase(output)
 {
 
     internal static readonly Dictionary<Type, int> ExpectedCountPerType = new()
@@ -121,24 +118,4 @@ public class ReferenceDataTestHelper(ITestOutputHelper output) : HubTestBase(out
         { typeof(ValuationApproach), 2 },
         { typeof(ProjectionConfiguration), 20 },
     };
-    
-    public static async Task<Dictionary<Type, int>> GetActualCountsPerType(IMessageHub client)
-    {
-        var actualCountsPerType = new Dictionary<Type, int>();
-        foreach (var domainType in ExpectedCountPerType.Keys)
-        {
-            var requestType = typeof(GetManyRequest<>).MakeGenericType(domainType);
-            var request = Activator.CreateInstance(requestType);
-            var responseType = typeof(GetManyResponse<>).MakeGenericType(domainType);
-            Func<PostOptions, PostOptions> options = o => o.WithTarget(new HostAddress());
-            object response = (((IMessageDelivery)await AwaitResponseMethod.MakeGenericMethod(responseType)
-                .InvokeAsFunctionAsync(client, request, options)).Message);
-            var total = ((GetManyResponseBase)response).Total;
-            actualCountsPerType[domainType] = total;
-        }
-
-        return actualCountsPerType;
-    }
-
-    private static readonly MethodInfo AwaitResponseMethod = ReflectionHelper.GetMethodGeneric<IMessageHub>(x => x.AwaitResponse<object>(null, null));
 }
