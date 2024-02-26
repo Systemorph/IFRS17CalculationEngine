@@ -1,4 +1,5 @@
 using OpenSmc.Domain.Abstractions.Attributes;
+using OpenSmc.Ifrs17.DataTypes.Constants;
 using OpenSmc.Ifrs17.DataTypes.Constants.Enumerates;
 using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 
@@ -8,7 +9,7 @@ public record EstimateType : KeyedOrderedDimensionWithExternalId
 {
     public InputSource InputSource { get; init; }
 
-    public StructureType StructureType { get; init; }
+    public string StructureType { get; init; }
 
     [Dimension(typeof(PeriodType))] public PeriodType PeriodType { get; init; }
 }

@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="ImportReferenceDataTest.cs" />
+    <Compile Remove="ReferenceDataDictInitTest.cs" />
+    <Compile Remove="ReferenceDataImportInitTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\OpenSmc\test\OpenSmc.Hub.Fixture\OpenSmc.Hub.Fixture.csproj" />
+    <ProjectReference Include="..\OpenSmc.Ifrs17.CalculationScopes\OpenSmc.Ifrs17.CalculationScopes.csproj" />
+    <ProjectReference Include="..\OpenSmc.Ifrs17.ParameterDataHub\OpenSmc.Ifrs17.ParameterDataHub.csproj" />
+    <ProjectReference Include="..\OpenSmc.Ifrs17.ReferenceDataHub\OpenSmc.Ifrs17.ReferenceDataHub.csproj" />
+  </ItemGroup>
+
+</Project>

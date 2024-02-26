@@ -1,0 +1,13 @@
+<Project>
+  <ItemGroup>
+    <PackageVersion Include="coverlet.collector" Version="6.0.0" />
+    <PackageVersion Include="morelinq" Version="4.1.0" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+  </ItemGroup>
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Packages.props', '$(MSBuildThisFileDirectory)../OpenSmc/'))" />
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+</Project>

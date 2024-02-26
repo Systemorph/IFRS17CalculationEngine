@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.DataCubes.Abstractions\OpenSmc.DataCubes.Abstractions.csproj" />
+    <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.DataCubes\OpenSmc.DataCubes.csproj" />
+    <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Hierarchies\OpenSmc.Hierarchies.csproj" />
+    <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Scopes\OpenSmc.Scopes.csproj" />
+    <ProjectReference Include="..\OpenSmc.Ifrs17.DataTypes\OpenSmc.Ifrs17.DataTypes.csproj" />
+  </ItemGroup>
+
+</Project>

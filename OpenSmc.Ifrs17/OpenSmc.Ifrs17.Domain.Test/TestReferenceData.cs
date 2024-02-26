@@ -1,4 +1,5 @@
-﻿using OpenSmc.Ifrs17.DataTypes.DataModel;
+﻿using OpenSmc.Ifrs17.DataTypes.Constants.Enumerates;
+using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
 
 namespace OpenSmc.Ifrs17.Domain.Test
@@ -23,8 +24,8 @@ namespace OpenSmc.Ifrs17.Domain.Test
 
             ReferenceAmountTypes =
             [
-                new AmountType() {SystemName = "E", DisplayName = "Expenses"},
-                new AmountType() {SystemName = "P", DisplayName = "Premiums"}
+                new AmountType { SystemName = "E", DisplayName = "Expenses", Parent = "", Order = 10, PeriodType = PeriodType.BeginningOfPeriod },
+                new AmountType { SystemName = "PR", DisplayName = "Premiums", Parent = "", Order = 10, PeriodType = PeriodType.BeginningOfPeriod }
             ];
         }
     };

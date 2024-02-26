@@ -1,0 +1,7 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\OpenSmc.Ifrs17.ReferenceDataHub\OpenSmc.Ifrs17.ReferenceDataHub.csproj" />
+  </ItemGroup>
+
+</Project>

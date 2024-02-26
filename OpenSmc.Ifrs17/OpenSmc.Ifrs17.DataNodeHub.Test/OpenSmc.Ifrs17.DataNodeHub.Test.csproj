@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Data\OpenSmc.Data.csproj" />
+    <ProjectReference Include="..\..\OpenSmc\test\OpenSmc.Hub.Fixture\OpenSmc.Hub.Fixture.csproj" />
+    <ProjectReference Include="..\OpenSmc.Ifrs17.DataTypes\OpenSmc.Ifrs17.DataTypes.csproj" />
+  </ItemGroup>
+
+</Project>

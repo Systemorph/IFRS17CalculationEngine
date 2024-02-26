@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using OpenSmc.Data;
 using OpenSmc.Hub.Fixture;
+using OpenSmc.Ifrs17.DataTypes.Constants.Enumerates;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
 using OpenSmc.Messaging;
@@ -17,12 +18,12 @@ public class ReferenceDataHubTest(ITestOutputHelper output) : HubTestBase(output
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
         => base.ConfigureHost(configuration).AddData(dc => dc.WithDataSource("ReferenceDataSource", 
             ds => ds.WithType<AmountType>(t => t.WithKey(x => x.SystemName)
-                .WithInitialData(async () => await Task.FromResult(_testReferenceData.ReferenceAmountTypes))
+                .WithInitialData(_testReferenceData.ReferenceAmountTypes)
                 .WithUpdate(AddAmountType)
                 .WithAdd(AddAmountType)
                 .WithDelete(DeleteAmountType))
                 .WithType<AocStep>(t => t.WithKey(x => (x.AocType, x.Novelty))
-                    .WithInitialData(async () => await Task.FromResult(_testReferenceData.ReferenceAocSteps))
+                    .WithInitialData(_testReferenceData.ReferenceAocSteps)
                     .WithUpdate(AddAocStep)
                     .WithAdd(AddAocStep)
                     .WithDelete(DeleteAocStep))));
@@ -70,7 +71,6 @@ public class ReferenceDataHubTest(ITestOutputHelper output) : HubTestBase(output
         response.Message.Should().BeEquivalentTo(expected);
     }
 
-
     [Fact]
     public async Task InitializationRdhAmountTypeTest()
     {
@@ -90,17 +90,14 @@ public class ReferenceDataHubTest(ITestOutputHelper output) : HubTestBase(output
     {
         var updateItems = new AmountType[]
         {
-            new()
-            {
-                SystemName = "W", DisplayName = "WriteOff"
-
-            }
+            new AmountType{ SystemName = "W", DisplayName = "WriteOff", Parent = "", Order = 10, PeriodType = PeriodType.BeginningOfPeriod }
+            
         };
         var client = GetClient();
         var updateResponse = await client.AwaitResponse(new UpdateDataRequest(updateItems), 
             o => o.WithTarget(new HostAddress()));
         await Task.Delay(300);
-        var expected = new DataChanged(1);
+        var expected = new DataChangedEvent(1);
         updateResponse.Message.Should().BeEquivalentTo(expected);
         _testReferenceData.ReferenceAmountTypes.Should().Contain(updateItems);
     }
@@ -111,17 +108,13 @@ public class ReferenceDataHubTest(ITestOutputHelper output) : HubTestBase(output
         _testReferenceData.Reset();
         var deleteItems = new AmountType[]
         {
-            new()
-            {
-                SystemName = "E",
-                DisplayName = "Expenses"
-            }
+            new AmountType{ SystemName = "E", DisplayName = "Expenses", Parent = "", Order = 10, PeriodType = PeriodType.BeginningOfPeriod }
         };
         var client = GetClient();
         var deleteResponse = await client.AwaitResponse(new DeleteDataRequest(deleteItems),
             o => o.WithTarget(new HostAddress()));
         await Task.Delay(300);
-        var expected = new DataChanged(1);
+        var expected = new DataChangedEvent(1);
         deleteResponse.Message.Should().BeEquivalentTo(expected);
         _testReferenceData.ReferenceAmountTypes.Should().NotContain(deleteItems);
     }

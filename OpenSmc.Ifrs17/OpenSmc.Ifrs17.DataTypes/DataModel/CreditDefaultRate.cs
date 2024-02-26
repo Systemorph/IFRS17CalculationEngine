@@ -11,7 +11,7 @@ public record CreditDefaultRate : KeyedRecord, IWithYearMonthAndScenario
     [Required]
     [IdentityProperty]
     [Dimension(typeof(CreditRiskRating))]
-    public string? CreditRiskRating { get; init; }
+    public string CreditRiskRating { get; init; }
 
     [Required]
     [IdentityProperty]
@@ -28,9 +28,9 @@ public record CreditDefaultRate : KeyedRecord, IWithYearMonthAndScenario
     public int Month { get; init; }
 
     //[Conversion(typeof(PrimitiveArrayConverter))]
-    public double[]? Values { get; init; }
+    public double[] Values { get; init; }
 
     [IdentityProperty]
     [Dimension(typeof(Scenario))]
-    public string? Scenario { get; init; }
+    public string Scenario { get; init; }
 }

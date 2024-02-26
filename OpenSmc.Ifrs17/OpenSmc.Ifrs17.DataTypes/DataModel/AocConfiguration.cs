@@ -3,6 +3,7 @@ using Microsoft.VisualBasic;
 using OpenSmc.Arithmetics;
 using OpenSmc.DataCubes;
 using OpenSmc.Domain.Abstractions.Attributes;
+using OpenSmc.Ifrs17.DataTypes.Constants;
 using OpenSmc.Ifrs17.DataTypes.Constants.Enumerates;
 using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
 using OpenSmc.Ifrs17.DataTypes.DataModel.Interfaces;
@@ -37,7 +38,7 @@ public record AocConfiguration : KeyedRecord, IWithYearAndMonth, IOrdered
 
     [Dimension(typeof(Constants.Enumerates.DataType))] public Constants.Enumerates.DataType DataType { get; init; }
 
-    [Dimension(typeof(StructureType))] public StructureType StructureType { get; init; }
+    [Dimension(typeof(StructureTypes))] public string StructureType { get; init; }
 
     [Dimension(typeof(InputSource))] public InputSource InputSource { get; init; }
 
