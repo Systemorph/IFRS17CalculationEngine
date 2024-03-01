@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OpenSmc.Ifrs17.ReferenceDataHub\OpenSmc.Ifrs17.ReferenceDataHub.csproj" />
+    <ProjectReference Include="..\OpenSmc.Ifrs17.Utils\OpenSmc.Ifrs17.Utils.csproj" />
   </ItemGroup>
 
 </Project>

@@ -14,7 +14,7 @@ public class IfrsVariableDataDictInitTest(ITestOutputHelper output) : HubTestBas
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
     {
         return base.ConfigureHost(configuration)
-            .ConfigureIfrsDataDictInit();
+            .ConfigureIfrsDataDictInit(TemplateData.year,TemplateData.month,TemplateData.reportinNode,null);
     }
 
     [Fact]

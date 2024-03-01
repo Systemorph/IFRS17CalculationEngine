@@ -163,6 +163,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Ifrs17.DataNodeHub"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSmc.Ifrs17.ReportHub", "ReportHub\OpenSmc.Ifrs17.ReportHub.csproj", "{AA1664C5-1140-411E-81EA-30E819582DB2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenSmc.Ifrs17.Utils", "OpenSmc.Ifrs17.Utils\OpenSmc.Ifrs17.Utils.csproj", "{A8F919A8-5109-41A6-822A-3B1CA1C64053}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1025,6 +1027,18 @@ Global
 		{AA1664C5-1140-411E-81EA-30E819582DB2}.Release|arm64.Build.0 = Release|Any CPU
 		{AA1664C5-1140-411E-81EA-30E819582DB2}.Release|x86.ActiveCfg = Release|Any CPU
 		{AA1664C5-1140-411E-81EA-30E819582DB2}.Release|x86.Build.0 = Release|Any CPU
+		{A8F919A8-5109-41A6-822A-3B1CA1C64053}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8F919A8-5109-41A6-822A-3B1CA1C64053}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8F919A8-5109-41A6-822A-3B1CA1C64053}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{A8F919A8-5109-41A6-822A-3B1CA1C64053}.Debug|arm64.Build.0 = Debug|Any CPU
+		{A8F919A8-5109-41A6-822A-3B1CA1C64053}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A8F919A8-5109-41A6-822A-3B1CA1C64053}.Debug|x86.Build.0 = Debug|Any CPU
+		{A8F919A8-5109-41A6-822A-3B1CA1C64053}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8F919A8-5109-41A6-822A-3B1CA1C64053}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8F919A8-5109-41A6-822A-3B1CA1C64053}.Release|arm64.ActiveCfg = Release|Any CPU
+		{A8F919A8-5109-41A6-822A-3B1CA1C64053}.Release|arm64.Build.0 = Release|Any CPU
+		{A8F919A8-5109-41A6-822A-3B1CA1C64053}.Release|x86.ActiveCfg = Release|Any CPU
+		{A8F919A8-5109-41A6-822A-3B1CA1C64053}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
