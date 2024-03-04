@@ -6,4 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Import\OpenSmc.Import.csproj" />
+    <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Messaging.Hub\OpenSmc.Messaging.Hub.csproj" />
+    <ProjectReference Include="..\OpenSmc.Ifrs17.DataNodeHub\OpenSmc.Ifrs17.DataNodeHub.csproj" />
+  </ItemGroup>
+
 </Project>
