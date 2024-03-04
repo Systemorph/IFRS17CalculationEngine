@@ -1,4 +1,5 @@
-﻿using OpenSmc.Data;
+﻿using FluentAssertions;
+using OpenSmc.Data;
 using OpenSmc.Hub.Fixture;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Ifrs17.ReportHub;
@@ -16,16 +17,14 @@ public class ReportDataTest(ITestOutputHelper output) : HubTestBase(output)
     }
 
     [Fact]
-    public async Task InitParameterDataTest()
+    public async Task InitReportDataTest()
     {
         var client = GetClient();
 
-        var exchangeRateData = await client.AwaitResponse(new GetManyRequest<ExchangeRate>(), o => o.WithTarget(new HostAddress()));
-        var cdrData = await client.AwaitResponse(new GetManyRequest<CreditDefaultRate>(), o => o.WithTarget(new HostAddress()));
-        var partnerRatingData = await client.AwaitResponse(new GetManyRequest<PartnerRating>(), o => o.WithTarget(new HostAddress()));
+        var reportAddress = new ReportAddress(new HostAddress(), 2020, 12, "CH", "Bla");
 
-        exchangeRateData.Message.Items.Should().HaveCount(12);
-        cdrData.Message.Items.Should().HaveCount(22);
-        partnerRatingData.Message.Items.Should().HaveCount(3);
+        var reportVariable = await client.AwaitResponse(new GetManyRequest<ReportVariable>(), o => o.WithTarget(reportAddress));
+
+        reportVariable.Message.Items.Should().HaveCount(2);
     }
 }

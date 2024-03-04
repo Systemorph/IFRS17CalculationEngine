@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using OpenSmc.Ifrs17.DataTypes.DataModel.TransactionalData;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
+using static OpenSmc.Ifrs17.ReportHub.ReportScopes;
 
 namespace OpenSmc.Ifrs17.ReportHub;
 
@@ -21,8 +22,10 @@ public static class ReportHubConfiguration
         var refDataAddress = new ReferenceDataAddress(configuration.Address);
         var dataNodeAddress = new DataNodeAddress(configuration.Address);
         var parameterAddress = new ParameterAddress(configuration.Address);
-        var ifrsVarAddress = new IfrsVariableAddress(configuration.Address);
-        var reportAddress = new ReportAddress(configuration.Address);
+
+        // TODO: understand how to configure a generic data hub with non-trivial address without hard-coding the partition
+        var ifrsVarAddress = new IfrsVariableAddress(configuration.Address, 2020, 12, "CH", "Bla");
+        var reportAddress = new ReportAddress(configuration.Address, 2020, 12, "CH", "Bla");
 
         return configuration
             .WithServices(services => services.AddSingleton<ScopeFactory>())
@@ -30,7 +33,12 @@ public static class ReportHubConfiguration
             .WithHostedHub(refDataAddress, config => config.ConfigureReferenceDataDictInit())
             .WithHostedHub(dataNodeAddress, config => config.ConfigureDataNodeDataDictInit())
             .WithHostedHub(parameterAddress, config => config.ConfigureParameterDataDictInit())
-            .WithHostedHub(ifrsVarAddress, config => config.ConfigureIfrsDataDictInit(2020, 12, "CH", default)) // TODO: ???
+
+            .WithHostedHub(ifrsVarAddress, config =>
+            {
+                var address = (IfrsVariableAddress)config.Address;
+                return config.ConfigureIfrsDataDictInit(address.Year, address.Month, address.ReportingNode, address.Scenario);
+            })
             
             .WithHostedHub(reportAddress, config => config
                 .AddData(data => data
@@ -46,23 +54,36 @@ public static class ReportHubConfiguration
                         .WithType<ExchangeRate>().WithType<CreditDefaultRate>().WithType<PartnerRating>())
                     .FromHub(ifrsVarAddress, ds => ds
                         .WithType<IfrsVariable>())
-                    .AddCustomInitialization(ReportInit(config))));
+                    .AddCustomInitialization(ReportInit(config))))
+
+            .WithRoutes(route => route.RouteMessage<GetManyRequest<ReportVariable>>(_ => reportAddress));
     }
 
     public static Action<HubDataSource, ScopeFactory> ReportInit(MessageHubConfiguration config)
     {
         return (workspace, scopeFactory) =>
         {
-            //workspace.GetData<IfrsVariable>();
-            
-            // TODO: WIP
+            // TMP: this is how we retrieve data from this workspace variable
+            //workspace.Get<IfrsVariable>();
+
+            var address = (ReportAddress)config.Address;
+
+            // TODO: understand from where to take this currency type
+            var currencyType = DataTypes.Constants.Enumerates.CurrencyType.Group;
+
             var storage = new ReportStorage(workspace);
-            storage.Initialize((2020, 12), "CH", null, DataTypes.Constants.Enumerates.CurrencyType.Group);
+            //storage.Initialize((address.Year, address.Month), address.ReportingNode, address.Scenario, currencyType);
 
-            // TODO: instantiate a new scope registry here
-            //scopeFactory.ForSingleton<>();
+            using (var universe = scopeFactory.ForSingleton().WithStorage(storage).ToScope<IUniverse>())
+            {
+                // TODO: take from the scopes the report variables we need
+                //universe.GetScopes Identities
+                //universe.GetScopes RiskAdjustments
 
-            // TODO
+                var reportVariables = new ReportVariable[] { new() { AmountType = "a" }, new() { AmountType = "b" } };
+
+                workspace.Change(new UpdateDataRequest(reportVariables));
+            }
         };
     }
 
