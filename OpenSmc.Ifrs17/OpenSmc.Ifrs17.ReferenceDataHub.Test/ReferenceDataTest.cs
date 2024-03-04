@@ -1,6 +1,5 @@
 using FluentAssertions;
 using OpenSmc.Activities;
-using OpenSmc.Data;
 using OpenSmc.Ifrs17.DataTypes.Constants;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
@@ -27,7 +26,7 @@ public class ReferenceDataIfrsHubDictInitTest(ITestOutputHelper output) : Refere
         var client = GetClient();
 
         //Get ActualCountPerType
-        var actualCountsPerType = await GetActualCountsPerType(client, ExpectedCountPerType.Keys);
+        var actualCountsPerType = await GetActualCountsPerType(client, ExpectedCountPerType.Keys, new HostAddress());
 
         //Assert Count per Type
         actualCountsPerType.Should().Equal(ExpectedCountPerType);
@@ -44,17 +43,21 @@ NewSystemName,NewDisplayName
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
     {
         return base.ConfigureHost(configuration)
-            .ConfigureReferenceDataDictInit()
+            .WithHostedHub(
+                new ReferenceDataAddress(configuration.Address),
+                config => config
+                    .ConfigureReferenceDataDictInit()
+            )
             .ConfigureReferenceDataImportHub();
     }
 
-    [Fact (Skip = "Import Hub configuration not working yet.")]
+    [Fact]
     public async Task ImportTest()
     {
         var client = GetClient();
 
         //Get ActualCountPerType
-        var actualCountsPerType = await GetActualCountsPerType(client, ExpectedCountPerType.Keys);
+        var actualCountsPerType = await GetActualCountsPerType(client, ExpectedCountPerType.Keys, new ReferenceDataAddress(new HostAddress()));
 
         //Assert Count per Type
         actualCountsPerType.Should().Equal(ExpectedCountPerType);
@@ -65,6 +68,11 @@ NewSystemName,NewDisplayName
         importResponse.Message.Log.Status.Should().Be(ActivityLogStatus.Succeeded);
 
         //Assert changes
+        var newExpectedCountPerType = ExpectedCountPerType.ToDictionary();
+        newExpectedCountPerType[typeof(LiabilityType)] += 1;
+
+        actualCountsPerType = await GetActualCountsPerType(client, ExpectedCountPerType.Keys, new ReferenceDataAddress(new HostAddress()));
+        actualCountsPerType.Should().Equal(newExpectedCountPerType);
     }
 }
 
