@@ -9,7 +9,7 @@ namespace OpenSmc.Ifrs17.Hub.Test
 {
     public class IfrsHubTestBase(ITestOutputHelper output) : HubTestBase(output)
     {
-        public static async Task<Dictionary<Type, int>> GetActualCountsPerType(IMessageHub client, IEnumerable<Type> types)
+        public static async Task<Dictionary<Type, int>> GetActualCountsPerType(IMessageHub client, IEnumerable<Type> types, object address)
         {
             var actualCountsPerType = new Dictionary<Type, int>();
             foreach (var domainType in types)
@@ -17,7 +17,7 @@ namespace OpenSmc.Ifrs17.Hub.Test
                 var requestType = typeof(GetManyRequest<>).MakeGenericType(domainType);
                 var request = Activator.CreateInstance(requestType);
                 var responseType = typeof(GetManyResponse<>).MakeGenericType(domainType);
-                Func<PostOptions, PostOptions> options = o => o.WithTarget(new HostAddress());
+                Func<PostOptions, PostOptions> options = o => o.WithTarget(address);
                 object response = (((IMessageDelivery)await AwaitResponseMethod.MakeGenericMethod(responseType)
                     .InvokeAsFunctionAsync(client, request, options)).Message);
                 var total = ((GetManyResponseBase)response).Total;
