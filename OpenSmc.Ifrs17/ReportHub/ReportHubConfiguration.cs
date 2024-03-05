@@ -54,7 +54,8 @@ public static class ReportHubConfiguration
                         .WithType<ExchangeRate>().WithType<CreditDefaultRate>().WithType<PartnerRating>())
                     .FromHub(ifrsVarAddress, ds => ds
                         .WithType<IfrsVariable>())
-                    .AddCustomInitialization(ReportInit(config))))
+                    //.AddCustomInitialization(ReportInit(config))
+                    ))
 
             .WithRoutes(route => route.RouteMessage<GetManyRequest<ReportVariable>>(_ => reportAddress));
     }
