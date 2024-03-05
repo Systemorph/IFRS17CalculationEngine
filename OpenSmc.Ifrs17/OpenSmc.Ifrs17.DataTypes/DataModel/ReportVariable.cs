@@ -80,7 +80,9 @@ public record ReportVariable
     [IdentityProperty]
     public string Partner { get; init; }
 
-    [NotVisible][IdentityProperty] public bool IsReinsurance { get; init; }
+    [NotVisible]
+    [IdentityProperty] 
+    public bool IsReinsurance { get; init; }
 
     [NotVisible]
     [NoArithmetics(ArithmeticOperation.Scale)]

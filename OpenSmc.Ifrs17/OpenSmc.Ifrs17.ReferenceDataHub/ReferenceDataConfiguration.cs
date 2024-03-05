@@ -1,13 +1,9 @@
-﻿using System.Reflection;
-using OpenSmc.Data;
-using OpenSmc.Ifrs17.DataTypes.Constants;
+﻿using OpenSmc.Data;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
-using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
 using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.Utils;
 using OpenSmc.Import;
 using OpenSmc.Messaging;
-using OpenSmc.Reflection;
 
 namespace OpenSmc.Ifrs17.ReferenceDataHub;
 
@@ -19,7 +15,7 @@ public static class ReferenceDataHubConfiguration
     {
         return configuration
             .AddData(dc => dc
-                .FromConfigurableDataSource(new ReferenceDataAddress(configuration.Address),
+                .FromConfigurableDataSource("reference",
                     ds => ds.ConfigureCategory(TemplateData.TemplateReferenceData)
                         .WithType<AocConfiguration>(t =>
                             t.WithKey(x => (x.Year, x.Month, x.AocType, x.Novelty))
@@ -27,16 +23,17 @@ public static class ReferenceDataHubConfiguration
                 ));
     }
 
-    public static MessageHubConfiguration ConfigureReferenceDataImportHub(this MessageHubConfiguration configuration)
-    {
-        return configuration
+    public static MessageHubConfiguration ConfigureReferenceDataImportHub(this MessageHubConfiguration configuration) 
+        => configuration
             .WithHostedHub(new ReferenceDataImportAddress(configuration.Address),//TODO this should not be a HostedHub but a separate Hub
-            config => config
-                .AddImport(data => data.FromHub(new ReferenceDataAddress(configuration.Address),
-                        dataSource => dataSource.WithType<LiabilityType>()),
-                    import => import
-                ));
-    }
+                config => config
+                    .AddImport(data =>
+                        data.FromHub(new ReferenceDataAddress(configuration.Address),
+                            dataSource => dataSource.WithType<LiabilityType>()
+                        ),
+                        import => import
+                    )
+            );
 
 //    ////Configuration 2: Use Import of Dimension.CSV to Initialize the DataHub
 //    public static readonly Dictionary<Type, IEnumerable<object>> ReferenceDataDomain

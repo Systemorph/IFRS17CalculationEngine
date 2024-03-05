@@ -12,6 +12,7 @@
     <ProjectReference Include="..\OpenSmc.Ifrs17.IfrsVariableHub\OpenSmc.Ifrs17.IfrsVariableHub.csproj" />
     <ProjectReference Include="..\OpenSmc.Ifrs17.ParameterDataHub\OpenSmc.Ifrs17.ParameterDataHub.csproj" />
     <ProjectReference Include="..\OpenSmc.Ifrs17.ReferenceDataHub\OpenSmc.Ifrs17.ReferenceDataHub.csproj" />
+	<ProjectReference Include="..\OpenSmc.Ifrs17.Utils\OpenSmc.Ifrs17.Utils.csproj" />
   </ItemGroup>
 
 </Project>

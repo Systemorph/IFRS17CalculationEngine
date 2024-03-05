@@ -3,7 +3,6 @@ using OpenSmc.Ifrs17.DataTypes.Constants.Enumerates;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
 using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
-using System.Reactive;
 
 namespace OpenSmc.Ifrs17.ReferenceDataHub;
 
