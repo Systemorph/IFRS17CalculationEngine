@@ -21,7 +21,7 @@ public class DataNodeDataDictInitTest(ITestOutputHelper output) : DataNodeDataIf
         var client = GetClient();
 
         //Get ActualCountPerType
-        var actualCountsPerType = await GetActualCountsPerType(client, ExpectedCountPerType.Keys);
+        var actualCountsPerType = await GetActualCountsPerType(client, ExpectedCountPerType.Keys, new HostAddress());
 
         //Assert Count per Type
         actualCountsPerType.Should().Equal(ExpectedCountPerType);
