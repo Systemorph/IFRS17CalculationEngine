@@ -17,7 +17,8 @@ public class ReferenceDataIfrsHubDictInitTest(ITestOutputHelper output) : Refere
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
     {
         return base.ConfigureHost(configuration)
-                   .ConfigureReferenceDataDictInit();
+                   //.ConfigureReferenceDataDictInit();
+                   .ConfigureReferenceDataModelHub();
     }
 
     [Fact]
@@ -26,7 +27,7 @@ public class ReferenceDataIfrsHubDictInitTest(ITestOutputHelper output) : Refere
         var client = GetClient();
 
         //Get ActualCountPerType
-        var actualCountsPerType = await GetActualCountsPerType(client, ExpectedCountPerType.Keys, new HostAddress());
+        var actualCountsPerType = await GetActualCountsPerType(client, ExpectedCountPerType.Keys, new ReferenceDataAddress(new HostAddress()) );
 
         //Assert Count per Type
         actualCountsPerType.Should().Equal(ExpectedCountPerType);
@@ -43,11 +44,7 @@ NewSystemName,NewDisplayName
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
     {
         return base.ConfigureHost(configuration)
-            .WithHostedHub(
-                new ReferenceDataAddress(configuration.Address),
-                config => config
-                    .ConfigureReferenceDataDictInit()
-            )
+            .ConfigureReferenceDataModelHub()
             .ConfigureReferenceDataImportHub();
     }
 
