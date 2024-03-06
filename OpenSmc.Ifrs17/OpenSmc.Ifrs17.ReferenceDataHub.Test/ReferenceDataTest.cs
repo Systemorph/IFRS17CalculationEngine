@@ -1,5 +1,6 @@
 using FluentAssertions;
 using OpenSmc.Activities;
+using OpenSmc.Data;
 using OpenSmc.Ifrs17.DataTypes.Constants;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
@@ -17,7 +18,6 @@ public class ReferenceDataIfrsHubDictInitTest(ITestOutputHelper output) : Refere
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
     {
         return base.ConfigureHost(configuration)
-                   //.ConfigureReferenceDataDictInit();
                    .ConfigureReferenceDataModelHub();
     }
 
@@ -38,6 +38,9 @@ public class ReferenceDataIfrsHubDictInitTest(ITestOutputHelper output) : Refere
 public class ReferenceDataImportTest(ITestOutputHelper output) : ReferenceDataIfrsHubTestBase(output)
 {
     private const string LiabilityTypeData = @"@@LiabilityType
+SystemName,DisplayName
+NewSystemName,NewDisplayName
+@@Novelty
 SystemName,DisplayName
 NewSystemName,NewDisplayName
 ";
@@ -64,12 +67,22 @@ NewSystemName,NewDisplayName
         var importResponse = await client.AwaitResponse(importRequest, o => o.WithTarget(new ReferenceDataImportAddress(new HostAddress())));
         importResponse.Message.Log.Status.Should().Be(ActivityLogStatus.Succeeded);
 
-        //Assert changes
+        //Assert changes Count
         var newExpectedCountPerType = ExpectedCountPerType.ToDictionary();
         newExpectedCountPerType[typeof(LiabilityType)] += 1;
+        newExpectedCountPerType[typeof(Novelty)] += 1;
 
         actualCountsPerType = await GetActualCountsPerType(client, ExpectedCountPerType.Keys, new ReferenceDataAddress(new HostAddress()));
         actualCountsPerType.Should().Equal(newExpectedCountPerType);
+
+        //Assert data changed
+        var liabilityTypes = await client.AwaitResponse(new GetManyRequest<LiabilityType>(),
+            o => o.WithTarget(new ReferenceDataAddress(new HostAddress())));
+        var novelties = await client.AwaitResponse(new GetManyRequest<Novelty>(),
+            o => o.WithTarget(new ReferenceDataAddress(new HostAddress())));
+
+        liabilityTypes.Message.Items.Where(x => x.SystemName == "NewSystemName" && x.DisplayName == "NewDisplayName").Should().HaveCount(1);
+        novelties.Message.Items.Where(x => x.SystemName == "NewSystemName" && x.DisplayName == "NewDisplayName").Should().HaveCount(1);
     }
 }
 
