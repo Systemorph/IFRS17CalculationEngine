@@ -41,7 +41,7 @@ public static class ReportHubConfiguration
             })
             
             .WithHostedHub(reportAddress, config => config
-                .AddData(data => data
+                .AddData(data => data // this will become the Report Plugin
                     .FromConfigurableDataSource("ReportDataSource", ds => ds
                         .WithType<ReportVariable>(t => t.WithKey(ReportVariableKey)))
                     .FromHub(refDataAddress, ds => ds
@@ -52,9 +52,10 @@ public static class ReportHubConfiguration
                         .WithType<ReinsurancePortfolio>().WithType<GroupOfReinsuranceContract>())
                     .FromHub(parameterAddress, ds => ds 
                         .WithType<ExchangeRate>().WithType<CreditDefaultRate>().WithType<PartnerRating>())
+                    // ReportPlugin[yet to come](ds => ReportInit(config))
                     //.FromHub(ifrsVarAddress, ds => ds
                     //    .WithType<IfrsVariable>())
-                    //.AddCustomInitialization(ReportInit(config))
+                    //.AddCustomInitialization(ReportInit(config)) //called by the config of the report plugin (that can handle scopes)
                     ))
 
             .WithRoutes(route => route.RouteMessage<GetManyRequest<ReportVariable>>(_ => reportAddress)));
@@ -73,8 +74,8 @@ public static class ReportHubConfiguration
             var currencyType = DataTypes.Constants.Enumerates.CurrencyType.Group;
 
             var storage = new ReportStorage(workspace);
-            //storage.Initialize((address.Year, address.Month), address.ReportingNode, address.Scenario, currencyType);
-
+            storage.Initialize((address.Year, address.Month), address.ReportingNode, address.Scenario, currencyType);
+            
             using (var universe = scopeFactory.ForSingleton().WithStorage(storage).ToScope<IUniverse>())
             {
                 // TODO: take from the scopes the report variables we need
