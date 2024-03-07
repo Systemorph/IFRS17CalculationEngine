@@ -1,5 +1,7 @@
 ﻿using OpenSmc.Data;
+using OpenSmc.Ifrs17.DataTypes.Constants;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
+using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
 using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.Utils;
 using OpenSmc.Import;
@@ -15,7 +17,7 @@ public static class ReferenceDataHubConfiguration
     {
         return configuration
             .AddData(dc => dc
-                .FromConfigurableDataSource("reference",
+                .FromConfigurableDataSource("ReferenceData",
                     ds => ds.ConfigureCategory(TemplateData.TemplateReferenceData)
                         .WithType<AocConfiguration>(t =>
                             t.WithKey(x => (x.Year, x.Month, x.AocType, x.Novelty))
@@ -23,17 +25,38 @@ public static class ReferenceDataHubConfiguration
                 ));
     }
 
-    public static MessageHubConfiguration ConfigureReferenceDataImportHub(this MessageHubConfiguration configuration) 
-        => configuration
-            .WithHostedHub(new ReferenceDataImportAddress(configuration.Address),//TODO this should not be a HostedHub but a separate Hub
+    //Configuration DataHub Golden Copy. 
+    public static MessageHubConfiguration ConfigureReferenceDataModelHub(this MessageHubConfiguration configuration)
+    {
+        var address = new ReferenceDataAddress(configuration.Address);
+        return configuration
+            .WithHostedHub(address,
+            config => config
+                .ConfigureReferenceDataDictInit()
+        );
+    }
+
+    //Configuration of ReferenceData Import Hub
+    public static MessageHubConfiguration ConfigureReferenceDataImportHub(this MessageHubConfiguration configuration)
+    {
+        var refDataAddress = new ReferenceDataAddress(configuration.Address);
+        var refDataImportAddress = new ReferenceDataImportAddress(configuration.Address);
+
+        return configuration
+            .WithHostedHub(refDataImportAddress,
                 config => config
                     .AddImport(data =>
-                        data.FromHub(new ReferenceDataAddress(configuration.Address),
-                            dataSource => dataSource.WithType<LiabilityType>()
-                        ),
+                            data.FromHub(refDataAddress,
+                                dataSource => dataSource.WithType<AmountType>().WithType<DeferrableAmountType>()
+                                    .WithType<AocType>().WithType<StructureType>().WithType<CreditRiskRating>().WithType<Currency>().WithType<EconomicBasis>()
+                                    .WithType<EstimateType>().WithType<LiabilityType>().WithType<LineOfBusiness>().WithType<Profitability>()
+                                    .WithType<Novelty>().WithType<OciType>().WithType<Partner>().WithType<PnlVariableType>().WithType<RiskDriver>()
+                                    .WithType<Scenario>().WithType<ValuationApproach>().WithType<ProjectionConfiguration>().WithType<ReportingNode>()
+                            ),
                         import => import
                     )
             );
+    }
 
 //    ////Configuration 2: Use Import of Dimension.CSV to Initialize the DataHub
 //    public static readonly Dictionary<Type, IEnumerable<object>> ReferenceDataDomain
