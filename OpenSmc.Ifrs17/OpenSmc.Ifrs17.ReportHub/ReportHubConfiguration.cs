@@ -52,12 +52,12 @@ public static class ReportHubConfiguration
                         .WithType<ReinsurancePortfolio>().WithType<GroupOfReinsuranceContract>())
                     .FromHub(parameterAddress, ds => ds 
                         .WithType<ExchangeRate>().WithType<CreditDefaultRate>().WithType<PartnerRating>())
-                    .FromHub(ifrsVarAddress, ds => ds
-                        .WithType<IfrsVariable>())
+                    //.FromHub(ifrsVarAddress, ds => ds
+                    //    .WithType<IfrsVariable>())
                     //.AddCustomInitialization(ReportInit(config))
                     ))
 
-            .WithRoutes(route => route.RouteMessage<GetManyRequest<ReportVariable>>(_ => reportAddress));
+            .WithRoutes(route => route.RouteMessage<GetManyRequest<ReportVariable>>(_ => reportAddress)));
     }
 
     public static Action<HubDataSource, ScopeFactory> ReportInit(MessageHubConfiguration config)
