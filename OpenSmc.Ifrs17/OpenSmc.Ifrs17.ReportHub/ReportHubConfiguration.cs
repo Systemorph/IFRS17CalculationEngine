@@ -1,18 +1,19 @@
 ﻿using OpenSmc.Data;
 using OpenSmc.Messaging;
+using OpenSmc.Reporting;
 using OpenSmc.Ifrs17.DataNodeHub;
 using OpenSmc.Ifrs17.ReferenceDataHub;
 using OpenSmc.Ifrs17.ParameterDataHub;
 using OpenSmc.Ifrs17.IfrsVariableHub;
 using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
-using OpenSmc.Data.Persistence;
 using OpenSmc.Scopes.Proxy;
 using Microsoft.Extensions.DependencyInjection;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 using static OpenSmc.Ifrs17.ReportHub.ReportScopes;
-using OpenSmc.Reporting;
-
+using OpenSmc.Pivot.Builder;
+using OpenSmc.DataCubes;
+using OpenSmc.Reporting.Builder;
 
 namespace OpenSmc.Ifrs17.ReportHub;
 
@@ -23,8 +24,6 @@ public static class ReportHubConfiguration
         var refDataAddress = new ReferenceDataAddress(configuration.Address);
         var dataNodeAddress = new DataNodeAddress(configuration.Address);
         var parameterAddress = new ParameterAddress(configuration.Address);
-
-        // TODO: understand how to configure a generic data hub with non-trivial address without hard-coding the partition
         var ifrsVarAddress = new IfrsVariableAddress(configuration.Address, 2020, 12, "CH", "Bla");
         var reportAddress = new ReportAddress(configuration.Address, 2020, 12, "CH", "Bla");
 
@@ -42,7 +41,7 @@ public static class ReportHubConfiguration
             })
             
             .WithHostedHub(reportAddress, config => config
-                .AddData(data => data // this will become the Report Plugin
+                .AddReporting(data => data // this will become the Report Plugin
                     .FromConfigurableDataSource("ReportDataSource", ds => ds
                         .WithType<ReportVariable>(t => t.WithKey(ReportVariableKey)))
                     .FromHub(refDataAddress, ds => ds
@@ -52,17 +51,22 @@ public static class ReportHubConfiguration
                         .WithType<InsurancePortfolio>().WithType<GroupOfInsuranceContract>()
                         .WithType<ReinsurancePortfolio>().WithType<GroupOfReinsuranceContract>())
                     .FromHub(parameterAddress, ds => ds 
-                        .WithType<ExchangeRate>().WithType<CreditDefaultRate>().WithType<PartnerRating>())
+                        .WithType<ExchangeRate>().WithType<CreditDefaultRate>().WithType<PartnerRating>()),
                     ).AddPlugin(h => new ReportingPlugin(h, ReportInit(config))
-                    //.FromHub(ifrsVarAddress, ds => ds 
-                    //    .WithType<IfrsVariable>())
-                    //.AddCustomInitialization(ReportInit(config)) //called by the config of the report plugin (that can handle scopes)
-                    )
+                    reportConfig => reportConfig
+                    .WithDataCubeOn(GetDataCube(config), GetReportFunc(reportConfig)))
 
             .WithRoutes(route => route.RouteMessage<GetManyRequest<ReportVariable>>(_ => reportAddress)));
     }
 
-    public static Action<HubDataSource, ScopeFactory> ReportInit(MessageHubConfiguration config)
+    private static Func<DataCubePivotBuilder<IDataCube<ReportVariable>, ReportVariable, ReportVariable, ReportVariable>, 
+        DataCubeReportBuilder<IDataCube<ReportVariable>, ReportVariable, ReportVariable, ReportVariable>> 
+        GetReportFunc(ReportConfiguration reportConfig)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static Func<IWorkspace, IScopeFactory, IEnumerable<ReportVariable>> GetDataCube(MessageHubConfiguration config)
     {
         return (workspace, scopeFactory) =>
         {
@@ -77,16 +81,18 @@ public static class ReportHubConfiguration
             var storage = new ReportStorage(workspace);
             storage.Initialize((address.Year, address.Month), address.ReportingNode, address.Scenario, currencyType);
             storage.InitializeReportIndependentCache();
+            IEnumerable<ReportVariable> res; 
+
             using (var universe = scopeFactory.ForSingleton().WithStorage(storage).ToScope<IUniverse>())
             {
                 // TODO: take from the scopes the report variables we need
                 //universe.GetScopes Identities
                 //universe.GetScopes RiskAdjustments
 
-                var reportVariables = new ReportVariable[] { new() { AmountType = "a" }, new() { AmountType = "b" } };
-
-                workspace.Change(new UpdateDataRequest(reportVariables));
+                res = new ReportVariable[] { new() { AmountType = "a" }, new() { AmountType = "b" } };
             }
+
+            return res;
         };
     }
 
