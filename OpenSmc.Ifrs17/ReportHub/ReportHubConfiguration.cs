@@ -17,6 +17,19 @@ namespace OpenSmc.Ifrs17.ReportHub;
 
 public static class ReportHubConfiguration
 {
+    //public static IServiceProvider CreateIfrsReportHub(this IServiceProvider serviceProvider, object address)
+    //{
+    //    var reportAddress = (ReportAddress)address;
+
+    //    var hub = serviceProvider.CreateMessageHub<ReportAddress>(reportAddress, config => config
+    //                .AddData(data => data
+    //                    .FromHub(refDataAddress, ds => ds                               
+    //                        .WithType<AmountType>().WithType<LineOfBusiness>())));
+        
+    //    return serviceProvider;
+    //}
+    //}
+
     public static MessageHubConfiguration ConfigureReportDataHub(this MessageHubConfiguration configuration)
     {
         var refDataAddress = new ReferenceDataAddress(configuration.Address);
