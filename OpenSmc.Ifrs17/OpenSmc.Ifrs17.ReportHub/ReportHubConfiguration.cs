@@ -50,13 +50,13 @@ public static class ReportHubConfiguration
                     .FromHub(dataNodeAddress, ds => ds
                         .WithType<InsurancePortfolio>().WithType<GroupOfInsuranceContract>()
                         .WithType<ReinsurancePortfolio>().WithType<GroupOfReinsuranceContract>())
-                    .FromHub(parameterAddress, ds => ds 
+                    .FromHub(parameterAddress, ds => ds
                         .WithType<ExchangeRate>().WithType<CreditDefaultRate>().WithType<PartnerRating>()),
-                    ).AddPlugin(h => new ReportingPlugin(h, ReportInit(config))
-                    reportConfig => reportConfig
-                    .WithDataCubeOn(GetDataCube(config), GetReportFunc(reportConfig)))
 
-            .WithRoutes(route => route.RouteMessage<GetManyRequest<ReportVariable>>(_ => reportAddress)));
+                    reportConfig => reportConfig
+                        .WithDataCubeOn(GetDataCube(config), GetReportFunc(reportConfig)))
+
+                .WithRoutes(route => route.RouteMessage<GetManyRequest<ReportVariable>>(_ => reportAddress)));
     }
 
     private static Func<DataCubePivotBuilder<IDataCube<ReportVariable>, ReportVariable, ReportVariable, ReportVariable>, 
