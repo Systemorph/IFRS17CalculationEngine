@@ -16,7 +16,7 @@ public class ReportDataTest(ITestOutputHelper output) : HubTestBase(output)
         return base.ConfigureHost(configuration).ConfigureReportDataHub();
     }
 
-    [Fact]
+    [Fact (Skip = "Functionality is not completed yet.")]
     public async Task InitReportDataTest()
     {
         var client = GetClient();

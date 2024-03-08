@@ -60,10 +60,13 @@ public class ReportStorage
         await HierarchicalDimensionCache.InitializeAsync<ReportingNode>();
 
         // Initial Values
-        var mostRecentPartition = Workspace.Get<PartitionByReportingNodeAndPeriod>().Where(x => x.Scenario == null).OrderBy(x => x.Year).ThenBy(x => x.Month).LastOrDefault();
-        InitialReportingPeriod = (mostRecentPartition?.Year?? 0, mostRecentPartition?.Month?? 0);
-        var rootReportingNode = Workspace.Get<ReportingNode>().FirstOrDefault(x => x.Parent == null);
-        InitialReportingNode = (rootReportingNode?.DisplayName?? "", rootReportingNode?.SystemName?? "");
+        // this logic must be moved in ViewModelHub
+        //var mostRecentPartition = Workspace.Get<PartitionByReportingNodeAndPeriod>().Where(x => x.Scenario == null).OrderBy(x => x.Year).ThenBy(x => x.Month).LastOrDefault();
+        //InitialReportingPeriod = (mostRecentPartition?.Year?? 0, mostRecentPartition?.Month?? 0);
+        //var rootReportingNode = Workspace.Get<ReportingNode>().FirstOrDefault(x => x.Parent == null);
+        //InitialReportingNode = (rootReportingNode?.DisplayName?? "", rootReportingNode?.SystemName?? "");
+        //
+        
     }
 
     public void Initialize((int year, int month) period, string reportingNode, string scenario, CurrencyType currencyType)
@@ -72,7 +75,7 @@ public class ReportStorage
         Args = (period, reportingNode, scenario, currencyType);
         ProjectionConfigurations = Workspace.Get<ProjectionConfiguration>().ToArray();
         currentPeriodProjection = ProjectionConfigurations.SortRelevantProjections(period.month).First().SystemName;
-
+        InitialReportingNode = (reportingNode, reportingNode); // temporary
         EstimateTypesWithoutAoc = Workspace.Get<EstimateType>().Where(x => x.StructureType != EstimateTypeStructureTypes.AoC).Select(x => x.SystemName).ToArray().ToHashSet();
         TargetScenarios = GetScenarios(scenario);
 
@@ -169,6 +172,7 @@ public class ReportStorage
 
     public HashSet<string?> GetScenarios(string scenario) =>
         scenario == Scenarios.Delta || scenario == Scenarios.All
-        ? Workspace.Get<PartitionByReportingNodeAndPeriod>().Select(x => x.Scenario).ToArray().ToHashSet()
+        //? Workspace.Get<PartitionByReportingNodeAndPeriod>().Select(x => x.Scenario).ToArray().ToHashSet()
+        ? Workspace.Get<Scenario>().Select(x => x.SystemName).ToHashSet()
         : scenario.RepeatOnce().ToHashSet() as HashSet<string?>;
 }

@@ -17,19 +17,6 @@ namespace OpenSmc.Ifrs17.ReportHub;
 
 public static class ReportHubConfiguration
 {
-    //public static IServiceProvider CreateIfrsReportHub(this IServiceProvider serviceProvider, object address)
-    //{
-    //    var reportAddress = (ReportAddress)address;
-
-    //    var hub = serviceProvider.CreateMessageHub<ReportAddress>(reportAddress, config => config
-    //                .AddData(data => data
-    //                    .FromHub(refDataAddress, ds => ds                               
-    //                        .WithType<AmountType>().WithType<LineOfBusiness>())));
-        
-    //    return serviceProvider;
-    //}
-    //}
-
     public static MessageHubConfiguration ConfigureReportDataHub(this MessageHubConfiguration configuration)
     {
         var refDataAddress = new ReferenceDataAddress(configuration.Address);
@@ -54,7 +41,7 @@ public static class ReportHubConfiguration
             })
             
             .WithHostedHub(reportAddress, config => config
-                .AddData(data => data
+                .AddData(data => data // this will become the Report Plugin
                     .FromConfigurableDataSource("ReportDataSource", ds => ds
                         .WithType<ReportVariable>(t => t.WithKey(ReportVariableKey)))
                     .FromHub(refDataAddress, ds => ds
@@ -65,11 +52,13 @@ public static class ReportHubConfiguration
                         .WithType<ReinsurancePortfolio>().WithType<GroupOfReinsuranceContract>())
                     .FromHub(parameterAddress, ds => ds 
                         .WithType<ExchangeRate>().WithType<CreditDefaultRate>().WithType<PartnerRating>())
-                    .FromHub(ifrsVarAddress, ds => ds
-                        .WithType<IfrsVariable>())
-                    .AddCustomInitialization(ReportInit(config))))
+                    // ReportPlugin[yet to come](ds => ReportInit(config))
+                    //.FromHub(ifrsVarAddress, ds => ds
+                    //    .WithType<IfrsVariable>())
+                    //.AddCustomInitialization(ReportInit(config)) //called by the config of the report plugin (that can handle scopes)
+                    ))
 
-            .WithRoutes(route => route.RouteMessage<GetManyRequest<ReportVariable>>(_ => reportAddress));
+            .WithRoutes(route => route.RouteMessage<GetManyRequest<ReportVariable>>(_ => reportAddress)));
     }
 
     public static Action<HubDataSource, ScopeFactory> ReportInit(MessageHubConfiguration config)
@@ -85,8 +74,8 @@ public static class ReportHubConfiguration
             var currencyType = DataTypes.Constants.Enumerates.CurrencyType.Group;
 
             var storage = new ReportStorage(workspace);
-            //storage.Initialize((address.Year, address.Month), address.ReportingNode, address.Scenario, currencyType);
-
+            storage.Initialize((address.Year, address.Month), address.ReportingNode, address.Scenario, currencyType);
+            
             using (var universe = scopeFactory.ForSingleton().WithStorage(storage).ToScope<IUniverse>())
             {
                 // TODO: take from the scopes the report variables we need
