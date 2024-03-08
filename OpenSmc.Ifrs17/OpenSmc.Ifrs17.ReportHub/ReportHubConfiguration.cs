@@ -8,6 +8,7 @@ using OpenSmc.Ifrs17.IfrsVariableHub;
 using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
 using OpenSmc.Scopes.Proxy;
 using Microsoft.Extensions.DependencyInjection;
+using OpenSmc.Data.Persistence;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 using static OpenSmc.Ifrs17.ReportHub.ReportScopes;
@@ -41,7 +42,7 @@ public static class ReportHubConfiguration
             })
             
             .WithHostedHub(reportAddress, config => config
-                .AddReporting(data => data // this will become the Report Plugin
+                .AddReporting(data => data 
                     .FromConfigurableDataSource("ReportDataSource", ds => ds
                         .WithType<ReportVariable>(t => t.WithKey(ReportVariableKey)))
                     .FromHub(refDataAddress, ds => ds
@@ -52,7 +53,6 @@ public static class ReportHubConfiguration
                         .WithType<ReinsurancePortfolio>().WithType<GroupOfReinsuranceContract>())
                     .FromHub(parameterAddress, ds => ds
                         .WithType<ExchangeRate>().WithType<CreditDefaultRate>().WithType<PartnerRating>()),
-
                     reportConfig => reportConfig
                         .WithDataCubeOn(GetDataCube(config), GetReportFunc(reportConfig)))
 

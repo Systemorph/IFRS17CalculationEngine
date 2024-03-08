@@ -33,8 +33,8 @@ public static class ReportStorageExtensions
             .ThenBy(x => x.TimeStep)
             .ToArray();
 
-    public static Dictionary<string, Dictionary<FxPeriod, double>> GetExchangeRatesDictionary(this HubDataSource workspace, int year, int month)
-        => (workspace.Get<ExchangeRate>()
+    public static Dictionary<string, Dictionary<FxPeriod, double>> GetExchangeRatesDictionary(this IWorkspace workspace, int year, int month)
+        => (workspace.GetData<ExchangeRate>()
                 .Where(x => x.Year == year - 1 && x.Month == BusinessConstant.MonthInAYear && x.FxType == FxType.Spot ||
                             x.Year == year && x.Month == month)
                 .ToArray())
@@ -47,21 +47,21 @@ public static class ReportStorageExtensions
                     },
                     y => y.FxToGroupCurrency));
 
-    public static IEnumerable<AocConfiguration> LoadAocStepConfiguration(this HubDataSource workspace, int year, int month)
+    public static IEnumerable<AocConfiguration> LoadAocStepConfiguration(this IWorkspace workspace, int year, int month)
         => workspace.LoadParameter<AocConfiguration>(year, month)
             .GroupBy(x => (x.AocType, x.Novelty),
                 (k, v) => v.OrderByDescending(x => x.Year).ThenByDescending(x => x.Month).First());
 
-    public static T[] LoadParameter<T>(this HubDataSource workspace, int year, int month, Func<T, bool>? filterExpression = null)
+    public static T[] LoadParameter<T>(this IWorkspace workspace, int year, int month, Func<T, bool>? filterExpression = null)
         where T : class, IWithYearAndMonth
     {
-        return workspace.Get<T>()
+        return workspace.GetData<T>()
             .Where(x => x.Year == year && x.Month <= month || x.Year < year)
             .Where(filterExpression ?? (x => true))
             .ToArray();
     }
 
-    public static ICollection<ReportVariable> QueryReportVariables(this HubDataSource workspace, (int Year, int Month, string ReportingNode, string Scenario) args, ProjectionConfiguration[] orderedProjectionConfigurations)
+    public static ICollection<ReportVariable> QueryReportVariables(this IWorkspace workspace, (int Year, int Month, string ReportingNode, string Scenario) args, ProjectionConfiguration[] orderedProjectionConfigurations)
     {
         var bestEstimate = workspace.QueryReportVariablesSingleScenario((args.Year, args.Month, args.ReportingNode, null), orderedProjectionConfigurations);
         return (args.Scenario == null)
@@ -70,13 +70,13 @@ public static class ReportStorageExtensions
             .Union(bestEstimate.Select(x => x with { Scenario = args.Scenario }), EqualityComparer<ReportVariable>.Instance).ToArray();
     }
 
-    public static ReportVariable[] QueryReportVariablesSingleScenario(this HubDataSource workspace, (int Year, int Month, string ReportingNode, string Scenario) args,
+    public static ReportVariable[] QueryReportVariablesSingleScenario(this IWorkspace workspace, (int Year, int Month, string ReportingNode, string Scenario) args,
         ProjectionConfiguration[] orderedProjectionConfigurations)
     {
         //await workspace.Partition.SetAsync<PartitionByReportingNode>(new { ReportingNode = args.ReportingNode, Scenario = (string)null });
         //await workspace.Partition.SetAsync<PartitionByReportingNodeAndPeriod>(new { ReportingNode = args.ReportingNode, Scenario = args.Scenario, Year = args.Year, Month = args.Month });
-        var reportVariables = workspace.Get<GroupOfContract>()
-                .Join(workspace.Get<IfrsVariable>(),
+        var reportVariables = workspace.GetData<GroupOfContract>()
+                .Join(workspace.GetData<IfrsVariable>(),
                     dn => dn.SystemName,
                     iv => iv.DataNode,
                     (dn, iv) => GetReportVariable(dn, iv, args, orderedProjectionConfigurations)
