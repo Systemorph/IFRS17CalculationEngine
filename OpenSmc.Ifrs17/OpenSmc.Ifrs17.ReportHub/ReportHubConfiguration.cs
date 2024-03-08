@@ -8,10 +8,11 @@ using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
 using OpenSmc.Data.Persistence;
 using OpenSmc.Scopes.Proxy;
 using Microsoft.Extensions.DependencyInjection;
-using OpenSmc.Ifrs17.DataTypes.DataModel.TransactionalData;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 using static OpenSmc.Ifrs17.ReportHub.ReportScopes;
+using OpenSmc.Reporting;
+
 
 namespace OpenSmc.Ifrs17.ReportHub;
 
@@ -52,11 +53,11 @@ public static class ReportHubConfiguration
                         .WithType<ReinsurancePortfolio>().WithType<GroupOfReinsuranceContract>())
                     .FromHub(parameterAddress, ds => ds 
                         .WithType<ExchangeRate>().WithType<CreditDefaultRate>().WithType<PartnerRating>())
-                    // ReportPlugin[yet to come](ds => ReportInit(config))
-                    //.FromHub(ifrsVarAddress, ds => ds
+                    ).AddPlugin(h => new ReportingPlugin(h, ReportInit(config))
+                    //.FromHub(ifrsVarAddress, ds => ds 
                     //    .WithType<IfrsVariable>())
                     //.AddCustomInitialization(ReportInit(config)) //called by the config of the report plugin (that can handle scopes)
-                    ))
+                    )
 
             .WithRoutes(route => route.RouteMessage<GetManyRequest<ReportVariable>>(_ => reportAddress)));
     }
@@ -75,7 +76,7 @@ public static class ReportHubConfiguration
 
             var storage = new ReportStorage(workspace);
             storage.Initialize((address.Year, address.Month), address.ReportingNode, address.Scenario, currencyType);
-            
+            storage.InitializeReportIndependentCache();
             using (var universe = scopeFactory.ForSingleton().WithStorage(storage).ToScope<IUniverse>())
             {
                 // TODO: take from the scopes the report variables we need

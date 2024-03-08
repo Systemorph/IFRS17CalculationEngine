@@ -51,13 +51,13 @@ public class ReportStorage
     }
 
     // Initializers
-    public async Task InitializeReportIndependentCacheAsync()
+    public void InitializeReportIndependentCache()
     {
         // Hierarchical Dimensions
-        await HierarchicalDimensionCache.InitializeAsync<LineOfBusiness>();
-        await HierarchicalDimensionCache.InitializeAsync<AmountType>();
-        await HierarchicalDimensionCache.InitializeAsync<VariableType>();
-        await HierarchicalDimensionCache.InitializeAsync<ReportingNode>();
+        HierarchicalDimensionCache.Initialize<LineOfBusiness>();
+        HierarchicalDimensionCache.Initialize<AmountType>();
+        HierarchicalDimensionCache.Initialize<VariableType>();
+        HierarchicalDimensionCache.Initialize<ReportingNode>();
 
         // Initial Values
         // this logic must be moved in ViewModelHub
