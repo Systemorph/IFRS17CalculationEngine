@@ -7,8 +7,6 @@ using OpenSmc.Ifrs17.ParameterDataHub;
 using OpenSmc.Ifrs17.IfrsVariableHub;
 using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
 using OpenSmc.Scopes.Proxy;
-using Microsoft.Extensions.DependencyInjection;
-using OpenSmc.Data.Persistence;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 using static OpenSmc.Ifrs17.ReportHub.ReportScopes;
@@ -82,7 +80,6 @@ public static class ReportHubConfiguration
 
             var storage = new ReportStorage(workspace);
             storage.Initialize((address.Year, address.Month), address.ReportingNode, address.Scenario, currencyType);
-            storage.InitializeReportIndependentCache();
             
             IEnumerable<ReportVariable> res; 
             using (var universe = scopeFactory.ForSingleton().WithStorage(storage).ToScope<IUniverse>())
