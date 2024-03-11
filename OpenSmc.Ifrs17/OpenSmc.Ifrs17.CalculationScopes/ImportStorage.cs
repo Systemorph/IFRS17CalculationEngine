@@ -17,7 +17,7 @@ namespace OpenSmc.Ifrs17.CalculationScopes;
 
 public class ImportStorage
 {
-    [Inject] public readonly IWorkspace Workspace; // This is the only row to survive 
+    public readonly IWorkspace Workspace; 
     private readonly HierarchicalDimensionCacheWithWorkspace _hierarchyCache;
     private readonly ImportArgs _args;
 
@@ -28,6 +28,7 @@ public class ImportStorage
     public (int Year, int Month) CurrentReportingPeriod => (_args.Year, _args.Month);
     public (int Year, int Month) PreviousReportingPeriod => (_args.Year - 1, Consts.MonthInAYear); // YTD Logic
 
+    List<string> Warnings { get; } = new List<string>();
 
     //Projections
     private ProjectionConfiguration[] ProjectionConfiguration;
@@ -62,11 +63,11 @@ public class ImportStorage
     public Dictionary<string, HashSet<string>> EstimateTypesByImportFormat { get; private set; }
 
     //Constructor
-    public ImportStorage(ImportArgs args)
+    public ImportStorage(ImportArgs args, IWorkspace workspace)
     {
-        _hierarchyCache = new HierarchicalDimensionCacheWithWorkspace(Workspace);
-        this._args = args;
-
+        Workspace = workspace;
+        _args = args;
+        _hierarchyCache = new HierarchicalDimensionCacheWithWorkspace(workspace);
     }
 
     //Periods
@@ -81,13 +82,13 @@ public class ImportStorage
     public DataNodeData GetDataNodeData(ImportIdentity id) => DataNodeDataBySystemName[id.DataNode];
 
     public SingleDataNodeParameter GetSingleDataNodeParameter(ImportIdentity id, int period) => SingleDataNodeParametersByGoc.TryGetValue(id.DataNode, out var singleDataNodeParameter)
-            ? singleDataNodeParameter[period] : (SingleDataNodeParameter)ApplicationMessage.Log(Error.MissingSingleDataNodeParameter, id.DataNode);
+            ? singleDataNodeParameter[period] : throw new Exception(Error.MissingSingleDataNodeParameter.GetMessage(id.DataNode));
 
     public (int Year, int Month) GetReportingPeriod(int period) => period == Consts.CurrentPeriod ?
                                                                                 CurrentReportingPeriod :
                                                                                 period == Consts.PreviousPeriod ?
                                                                                     PreviousReportingPeriod :
-                                                                                    ((int, int))ApplicationMessage.Log(Error.PeriodNotFound, period.ToString());
+                                                                                    throw new Exception(Error.PeriodNotFound.GetMessage(period.ToString()));
 
     //YieldCurve
     public double[] GetYearlyYieldCurve(ImportIdentity id, string economicBasis)
@@ -105,11 +106,11 @@ public class ImportStorage
                                  : GetCurrentYieldCurve(id.DataNode, Consts.PreviousPeriod),
         (EconomicBases.C, PeriodType.EndOfPeriod) => GetCurrentYieldCurve(id.DataNode, Consts.CurrentPeriod),
         (EconomicBases.L, _) => LockedInYieldCurve.TryGetValue(id.DataNode, out var yc) && yc != null ? yc :
-                                (YieldCurve)ApplicationMessage.Log(Error.YieldCurveNotFound, id.DataNode, DataNodeDataBySystemName[id.DataNode].ContractualCurrency,
+                                throw new Exception(Error.YieldCurveNotFound.GetMessage(id.DataNode, DataNodeDataBySystemName[id.DataNode].ContractualCurrency,
                                                             DataNodeDataBySystemName[id.DataNode].Year.ToString(), _args.Month.ToString(),
-                                                            _args.Scenario, DataNodeDataBySystemName[id.DataNode].YieldCurveName),
-        (_, PeriodType.NotApplicable) => (YieldCurve)ApplicationMessage.Log(Error.YieldCurvePeriodNotApplicable, id.AocType, id.Novelty),
-        (_, _) => (YieldCurve)ApplicationMessage.Log(Error.EconomicBasisNotFound, id.DataNode)
+                                                            _args.Scenario, DataNodeDataBySystemName[id.DataNode].YieldCurveName)),
+        (_, PeriodType.NotApplicable) => throw new Exception(Error.YieldCurvePeriodNotApplicable.GetMessage(id.AocType, id.Novelty)),
+        (_, _) => throw new Exception(Error.EconomicBasisNotFound.GetMessage(id.DataNode))
     };
 
     //Projection
@@ -147,7 +148,9 @@ public class ImportStorage
     //Accident years
     public IEnumerable<int?> GetAccidentYears(string dataNode, int projectionPeriod)
     {
-        if (!DataNodeDataBySystemName.TryGetValue(dataNode, out var dataNodeData)) ApplicationMessage.Log(Error.DataNodeNotFound, dataNode);
+        if (!DataNodeDataBySystemName.TryGetValue(dataNode, out var dataNodeData)) 
+            throw new Exception(Error.DataNodeNotFound.GetMessage(dataNode));
+
         if (AccidentYearsByDataNode.TryGetValue(dataNode, out var accidentYears))
             return dataNodeData.LiabilityType == LiabilityTypes.LIC
                 ? accidentYears.Where(ay => Consts.MonthInAYear * ay <= Consts.MonthInAYear * _args.Year + GetShift(projectionPeriod) || ay == default).ToHashSet()
@@ -158,22 +161,28 @@ public class ImportStorage
     //Parameters
     public double GetNonPerformanceRiskRate(ImportIdentity identity, string cdrBasis)
     {
-        if (!DataNodeDataBySystemName.TryGetValue(identity.DataNode, out var dataNodeData)) ApplicationMessage.Log(Error.DataNodeNotFound, identity.DataNode);
-        if (dataNodeData.Partner == null) ApplicationMessage.Log(Error.PartnerNotFound, identity.DataNode);
+        if (!DataNodeDataBySystemName.TryGetValue(identity.DataNode, out var dataNodeData))
+            throw new Exception(Error.DataNodeNotFound.GetMessage(identity.DataNode));
+        if (dataNodeData.Partner == null) 
+            throw new Exception(Error.PartnerNotFound.GetMessage(identity.DataNode));
 
         double rate;
         if (cdrBasis == EconomicBases.C)
         {
             var period = GetCreditDefaultRiskPeriod(identity) == PeriodType.BeginningOfPeriod ? Consts.PreviousPeriod : Consts.CurrentPeriod;
             // if Partner == Internal then return 0;
-            if (!CurrentPartnerRating.TryGetValue(dataNodeData.Partner, out var currentRating)) ApplicationMessage.Log(Error.RatingNotFound, dataNodeData.Partner);
-            if (!CurrentCreditDefaultRates.TryGetValue(currentRating[period].CreditRiskRating, out var currentRate)) ApplicationMessage.Log(Error.CreditDefaultRateNotFound, currentRating[period].CreditRiskRating);
+            if (!CurrentPartnerRating.TryGetValue(dataNodeData.Partner, out var currentRating))
+                throw new Exception(Error.RatingNotFound.GetMessage(dataNodeData.Partner));
+            if (!CurrentCreditDefaultRates.TryGetValue(currentRating[period].CreditRiskRating, out var currentRate))
+                throw new Exception(Error.CreditDefaultRateNotFound.GetMessage(currentRating[period].CreditRiskRating));
             rate = currentRate[period].Values[0];
         }
         else
         {
-            if (!LockedInPartnerRating[dataNodeData.Year].TryGetValue(dataNodeData.Partner, out var lockedRating)) ApplicationMessage.Log(Error.RatingNotFound, dataNodeData.Partner);
-            if (!LockedInCreditDefaultRates[dataNodeData.Year].TryGetValue(lockedRating.CreditRiskRating, out var lockedRate)) ApplicationMessage.Log(Error.CreditDefaultRateNotFound, lockedRating.CreditRiskRating);
+            if (!LockedInPartnerRating[dataNodeData.Year].TryGetValue(dataNodeData.Partner, out var lockedRating)) 
+                throw new Exception(Error.RatingNotFound.GetMessage(dataNodeData.Partner));
+            if (!LockedInCreditDefaultRates[dataNodeData.Year].TryGetValue(lockedRating.CreditRiskRating, out var lockedRate))
+                throw new Exception(Error.CreditDefaultRateNotFound.GetMessage(lockedRating.CreditRiskRating));
             rate = lockedRate.Values[0];
         }
         return Math.Pow(1d + rate, 1d / 12d) - 1d;
@@ -198,8 +207,9 @@ public class ImportStorage
             return (AmountTypes.CU, Enumerable.Repeat(0d, patternShift).Concat(patternFromCoverageUnits).ToArray());
 
         if (DataNodeDataBySystemName[identity.DataNode].ValuationApproach == ValuationApproaches.PAA && DataNodeDataBySystemName[identity.DataNode].LiabilityType == LiabilityTypes.LRC)
-            ApplicationMessage.Log(Warning.ReleasePatternNotFound, identity.DataNode, amountType);
-        else ApplicationMessage.Log(Error.ReleasePatternNotFound, identity.DataNode, amountType);
+            Warnings.Add(Warning.ReleasePatternNotFound.GetMessage(identity.DataNode, amountType));
+        else
+            throw new Exception(Error.ReleasePatternNotFound.GetMessage(identity.DataNode, amountType));
 
         return (null, Enumerable.Empty<double>().ToArray());
     }
@@ -228,13 +238,15 @@ public class ImportStorage
         var targetPeriod = AocConfigurationByAocStep[new AocStep(id.AocType, id.Novelty)].RcPeriod == PeriodType.EndOfPeriod ? Consts.CurrentPeriod : Consts.PreviousPeriod;
         return InterDataNodeParametersByGoc.TryGetValue(id.DataNode, out var interDataNodeParameters)
             ? interDataNodeParameters[targetPeriod].FirstOrDefault(x => x.DataNode == gic || x.LinkedDataNode == gic).ReinsuranceCoverage
-            : (double)ApplicationMessage.Log(Error.ReinsuranceCoverage, id.DataNode);
+            : throw new Exception(Error.ReinsuranceCoverage.GetMessage(id.DataNode));
     }
 
     public ImportIdentity GetUnderlyingIdentity(ImportIdentity id, string gic)
     {
-        if (!(DataNodeDataBySystemName.TryGetValue(id.DataNode, out var gricData) && gricData.IsReinsurance)) ApplicationMessage.Log(Error.InvalidGric, id.DataNode);
-        if (!DataNodeDataBySystemName.TryGetValue(gic, out var gicData)) ApplicationMessage.Log(Error.InvalidGic, gic);
+        if (!(DataNodeDataBySystemName.TryGetValue(id.DataNode, out var gricData) && gricData.IsReinsurance)) 
+            throw new Exception(Error.InvalidGric.GetMessage(id.DataNode));
+        if (!DataNodeDataBySystemName.TryGetValue(gic, out var gicData))
+            throw new Exception(Error.InvalidGic.GetMessage(gic));
 
         return id with { DataNode = gic, ValuationApproach = gicData.ValuationApproach, IsReinsurance = gicData.IsReinsurance };
     }
@@ -258,7 +270,7 @@ public class ImportStorage
 
     private YieldCurve GetCurrentYieldCurve(string dn, int period) =>
         CurrentYieldCurve.TryGetValue(dn, out var ycByPeriod) && ycByPeriod != null && ycByPeriod.TryGetValue(period, out var yc) ? yc :
-        (YieldCurve)ApplicationMessage.Log(Error.YieldCurveNotFound, dn, DataNodeDataBySystemName[dn].ContractualCurrency, DataNodeDataBySystemName[dn].Year.ToString(),
-                                        _args.Month.ToString(), _args.Scenario, DataNodeDataBySystemName[dn].YieldCurveName);
+        throw new Exception(Error.YieldCurveNotFound.GetMessage(dn, DataNodeDataBySystemName[dn].ContractualCurrency, DataNodeDataBySystemName[dn].Year.ToString(),
+                                                                _args.Month.ToString(), _args.Scenario, DataNodeDataBySystemName[dn].YieldCurveName));
     public void PopulateWorkspace(){}
 }
