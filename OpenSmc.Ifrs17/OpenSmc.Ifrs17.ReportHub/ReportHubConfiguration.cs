@@ -15,6 +15,7 @@ using static OpenSmc.Ifrs17.ReportHub.ReportScopes;
 using OpenSmc.Pivot.Builder;
 using OpenSmc.DataCubes;
 using OpenSmc.Reporting.Builder;
+using OpenSmc.Scopes;
 
 namespace OpenSmc.Ifrs17.ReportHub;
 
@@ -29,8 +30,8 @@ public static class ReportHubConfiguration
         var reportAddress = new ReportAddress(configuration.Address, 2020, 12, "CH", "Bla");
 
         return configuration
-            .WithServices(services => services.AddSingleton<ScopeFactory>())
-            
+            .WithServices(services => services.RegisterScopes())
+
             .WithHostedHub(refDataAddress, config => config.ConfigureReferenceDataDictInit())
             .WithHostedHub(dataNodeAddress, config => config.ConfigureDataNodeDataDictInit())
             .WithHostedHub(parameterAddress, config => config.ConfigureParameterDataDictInit())
@@ -40,10 +41,10 @@ public static class ReportHubConfiguration
                 var address = (IfrsVariableAddress)config.Address;
                 return config.ConfigureIfrsDataDictInit(address.Year, address.Month, address.ReportingNode, address.Scenario);
             })
-            
+
             .WithHostedHub(reportAddress, config => config
                 .AddReporting(
-                    data => data 
+                    data => data
                         .FromConfigurableDataSource("ReportDataSource", ds => ds
                             .WithType<ReportVariable>(t => t.WithKey(ReportVariableKey)))
                         .FromHub(refDataAddress, ds => ds
@@ -53,11 +54,11 @@ public static class ReportHubConfiguration
                             .WithType<InsurancePortfolio>().WithType<GroupOfInsuranceContract>()
                             .WithType<ReinsurancePortfolio>().WithType<GroupOfReinsuranceContract>())
                         .FromHub(parameterAddress, ds => ds
-                            .WithType<ExchangeRate>().WithType<CreditDefaultRate>().WithType<PartnerRating>()),
+                            .WithType<ExchangeRate>()),
                     reportConfig => reportConfig
-                        .WithDataCubeOn(GetDataCube(config), GetReportFunc()))
+                        .WithDataCubeOn(GetDataCube(config), GetReportFunc())));
 
-                .WithRoutes(route => route.RouteMessage<GetManyRequest<ReportVariable>>(_ => reportAddress)));
+            //.WithRoutes(route => route.RouteMessage<ReportRequest>(_ => reportAddress));
     }
 
     private static Func<DataCubePivotBuilder<IDataCube<ReportVariable>, ReportVariable, ReportVariable, ReportVariable>, 
@@ -74,9 +75,6 @@ public static class ReportHubConfiguration
     {
         return (workspace, scopeFactory) =>
         {
-            // TMP: this is how we retrieve data from this workspace variable
-            //workspace.Get<IfrsVariable>();
-
             var address = (ReportAddress)config.Address;
 
             // TODO: understand from where to take this currency type
