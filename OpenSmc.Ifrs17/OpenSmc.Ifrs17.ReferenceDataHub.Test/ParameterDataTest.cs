@@ -35,6 +35,52 @@ public class ParameterDataDictInitTest(ITestOutputHelper output) : HubTestBase(o
     }
 }
 
+//Test ParameterDataImport configuration
+public class ParameterImportTest(ITestOutputHelper output) : HubTestBase(output)
+{
+    protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
+    {
+        return base.ConfigureHost(configuration)
+            .ConfigureParameterDataModelHub()
+            .ConfigureParameterDataImportHub();
+    }
+
+    private const string ExchangeRateData = @"@@ExchangeRate
+Currency,Year,Month,FxToGroupCurrency,FxType,Scenario
+EUR,2050,1,1.1,Average,";
+
+    [Fact]
+    public async Task ImportTest()
+    {
+        var client = GetClient();
+
+        //Get ActualCountPerType
+        var exchangeRateData = await client.AwaitResponse(new GetManyRequest<ExchangeRate>(), o => o.WithTarget(new ParameterDataAddress(new HostAddress())));
+        var cdrData = await client.AwaitResponse(new GetManyRequest<CreditDefaultRate>(), o => o.WithTarget(new ParameterDataAddress(new HostAddress())));
+        var partnerRatingData = await client.AwaitResponse(new GetManyRequest<PartnerRating>(), o => o.WithTarget(new ParameterDataAddress(new HostAddress())));
+
+        //Assert Count per Type
+        exchangeRateData.Message.Items.Should().HaveCount(12);
+        cdrData.Message.Items.Should().HaveCount(22);
+        partnerRatingData.Message.Items.Should().HaveCount(3);
+
+        //Import of LiabilityType
+        var importRequest = new ImportRequest(ExchangeRateData);
+        var importResponse = await client.AwaitResponse(importRequest, o => o.WithTarget(new ParameterImportAddress(new HostAddress())));
+        importResponse.Message.Log.Status.Should().Be(ActivityLogStatus.Succeeded);
+
+        //Assert changes Count
+        exchangeRateData = await client.AwaitResponse(new GetManyRequest<ExchangeRate>(), o => o.WithTarget(new ParameterDataAddress(new HostAddress())));
+
+        //Assert data changed
+        exchangeRateData.Message.Items.Should().HaveCount(13);
+
+        exchangeRateData.Message.Items.Where(x => x.Year == 2050).Should().HaveCount(1);
+        exchangeRateData.Message.Items.Single(x => x.Year == 2050).FxToGroupCurrency.Should().BeApproximately(1.1, 1E-8);
+    }
+}
+
+
 //Test Import of Parameters
 //public class ImportParameterDataTest(ITestOutputHelper output) : HubTestBase(output)
 //    {

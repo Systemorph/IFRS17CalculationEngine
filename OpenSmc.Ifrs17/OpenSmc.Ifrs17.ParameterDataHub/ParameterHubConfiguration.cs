@@ -20,6 +20,33 @@ public static class ParameterHubConfiguration
         
     }
 
+    public static MessageHubConfiguration ConfigureParameterDataModelHub(this MessageHubConfiguration configuration)
+    {
+        var address = new ParameterDataAddress(configuration.Address);
+        return configuration
+            .WithHostedHub(address,
+                config => config
+                    .ConfigureParameterDataDictInit()
+            );
+    }
+
+    public static MessageHubConfiguration ConfigureParameterDataImportHub(this MessageHubConfiguration configuration)
+    {
+        var paramDataAddress = new ParameterDataAddress(configuration.Address);
+        var paramDataImportAddress = new ParameterImportAddress(configuration.Address);
+
+        return configuration
+            .WithHostedHub(paramDataImportAddress,
+                config => config
+                    .AddImport(data =>
+                            data.FromHub(paramDataAddress,
+                                dataSource => dataSource.WithType<ExchangeRate>().WithType<CreditDefaultRate>().WithType<PartnerRating>()
+                            ),
+                        import => import
+                    )
+            );
+    }
+
     ////Configuration 2: Use Import of TemplateParameter.CSV to Initialize the DataHub.
     //public static readonly Dictionary<Type, IEnumerable<object>> ParametersDomain =
     //    new[] { typeof(ExchangeRate), typeof(CreditDefaultRate), typeof(PartnerRating) }
