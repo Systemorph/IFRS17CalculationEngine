@@ -51,7 +51,7 @@ NewSystemName,NewDisplayName
             .ConfigureReferenceDataImportHub();
     }
 
-    [Fact (Skip = "Import Hub configuration not working yet.")]
+    [Fact]
     public async Task ImportTest()
     {
         var client = GetClient();

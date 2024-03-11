@@ -42,28 +42,32 @@ public static class ReportHubConfiguration
             })
             
             .WithHostedHub(reportAddress, config => config
-                .AddReporting(data => data 
-                    .FromConfigurableDataSource("ReportDataSource", ds => ds
-                        .WithType<ReportVariable>(t => t.WithKey(ReportVariableKey)))
-                    .FromHub(refDataAddress, ds => ds
-                        // TODO: complete this list
-                        .WithType<AmountType>().WithType<LineOfBusiness>())
-                    .FromHub(dataNodeAddress, ds => ds
-                        .WithType<InsurancePortfolio>().WithType<GroupOfInsuranceContract>()
-                        .WithType<ReinsurancePortfolio>().WithType<GroupOfReinsuranceContract>())
-                    .FromHub(parameterAddress, ds => ds
-                        .WithType<ExchangeRate>().WithType<CreditDefaultRate>().WithType<PartnerRating>()),
+                .AddReporting(
+                    data => data 
+                        .FromConfigurableDataSource("ReportDataSource", ds => ds
+                            .WithType<ReportVariable>(t => t.WithKey(ReportVariableKey)))
+                        .FromHub(refDataAddress, ds => ds
+                            // TODO: complete this list
+                            .WithType<AmountType>().WithType<LineOfBusiness>())
+                        .FromHub(dataNodeAddress, ds => ds
+                            .WithType<InsurancePortfolio>().WithType<GroupOfInsuranceContract>()
+                            .WithType<ReinsurancePortfolio>().WithType<GroupOfReinsuranceContract>())
+                        .FromHub(parameterAddress, ds => ds
+                            .WithType<ExchangeRate>().WithType<CreditDefaultRate>().WithType<PartnerRating>()),
                     reportConfig => reportConfig
-                        .WithDataCubeOn(GetDataCube(config), GetReportFunc(reportConfig)))
+                        .WithDataCubeOn(GetDataCube(config), GetReportFunc()))
 
                 .WithRoutes(route => route.RouteMessage<GetManyRequest<ReportVariable>>(_ => reportAddress)));
     }
 
     private static Func<DataCubePivotBuilder<IDataCube<ReportVariable>, ReportVariable, ReportVariable, ReportVariable>, 
         DataCubeReportBuilder<IDataCube<ReportVariable>, ReportVariable, ReportVariable, ReportVariable>> 
-        GetReportFunc(ReportConfiguration reportConfig)
+        GetReportFunc()
     {
-        throw new NotImplementedException();
+        return b => b.SliceRowsBy(nameof(AmountType))
+                     .ToTable()
+                     //.WithOptions(rm => rm.HideRowValuesForDimension("DimA", x => x.ForLevel(1)))
+                     .WithOptions(o => o.AutoHeight());
     }
 
     public static Func<IWorkspace, IScopeFactory, IEnumerable<ReportVariable>> GetDataCube(MessageHubConfiguration config)
@@ -81,8 +85,8 @@ public static class ReportHubConfiguration
             var storage = new ReportStorage(workspace);
             storage.Initialize((address.Year, address.Month), address.ReportingNode, address.Scenario, currencyType);
             storage.InitializeReportIndependentCache();
+            
             IEnumerable<ReportVariable> res; 
-
             using (var universe = scopeFactory.ForSingleton().WithStorage(storage).ToScope<IUniverse>())
             {
                 // TODO: take from the scopes the report variables we need
