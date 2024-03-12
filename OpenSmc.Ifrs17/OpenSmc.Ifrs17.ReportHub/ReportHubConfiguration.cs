@@ -64,11 +64,6 @@ public static class ReportHubConfiguration
                     .ToTable()
                     //.WithOptions(rm => rm.HideRowValuesForDimension("DimA", x => x.ForLevel(1)))
                     .WithOptions(o => o.AutoHeight());
-
-        //await Report.ForSlicedDataCube(pvs.Filter(portfolioFilters),//.Filter(("GroupOfContract","RIC8_2021")),
-        //DataSource, pvRowSlices, pvColumnSlices)
-        //.ReportGridOptions()
-        //.ExecuteAsync()
     }
 
     public static Func<IWorkspace, IScopeFactory, ReportRequest, IEnumerable<ReportVariable>> GetDataCube(MessageHubConfiguration config)
@@ -86,10 +81,6 @@ public static class ReportHubConfiguration
             var res = Enumerable.Empty<ReportVariable>(); 
             using (var universe = scopeFactory.ForSingleton().WithStorage(storage).ToScope<IUniverse>())
             {
-                // TODO: take from the scopes the report variables we need
-                //universe.GetScopes Identities
-                //universe.GetScopes RiskAdjustments
-
                 var ids = storage.GetIdentities((address.Year, address.Month), address.ReportingNode, address.Scenario, currencyType);
 
                 var pvs = universe.GetScopes<LockedBestEstimate>(ids).Select(x => x.LockedBestEstimate).Aggregate() +
