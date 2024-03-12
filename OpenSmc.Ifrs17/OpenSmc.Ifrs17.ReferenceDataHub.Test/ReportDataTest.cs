@@ -20,7 +20,7 @@ public class ReportDataTest(ITestOutputHelper output) : HubTestBase(output)
     {
         var client = GetClient();
 
-        var reportAddress = new ReportAddress(new HostAddress(), 2020, 12, "CH", "Bla");
+        var reportAddress = new ReportAddress(new HostAddress(), 2020, 12, "CH", null);
 
         var reportRequest = new ReportRequest();
 

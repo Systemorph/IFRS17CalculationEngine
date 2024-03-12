@@ -14,6 +14,7 @@ using OpenSmc.Pivot.Builder;
 using OpenSmc.DataCubes;
 using OpenSmc.Reporting.Builder;
 using OpenSmc.Scopes;
+using DocumentFormat.OpenXml.Bibliography;
 
 namespace OpenSmc.Ifrs17.ReportHub;
 
@@ -24,8 +25,8 @@ public static class ReportHubConfiguration
         var refDataAddress = new ReferenceDataAddress(configuration.Address);
         var dataNodeAddress = new DataNodeAddress(configuration.Address);
         var parameterAddress = new ParameterAddress(configuration.Address);
-        var ifrsVarAddress = new IfrsVariableAddress(configuration.Address, 2020, 12, "CH", "Bla");
-        var reportAddress = new ReportAddress(configuration.Address, 2020, 12, "CH", "Bla");
+        var ifrsVarAddress = new IfrsVariableAddress(configuration.Address, 2020, 12, "CH", null);
+        var reportAddress = new ReportAddress(configuration.Address, 2020, 12, "CH", null);
 
         return configuration
             .WithServices(services => services.RegisterScopes())
@@ -43,11 +44,8 @@ public static class ReportHubConfiguration
             .WithHostedHub(reportAddress, config => config
                 .AddReporting(
                     data => data
-                        .FromConfigurableDataSource("ReportDataSource", ds => ds
-                            .WithType<ReportVariable>(t => t.WithKey(ReportVariableKey)))
-                        .FromHub(refDataAddress, ds => ds
-                            // TODO: complete this list
-                            .WithType<AmountType>().WithType<LineOfBusiness>())
+                        // Here I am not specifying any type under the assumption that it will synch all types available, pls check (12.3.24, AM)
+                        .FromHub(refDataAddress, ds => ds)
                         .FromHub(dataNodeAddress, ds => ds
                             .WithType<InsurancePortfolio>().WithType<GroupOfInsuranceContract>()
                             .WithType<ReinsurancePortfolio>().WithType<GroupOfReinsuranceContract>())
@@ -65,8 +63,14 @@ public static class ReportHubConfiguration
     {
         return b => b.SliceRowsBy(nameof(AmountType))
                      .ToTable()
-                     //.WithOptions(rm => rm.HideRowValuesForDimension("DimA", x => x.ForLevel(1)))
+        //.WithOptions(rm => rm.HideRowValuesForDimension("DimA", x => x.ForLevel(1)))
                      .WithOptions(o => o.AutoHeight());
+
+
+        //await Report.ForSlicedDataCube(pvs.Filter(portfolioFilters),//.Filter(("GroupOfContract","RIC8_2021")),
+    //DataSource, pvRowSlices, pvColumnSlices)
+    //.ReportGridOptions()
+    //.ExecuteAsync()
     }
 
     public static Func<IWorkspace, IScopeFactory, IEnumerable<ReportVariable>> GetDataCube(MessageHubConfiguration config)
@@ -81,14 +85,20 @@ public static class ReportHubConfiguration
             var storage = new ReportStorage(workspace);
             storage.Initialize((address.Year, address.Month), address.ReportingNode, address.Scenario, currencyType);
             
-            IEnumerable<ReportVariable> res; 
+            var res = Enumerable.Empty<ReportVariable>(); 
             using (var universe = scopeFactory.ForSingleton().WithStorage(storage).ToScope<IUniverse>())
             {
                 // TODO: take from the scopes the report variables we need
                 //universe.GetScopes Identities
                 //universe.GetScopes RiskAdjustments
 
-                res = new ReportVariable[] { new() { AmountType = "a" }, new() { AmountType = "b" } };
+                var ids = storage.GetIdentities((address.Year, address.Month), address.ReportingNode, address.Scenario, currencyType);
+
+                var pvs = universe.GetScopes<LockedBestEstimate>(ids).Select(x => x.LockedBestEstimate).Aggregate() +
+                          universe.GetScopes<CurrentBestEstimate>(ids).Select(x => x.CurrentBestEstimate).Aggregate() +
+                          universe.GetScopes<NominalBestEstimate>(ids).Select(x => x.NominalBestEstimate).Aggregate();
+
+                res = res.Concat(pvs.ToArray());
             }
 
             return res;
