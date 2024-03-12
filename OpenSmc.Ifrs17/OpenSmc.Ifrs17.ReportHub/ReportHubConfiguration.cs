@@ -53,29 +53,27 @@ public static class ReportHubConfiguration
                             .WithType<ExchangeRate>()),
                     reportConfig => reportConfig
                         .WithDataCubeOn(GetDataCube(config), GetReportFunc())));
-
-            //.WithRoutes(route => route.RouteMessage<ReportRequest>(_ => reportAddress));
     }
 
-    private static Func<DataCubePivotBuilder<IDataCube<ReportVariable>, ReportVariable, ReportVariable, ReportVariable>, 
+    private static Func<DataCubePivotBuilder<IDataCube<ReportVariable>, ReportVariable, ReportVariable, ReportVariable>, ReportRequest,
         DataCubeReportBuilder<IDataCube<ReportVariable>, ReportVariable, ReportVariable, ReportVariable>> 
         GetReportFunc()
     {
-        return b => b.SliceRowsBy(nameof(AmountType))
-                     .ToTable()
-        //.WithOptions(rm => rm.HideRowValuesForDimension("DimA", x => x.ForLevel(1)))
-                     .WithOptions(o => o.AutoHeight());
-
+        return (reportBuilder, reportRequest) => reportBuilder
+                    .SliceRowsBy(nameof(AmountType))
+                    .ToTable()
+                    //.WithOptions(rm => rm.HideRowValuesForDimension("DimA", x => x.ForLevel(1)))
+                    .WithOptions(o => o.AutoHeight());
 
         //await Report.ForSlicedDataCube(pvs.Filter(portfolioFilters),//.Filter(("GroupOfContract","RIC8_2021")),
-    //DataSource, pvRowSlices, pvColumnSlices)
-    //.ReportGridOptions()
-    //.ExecuteAsync()
+        //DataSource, pvRowSlices, pvColumnSlices)
+        //.ReportGridOptions()
+        //.ExecuteAsync()
     }
 
-    public static Func<IWorkspace, IScopeFactory, IEnumerable<ReportVariable>> GetDataCube(MessageHubConfiguration config)
+    public static Func<IWorkspace, IScopeFactory, ReportRequest, IEnumerable<ReportVariable>> GetDataCube(MessageHubConfiguration config)
     {
-        return (workspace, scopeFactory) =>
+        return (workspace, scopeFactory, reportRequest) =>
         {
             var address = (ReportAddress)config.Address;
 
