@@ -15,6 +15,7 @@ using OpenSmc.DataCubes;
 using OpenSmc.Reporting.Builder;
 using OpenSmc.Scopes;
 using DocumentFormat.OpenXml.Bibliography;
+using OpenSmc.Ifrs17.DataTypes.Constants;
 
 namespace OpenSmc.Ifrs17.ReportHub;
 
@@ -44,8 +45,13 @@ public static class ReportHubConfiguration
             .WithHostedHub(reportAddress, config => config
                 .AddReporting(
                     data => data
-                        // Here I am not specifying any type under the assumption that it will synch all types available, pls check (12.3.24, AM)
-                        .FromHub(refDataAddress, ds => ds)
+                        // Here eventually we can decide whether the default is all types available (12.3.24, AM)
+                        .FromHub(refDataAddress, ds => ds
+                            .WithType<AmountType>().WithType<DeferrableAmountType>()
+                            .WithType<AocType>().WithType<StructureType>().WithType<CreditRiskRating>().WithType<Currency>().WithType<EconomicBasis>()
+                            .WithType<EstimateType>().WithType<LiabilityType>().WithType<LineOfBusiness>().WithType<Profitability>()
+                            .WithType<Novelty>().WithType<OciType>().WithType<Partner>().WithType<PnlVariableType>().WithType<RiskDriver>()
+                            .WithType<Scenario>().WithType<ValuationApproach>().WithType<ProjectionConfiguration>().WithType<ReportingNode>())
                         .FromHub(dataNodeAddress, ds => ds
                             .WithType<InsurancePortfolio>().WithType<GroupOfInsuranceContract>()
                             .WithType<ReinsurancePortfolio>().WithType<GroupOfReinsuranceContract>())
@@ -72,8 +78,10 @@ public static class ReportHubConfiguration
         {
             var address = (ReportAddress)config.Address;
 
-            // TODO: understand from where to take this currency type
+            // TODO: understand from where to take this currency type (6.3.24, AM)
             var currencyType = DataTypes.Constants.Enumerates.CurrencyType.Group;
+
+            var a = workspace.GetData<AmountType>();
 
             var storage = new ReportStorage(workspace);
             storage.Initialize((address.Year, address.Month), address.ReportingNode, address.Scenario, currencyType);
@@ -81,8 +89,10 @@ public static class ReportHubConfiguration
             var res = Enumerable.Empty<ReportVariable>(); 
             using (var universe = scopeFactory.ForSingleton().WithStorage(storage).ToScope<IUniverse>())
             {
+                // TODO: here the identities are 0
                 var ids = storage.GetIdentities((address.Year, address.Month), address.ReportingNode, address.Scenario, currencyType);
 
+                // TODO: exception thrown here: cannot convert to output type IDataCube
                 var pvs = universe.GetScopes<LockedBestEstimate>(ids).Select(x => x.LockedBestEstimate).Aggregate() +
                           universe.GetScopes<CurrentBestEstimate>(ids).Select(x => x.CurrentBestEstimate).Aggregate() +
                           universe.GetScopes<NominalBestEstimate>(ids).Select(x => x.NominalBestEstimate).Aggregate();
