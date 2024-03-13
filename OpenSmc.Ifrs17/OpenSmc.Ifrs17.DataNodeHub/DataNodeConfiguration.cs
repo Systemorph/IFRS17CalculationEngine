@@ -15,8 +15,8 @@ public static class DataNodeHubConfiguration
     {
         return configuration
             .AddData(dc => dc
-                .FromConfigurableDataSource("DataNodeDataSource",
-                    ds => ds.ConfigureCategory(TemplateData.DataNodeData)
+                .FromConfigurableDataSource("DataNodeDataSource", ds => ds
+                    .ConfigureCategory(TemplateData.DataNodeData)
                 ));
     }
 

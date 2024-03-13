@@ -1,17 +1,22 @@
 ﻿using OpenSmc.Data;
 using OpenSmc.Messaging;
+using OpenSmc.Reporting;
 using OpenSmc.Ifrs17.DataNodeHub;
 using OpenSmc.Ifrs17.ReferenceDataHub;
 using OpenSmc.Ifrs17.ParameterDataHub;
 using OpenSmc.Ifrs17.IfrsVariableHub;
 using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
-using OpenSmc.Data.Persistence;
 using OpenSmc.Scopes.Proxy;
-using Microsoft.Extensions.DependencyInjection;
-using OpenSmc.Ifrs17.DataTypes.DataModel.TransactionalData;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 using static OpenSmc.Ifrs17.ReportHub.ReportScopes;
+using OpenSmc.Pivot.Builder;
+using OpenSmc.DataCubes;
+using OpenSmc.Reporting.Builder;
+using OpenSmc.Scopes;
+using DocumentFormat.OpenXml.Bibliography;
+using OpenSmc.Ifrs17.DataTypes.Constants;
+using OpenSmc.Ifrs17.DataTypes.DataModel.TransactionalData;
 
 namespace OpenSmc.Ifrs17.ReportHub;
 
@@ -22,14 +27,12 @@ public static class ReportHubConfiguration
         var refDataAddress = new ReferenceDataAddress(configuration.Address);
         var dataNodeAddress = new DataNodeAddress(configuration.Address);
         var parameterAddress = new ParameterAddress(configuration.Address);
-
-        // TODO: understand how to configure a generic data hub with non-trivial address without hard-coding the partition
-        var ifrsVarAddress = new IfrsVariableAddress(configuration.Address, 2020, 12, "CH", "Bla");
-        var reportAddress = new ReportAddress(configuration.Address, 2020, 12, "CH", "Bla");
+        var ifrsVarAddress = new IfrsVariableAddress(configuration.Address, 2020, 12, "CH", null);
+        var reportAddress = new ReportAddress(configuration.Address, 2020, 12, "CH", null);
 
         return configuration
-            .WithServices(services => services.AddSingleton<ScopeFactory>())
-            
+            .WithServices(services => services.RegisterScopes())
+
             .WithHostedHub(refDataAddress, config => config.ConfigureReferenceDataDictInit())
             .WithHostedHub(dataNodeAddress, config => config.ConfigureDataNodeDataDictInit())
             .WithHostedHub(parameterAddress, config => config.ConfigureParameterDataDictInit())
@@ -39,52 +42,69 @@ public static class ReportHubConfiguration
                 var address = (IfrsVariableAddress)config.Address;
                 return config.ConfigureIfrsDataDictInit(address.Year, address.Month, address.ReportingNode, address.Scenario);
             })
-            
-            .WithHostedHub(reportAddress, config => config
-                .AddData(data => data
-                    .FromConfigurableDataSource("ReportDataSource", ds => ds
-                        .WithType<ReportVariable>(t => t.WithKey(ReportVariableKey)))
-                    .FromHub(refDataAddress, ds => ds
-                        // TODO: complete this list
-                        .WithType<AmountType>().WithType<LineOfBusiness>())
-                    .FromHub(dataNodeAddress, ds => ds
-                        .WithType<InsurancePortfolio>().WithType<GroupOfInsuranceContract>()
-                        .WithType<ReinsurancePortfolio>().WithType<GroupOfReinsuranceContract>())
-                    .FromHub(parameterAddress, ds => ds 
-                        .WithType<ExchangeRate>().WithType<CreditDefaultRate>().WithType<PartnerRating>())
-                    //.FromHub(ifrsVarAddress, ds => ds
-                    //    .WithType<IfrsVariable>())
-                    //.AddCustomInitialization(ReportInit(config)))
-            )
 
-            .WithRoutes(route => route.RouteMessage<GetManyRequest<ReportVariable>>(_ => reportAddress)));
+            .WithHostedHub(reportAddress, config => config
+                .AddReporting(
+                    data => data
+                        // Here eventually we can decide whether the default is all types available (12.3.24, AM)
+                        .FromHub(refDataAddress, ds => ds
+                            .WithType<AmountType>().WithType<DeferrableAmountType>()
+                            .WithType<AocType>().WithType<StructureType>().WithType<CreditRiskRating>().WithType<Currency>().WithType<EconomicBasis>()
+                            .WithType<EstimateType>().WithType<LiabilityType>().WithType<LineOfBusiness>().WithType<Profitability>()
+                            .WithType<Novelty>().WithType<OciType>().WithType<Partner>().WithType<PnlVariableType>().WithType<RiskDriver>()
+                            .WithType<Scenario>().WithType<ValuationApproach>().WithType<ProjectionConfiguration>().WithType<ReportingNode>())
+                        .FromHub(dataNodeAddress, ds => ds
+                            .WithType<Portfolio>().WithType<GroupOfContract>()
+                            .WithType<InsurancePortfolio>().WithType<GroupOfInsuranceContract>()
+                            .WithType<ReinsurancePortfolio>().WithType<GroupOfReinsuranceContract>())
+                        .FromHub(parameterAddress, ds => ds
+                            .WithType<ExchangeRate>())
+                        .FromHub(ifrsVarAddress, ds => ds
+                            .WithType<IfrsVariable>()),
+                    reportConfig => reportConfig
+                        .WithDataCubeOn(GetDataCube(config), GetReportFunc())));
     }
 
-    public static Action<HubDataSource, ScopeFactory> ReportInit(MessageHubConfiguration config)
+    private static Func<DataCubePivotBuilder<IDataCube<ReportVariable>, ReportVariable, ReportVariable, ReportVariable>, ReportRequest,
+        DataCubeReportBuilder<IDataCube<ReportVariable>, ReportVariable, ReportVariable, ReportVariable>> 
+        GetReportFunc()
     {
-        return (workspace, scopeFactory) =>
-        {
-            // TMP: this is how we retrieve data from this workspace variable
-            //workspace.Get<IfrsVariable>();
+        return (reportBuilder, reportRequest) => reportBuilder
+                    .SliceRowsBy(nameof(AmountType))
+                    .ToTable()
+                    //.WithOptions(rm => rm.HideRowValuesForDimension("DimA", x => x.ForLevel(1)))
+                    .WithOptions(o => o.AutoHeight());
+    }
 
+    public static Func<IWorkspace, IScopeFactory, ReportRequest, IEnumerable<ReportVariable>> GetDataCube(MessageHubConfiguration config)
+    {
+        return (workspace, scopeFactory, reportRequest) =>
+        {
             var address = (ReportAddress)config.Address;
 
-            // TODO: understand from where to take this currency type
+            // TODO: understand from where to take this currency type (6.3.24, AM)
             var currencyType = DataTypes.Constants.Enumerates.CurrencyType.Group;
 
-            var storage = new ReportStorage(workspace);
-            //storage.Initialize((address.Year, address.Month), address.ReportingNode, address.Scenario, currencyType);
+            var a = workspace.GetData<AmountType>();
 
+            var storage = new ReportStorage(workspace);
+            storage.Initialize((address.Year, address.Month), address.ReportingNode, address.Scenario, currencyType);
+            
+            var res = Enumerable.Empty<ReportVariable>(); 
             using (var universe = scopeFactory.ForSingleton().WithStorage(storage).ToScope<IUniverse>())
             {
-                // TODO: take from the scopes the report variables we need
-                //universe.GetScopes Identities
-                //universe.GetScopes RiskAdjustments
+                // TODO: here the identities are 0
+                var ids = storage.GetIdentities((address.Year, address.Month), address.ReportingNode, address.Scenario, currencyType);
 
-                var reportVariables = new ReportVariable[] { new() { AmountType = "a" }, new() { AmountType = "b" } };
+                // TODO: exception thrown here: cannot convert to output type IDataCube
+                var pvs = universe.GetScopes<LockedBestEstimate>(ids).Select(x => x.LockedBestEstimate).Aggregate() +
+                          universe.GetScopes<CurrentBestEstimate>(ids).Select(x => x.CurrentBestEstimate).Aggregate() +
+                          universe.GetScopes<NominalBestEstimate>(ids).Select(x => x.NominalBestEstimate).Aggregate();
 
-                workspace.Change(new UpdateDataRequest(reportVariables));
+                res = res.Concat(pvs.ToArray());
             }
+
+            return res;
         };
     }
 
