@@ -9,9 +9,7 @@ public static class ExtensionMethods
 {
     public static TDataSource ConfigureCategory<TDataSource>(this TDataSource dataSource, IDictionary<Type, IEnumerable<object>> typeAndInstance)
         where TDataSource : DataSource<TDataSource>
-        => typeAndInstance.Aggregate(dataSource,
-            (ds, kvp) =>
-                ds.WithType(kvp.Key, t => t.WithInitialData(kvp.Value)));
+        => typeAndInstance.Aggregate(dataSource, (ds, kvp) => ds.WithType(kvp.Key, t => t.WithInitialData(kvp.Value)));
 
     public static Dictionary<TKey, TResult> ToDictionaryGrouped<TSource, TKey, TResult>
         (this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<IGrouping<TKey, TSource>, TResult> elementSelector)

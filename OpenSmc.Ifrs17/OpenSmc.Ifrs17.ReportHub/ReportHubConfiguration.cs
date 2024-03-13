@@ -16,6 +16,7 @@ using OpenSmc.Reporting.Builder;
 using OpenSmc.Scopes;
 using DocumentFormat.OpenXml.Bibliography;
 using OpenSmc.Ifrs17.DataTypes.Constants;
+using OpenSmc.Ifrs17.DataTypes.DataModel.TransactionalData;
 
 namespace OpenSmc.Ifrs17.ReportHub;
 
@@ -53,10 +54,13 @@ public static class ReportHubConfiguration
                             .WithType<Novelty>().WithType<OciType>().WithType<Partner>().WithType<PnlVariableType>().WithType<RiskDriver>()
                             .WithType<Scenario>().WithType<ValuationApproach>().WithType<ProjectionConfiguration>().WithType<ReportingNode>())
                         .FromHub(dataNodeAddress, ds => ds
+                            .WithType<Portfolio>().WithType<GroupOfContract>()
                             .WithType<InsurancePortfolio>().WithType<GroupOfInsuranceContract>()
                             .WithType<ReinsurancePortfolio>().WithType<GroupOfReinsuranceContract>())
                         .FromHub(parameterAddress, ds => ds
-                            .WithType<ExchangeRate>()),
+                            .WithType<ExchangeRate>())
+                        .FromHub(ifrsVarAddress, ds => ds
+                            .WithType<IfrsVariable>()),
                     reportConfig => reportConfig
                         .WithDataCubeOn(GetDataCube(config), GetReportFunc())));
     }
