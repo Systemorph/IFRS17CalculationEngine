@@ -82,7 +82,7 @@ public static class ReportScopes
 
         protected IDataCube<ReportVariable> Data => GetScope<Data>((Identity.ReportIdentity, Identity.EstimateType))
             .Data
-            .SelectToDataCube(x => MultiplicationAndDivisionFunction.Multiply<ReportVariable>(x, 
+            .SelectToDataCube(x => ArithmeticOperations.Multiply<ReportVariable>(x, 
                     GetScope<Fx>((Identity.ReportIdentity.ContractualCurrency,
                     Identity.ReportIdentity.FunctionalCurrency,
                     GetStorage().GetFxPeriod(GetStorage().Args.Period, Identity.ReportIdentity.Projection, x.VariableType, x.Novelty),

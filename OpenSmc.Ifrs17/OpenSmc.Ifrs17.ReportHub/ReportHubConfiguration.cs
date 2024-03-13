@@ -48,7 +48,7 @@ public static class ReportHubConfiguration
                     data => data
                         // Here eventually we can decide whether the default is all types available (12.3.24, AM)
                         .FromHub(refDataAddress, ds => ds
-                            .WithType<AmountType>().WithType<DeferrableAmountType>()
+                            .WithType<AmountType>().WithType<DeferrableAmountType>().WithType<AocConfiguration>()
                             .WithType<AocType>().WithType<StructureType>().WithType<CreditRiskRating>().WithType<Currency>().WithType<EconomicBasis>()
                             .WithType<EstimateType>().WithType<LiabilityType>().WithType<LineOfBusiness>().WithType<Profitability>()
                             .WithType<Novelty>().WithType<OciType>().WithType<Partner>().WithType<PnlVariableType>().WithType<RiskDriver>()
