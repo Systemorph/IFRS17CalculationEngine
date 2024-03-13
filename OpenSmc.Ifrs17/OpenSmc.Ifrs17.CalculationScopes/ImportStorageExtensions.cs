@@ -1,5 +1,4 @@
-﻿using OpenSmc.Ifrs17.CalculationScopes.Placeholder;
-using OpenSmc.Ifrs17.DataTypes.Constants;
+﻿using OpenSmc.Ifrs17.DataTypes.Constants;
 using OpenSmc.Ifrs17.DataTypes.Constants.Validations;
 using static MoreLinq.Extensions.ZipLongestExtension;
 
@@ -15,8 +14,7 @@ public static class ImportStorageExtensions
 
         if (index < 0)
         {
-            ApplicationMessage.Log(Error.NegativeIndex);
-            return default;
+            throw new Exception(Error.NegativeIndex.GetMessage());
         }
 
         return index < count

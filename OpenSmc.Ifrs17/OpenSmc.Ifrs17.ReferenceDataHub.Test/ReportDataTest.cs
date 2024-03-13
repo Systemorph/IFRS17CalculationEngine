@@ -1,9 +1,8 @@
 ﻿using FluentAssertions;
-using OpenSmc.Data;
 using OpenSmc.Hub.Fixture;
-using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Ifrs17.ReportHub;
 using OpenSmc.Messaging;
+using OpenSmc.Reporting;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -16,15 +15,18 @@ public class ReportDataTest(ITestOutputHelper output) : HubTestBase(output)
         return base.ConfigureHost(configuration).ConfigureReportDataHub();
     }
 
-    [Fact (Skip = "Functionality is not completed yet.")]
+    [Fact]
     public async Task InitReportDataTest()
     {
         var client = GetClient();
 
-        var reportAddress = new ReportAddress(new HostAddress(), 2020, 12, "CH", "Bla");
+        var reportAddress = new ReportAddress(new HostAddress(), 2020, 12, "CH", null);
 
-        var reportVariable = await client.AwaitResponse(new GetManyRequest<ReportVariable>(), o => o.WithTarget(reportAddress));
+        var reportRequest = new ReportRequest();
 
-        reportVariable.Message.Items.Should().HaveCount(2);
+        var reportResponse = await client.AwaitResponse(reportRequest, o => o.WithTarget(reportAddress));
+
+        var gridOptions = reportResponse.Message.GridOptions;
+        gridOptions.Should().NotBeNull();
     }
 }
