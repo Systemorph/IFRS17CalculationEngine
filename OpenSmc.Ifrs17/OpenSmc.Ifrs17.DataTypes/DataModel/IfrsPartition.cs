@@ -7,13 +7,10 @@ namespace OpenSmc.Ifrs17.DataTypes.DataModel;
 
 public abstract record IfrsPartition : IPartition
 {
-    [Key]
-    //[PartitionId]
-    public Guid Id { get; init; }
-
     [Required]
     [Dimension(typeof(ReportingNode))]
     [IdentityProperty]
+    [Key]
     [Display(Order = 10)]
-    public string? ReportingNode { get; init; }
+    public string ReportingNode { get; init; }
 }

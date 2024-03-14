@@ -8,6 +8,12 @@ namespace OpenSmc.Ifrs17.ReferenceDataHub;
 
 public class TemplateData
 {
+    public static readonly Dictionary<Type, IEnumerable<Object>> Partitions = new()
+    {
+        {typeof(PartitionByReportingNode), new []{new PartitionByReportingNode(){ReportingNode = "CH"}}},
+        {typeof(PartitionByReportingNodeAndPeriod), new []{new PartitionByReportingNodeAndPeriod(){ReportingNode = "CH", Year = 2020, Month = 12, Scenario = null}}}
+
+    };
     public static readonly Dictionary<Type, IEnumerable<AocConfiguration>> AocConfiguration   
         =
         new()
