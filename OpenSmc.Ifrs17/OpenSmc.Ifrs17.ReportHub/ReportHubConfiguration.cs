@@ -52,7 +52,8 @@ public static class ReportHubConfiguration
                             .WithType<AocType>().WithType<StructureType>().WithType<CreditRiskRating>().WithType<Currency>().WithType<EconomicBasis>()
                             .WithType<EstimateType>().WithType<LiabilityType>().WithType<LineOfBusiness>().WithType<Profitability>()
                             .WithType<Novelty>().WithType<OciType>().WithType<Partner>().WithType<PnlVariableType>().WithType<RiskDriver>()
-                            .WithType<Scenario>().WithType<ValuationApproach>().WithType<ProjectionConfiguration>().WithType<ReportingNode>())
+                            .WithType<Scenario>().WithType<ValuationApproach>().WithType<ProjectionConfiguration>().WithType<ReportingNode>()
+                            .WithType<PartitionByReportingNode>().WithType<PartitionByReportingNodeAndPeriod>())
                         .FromHub(dataNodeAddress, ds => ds
                             .WithType<Portfolio>().WithType<GroupOfContract>()
                             .WithType<InsurancePortfolio>().WithType<GroupOfInsuranceContract>()

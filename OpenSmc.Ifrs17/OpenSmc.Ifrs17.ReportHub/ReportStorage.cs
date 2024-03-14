@@ -147,6 +147,6 @@ public class ReportStorage
 
     public HashSet<string> GetScenarios(string scenario) =>
         scenario == Scenarios.Delta || scenario == Scenarios.All
-        ? Workspace.GetData<Scenario>().Select(x => x.SystemName).ToHashSet()
+        ? Workspace.GetData<PartitionByReportingNodeAndPeriod>().Select(x => x.Scenario).ToHashSet()
         : scenario.RepeatOnce().ToHashSet() as HashSet<string>;
 }
