@@ -22,12 +22,12 @@ public static class ReferenceDataHubConfiguration
                     .WithType<AocConfiguration>(t => t
                         .WithKey(x => (x.Year, x.Month, x.AocType, x.Novelty))
                         .WithInitialData(TemplateData.AocConfiguration[typeof(AocConfiguration)]))
-                        .WithType<PartitionByReportingNode>(t => 
-                            t.WithKey(x => x.ReportingNode)
-                                .WithInitialData((IEnumerable<PartitionByReportingNode>)TemplateData.Partitions[typeof(PartitionByReportingNode)]))
-                        //.WithType<PartitionByReportingNodeAndPeriod>(t => 
-                        //    t.WithKey(x => (x.ReportingNode, x.Year, x.Month, x.Scenario))
-                        //        .WithInitialData((IEnumerable<PartitionByReportingNodeAndPeriod>)TemplateData.Partitions[typeof(PartitionByReportingNodeAndPeriod)]))
+                    .WithType<PartitionByReportingNode>(t => t
+                        .WithKey(x => x.ReportingNode)
+                        .WithInitialData((IEnumerable<PartitionByReportingNode>)TemplateData.Partitions[typeof(PartitionByReportingNode)]))
+                    .WithType<PartitionByReportingNodeAndPeriod>(t => t
+                        .WithKey(x => (x.ReportingNode, x.Year, x.Month, x.Scenario))
+                        .WithInitialData((IEnumerable<PartitionByReportingNodeAndPeriod>)TemplateData.Partitions[typeof(PartitionByReportingNodeAndPeriod)]))
                 ));
     }
 

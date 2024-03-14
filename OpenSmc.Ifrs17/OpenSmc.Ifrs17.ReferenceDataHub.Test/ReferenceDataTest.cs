@@ -170,7 +170,7 @@ public class ReferenceDataIfrsHubTestBase(ITestOutputHelper output) : IfrsHubTes
         { typeof(Scenario), 16 },
         { typeof(ValuationApproach), 2 },
         { typeof(ProjectionConfiguration), 20 },
-        { typeof(ReportingNode), 1},
+        { typeof(ReportingNode), 8},
         { typeof(PartitionByReportingNode), 1},
         { typeof(PartitionByReportingNodeAndPeriod), 1},
     };
