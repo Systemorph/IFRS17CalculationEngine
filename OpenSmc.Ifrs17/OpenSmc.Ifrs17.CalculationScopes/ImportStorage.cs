@@ -2,7 +2,6 @@ using OpenSmc.Collections;
 using OpenSmc.Data;
 using OpenSmc.Domain.Abstractions;
 using OpenSmc.Hierarchies;
-using OpenSmc.Ifrs17.CalculationScopes.Placeholder;
 using OpenSmc.Ifrs17.DataTypes.Constants;
 using OpenSmc.Ifrs17.DataTypes.Constants.Enumerates;
 using OpenSmc.Ifrs17.DataTypes.Constants.Validations;
@@ -11,14 +10,13 @@ using OpenSmc.Ifrs17.DataTypes.DataModel.Args;
 using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
 using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.DataTypes.DataModel.TransactionalData;
-using OpenSmc.ServiceProvider;
 
 namespace OpenSmc.Ifrs17.CalculationScopes;
 
 public class ImportStorage
 {
     public readonly IWorkspace Workspace; 
-    private readonly HierarchicalDimensionCacheWithWorkspace _hierarchyCache;
+    private readonly HierarchicalDimensionCache _hierarchyCache;
     private readonly ImportArgs _args;
 
     //Format
@@ -67,7 +65,7 @@ public class ImportStorage
     {
         Workspace = workspace;
         _args = args;
-        _hierarchyCache = new HierarchicalDimensionCacheWithWorkspace(workspace);
+        _hierarchyCache = new HierarchicalDimensionCache(workspace);
     }
 
     //Periods

@@ -8,7 +8,7 @@ using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
 using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 using OpenSmc.Hierarchies;
-using OpenSmc.Data.Persistence;
+using OpenSmc.Ifrs17.Utils;
 
 namespace OpenSmc.Ifrs17.ReportHub;
 
@@ -147,6 +147,6 @@ public class ReportStorage
 
     public HashSet<string> GetScenarios(string scenario) =>
         scenario == Scenarios.Delta || scenario == Scenarios.All
-        ? Workspace.GetData<PartitionByReportingNodeAndPeriod>().Select(x => x.Scenario).ToArray().ToHashSet()!
+        ? Workspace.GetData<Scenario>().Select(x => x.SystemName).ToHashSet()
         : scenario.RepeatOnce().ToHashSet() as HashSet<string>;
 }

@@ -27,9 +27,9 @@ public class HierarchyWithWorkspace<T> : IHierarchy<T>
         elementsBySystemNameAndLevels = new Dictionary<string, IDictionary<int, string>>();
     }
 
-    public void InitializeAsync()
+    public async Task InitializeAsync()
     {
-        elementsBySystemName = _workspace.GetData<T>().ToDictionary(x => x.SystemName);
+        elementsBySystemName = await _workspace.GetData<T>().ToAsyncEnumerable().ToDictionaryAsync(x => x.SystemName);
         AddChildren(0, GetPairs());
     }
 
