@@ -17,11 +17,17 @@ public static class ReferenceDataHubConfiguration
     {
         return configuration
             .AddData(dc => dc
-                .FromConfigurableDataSource("ReferenceData",
-                    ds => ds.ConfigureCategory(TemplateData.TemplateReferenceData)
-                        .WithType<AocConfiguration>(t =>
-                            t.WithKey(x => (x.Year, x.Month, x.AocType, x.Novelty))
-                                .WithInitialData(TemplateData.AocConfiguration[typeof(AocConfiguration)]))
+                .FromConfigurableDataSource("ReferenceData", ds => ds
+                    .ConfigureCategory(TemplateData.TemplateReferenceData)
+                    .WithType<AocConfiguration>(t => t
+                        .WithKey(x => (x.Year, x.Month, x.AocType, x.Novelty))
+                        .WithInitialData(TemplateData.AocConfiguration[typeof(AocConfiguration)]))
+                    .WithType<PartitionByReportingNode>(t => t
+                        .WithKey(x => x.ReportingNode)
+                        .WithInitialData((IEnumerable<PartitionByReportingNode>)TemplateData.Partitions[typeof(PartitionByReportingNode)]))
+                    .WithType<PartitionByReportingNodeAndPeriod>(t => t
+                        .WithKey(x => (x.ReportingNode, x.Year, x.Month, x.Scenario))
+                        .WithInitialData((IEnumerable<PartitionByReportingNodeAndPeriod>)TemplateData.Partitions[typeof(PartitionByReportingNodeAndPeriod)]))
                 ));
     }
 
@@ -30,8 +36,7 @@ public static class ReferenceDataHubConfiguration
     {
         var address = new ReferenceDataAddress(configuration.Address);
         return configuration
-            .WithHostedHub(address,
-            config => config
+            .WithHostedHub(address, config => config
                 .ConfigureReferenceDataDictInit()
         );
     }
@@ -43,15 +48,15 @@ public static class ReferenceDataHubConfiguration
         var refDataImportAddress = new ReferenceDataImportAddress(configuration.Address);
 
         return configuration
-            .WithHostedHub(refDataImportAddress,
-                config => config
-                    .AddImport(data =>
-                            data.FromHub(refDataAddress,
-                                dataSource => dataSource.WithType<AmountType>().WithType<DeferrableAmountType>()
-                                    .WithType<AocType>().WithType<StructureType>().WithType<CreditRiskRating>().WithType<Currency>().WithType<EconomicBasis>()
-                                    .WithType<EstimateType>().WithType<LiabilityType>().WithType<LineOfBusiness>().WithType<Profitability>()
-                                    .WithType<Novelty>().WithType<OciType>().WithType<Partner>().WithType<PnlVariableType>().WithType<RiskDriver>()
-                                    .WithType<Scenario>().WithType<ValuationApproach>().WithType<ProjectionConfiguration>().WithType<ReportingNode>()
+            .WithHostedHub(refDataImportAddress, config => config
+                .AddImport(data => data
+                    .FromHub(refDataAddress, ds => ds
+                        .WithType<AmountType>().WithType<DeferrableAmountType>().WithType<AocConfiguration>()
+                        .WithType<AocType>().WithType<StructureType>().WithType<CreditRiskRating>().WithType<Currency>().WithType<EconomicBasis>()
+                        .WithType<EstimateType>().WithType<LiabilityType>().WithType<LineOfBusiness>().WithType<Profitability>()
+                        .WithType<Novelty>().WithType<OciType>().WithType<Partner>().WithType<PnlVariableType>().WithType<RiskDriver>()
+                        .WithType<Scenario>().WithType<ValuationApproach>().WithType<ProjectionConfiguration>().WithType<ReportingNode>()
+                                    .WithType<PartitionByReportingNode>().WithType<PartitionByReportingNodeAndPeriod>()
                             ),
                         import => import
                     )

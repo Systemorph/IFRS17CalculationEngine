@@ -1,10 +1,8 @@
 ﻿using FluentAssertions;
-using OpenSmc.Activities;
 using OpenSmc.Data;
 using OpenSmc.Hub.Fixture;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Ifrs17.ParameterDataHub;
-using OpenSmc.Import;
 using OpenSmc.Messaging;
 using Xunit;
 using Xunit.Abstractions;

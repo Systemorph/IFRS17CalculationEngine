@@ -12,12 +12,11 @@ public static class ParameterHubConfiguration
     public static MessageHubConfiguration ConfigureParameterDataDictInit(this MessageHubConfiguration configuration)
     {
         return configuration
-            .AddData(dc => dc.FromConfigurableDataSource("ParameterDataSource",
-        ds => ds.WithType<ExchangeRate>(t => t.WithKey(x => (x.Year, x.Month, x.Scenario, x.FxType, x.Currency)).WithInitialData((IEnumerable<ExchangeRate>)TemplateData.ParameterData[typeof(ExchangeRate)]))
-                                        .WithType<CreditDefaultRate>(t => t.WithKey(x => (x.Year, x.Month, x.Scenario, x.CreditRiskRating)).WithInitialData((IEnumerable<CreditDefaultRate>)TemplateData.ParameterData[typeof(CreditDefaultRate)]))
-                                        .WithType<PartnerRating>(t => t.WithKey(x => (x.Year, x.Month, x.Scenario, x.Partner)).WithInitialData((IEnumerable<PartnerRating>)TemplateData.ParameterData[typeof(PartnerRating)]))
-                    ));
-        
+            .AddData(dc => dc.FromConfigurableDataSource("ParameterDataSource", ds => ds
+                .WithType<ExchangeRate>(t => t.WithKey(x => (x.Year, x.Month, x.Scenario, x.FxType, x.Currency)).WithInitialData((IEnumerable<ExchangeRate>)TemplateData.ParameterData[typeof(ExchangeRate)]))
+                .WithType<CreditDefaultRate>(t => t.WithKey(x => (x.Year, x.Month, x.Scenario, x.CreditRiskRating)).WithInitialData((IEnumerable<CreditDefaultRate>)TemplateData.ParameterData[typeof(CreditDefaultRate)]))
+                .WithType<PartnerRating>(t => t.WithKey(x => (x.Year, x.Month, x.Scenario, x.Partner)).WithInitialData((IEnumerable<PartnerRating>)TemplateData.ParameterData[typeof(PartnerRating)]))
+            ));
     }
 
     public static MessageHubConfiguration ConfigureParameterDataModelHub(this MessageHubConfiguration configuration)
