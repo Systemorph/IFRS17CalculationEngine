@@ -26,7 +26,7 @@ public static class ReportHubConfiguration
     {
         var refDataAddress = new ReferenceDataAddress(configuration.Address);
         var dataNodeAddress = new DataNodeAddress(configuration.Address);
-        var parameterAddress = new ParameterAddress(configuration.Address);
+        var parameterAddress = new ParameterDataAddress(configuration.Address);
         var ifrsVarAddress = new IfrsVariableAddress(configuration.Address, 2020, 12, "CH", null);
         var reportAddress = new ReportAddress(configuration.Address, 2020, 12, "CH", null);
 
