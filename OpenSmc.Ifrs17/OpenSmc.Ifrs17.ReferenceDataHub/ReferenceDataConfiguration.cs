@@ -22,6 +22,12 @@ public static class ReferenceDataHubConfiguration
                     .WithType<AocConfiguration>(t => t
                         .WithKey(x => (x.Year, x.Month, x.AocType, x.Novelty))
                         .WithInitialData(TemplateData.AocConfiguration[typeof(AocConfiguration)]))
+                    .WithType<PartitionByReportingNode>(t => t
+                        .WithKey(x => x.ReportingNode)
+                        .WithInitialData((IEnumerable<PartitionByReportingNode>)TemplateData.Partitions[typeof(PartitionByReportingNode)]))
+                    .WithType<PartitionByReportingNodeAndPeriod>(t => t
+                        .WithKey(x => (x.ReportingNode, x.Year, x.Month, x.Scenario))
+                        .WithInitialData((IEnumerable<PartitionByReportingNodeAndPeriod>)TemplateData.Partitions[typeof(PartitionByReportingNodeAndPeriod)]))
                 ));
     }
 
@@ -50,8 +56,10 @@ public static class ReferenceDataHubConfiguration
                         .WithType<EstimateType>().WithType<LiabilityType>().WithType<LineOfBusiness>().WithType<Profitability>()
                         .WithType<Novelty>().WithType<OciType>().WithType<Partner>().WithType<PnlVariableType>().WithType<RiskDriver>()
                         .WithType<Scenario>().WithType<ValuationApproach>().WithType<ProjectionConfiguration>().WithType<ReportingNode>()
-                    ), import => import
-                )
+                                    .WithType<PartitionByReportingNode>().WithType<PartitionByReportingNodeAndPeriod>()
+                            ),
+                        import => import
+                    )
             );
     }
 
