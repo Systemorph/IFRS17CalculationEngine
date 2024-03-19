@@ -2,4 +2,5 @@
 
 namespace OpenSmc.Ifrs17.ParameterDataHub;
 
-public record ParameterAddress(object Host) : IHostedAddress;
+public record ParameterDataAddress(object Host) : IHostedAddress;
+public record ParameterImportAddress(object Host) : IHostedAddress;

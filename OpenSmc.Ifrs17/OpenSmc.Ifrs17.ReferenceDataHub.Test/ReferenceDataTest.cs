@@ -43,6 +43,10 @@ NewSystemName,NewDisplayName
 @@Novelty
 SystemName,DisplayName
 NewSystemName,NewDisplayName
+@@PartitionByReportingNodeAndPeriod,
+ReportingNode,Year,Month,Scenario,
+CH,2050,12,,
+
 ";
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
     {
@@ -71,8 +75,11 @@ NewSystemName,NewDisplayName
         var newExpectedCountPerType = ExpectedCountPerType.ToDictionary();
         newExpectedCountPerType[typeof(LiabilityType)] += 1;
         newExpectedCountPerType[typeof(Novelty)] += 1;
+        newExpectedCountPerType[typeof(PartitionByReportingNodeAndPeriod)] += 1;
 
-        actualCountsPerType = await GetActualCountsPerType(client, ExpectedCountPerType.Keys, new ReferenceDataAddress(new HostAddress()));
+        //Wait for Import to finish before proceeding with the GetRequest
+        await Task.Delay(300);
+        actualCountsPerType = await GetActualCountsPerType(client, ExpectedCountPerType.Keys, new ReferenceDataAddress(new HostAddress())); //Test a type with Custom Key
         actualCountsPerType.Should().Equal(newExpectedCountPerType);
 
         //Assert data changed
@@ -80,70 +87,14 @@ NewSystemName,NewDisplayName
             o => o.WithTarget(new ReferenceDataAddress(new HostAddress())));
         var novelties = await client.AwaitResponse(new GetManyRequest<Novelty>(),
             o => o.WithTarget(new ReferenceDataAddress(new HostAddress())));
+        var partitions = await client.AwaitResponse(new GetManyRequest<PartitionByReportingNodeAndPeriod>(),
+            o => o.WithTarget(new ReferenceDataAddress(new HostAddress())));
 
         liabilityTypes.Message.Items.Where(x => x.SystemName == "NewSystemName" && x.DisplayName == "NewDisplayName").Should().HaveCount(1);
         novelties.Message.Items.Where(x => x.SystemName == "NewSystemName" && x.DisplayName == "NewDisplayName").Should().HaveCount(1);
+        partitions.Message.Items.Where(x => x.Year == 2050).Should().HaveCount(1);
     }
 }
-
-
-//public class ReferenceDataIfrsHubImportInitTest(ITestOutputHelper output) : ReferenceDataIfrsHubTestBase(output)
-//{
-
-//    protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
-//    {
-//        return base.ConfigureHost(configuration)
-//                   .ConfigureReferenceDataImportInit();
-//    }
-
-//    [Fact]
-//    public async Task InitReferenceDataTest()
-//    {
-//        var client = GetClient();
-
-//        //Get ActualCountPerType
-//        var actualCountsPerType = await GetActualCountsPerType(client, ExpectedCountPerType.Keys);
-
-//        //Assert Count per Type
-//        actualCountsPerType.Should().Equal(ExpectedCountPerType);
-//    }
-//}
-
-
-//public class ReferenceDataIfrsHubImportTest(ITestOutputHelper output) : ReferenceDataIfrsHubTestBase(output)
-//{
-//    protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
-//    {
-//        return base.ConfigureHost(configuration)
-//            .AddImport(import => import)
-//            .AddData(dc => dc
-//                .WithDataSource("ReferenceDataSource",
-//                    ds => ds.ConfigureCategory(TemplateData.TemplateReferenceData)
-//                            .ConfigureCategory(ReferenceDataHubConfiguration.ReferenceDataDomainExtra)));
-//    }
-
-//    [Fact]
-//    public async Task ImportDataTest()
-//    {
-//        // arrange
-//        var client = GetClient();
-//        var importRequest = new ImportRequest(TemplateDimensions.Csv);
-
-//        // act
-//        var importResponse = await client.AwaitResponse(importRequest, o => o.WithTarget(new HostAddress()));
-
-//        //assert Response
-//        importResponse.Message.Log.Status.Should().Be(ActivityLogStatus.Succeeded);
-
-//        //Get ActualCountPerType
-//        var actualCountsPerType = await GetActualCountsPerType(client, ExpectedCountPerType.Keys);
-
-//        //Assert Count per Type
-//        actualCountsPerType.Should().Equal(ExpectedCountPerType);
-//    }
-
-
-//}
 
 public class ReferenceDataIfrsHubTestBase(ITestOutputHelper output) : IfrsHubTestBase(output)
 {
