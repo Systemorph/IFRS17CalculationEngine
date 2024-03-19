@@ -56,7 +56,7 @@ public static class ReferenceDataHubConfiguration
                         .WithType<EstimateType>().WithType<LiabilityType>().WithType<LineOfBusiness>().WithType<Profitability>()
                         .WithType<Novelty>().WithType<OciType>().WithType<Partner>().WithType<PnlVariableType>().WithType<RiskDriver>()
                         .WithType<Scenario>().WithType<ValuationApproach>().WithType<ProjectionConfiguration>().WithType<ReportingNode>()
-                                    .WithType<PartitionByReportingNode>().WithType<PartitionByReportingNodeAndPeriod>()
+                        .WithType<PartitionByReportingNode>().WithType<PartitionByReportingNodeAndPeriod>()
                             ),
                         import => import
                     )

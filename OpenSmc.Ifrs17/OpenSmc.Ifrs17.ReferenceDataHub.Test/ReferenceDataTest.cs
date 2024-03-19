@@ -43,6 +43,10 @@ NewSystemName,NewDisplayName
 @@Novelty
 SystemName,DisplayName
 NewSystemName,NewDisplayName
+@@PartitionByReportingNodeAndPeriod,
+ReportingNode,Year,Month,Scenario,
+CH,2050,12,,
+
 ";
     protected override MessageHubConfiguration ConfigureHost(MessageHubConfiguration configuration)
     {
@@ -71,8 +75,9 @@ NewSystemName,NewDisplayName
         var newExpectedCountPerType = ExpectedCountPerType.ToDictionary();
         newExpectedCountPerType[typeof(LiabilityType)] += 1;
         newExpectedCountPerType[typeof(Novelty)] += 1;
+        newExpectedCountPerType[typeof(PartitionByReportingNodeAndPeriod)] += 1;
 
-        actualCountsPerType = await GetActualCountsPerType(client, ExpectedCountPerType.Keys, new ReferenceDataAddress(new HostAddress()));
+        actualCountsPerType = await GetActualCountsPerType(client, ExpectedCountPerType.Keys, new ReferenceDataAddress(new HostAddress())); //Test a type with Custom Key
         actualCountsPerType.Should().Equal(newExpectedCountPerType);
 
         //Assert data changed
@@ -80,9 +85,12 @@ NewSystemName,NewDisplayName
             o => o.WithTarget(new ReferenceDataAddress(new HostAddress())));
         var novelties = await client.AwaitResponse(new GetManyRequest<Novelty>(),
             o => o.WithTarget(new ReferenceDataAddress(new HostAddress())));
+        var partitions = await client.AwaitResponse(new GetManyRequest<PartitionByReportingNodeAndPeriod>(),
+            o => o.WithTarget(new ReferenceDataAddress(new HostAddress())));
 
         liabilityTypes.Message.Items.Where(x => x.SystemName == "NewSystemName" && x.DisplayName == "NewDisplayName").Should().HaveCount(1);
         novelties.Message.Items.Where(x => x.SystemName == "NewSystemName" && x.DisplayName == "NewDisplayName").Should().HaveCount(1);
+        partitions.Message.Items.Where(x => x.Year == 2050).Should().HaveCount(1);
     }
 }
 

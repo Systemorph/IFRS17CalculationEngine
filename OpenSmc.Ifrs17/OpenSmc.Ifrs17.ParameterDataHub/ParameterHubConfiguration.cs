@@ -37,9 +37,11 @@ public static class ParameterHubConfiguration
         return configuration
             .WithHostedHub(paramDataImportAddress,
                 config => config
-                    .AddImport(data =>
-                            data.FromHub(paramDataAddress,
-                                dataSource => dataSource.WithType<ExchangeRate>().WithType<CreditDefaultRate>().WithType<PartnerRating>()
+                    .AddImport(data => data
+                            .FromHub(paramDataAddress,dataSource => dataSource
+                                .WithType<ExchangeRate>(t => t.WithKey(x => (x.Year, x.Month, x.Scenario, x.FxType, x.Currency)))
+                                .WithType<CreditDefaultRate>()
+                                .WithType<PartnerRating>()
                             ),
                         import => import
                     )

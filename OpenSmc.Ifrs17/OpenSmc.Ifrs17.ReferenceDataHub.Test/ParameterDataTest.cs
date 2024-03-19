@@ -47,7 +47,7 @@ public class ParameterImportTest(ITestOutputHelper output) : HubTestBase(output)
 
     private const string ExchangeRateData = @"@@ExchangeRate
 Currency,Year,Month,FxToGroupCurrency,FxType,Scenario
-EUR,2050,1,1.1,Average,";
+EUR,2050,1,1.1,Average,,";
 
     [Fact]
     public async Task ImportTest()
@@ -64,17 +64,16 @@ EUR,2050,1,1.1,Average,";
         cdrData.Message.Items.Should().HaveCount(22);
         partnerRatingData.Message.Items.Should().HaveCount(3);
 
-        //Import of LiabilityType
+        //Import exchange rate
         var importRequest = new ImportRequest(ExchangeRateData);
         var importResponse = await client.AwaitResponse(importRequest, o => o.WithTarget(new ParameterImportAddress(new HostAddress())));
         importResponse.Message.Log.Status.Should().Be(ActivityLogStatus.Succeeded);
 
-        //Assert changes Count
-        exchangeRateData = await client.AwaitResponse(new GetManyRequest<ExchangeRate>(), o => o.WithTarget(new ParameterDataAddress(new HostAddress())));
+        //Get data from DataHub
+        exchangeRateData = await client.AwaitResponse(new GetManyRequest<ExchangeRate>(), o => o.WithTarget(new ParameterDataAddress(new HostAddress())));//Works with ParameterImportAddress
 
         //Assert data changed
         exchangeRateData.Message.Items.Should().HaveCount(13);
-
         exchangeRateData.Message.Items.Where(x => x.Year == 2050).Should().HaveCount(1);
         exchangeRateData.Message.Items.Single(x => x.Year == 2050).FxToGroupCurrency.Should().BeApproximately(1.1, 1E-8);
     }
