@@ -69,9 +69,9 @@ EUR,2050,1,1.1,Average,,";
         var importResponse = await client.AwaitResponse(importRequest, o => o.WithTarget(new ParameterImportAddress(new HostAddress())));
         importResponse.Message.Log.Status.Should().Be(ActivityLogStatus.Succeeded);
 
-        //Get data from DataHub
+        //Get data from DataHub after Import is completed (delay)
         await Task.Delay(300);
-        exchangeRateData = await client.AwaitResponse(new GetManyRequest<ExchangeRate>(), o => o.WithTarget(new ParameterDataAddress(new HostAddress())));//Works with ParameterImportAddress
+        exchangeRateData = await client.AwaitResponse(new GetManyRequest<ExchangeRate>(), o => o.WithTarget(new ParameterDataAddress(new HostAddress())));
 
         //Assert data changed
         exchangeRateData.Message.Items.Should().HaveCount(13);
