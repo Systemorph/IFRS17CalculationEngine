@@ -1,4 +1,5 @@
-﻿using OpenSmc.Ifrs17.DataTypes.DataModel;
+﻿using OpenSmc.Data;
+using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
 using OpenSmc.Scopes;
 
