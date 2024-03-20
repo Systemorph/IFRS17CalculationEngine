@@ -16,7 +16,7 @@ namespace OpenSmc.Ifrs17.Hub.Test
             {
                 var requestType = typeof(GetManyRequest<>).MakeGenericType(domainType);
                 var request = Activator.CreateInstance(requestType);
-                var responseType = typeof(GetManyResponse<>).MakeGenericType(domainType);
+                var responseType = typeof(GetResponse<>).MakeGenericType(domainType);
                 Func<PostOptions, PostOptions> options = o => o.WithTarget(address);
                 object response = (((IMessageDelivery)await AwaitResponseMethod.MakeGenericMethod(responseType)
                     .InvokeAsFunctionAsync(client, request, options)).Message);
