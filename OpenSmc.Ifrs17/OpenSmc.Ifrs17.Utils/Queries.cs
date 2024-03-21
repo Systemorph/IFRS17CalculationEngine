@@ -7,7 +7,7 @@ using OpenSmc.Ifrs17.DataTypes.DataModel.Interfaces;
 using System.Linq.Expressions;
 using OpenSmc.Ifrs17.DataTypes.Constants.Enumerates;
 using OpenSmc.Hierarchies;
-using OpenSmc.Utils;
+using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 
 namespace OpenSmc.Ifrs17.Utils;
 
@@ -32,6 +32,25 @@ public static class Queries
         return new[] { EstimateTypes.C, EstimateTypes.L, EstimateTypes.LR, }.ToHashSet();
     }
 
+    public static Dictionary<string, DataNodeData> LoadDataNodes(this IWorkspace querySource, Args args)
+    {
+        var dataNodeStates = querySource.LoadCurrentAndPreviousParameter<DataNodeState>(args, x => x.DataNode);
+        var activeDataNodes = dataNodeStates.Where(kvp => kvp.Value[Consts.CurrentPeriod].State != State.Inactive).Select(kvp => kvp.Key);
+
+        return querySource.GetData<GroupOfContract>().Where(dn => activeDataNodes.Contains(dn.SystemName)).ToArray()
+            .ToDictionary(dn => dn.SystemName, dn => {
+                    var dnCurrentState = dataNodeStates[dn.SystemName][Consts.CurrentPeriod];
+                    var dnPreviousState = dataNodeStates[dn.SystemName][Consts.PreviousPeriod];
+                    return new DataNodeData(dn)
+                    {
+                        Year = dnPreviousState.Year,
+                        Month = dnPreviousState.Month,
+                        State = dnCurrentState.State,
+                        PreviousState = dnPreviousState.State
+                    };
+                }
+            );
+    }
     public static Dictionary<string, DataNodeState> LoadDataNodeState(this IWorkspace querySource, Args args)
     {
         return querySource.LoadCurrentAndPreviousParameter<DataNodeState>(args, x => x.DataNode)
@@ -44,7 +63,7 @@ public static class Queries
         Args args,
         Func<T, string> identityExpression,
         Expression<Func<T, bool>> filterExpression = null)
-        where T : IWithYearMonthAndScenario
+        where T : class, IWithYearMonthAndScenario
     {
         var parameters = querySource.LoadParameter<T>(args.Year, args.Month, filterExpression)
             .Where(yc => yc.Scenario == args.Scenario || yc.Scenario == null)
@@ -66,12 +85,34 @@ public static class Queries
         return ret;
     }
 
+    public static Dictionary<string, T> LoadCurrentParameter<T>(
+        this IWorkspace querySource,
+        Args args,
+        Func<T, string> identityExpression,
+        Expression<Func<T, bool>> filterExpression = null)
+        where T : class, IWithYearMonthAndScenario
+    {
+        return querySource.LoadParameter<T>(args.Year, args.Month, filterExpression)
+            .Where(x => x.Scenario == args.Scenario || x.Scenario == null)
+            .GroupBy(identityExpression)
+            .Select(x => x.OrderByDescending(y => y.Year)
+                .ThenByDescending(y => y.Month)
+                .ThenByDescending(y => y.Scenario)
+                .FirstOrDefault())
+            .ToDictionary(identityExpression);
+    }
+
     public static T[] LoadParameter<T>(this IWorkspace workspace, int year, int month, Expression<Func<T, bool>> filterExpression = null)
         where T : class, IWithYearAndMonth
     {
         return workspace.GetData<T>()
             .Where(x => x.Year == year && x.Month <= month || x.Year < year)
-            .Where(filterExpression?? (Expression<Func<T, bool>>)(x => true))
+            //.Where(filterExpression?? (x => true))
             .ToArray();
+    }
+
+    public static Dictionary<string, Dictionary<int, SingleDataNodeParameter>> LoadSingleDataNodeParameters(this IWorkspace querySource, Args args)
+    {
+        return querySource.LoadCurrentAndPreviousParameter<SingleDataNodeParameter>(args, x => x.DataNode);
     }
 }

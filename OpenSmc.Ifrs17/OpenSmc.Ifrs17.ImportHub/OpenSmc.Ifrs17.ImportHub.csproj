@@ -9,8 +9,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Data\OpenSmc.Data.csproj" />
     <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Hierarchies\OpenSmc.Hierarchies.csproj" />
-    <ProjectReference Include="..\..\OpenSmc\src\OpenSmc.Utils\OpenSmc.Utils.csproj" />
     <ProjectReference Include="..\OpenSmc.Ifrs17.DataTypes\OpenSmc.Ifrs17.DataTypes.csproj" />
+    <ProjectReference Include="..\OpenSmc.Ifrs17.Utils\OpenSmc.Ifrs17.Utils.csproj" />
   </ItemGroup>
 
 </Project>

@@ -9,6 +9,7 @@ using OpenSmc.Ifrs17.DataTypes.DataModel.Args;
 using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
 using OpenSmc.Ifrs17.DataTypes.DataModel.Interfaces;
 using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
+using OpenSmc.Ifrs17.Utils;
 
 
 namespace OpenSmc.Ifrs17.ImportHub;
@@ -18,7 +19,7 @@ public class ParsingStorage
         //private readonly IWorkspace Workspace;
         private readonly IWorkspace Workspace;
         private string ImportFormat { get; set; }
-        public ((int Year, int Month) Period, string ReportingNode, string Scenario, CurrencyType CurrencyType) Args { get; private set; }
+        public Args Args { get; private set; }
 
         //Hierarchy Cache
         public IHierarchicalDimensionCache HierarchicalDimensionCache { get; }
@@ -36,9 +37,9 @@ public class ParsingStorage
         private HashSet<string> amountTypes;
         private HashSet<string> economicBasis;
 
-        private Dictionary<string, HashSet<string>> amountTypesByEstimateType => GetAmountTypesByEstimateType(HierarchicalDimensionCache);
+        private Dictionary<string, HashSet<string>> amountTypesByEstimateType => Queries.GetAmountTypesByEstimateType(HierarchicalDimensionCache);
 
-        public HashSet<string> TechnicalMarginEstimateTypes => GetTechnicalMarginEstimateType();
+        public HashSet<string> TechnicalMarginEstimateTypes => Queries.GetTechnicalMarginEstimateType();
         public Dictionary<Type, Dictionary<string, string>> DimensionsWithExternalId;
 
         public Dictionary<string, Dictionary<int, SingleDataNodeParameter>> SingleDataNodeParametersByGoc
@@ -59,7 +60,7 @@ public class ParsingStorage
         }
 
         // Initialize
-        public Task Initialize()
+        public void Initialize()
         {
             //Partition Workspace and Workspace
             TargetPartitionByReportingNode = Workspace.GetData<PartitionByReportingNode>().Single(p => p.ReportingNode == Args.ReportingNode);
@@ -72,8 +73,8 @@ public class ParsingStorage
             {
                 TargetPartitionByReportingNodeAndPeriod = Workspace.GetData<PartitionByReportingNodeAndPeriod>()
                     .Single(p => p.ReportingNode == Args.ReportingNode &&
-                                          p.Year == Args.Period.Year&&
-                                          p.Month == Args.Period.Month &&
+                                          p.Year == Args.Year &&
+                                          p.Month == Args.Month &&
                                           p.Scenario == Args.Scenario);
 
 
@@ -98,16 +99,16 @@ public class ParsingStorage
             AocTypeMap = ImportFormat switch
             {
                 ImportFormats.Cashflow => aocConfigurationByAocStep.Where(x =>
-                        x.InputSource.Contains(InputSource.Cashflow) &&
+                        x.InputSource == InputSource.Cashflow &&
                         !new DataType[] { DataType.Calculated, DataType.CalculatedTelescopic }.Contains(x.DataType))
                     .GroupBy(x => new AocStep(x.AocType, x.Novelty), (k, v) => k).ToHashSet(),
                 ImportFormats.Actual => aocConfigurationByAocStep.Where(x =>
-                        x.InputSource.Contains(InputSource.Actual) &&
+                        x.InputSource == InputSource.Actual &&
                         !new DataType[] { DataType.Calculated, DataType.CalculatedTelescopic }.Contains(x.DataType) &&
                         new AocStep(x.AocType, x.Novelty) != new AocStep(AocTypes.BOP, Novelties.I))
                     .GroupBy(x => new AocStep(x.AocType, x.Novelty), (k, v) => k).ToHashSet(),
                 ImportFormats.Opening => aocConfigurationByAocStep
-                    .Where(x => x.InputSource.Contains(InputSource.Opening) && x.DataType == DataType.Optional)
+                    .Where(x => x.InputSource ==InputSource.Opening && x.DataType == DataType.Optional)
                     .GroupBy(x => new AocStep(x.AocType, x.Novelty), (k, v) => k).ToHashSet(),
                 ImportFormats.SimpleValue => aocConfigurationByAocStep
                     .GroupBy(x => new AocStep(x.AocType, x.Novelty), (k, v) => k)
@@ -115,7 +116,7 @@ public class ParsingStorage
                         .Select(vt => new AocStep(vt.SystemName, null))).ToHashSet(),
                 _ => Enumerable.Empty<AocStep>().ToHashSet(),
             };
-            DataNodeDataBySystemName = ImportFormat == ImportFormats.Opening ? LoadDataNodes(Workspace, Args).Where(kvp => kvp.Value.Year == Args.Period.Year).ToDictionary(kvp => kvp.Key, kvp => kvp.Value) : await LoadDataNodesAsync(Workspace, Args);
+            DataNodeDataBySystemName = ImportFormat == ImportFormats.Opening ? Queries.LoadDataNodes(Workspace, Args).Where(kvp => kvp.Value.Year == Args.Year).ToDictionary(kvp => kvp.Key, kvp => kvp.Value) : Queries.LoadDataNodes(Workspace, Args);
 
             SingleDataNodeParametersByGoc = Workspace.LoadSingleDataNodeParameters(Args);
 
@@ -127,8 +128,8 @@ public class ParsingStorage
             estimateTypes = ImportFormat switch
             {
                 ImportFormats.SimpleValue => Workspace.GetData<EstimateType>().Select(et => et.SystemName).ToHashSet(),
-                ImportFormats.Opening => Workspace.GetData<EstimateType>().Where(et => et.StructureType == StructureType.AoC)
-                    .Where(et => et.InputSource.Contains(InputSource.Opening)) //This Contains overload cannot be used in DB, thus the ToArrayAsync()
+                ImportFormats.Opening => Workspace.GetData<EstimateType>().Where(et => et.StructureType == EstimateTypeStructureTypes.AoC)
+                    .Where(et => et.InputSource == InputSource.Opening) //This Contains overload cannot be used in DB, thus the ToArrayAsync()
                     .Select(et => et.SystemName).ToHashSet(),
                 _ => Enumerable.Empty<string>().ToHashSet(),
             };
@@ -144,7 +145,7 @@ public class ParsingStorage
             HierarchicalDimensionCache.Initialize<AmountType>();
         }
 
-        public Task<Dictionary<string, string>> GetDimensionWithExternalIdDictionary<T>()
+        public Dictionary<string, string> GetDimensionWithExternalIdDictionary<T>()
             where T : KeyedOrderedDimension
         {
             var dict = new Dictionary<string, string>();
@@ -173,16 +174,17 @@ public class ParsingStorage
         {
             if (!SingleDataNodeParametersByGoc.TryGetValue(goc, out var inner))
                 return CashFlowPeriodicity.Monthly;
-            return inner[CurrentPeriod].CashFlowPeriodicity;
+            return inner[Consts.CurrentPeriod].CashFlowPeriodicity;
         }
 
         public InterpolationMethod GetInterpolationMethod(string goc)
         {
             if (!SingleDataNodeParametersByGoc.TryGetValue(goc, out var inner))
                 return InterpolationMethod.NotApplicable;
-            return inner[CurrentPeriod].InterpolationMethod;
+            return inner[Consts.CurrentPeriod].InterpolationMethod;
         }
 
+        /*
         // Validations
         public string ValidateEstimateType(string et, string goc)
         {
@@ -242,7 +244,7 @@ public class ParsingStorage
 
             return eb;
         }
-       
+       */
 }
 
 
