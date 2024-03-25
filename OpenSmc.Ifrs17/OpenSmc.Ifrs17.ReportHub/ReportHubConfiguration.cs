@@ -9,14 +9,13 @@ using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
 using OpenSmc.Scopes.Proxy;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
-using static OpenSmc.Ifrs17.ReportHub.ReportScopes;
 using OpenSmc.Pivot.Builder;
 using OpenSmc.DataCubes;
 using OpenSmc.Reporting.Builder;
 using OpenSmc.Scopes;
-using DocumentFormat.OpenXml.Bibliography;
 using OpenSmc.Ifrs17.DataTypes.Constants;
 using OpenSmc.Ifrs17.DataTypes.DataModel.TransactionalData;
+using static OpenSmc.Ifrs17.ReportHub.ReportScopes;
 
 namespace OpenSmc.Ifrs17.ReportHub;
 
