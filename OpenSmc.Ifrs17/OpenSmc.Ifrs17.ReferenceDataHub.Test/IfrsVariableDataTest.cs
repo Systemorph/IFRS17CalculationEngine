@@ -1,3 +1,4 @@
+using System.Reactive.Linq;
 using FluentAssertions;
 using OpenSmc.Data;
 using OpenSmc.Hub.Fixture;
@@ -21,11 +22,12 @@ public class IfrsVariableDataDictInitTest(ITestOutputHelper output) : HubTestBas
     public async Task InitIfrsVariableDataTest()
     {
         var client = GetClient();
+        var workspace = client.GetWorkspace(); // TODO V10: client should be configured to become a member of DataSync flow (2024/03/21, Dmitry Kalabin)
 
         //Get Count
-        var ifrsVariables = await client.AwaitResponse(new GetManyRequest<IfrsVariable>(), o => o.WithTarget(new HostAddress()));
+        var ifrsVariables = await workspace.GetObservable<IfrsVariable>().FirstAsync();
 
         //Assert Count
-        ifrsVariables.Message.Items.Should().HaveCount(40);
+        ifrsVariables.Should().HaveCount(40);
     }
 }

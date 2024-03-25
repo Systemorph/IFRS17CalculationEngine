@@ -1,3 +1,4 @@
+using System.Reactive.Linq;
 using FluentAssertions;
 using OpenSmc.Activities;
 using OpenSmc.Data;
@@ -83,16 +84,14 @@ CH,2050,12,,
         actualCountsPerType.Should().Equal(newExpectedCountPerType);
 
         //Assert data changed
-        var liabilityTypes = await client.AwaitResponse(new GetManyRequest<LiabilityType>(),
-            o => o.WithTarget(new ReferenceDataAddress(new HostAddress())));
-        var novelties = await client.AwaitResponse(new GetManyRequest<Novelty>(),
-            o => o.WithTarget(new ReferenceDataAddress(new HostAddress())));
-        var partitions = await client.AwaitResponse(new GetManyRequest<PartitionByReportingNodeAndPeriod>(),
-            o => o.WithTarget(new ReferenceDataAddress(new HostAddress())));
+        var workspace = client.GetWorkspace(); // TODO V10: client should be configured to become a member of DataSync flow (2024/03/21, Dmitry Kalabin)
+        var liabilityTypes = await workspace.GetObservable<LiabilityType>().FirstAsync();
+        var novelties = await workspace.GetObservable<Novelty>().FirstAsync();
+        var partitions = await workspace.GetObservable<PartitionByReportingNodeAndPeriod>().FirstAsync();
 
-        liabilityTypes.Message.Items.Where(x => x.SystemName == "NewSystemName" && x.DisplayName == "NewDisplayName").Should().HaveCount(1);
-        novelties.Message.Items.Where(x => x.SystemName == "NewSystemName" && x.DisplayName == "NewDisplayName").Should().HaveCount(1);
-        partitions.Message.Items.Where(x => x.Year == 2050).Should().HaveCount(1);
+        liabilityTypes.Where(x => x.SystemName == "NewSystemName" && x.DisplayName == "NewDisplayName").Should().HaveCount(1);
+        novelties.Where(x => x.SystemName == "NewSystemName" && x.DisplayName == "NewDisplayName").Should().HaveCount(1);
+        partitions.Where(x => x.Year == 2050).Should().HaveCount(1);
     }
 }
 
