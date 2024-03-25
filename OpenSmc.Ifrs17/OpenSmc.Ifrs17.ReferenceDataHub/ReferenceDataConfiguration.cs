@@ -49,15 +49,13 @@ public static class ReferenceDataHubConfiguration
             .WithHostedHub(refDataImportAddress, config => config
                 .AddImport(data => data
                     .FromHub(refDataAddress, ds => ds
-                        .WithType<AmountType>().WithType<DeferrableAmountType>().WithType<AocConfiguration>()
-                        .WithType<AocType>().WithType<StructureType>().WithType<CreditRiskRating>().WithType<Currency>().WithType<EconomicBasis>()
-                        .WithType<EstimateType>().WithType<LiabilityType>().WithType<LineOfBusiness>().WithType<Profitability>()
-                        .WithType<Novelty>().WithType<OciType>().WithType<Partner>().WithType<PnlVariableType>().WithType<RiskDriver>()
-                        .WithType<Scenario>().WithType<ValuationApproach>().WithType<ProjectionConfiguration>().WithType<ReportingNode>()
-                        .WithType<PartitionByReportingNode>().WithType<PartitionByReportingNodeAndPeriod>()
-                            ),
-                        import => import
-                    )
+                        .ConfigureTypesFromCategory(TemplateData.TemplateReferenceData)
+                        .WithType<AocConfiguration>()
+                        .WithType<PartitionByReportingNode>()
+                        .WithType<PartitionByReportingNodeAndPeriod>()
+                        ),
+                    import => import
+                )
             );
     }
 }
