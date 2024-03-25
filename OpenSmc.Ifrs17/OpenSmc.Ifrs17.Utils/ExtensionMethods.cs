@@ -11,6 +11,10 @@ public static class ExtensionMethods
         where TDataSource : DataSource<TDataSource>
         => typeAndInstance.Aggregate(dataSource, (ds, kvp) => ds.WithType(kvp.Key, t => t.WithInitialData(kvp.Value)));
 
+    public static TDataSource ConfigureTypesFromCategory<TDataSource>(this TDataSource dataSource, IDictionary<Type, IEnumerable<object>> typeAndInstance)
+        where TDataSource : DataSource<TDataSource>
+        => typeAndInstance.Aggregate(dataSource, (ds, kvp) => ds.WithType(kvp.Key, t => t));
+
     public static Dictionary<TKey, TResult> ToDictionaryGrouped<TSource, TKey, TResult>
         (this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<IGrouping<TKey, TSource>, TResult> elementSelector)
         => source.GroupBy(keySelector).ToDictionary(g => g.Key, elementSelector);

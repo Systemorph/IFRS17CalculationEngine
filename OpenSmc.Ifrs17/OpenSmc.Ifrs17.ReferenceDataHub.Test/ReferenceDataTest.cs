@@ -7,6 +7,7 @@ using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
 using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
 using OpenSmc.Ifrs17.ReferenceDataHub;
+using OpenSmc.Ifrs17.Utils;
 using OpenSmc.Import;
 using OpenSmc.Messaging;
 using Xunit;
@@ -21,6 +22,17 @@ public class ReferenceDataIfrsHubDictInitTest(ITestOutputHelper output) : Refere
         return base.ConfigureHost(configuration)
                    .ConfigureReferenceDataModelHub();
     }
+
+    protected override MessageHubConfiguration ConfigureClient(MessageHubConfiguration configuration)
+        => base.ConfigureClient(configuration)
+            .AddData(dc => dc
+                .FromHub(new ReferenceDataAddress(new HostAddress()), ds => ds
+                    .ConfigureTypesFromCategory(TemplateData.TemplateReferenceData)
+                    .WithType<AocConfiguration>()
+                    .WithType<PartitionByReportingNode>()
+                    .WithType<PartitionByReportingNodeAndPeriod>()
+                )
+            );
 
     [Fact]
     public async Task InitReferenceDataTest()

@@ -21,6 +21,16 @@ public class ParameterDataDictInitTest(ITestOutputHelper output) : HubTestBase(o
             .ConfigureParameterDataDictInit();
     }
 
+    protected override MessageHubConfiguration ConfigureClient(MessageHubConfiguration configuration)
+        => base.ConfigureClient(configuration)
+            .AddData(dc => dc
+                .FromHub(new HostAddress(), ds => ds
+                    .WithType<ExchangeRate>()
+                    .WithType<CreditDefaultRate>()
+                    .WithType<PartnerRating>()
+                )
+            );
+
     [Fact]
     public async Task InitParameterDataTest()
     {

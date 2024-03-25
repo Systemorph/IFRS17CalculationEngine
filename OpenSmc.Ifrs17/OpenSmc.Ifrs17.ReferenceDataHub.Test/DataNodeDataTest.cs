@@ -1,6 +1,8 @@
 using FluentAssertions;
+using OpenSmc.Data;
 using OpenSmc.Ifrs17.DataNodeHub;
 using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
+using OpenSmc.Ifrs17.Utils;
 using OpenSmc.Messaging;
 using Xunit;
 using Xunit.Abstractions;
@@ -14,6 +16,14 @@ public class DataNodeDataDictInitTest(ITestOutputHelper output) : DataNodeDataIf
         return base.ConfigureHost(configuration)
             .ConfigureDataNodeDataDictInit();
     }
+
+    protected override MessageHubConfiguration ConfigureClient(MessageHubConfiguration configuration)
+        => base.ConfigureClient(configuration)
+            .AddData(dc => dc
+                .FromHub(new HostAddress(), ds => ds
+                    .ConfigureTypesFromCategory(TemplateData.DataNodeData)
+                )
+            );
 
     [Fact]
     public async Task InitDataNodeDictInitTest()

@@ -18,6 +18,14 @@ public class IfrsVariableDataDictInitTest(ITestOutputHelper output) : HubTestBas
             .ConfigureIfrsDataDictInit(TemplateData.year,TemplateData.month,TemplateData.reportinNode,null);
     }
 
+    protected override MessageHubConfiguration ConfigureClient(MessageHubConfiguration configuration) 
+        => base.ConfigureClient(configuration)
+            .AddData(dc => dc
+                .FromHub(new HostAddress(), ds => ds
+                    .WithType<IfrsVariable>()
+                )
+            );
+
     [Fact]
     public async Task InitIfrsVariableDataTest()
     {

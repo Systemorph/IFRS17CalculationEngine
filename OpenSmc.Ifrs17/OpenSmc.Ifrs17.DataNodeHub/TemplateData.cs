@@ -2,7 +2,7 @@
 
 namespace OpenSmc.Ifrs17.DataNodeHub
 {
-    internal class TemplateData
+    public class TemplateData
     {
         public static readonly Dictionary<Type, IEnumerable<object>> DataNodeData
             = new()
