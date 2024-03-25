@@ -1,7 +1,8 @@
-﻿using OpenSmc.Data;
+﻿using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
+using OpenSmc.Data;
 using OpenSmc.Messaging;
 using OpenSmc.Reflection;
-using System.Reflection;
 using OpenSmc.Hub.Fixture;
 using Xunit.Abstractions;
 
@@ -29,5 +30,10 @@ namespace OpenSmc.Ifrs17.Hub.Test
 
         private static readonly MethodInfo AwaitResponseMethod = ReflectionHelper.GetMethodGeneric<IMessageHub>(x => x.AwaitResponse<object>(null, null));
 
+    }
+
+    public static class WorkspaceHubExtensions
+    {
+        public static IWorkspace GetWorkspace(this IMessageHub hub) => hub.ServiceProvider.GetRequiredService<IWorkspace>();
     }
 }
