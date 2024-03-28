@@ -4,7 +4,7 @@ public class Error : ValidationBase
 {
     protected const string DefaultMessage = "Error not found.";
 
-    protected Error(string messageCode) : base(messageCode)
+    public Error(string messageCode) : base(messageCode)
     {
     }
 
