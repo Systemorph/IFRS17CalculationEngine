@@ -1,14 +1,12 @@
-﻿using System.Linq.Expressions;
-using OpenSmc.Collections;
-using OpenSmc.Data;
+﻿using OpenSmc.Data;
 using OpenSmc.Hierarchies;
 using OpenSmc.Ifrs17.DataTypes.Constants;
 using OpenSmc.Ifrs17.DataTypes.Constants.Enumerates;
 using OpenSmc.Ifrs17.DataTypes.DataModel;
 using OpenSmc.Ifrs17.DataTypes.DataModel.Args;
 using OpenSmc.Ifrs17.DataTypes.DataModel.FinancialDataDimensions;
-using OpenSmc.Ifrs17.DataTypes.DataModel.Interfaces;
 using OpenSmc.Ifrs17.DataTypes.DataModel.KeyedDimensions;
+using OpenSmc.Ifrs17.DataTypes.Constants.Validations;
 using OpenSmc.Ifrs17.Utils;
 
 
@@ -184,7 +182,7 @@ public class ParsingStorage
             return inner[Consts.CurrentPeriod].InterpolationMethod;
         }
 
-        /*
+       
         // Validations
         public string ValidateEstimateType(string et, string goc)
         {
@@ -193,10 +191,15 @@ public class ParsingStorage
                 dataNodeData.LiabilityType == LiabilityTypes.LIC)
                 estimateTypes.ExceptWith(TechnicalMarginEstimateTypes);
             if (!allowedEstimateTypes.Contains(et))
-                ApplicationMessage.Log(Error.EstimateTypeNotFound, et);
+            {
+                var error = new Error("EstimateTypeNotFound");
+                throw new Exception(error.GetMessage(et));
+                //ApplicationMessage.Log(DataTypes.Constants.Validations.Error.EstimateTypeNotFound, et);
+            }
+
             return et;
         }
-
+    /*
         public string ValidateAmountType(string at)
         {
             if (at != null && !amountTypes.Contains(at))
